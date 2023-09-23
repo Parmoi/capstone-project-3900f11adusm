@@ -1,0 +1,23 @@
+Week 1
+
+Our group was formed, and we named ourselves DUSM. I was selected 
+as Scrum Master for our group. As a group, we discussed what areas
+we're most comfortable with and what our main strengths are. From 
+this we chose three projects and ordered them from the most preferable 
+to least preferable to send to as our project preference. After
+the lab was finished, I set up our Jira Site and finished the set-up
+process as outlined by the documentation given on Moodle.
+
+
+Week 2
+
+We were notified that our project choice was ratified. From here
+as a group we decided to brainstorm some ideas on our own and discuss
+what to do from the lab. Greg was added to our group. We decided on 
+using React for our frontend, Python for our backend with Flask, and 
+PostgreSQL for our DB. Dyllanson was selected to be our Product Owner.
+
+We started outlining what our end product could look like, what the 
+stakeholders would want out of it and how to model the system as a 
+whole. Started work on writing user stories and diagrams for our system.
+
