@@ -1,0 +1,10 @@
+Week 1:
+Formed group and selected roles. Exchanged contacts. Created Jira site. Discussed skills and decided on top 3 topics for project proposal.
+Worked out availabilites and set up async meetings and in person meetups. Set up document format for project proposal.
+
+Week 2:
+Worked out project specifications from user perspective. Began writing user stories. Allocated proposal parts to all members.
+Began working on user stories for proposal. Decided concrete dates for meetings. Made soft deadlines for proposal components.
+
+Week 3:
+Wrote background and worked on writing user stories for proposal. Had meeting, discussed client meeting and proposal.
