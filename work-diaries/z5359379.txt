@@ -1,0 +1,26 @@
+Week 1
+
+Group formed and named. Made note of member’s area of expertise and chose a
+scrum master (Uguudei). Decided on top 3 project preferences and sent them to
+the tutor. Scrum master created Jira Site. Scheduled async stand-ups for end of
+week, and a meeting on Monday.
+
+Week 2
+
+Cancelled meeting on Monday because we didn't get the project preference back
+yet. Received project confirmation on Tuesday (p20). Group discussed project
+during our Friday lab. Wrote down all functionality we want for collectors,
+and decided on tasks for our first sprint and MVP. Decided on the product lead
+(me). Greg joined our group. Assigned tasks to everyone to be done by our next
+meeting on Monday. Team leads of p20 set up a QA session with the product owner
+for Monday 6pm.
+
+Week 3
+
+Had the meeting with product client. Summarised the meeting discussion into a
+document. Worked on ER diagram for database. Everyone was assigned roles in
+Monday's meeting. Made changes to the software architecture diagram. Began
+writing answers to part C of the proposal. Met again on Wednesday. Discussed a
+new implementation of the trade system, modelled after Steam's trading system.
+Helped in making changes to the storyboard to accomodate these changes. Used
+user stories from lectures to rewrite all our user stories.
