@@ -21,3 +21,13 @@ We started outlining what our end product could look like, what the
 stakeholders would want out of it and how to model the system as a 
 whole. Started work on writing user stories and diagrams for our system.
 
+
+Week 3
+
+This week, we finished up our project proposal. We finilized our user
+stories and overall story board for the UI layout of our web application.
+Our stand-ups and meetings consisted of discussing the design and system
+architecture of the web application. From this, we decided who would 
+work on what component. At the beginning period of the development, I 
+would be working on the front-end side of the project as the beginning 
+will be front-end heavy.
