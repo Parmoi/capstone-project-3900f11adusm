@@ -1,3 +1,5 @@
+Stella Zhang
+
 Week 1:
 Formed group and selected roles. Exchanged contacts. Created Jira site. Discussed skills and decided on top 3 topics for project proposal.
 Worked out availabilites and set up async meetings and in person meetups. Set up document format for project proposal.
@@ -8,3 +10,8 @@ Began working on user stories for proposal. Decided concrete dates for meetings.
 
 Week 3:
 Wrote background and worked on writing user stories for proposal. Had meeting, discussed client meeting and proposal.
+Wrote novel functionality section for proposal. Had meeting working out project functionality and translating to storyboards.
+Worked on creating storyboards.
+
+Week 4:
+Had meeting on Monday discussing divison of work from backlog created on Jira. Assigned signin/registration page for frontend.
