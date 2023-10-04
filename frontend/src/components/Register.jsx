@@ -8,31 +8,35 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
-// import validator from 'validator';
+import validator from 'validator';
 
 const theme = createTheme();
 
-function Register () {
+function Register() {
   const navigate = useNavigate();
+  const [emailError, setEmailError] = React.useState(false);
+  const [nameError, setNameError] = React.useState(false);
+  const [pwdError, setPwdError] = React.useState(false);
 
-//   const validateEmail = (e) => {
-//     const email = e.target.value;
-//     setEmailError(!validator.isEmail(email));
-//   };
 
-//   const validateName = (e) => {
-//     const name = e.target.value;
-//     setNameError(name === '');
-//   };
+  const validateEmail = (e) => {
+    const email = e.target.value;
+    setEmailError(!validator.isEmail(email));
+  };
 
-//   const validatePwd = (e) => {
-//     const pwd = e.target.value;
-//     setPwdError(pwd === '');
-//   };
+  const validateName = (e) => {
+    const name = e.target.value;
+    setNameError(name === '');
+  };
 
-//   const register = (e) => {
-   
-//   }
+  const validatePwd = (e) => {
+    const pwd = e.target.value;
+    setPwdError(pwd === '');
+  };
+
+  //   const register = (e) => {
+
+  //   }
 
   return (
     <ThemeProvider theme={theme}>
@@ -62,8 +66,8 @@ function Register () {
               type="name"
               id="name"
               autoComplete="name"
-            //   onBlur={(e) => validateName(e)}
-            //   helperText={nameError ? 'Name must not be empty' : ''}
+              onBlur={(e) => validateName(e)}
+              helperText={nameError ? 'Name must not be empty' : ''}
             />
             <TextField
               margin="normal"
@@ -74,8 +78,8 @@ function Register () {
               name="email"
               autoComplete="email"
               autoFocus
-            //   onChange={(e) => validateEmail(e)}
-            //   helperText={emailError ? 'Email must be valid' : ''}
+              onChange={(e) => validateEmail(e)}
+              helperText={emailError ? 'Email must be valid' : ''}
             />
             <TextField
               margin="normal"
@@ -86,8 +90,8 @@ function Register () {
               type="text"
               id="password"
               autoComplete="current-password"
-            //   onBlur={(e) => validatePwd(e)}
-            //   helperText={pwdError ? 'Password must not be empty' : ''}
+              onBlur={(e) => validatePwd(e)}
+              helperText={pwdError ? 'Password must not be empty' : ''}
             />
             <Button
               type="submit"
