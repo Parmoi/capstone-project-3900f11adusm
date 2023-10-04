@@ -27,6 +27,7 @@ import {
   // useNavigate,
   // Outlet,
 } from 'react-router-dom';
+import { autocompleteClasses } from '@mui/material';
 
 const theme = createTheme({
   palette: {
@@ -53,9 +54,9 @@ const linkStyle = {
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
   borderRadius: theme.shape.borderRadius,
-  backgroundColor: 'secondary.main',
+  backgroundColor: alpha("#BFCC94", 0.4),
   '&:hover': {
-    backgroundColor: alpha(theme.palette.common.white, 0.25),
+    backgroundColor: alpha("#BFCC94", 0.2),
   },
   marginLeft: 0,
   width: '100%',
@@ -76,7 +77,8 @@ const SearchIconWrapper = styled('div')(({ theme }) => ({
 }));
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: 'inherit',
+  color: alpha("#1F2421", 1),
+  fontWeight: 'bold',
   '& .MuiInputBase-input': {
     padding: theme.spacing(1, 1, 1, 0),
     // vertical padding + font size from searchIcon
@@ -112,7 +114,7 @@ const SignedOutNav = () => {
 const SignedInNav = () => {
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="fixed" sx={{ height: "10ch", display: 'flex', justifyContent: 'center', backgroundColor: 'white' }}>
+      <AppBar position="fixed" sx={{ height: "10ch", display: 'flex', justifyContent: 'center', backgroundColor: 'secondary.main' }}>
         <Toolbar sx={{ justifyContent: 'space-between' }}>
           <Link to="/dashboard" style={linkStyle}>
             <Typography variant="h6" component="div" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
