@@ -34,9 +34,19 @@ function Register() {
     setPwdError(pwd === '');
   };
 
-  //   const register = (e) => {
+  const register = (e) => {
+    e.preventDefault();
+    const data = new FormData(e.currentTarget);
 
-  //   }
+    if (emailError || nameError || pwdError) {
+      // if error, do nothing
+      return;
+    }
+
+    console.log(data);
+
+    // call api with data
+  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -56,7 +66,7 @@ function Register() {
           <Typography component="h1" variant="h5">
             Sign up
           </Typography>
-          <Box component="form" noValidate sx={{ mt: 1 }}>
+          <Box component="form" onSubmit={register} noValidate sx={{ mt: 1 }}>
             <TextField
               margin="normal"
               required
