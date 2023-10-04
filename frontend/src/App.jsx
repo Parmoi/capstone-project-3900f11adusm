@@ -73,7 +73,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 const SignedOutNav = () => {
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
+      <AppBar position="static" sx={{ height: "10ch", display: 'flex', justifyContent: 'center' }}>
         <Toolbar sx={{ justifyContent: 'space-between' }}>
           <Link to="/" style={linkStyle}>
             <Typography variant="h6" component="div">
@@ -93,7 +93,7 @@ const SignedOutNav = () => {
 const SignedInNav = () => {
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
+      <AppBar position="static" sx={{ height: "10ch", display: 'flex', justifyContent: 'center' }}>
         <Toolbar sx={{ justifyContent: 'space-between' }}>
           <Link to="/dashboard" style={linkStyle}>
             <Typography variant="h6" component="div">
@@ -126,6 +126,7 @@ function App() {
         <SignedOutNav />
         <Routes>
           {/* home page stub */}
+          {/* separate routes based on if they are available signed in/out, check token (?) */}
           <Route path="/" element={<span>Home page</span>} />
           <Route path="/login" element={<SignIn />} />
           <Route path="/register" element={<Register />} />
