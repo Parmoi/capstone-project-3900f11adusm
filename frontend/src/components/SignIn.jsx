@@ -6,10 +6,8 @@ import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { createTheme, useTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
-
-const theme = createTheme();
 
 function SignIn() {
 
@@ -22,7 +20,7 @@ function SignIn() {
   }
 
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={useTheme()}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box
@@ -33,9 +31,9 @@ function SignIn() {
             alignItems: 'center',
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+          <Avatar sx={{ m: 1, bgcolor: 'support.main' }}>
           </Avatar>
-          <Typography component="h1" variant="h5">
+          <Typography component="h1" variant="h5" color='primary.text'>
             Sign in
           </Typography>
           <Box component="form" onSubmit={login} noValidate sx={{ mt: 1 }}>
@@ -66,7 +64,7 @@ function SignIn() {
               type="submit"
               fullWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2 }}
+              sx={{ mt: 3, mb: 2, backgroundColor: 'primary', color: 'secondary.main' }}
               name="sign in"
             >
               Sign In

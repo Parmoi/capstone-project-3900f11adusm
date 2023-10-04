@@ -11,6 +11,8 @@ import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import { styled, alpha } from '@mui/material/styles';
 import SearchIcon from '@mui/icons-material/Search';
 import InputBase from '@mui/material/InputBase';
+import SmartToyIcon from '@mui/icons-material/SmartToy';
+import { ThemeProvider, createTheme } from "@mui/material/styles";
 
 import SignIn from './components/SignIn';
 import Register from './components/Register';
@@ -26,15 +28,32 @@ import {
   // Outlet,
 } from 'react-router-dom';
 
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: "#216869",
+      text: "#1F2421",
+      light: "#BFCC94"
+    },
+    secondary: {
+      main: "#F0F4EF",
+    },
+    support: {
+      main: "#B4CDED",
+    }
+  }
+});
+
 const linkStyle = {
   textDecoration: 'none',
-  color: 'white',
+  color: '#1F2421'
 }
+
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
   borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.common.white, 0.15),
+  backgroundColor: 'secondary.main',
   '&:hover': {
     backgroundColor: alpha(theme.palette.common.white, 0.25),
   },
@@ -73,11 +92,11 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 const SignedOutNav = () => {
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static" sx={{ height: "10ch", display: 'flex', justifyContent: 'center' }}>
+      <AppBar position="fixed" sx={{ height: "10ch", display: 'flex', justifyContent: 'center', backgroundColor: 'secondary.main' }}>
         <Toolbar sx={{ justifyContent: 'space-between' }}>
           <Link to="/" style={linkStyle}>
-            <Typography variant="h6" component="div">
-              🧸 CollectiblesCorner
+            <Typography variant="h6" component="div" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
+              <SmartToyIcon />&nbsp;CollectiblesCorner
             </Typography>
           </Link>
           <Box>
@@ -86,18 +105,18 @@ const SignedOutNav = () => {
           </Box>
         </Toolbar>
       </AppBar>
-    </Box>
+    </Box >
   );
 };
 
 const SignedInNav = () => {
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static" sx={{ height: "10ch", display: 'flex', justifyContent: 'center' }}>
+      <AppBar position="fixed" sx={{ height: "10ch", display: 'flex', justifyContent: 'center', backgroundColor: 'white' }}>
         <Toolbar sx={{ justifyContent: 'space-between' }}>
           <Link to="/dashboard" style={linkStyle}>
-            <Typography variant="h6" component="div">
-              🧸 CollectiblesCorner
+            <Typography variant="h6" component="div" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
+              <SmartToyIcon />&nbsp;CollectiblesCorner
             </Typography>
           </Link>
           <Search>
@@ -120,21 +139,23 @@ const SignedInNav = () => {
 
 function App() {
   return (
-    <Box>
-      <BrowserRouter>
-        {/* <SignedInNav /> */}
-        <SignedOutNav />
-        <Routes>
-          {/* home page stub */}
-          {/* separate routes based on if they are available signed in/out, check token (?) */}
-          <Route path="/" element={<span>Home page</span>} />
-          <Route path="/login" element={<SignIn />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/profile" element={<span>Profile</span>} />
-          <Route path="/dashboard" element={<span>Dashboard</span>} />
-        </Routes>
-      </BrowserRouter>
-    </Box>
+    <ThemeProvider theme={theme}>
+      <Box sx={{ display: 'flex', flexDirection: 'column', rowGap: '10ch', alignItems: 'center', justifyContent: 'center' }}>
+        <BrowserRouter>
+          {/* <SignedInNav /> */}
+          <SignedOutNav />
+          <Routes>
+            {/* home page stub */}
+            {/* separate routes based on if they are available signed in/out, check token (?) */}
+            <Route path="/" element={<span>Home page</span>} />
+            <Route path="/login" element={<SignIn />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/profile" element={<span>Profile</span>} />
+            <Route path="/dashboard" element={<span>Dashboard</span>} />
+          </Routes>
+        </BrowserRouter>
+      </Box>
+    </ThemeProvider>
   );
 }
 
