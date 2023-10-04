@@ -16,22 +16,30 @@ import {
   Routes,
   Route,
   Link,
+  Navigate,
   // useParams,
   // useNavigate,
   // Outlet,
 } from 'react-router-dom';
+
+const linkStyle = {
+  textDecoration: 'none',
+  color: 'white',
+}
 
 const SignedOutNav = () => {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
         <Toolbar sx={{ justifyContent: 'space-between' }}>
-          <Typography variant="h6" component="div">
-          🧸 CollectiblesCorner
-          </Typography>
+          <Link to="/" style={linkStyle}>
+            <Typography variant="h6" component="div">
+              🧸 CollectiblesCorner
+            </Typography>
+          </Link>
           <Box>
-            <Button color="inherit"><Link to="/login">Login</Link></Button>
-            <Button color="inherit"><Link to="/register">Register</Link></Button>
+            <Button color="inherit"><Link to="/login" style={linkStyle}>Login</Link></Button>
+            <Button color="inherit"><Link to="/register" style={linkStyle}>Register</Link></Button>
           </Box>
         </Toolbar>
       </AppBar>
@@ -42,13 +50,15 @@ const SignedOutNav = () => {
 function App() {
   return (
     <Box>
-    <BrowserRouter>
-      <SignedOutNav />
-      <Routes>
-        <Route path="/login" element={<SignIn />} />
-        <Route path="/register" element={<Register />}/>
-      </Routes>
-    </BrowserRouter>
+      <BrowserRouter>
+        <SignedOutNav />
+        <Routes>
+          {/* home page stub */}
+          <Route path="/" element={<span>Home page</span>} />
+          <Route path="/login" element={<SignIn />} />
+          <Route path="/register" element={<Register />} />
+        </Routes>
+      </BrowserRouter>
     </Box>
   );
 }
