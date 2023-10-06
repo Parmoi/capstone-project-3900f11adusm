@@ -13,9 +13,22 @@ import SearchIcon from '@mui/icons-material/Search';
 import InputBase from '@mui/material/InputBase';
 import SmartToyIcon from '@mui/icons-material/SmartToy';
 import { ThemeProvider, createTheme } from "@mui/material/styles";
+import Tooltip from '@mui/material/Tooltip';
+import Menu from '@mui/material/Menu';
+import Avatar from '@mui/material/Avatar';
+import MenuItem from '@mui/material/MenuItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import Divider from '@mui/material/Divider';
+import Logout from '@mui/icons-material/Logout';
+import LibraryAddCheckIcon from '@mui/icons-material/LibraryAddCheck';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import SellIcon from '@mui/icons-material/Sell';
+import PriceCheckIcon from '@mui/icons-material/PriceCheck';
+import CreditScoreIcon from '@mui/icons-material/CreditScore';
 
 import SignIn from './components/SignIn';
 import Register from './components/Register';
+import WantList from './components/WantList';
 
 import {
   BrowserRouter,
@@ -33,15 +46,15 @@ const theme = createTheme({
   palette: {
     primary: {
       main: "#216869",
+      light: "#BFCC94",
       text: "#1F2421",
-      light: "#BFCC94"
     },
     secondary: {
       main: "#F0F4EF",
     },
     support: {
       main: "#B4CDED",
-    }
+    },
   }
 });
 
@@ -49,7 +62,6 @@ const linkStyle = {
   textDecoration: 'none',
   color: '#1F2421'
 }
-
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -112,6 +124,14 @@ const SignedOutNav = () => {
 };
 
 const SignedInNav = () => {
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="fixed" sx={{ height: "10ch", display: 'flex', justifyContent: 'center', backgroundColor: 'secondary.main' }}>
@@ -131,8 +151,96 @@ const SignedInNav = () => {
             />
           </Search>
           <Box>
-            <Button color="inherit"><Link to="/profile" style={linkStyle}><AccountBoxIcon /></Link></Button>
+            <Button color="inherit">
+              <Tooltip title="Menu">
+                <AccountBoxIcon
+                  onClick={handleClick}
+                  sx={{ color: 'primary.text' }}
+                  aria-controls={open ? 'account-menu' : undefined}
+                  aria-haspopup="true"
+                  aria-expanded={open ? 'true' : undefined}
+                />
+              </Tooltip>
+            </Button>
           </Box>
+          <Menu
+            anchorEl={anchorEl}
+            id="account-menu"
+            open={open}
+            onClose={handleClose}
+            onClick={handleClose}
+            PaperProps={{
+              elevation: 0,
+              sx: {
+                overflow: 'visible',
+                filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+                mt: 1.5,
+                '& .MuiAvatar-root': {
+                  width: 32,
+                  height: 32,
+                  ml: -0.5,
+                  mr: 1,
+                },
+                '&:before': {
+                  content: '""',
+                  display: 'block',
+                  position: 'absolute',
+                  top: 0,
+                  right: 14,
+                  width: 10,
+                  height: 10,
+                  bgcolor: 'background.paper',
+                  transform: 'translateY(-50%) rotate(45deg)',
+                  zIndex: 0,
+                },
+              },
+            }}
+            transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+            anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+          >
+            <MenuItem onClick={handleClose}>
+              <Avatar />
+              <Link to="/profile" style={linkStyle}>Profile</Link>
+            </MenuItem>
+            <MenuItem onClick={handleClose}>
+              <ListItemIcon>
+                <LibraryAddCheckIcon />
+              </ListItemIcon>
+              Collections
+            </MenuItem>
+            <MenuItem onClick={handleClose}>
+              <ListItemIcon>
+                <VisibilityIcon />
+              </ListItemIcon>
+              <Link to="/wantlist" style={linkStyle}>Wantlist</Link>
+            </MenuItem>
+            <Divider />
+            <MenuItem onClick={handleClose}>
+              <ListItemIcon>
+                <SellIcon />
+              </ListItemIcon>
+              Tradelist
+            </MenuItem>
+            <MenuItem onClick={handleClose}>
+              <ListItemIcon>
+                <PriceCheckIcon />
+              </ListItemIcon>
+              Offers
+            </MenuItem>
+            <MenuItem onClick={handleClose}>
+              <ListItemIcon>
+                <CreditScoreIcon />
+              </ListItemIcon>
+              Order History
+            </MenuItem>
+            <Divider />
+            <MenuItem onClick={handleClose}>
+              <ListItemIcon>
+                <Logout fontSize="small" />
+              </ListItemIcon>
+              Sign out
+            </MenuItem>
+          </Menu>
         </Toolbar>
       </AppBar>
     </Box>
@@ -144,8 +252,8 @@ function App() {
     <ThemeProvider theme={theme}>
       <Box sx={{ display: 'flex', flexDirection: 'column', rowGap: '10ch', alignItems: 'center', justifyContent: 'center' }}>
         <BrowserRouter>
-          {/* <SignedInNav /> */}
-          <SignedOutNav />
+          <SignedInNav />
+          {/* <SignedOutNav /> */}
           <Routes>
             {/* home page stub */}
             {/* separate routes based on if they are available signed in/out, check token (?) */}
@@ -153,6 +261,7 @@ function App() {
             <Route path="/login" element={<SignIn />} />
             <Route path="/register" element={<Register />} />
             <Route path="/profile" element={<span>Profile</span>} />
+            <Route path="/wantlist" element={<WantList />} />
             <Route path="/dashboard" element={<span>Dashboard</span>} />
           </Routes>
         </BrowserRouter>
