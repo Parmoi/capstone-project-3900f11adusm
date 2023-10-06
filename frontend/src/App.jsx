@@ -29,6 +29,7 @@ import CreditScoreIcon from '@mui/icons-material/CreditScore';
 import SignIn from './components/SignIn';
 import Register from './components/Register';
 import WantList from './components/WantList';
+import CollectionList from './components/CollectionList';
 
 import {
   BrowserRouter,
@@ -206,7 +207,7 @@ const SignedInNav = () => {
               <ListItemIcon>
                 <LibraryAddCheckIcon />
               </ListItemIcon>
-              Collections
+              <Link to="/collection" style={{ textDecoration: 'none', color: 'inherit' }}>Collection</Link>
             </MenuItem>
             <MenuItem onClick={handleClose}>
               <ListItemIcon>
@@ -265,6 +266,7 @@ function App() {
               <Route path="/profile" element={<span>Profile</span>} />
               <Route path="/wantlist" element={<WantList />} />
               <Route path="/dashboard" element={<span>Dashboard</span>} />
+              <Route path="/collection" element={<CollectionList />} />
             </Routes>
           </BrowserRouter>
         </Box>

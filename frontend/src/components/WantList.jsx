@@ -12,43 +12,49 @@ import {
 
 import { Box, Button, IconButton } from '@mui/material';
 
-// data stub waiting for backend
+// stub data
 const data = [
   {
     image: '',
     name: 'Homer',
     collectionName: 'Winter 2022',
     yearReleased: 1999,
+    dateAdded: 1800,
   },
   {
     image: '',
     name: 'Marge',
     collectionName: 'Winter 2022',
     yearReleased: 1899,
+    dateAdded: 1800,
   },
   {
     image: '',
     name: 'Bart',
     collectionName: 'Winter 2022',
     yearReleased: 1499,
+    dateAdded: 1800,
   },
   {
     image: '',
     name: 'Dog',
     collectionName: 'Winter 2022',
     yearReleased: 1989,
+    dateAdded: 1800,
   },
   {
     image: '',
     name: 'Lisa',
     collectionName: 'Winter 2022',
     yearReleased: 1709,
+    dateAdded: 1800,
   },
   {
     image: '',
     name: 'Rando',
     collectionName: 'Winter 2022',
     yearReleased: 1909,
+    dateAdded: 1801,
   },
 ]
 
@@ -75,6 +81,10 @@ const WantList = () => {
       {
         accessorKey: 'yearReleased',
         header: 'Year',
+      },
+      {
+        accessorKey: 'dateAdded',
+        header: 'Date Added',
       },
     ],
     [],
