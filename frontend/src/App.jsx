@@ -1,6 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
-import React from 'react';
+import React, { Fragment } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -40,7 +40,7 @@ import {
   // useNavigate,
   // Outlet,
 } from 'react-router-dom';
-import { autocompleteClasses } from '@mui/material';
+import { Helmet } from 'react-helmet';
 
 const theme = createTheme({
   palette: {
@@ -60,15 +60,16 @@ const theme = createTheme({
 
 const linkStyle = {
   textDecoration: 'none',
-  color: '#1F2421'
+  color: '#F0F4EF'
 }
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
   borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha("#BFCC94", 0.4),
+  borderWidth: '100px',
+  backgroundColor: alpha(theme.palette.common.white, 0.15),
   '&:hover': {
-    backgroundColor: alpha("#BFCC94", 0.2),
+    backgroundColor: alpha(theme.palette.common.white, 0.25),
   },
   marginLeft: 0,
   width: '100%',
@@ -89,8 +90,7 @@ const SearchIconWrapper = styled('div')(({ theme }) => ({
 }));
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: alpha("#1F2421", 1),
-  fontWeight: 'bold',
+  color: 'inherit',
   '& .MuiInputBase-input': {
     padding: theme.spacing(1, 1, 1, 0),
     // vertical padding + font size from searchIcon
@@ -106,10 +106,10 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 const SignedOutNav = () => {
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="fixed" sx={{ height: "10ch", display: 'flex', justifyContent: 'center', backgroundColor: 'secondary.main' }}>
+      <AppBar position="fixed" sx={{ height: "10ch", display: 'flex', justifyContent: 'center', backgroundColor: 'primary.main' }}>
         <Toolbar sx={{ justifyContent: 'space-between' }}>
           <Link to="/" style={linkStyle}>
-            <Typography variant="h6" component="div" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
+            <Typography variant="h6" component="div" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly', color: 'secondary.main' }}>
               <SmartToyIcon />&nbsp;CollectiblesCorner
             </Typography>
           </Link>
@@ -134,10 +134,10 @@ const SignedInNav = () => {
   };
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="fixed" sx={{ height: "10ch", display: 'flex', justifyContent: 'center', backgroundColor: 'secondary.main' }}>
+      <AppBar position="fixed" sx={{ height: "10ch", display: 'flex', justifyContent: 'center', backgroundColor: 'primary.main' }}>
         <Toolbar sx={{ justifyContent: 'space-between' }}>
           <Link to="/dashboard" style={linkStyle}>
-            <Typography variant="h6" component="div" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
+            <Typography variant="h6" component="div" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly', color: 'secondary.main' }}>
               <SmartToyIcon />&nbsp;CollectiblesCorner
             </Typography>
           </Link>
@@ -155,7 +155,7 @@ const SignedInNav = () => {
               <Tooltip title="Menu">
                 <AccountBoxIcon
                   onClick={handleClick}
-                  sx={{ color: 'primary.text' }}
+                  sx={{ color: 'secondary.main' }}
                   aria-controls={open ? 'account-menu' : undefined}
                   aria-haspopup="true"
                   aria-expanded={open ? 'true' : undefined}
@@ -200,7 +200,7 @@ const SignedInNav = () => {
           >
             <MenuItem onClick={handleClose}>
               <Avatar />
-              <Link to="/profile" style={linkStyle}>Profile</Link>
+              <Link to="/profile" style={{ textDecoration: 'none', color: 'inherit' }}>Profile</Link>
             </MenuItem>
             <MenuItem onClick={handleClose}>
               <ListItemIcon>
@@ -212,7 +212,7 @@ const SignedInNav = () => {
               <ListItemIcon>
                 <VisibilityIcon />
               </ListItemIcon>
-              <Link to="/wantlist" style={linkStyle}>Wantlist</Link>
+              <Link to="/wantlist" style={{ textDecoration: 'none', color: 'inherit' }}>Wantlist</Link>
             </MenuItem>
             <Divider />
             <MenuItem onClick={handleClose}>
@@ -249,24 +249,27 @@ const SignedInNav = () => {
 
 function App() {
   return (
-    <ThemeProvider theme={theme}>
-      <Box sx={{ display: 'flex', flexDirection: 'column', rowGap: '10ch', alignItems: 'center', justifyContent: 'center' }}>
-        <BrowserRouter>
-          <SignedInNav />
-          {/* <SignedOutNav /> */}
-          <Routes>
-            {/* home page stub */}
-            {/* separate routes based on if they are available signed in/out, check token (?) */}
-            <Route path="/" element={<span>Home page</span>} />
-            <Route path="/login" element={<SignIn />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/profile" element={<span>Profile</span>} />
-            <Route path="/wantlist" element={<WantList />} />
-            <Route path="/dashboard" element={<span>Dashboard</span>} />
-          </Routes>
-        </BrowserRouter>
-      </Box>
-    </ThemeProvider>
+    <Fragment>
+      <ThemeProvider theme={theme}>
+        <Helmet bodyAttributes={{ style: 'background-color : white' }} />
+        <Box sx={{ display: 'flex', flexDirection: 'column', rowGap: '10ch', alignItems: 'center', justifyContent: 'center' }}>
+          <BrowserRouter>
+            <SignedInNav />
+            {/* <SignedOutNav /> */}
+            <Routes>
+              {/* home page stub */}
+              {/* separate routes based on if they are available signed in/out, check token (?) */}
+              <Route path="/" element={<span>Home page</span>} />
+              <Route path="/login" element={<SignIn />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/profile" element={<span>Profile</span>} />
+              <Route path="/wantlist" element={<WantList />} />
+              <Route path="/dashboard" element={<span>Dashboard</span>} />
+            </Routes>
+          </BrowserRouter>
+        </Box>
+      </ThemeProvider>
+    </Fragment>
   );
 }
 

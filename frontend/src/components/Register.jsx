@@ -71,6 +71,7 @@ function Register() {
               margin="normal"
               required
               fullWidth
+              backgroundColor='white'
               name="name"
               label="Name"
               type="name"
