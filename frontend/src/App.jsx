@@ -30,6 +30,7 @@ import SignIn from './components/SignIn';
 import Register from './components/Register';
 import WantList from './components/WantList';
 import CollectionList from './components/CollectionList';
+import Profile from './components/Profile'
 
 import {
   BrowserRouter,
@@ -263,7 +264,7 @@ function App() {
               <Route path="/" element={<span>Home page</span>} />
               <Route path="/login" element={<SignIn />} />
               <Route path="/register" element={<Register />} />
-              <Route path="/profile" element={<span>Profile</span>} />
+              <Route path="/profile" element={<Profile />}/>
               <Route path="/wantlist" element={<WantList />} />
               <Route path="/dashboard" element={<span>Dashboard</span>} />
               <Route path="/collection" element={<CollectionList />} />
