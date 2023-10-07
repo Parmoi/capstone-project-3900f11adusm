@@ -1,26 +1,13 @@
 import * as React from 'react';
 import Avatar from '@mui/material/Avatar';
 import TextField from '@mui/material/TextField';
-import CssBaseline from '@mui/material/CssBaseline';
-import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
-import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
-import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
-import { styled, useTheme, ThemeProvider } from '@mui/material/styles';
 
-const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
-  ...theme.typography.body2,
-  padding: theme.spacing(1),
-  textAlign: 'center',
-  color: theme.palette.text.secondary,
-  flexGrow: 1,
-}));
 
 const Profile = () => {
     return (
@@ -68,39 +55,6 @@ const Profile = () => {
           </Stack>
         </Box>
       </Box>
-      // <Box sx={{ width: 200, height: 200 }}>
-      //   <Stack spacing={{ xs: 1, sm: 2 }} direction="row" useFlexGap flexWrap="wrap">
-          // <Container component="main" maxWidth="xs">
-          //   <CssBaseline />
-          //   <Avatar 
-          //     sx={{ width: 150, height: 150 }}
-          //   />
-          //   <Button variant="contained">Change Icon</Button>
-          // </Container>
-
-      //     <Item>Item 1</Item>
-      //     <Item>Item 2</Item>
-      //     <Item>Long content</Item>
-      //   </Stack>
-      // </Box>
-      // <ThemeProvider theme={useTheme()}>
-        // <Container component="main" maxWidth="xs">
-        //   <CssBaseline />
-        //   <Avatar 
-        //     sx={{ width: 100, height: 100 }}
-        //   />
-        // </Container>
-      //   <Box sx={{ width: 200 }}>
-      //     <Stack spacing={{ xs: 1, sm: 2 }} direction="row" useFlexGap flexWrap="wrap">
-            // <Avatar 
-            //   sx={{ width: 100, height: 100 }}
-            // />
-      //       <Item>Item 1</Item>
-      //       <Item>Item 2</Item>
-      //       <Item>Long content</Item>
-      //     </Stack>
-      //   </Box>
-      // </ThemeProvider>
     );
   }
 
