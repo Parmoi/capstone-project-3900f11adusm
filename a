@@ -1,0 +1,110 @@
+[33mcommit 688c414ee4a1cb79c316a38a2012a0a06d20d292[m[33m ([m[1;36mHEAD -> [m[1;32msignin_register[m[33m)[m
+Author: Stella Zhang <zstella159@gmail.com>
+Date:   Wed Oct 4 01:07:57 2023 +1100
+
+    Added template ui for registering and signing up and nav bar
+
+[33mcommit 2f659eb3da5858f730e5ae198d401bb7052b6d0f[m[33m ([m[1;31morigin/setup[m[33m, [m[1;32msetup[m[33m)[m
+Author: Stella Zhang <zstella159@gmail.com>
+Date:   Tue Oct 3 22:39:22 2023 +1100
+
+    Made changes to frontend setup
+
+[33mcommit 85a8f7d1f4565d41b9aea13f963dff1051485cae[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m
+Merge: 1e1375c 92f0cef
+Author: zstella159 <145647002+zstella159@users.noreply.github.com>
+Date:   Tue Oct 3 21:15:35 2023 +1100
+
+    Merge pull request #5 from unsw-cse-comp3900-9900-23T3/work_diary
+    
+    Updated work diary
+
+[33mcommit 92f0cefa7ac09d42be9eff0666f1b77dfa74a9f1[m[33m ([m[1;31morigin/work_diary[m[33m)[m
+Author: Stella Zhang <zstella159@gmail.com>
+Date:   Tue Oct 3 21:15:19 2023 +1100
+
+    Updated work diary
+
+[33mcommit 1e1375c6518a5d85477b119ad8645144c1c57749[m
+Merge: efab2a0 6ae1b77
+Author: de-ugudei <108383692+de-ugudei@users.noreply.github.com>
+Date:   Mon Oct 2 20:03:51 2023 +1100
+
+    Merge pull request #3 from unsw-cse-comp3900-9900-23T3/setup
+    
+    Created a basic setup for our project
+
+[33mcommit efab2a0bb6c2336401b21b28627298de10346a8a[m
+Author: Dyllanson So <dyllanson.so@student.unsw.edu.au>
+Date:   Mon Oct 2 17:29:08 2023 +1100
+
+    Added my work diary
+
+[33mcommit b1d8ec7458a8b73804020a83be6dfd6296605d61[m
+Merge: ba73061 42351e4
+Author: de-ugudei <108383692+de-ugudei@users.noreply.github.com>
+Date:   Mon Oct 2 11:29:10 2023 +1100
+
+    Merge pull request #4 from unsw-cse-comp3900-9900-23T3/work-diary
+    
+    Added my diary for week 3
+
+[33mcommit 42351e49dfc303bca2a6eae07bc56cb97ed6ec0a[m
+Author: Uguudei <auudguu@gmail.com>
+Date:   Mon Oct 2 11:28:19 2023 +1100
+
+    Added my diary for week 3
+
+[33mcommit 6ae1b77296cf5e5fb05c18fdc23c34ba960ea70d[m
+Author: Uguudei <auudguu@gmail.com>
+Date:   Sun Oct 1 22:55:45 2023 +1100
+
+    added a .babelrc file
+
+[33mcommit de9f7a66eb79cd6ebf876228168f40132d0fe43e[m
+Author: Uguudei <auudguu@gmail.com>
+Date:   Sun Oct 1 22:49:03 2023 +1100
+
+    created a basic setup for our project
+
+[33mcommit 099427a6182d4c6d8083186470f7adf325c5eb6f[m
+Author: Uguudei <auudguu@gmail.com>
+Date:   Sun Oct 1 22:48:18 2023 +1100
+
+    added a gitignore file
+
+[33mcommit ba73061ae642d6cbc4da102e4d1ac5154fb2a57c[m
+Merge: fffbb14 cf6c27d
+Author: zstella159 <145647002+zstella159@users.noreply.github.com>
+Date:   Mon Sep 25 21:02:48 2023 +1000
+
+    Merge pull request #2 from unsw-cse-comp3900-9900-23T3/work_diary
+    
+    Added work diary
+
+[33mcommit cf6c27d3c8a34db7d1edb2922d07149dca65c684[m
+Author: Stella Zhang <zstella159@gmail.com>
+Date:   Mon Sep 25 21:01:17 2023 +1000
+
+    Added work diary
+
+[33mcommit fffbb1489c847ec2e2eca59ff0d1c68e2338d8a9[m
+Merge: e1f07d8 6425e9c
+Author: de-ugudei <108383692+de-ugudei@users.noreply.github.com>
+Date:   Sat Sep 23 21:36:25 2023 +1000
+
+    Merge pull request #1 from unsw-cse-comp3900-9900-23T3/work-diaries
+    
+    work diary for weeks 1 and 2 for Uguudei
+
+[33mcommit 6425e9cd4b652d947c5cdc9076e3daf42c32521c[m
+Author: Uguudei <auudguu@gmail.com>
+Date:   Sat Sep 23 21:34:52 2023 +1000
+
+    work diary for weeks 1 and 2 for Uguudei
+
+[33mcommit e1f07d867d8e4a3ac0278a87131aeaf132b741a4[m
+Author: Uguudei <auudguu@gmail.com>
+Date:   Fri Sep 22 12:27:08 2023 +1000
+
+    first commit
