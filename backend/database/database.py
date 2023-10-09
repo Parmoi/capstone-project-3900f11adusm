@@ -75,5 +75,5 @@ def insert_collector(email, first_name, last_name, password):
     conn.execute(insert_stmt)
 
 # Code for testing purposes
-# database_setup()
-# insert_collector("hello@gmail.com", "peter", "bobby", "password")
+database_setup()
+insert_collector("hello22222@gmail.com", "peter", "bobby", "password")
