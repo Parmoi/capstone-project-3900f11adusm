@@ -3,6 +3,7 @@ from flask import Flask
 import psycopg2
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 import os
+import db_manager as dbm
 
 app = Flask(__name__)
 password = os.environ['POSTGRES_PASSWORD']
@@ -37,38 +38,15 @@ def get_widgets():
 
 @app.route('/initdb')
 def db_init():
-    conn = psycopg2.connect(
-        host="db",
-        user="postgres",
-        password=password,
-    )
-    conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
+    dbm.database_setup()
 
-    cursor = conn.cursor()
+    return 'Database has been setup successfully!'
 
-    cursor.execute("DROP DATABASE IF EXISTS example")
-    cursor.execute("CREATE DATABASE example")
+@app.route('/insertcollector')
+def db_collector_insert():
+    dbm.insert_collector("bob@gmail.com", "bob", "jacob", "password")
 
-    cursor.close()
-    conn.commit()
-    conn.close()
-
-    conn = psycopg2.connect(
-    host="db",
-    user="postgres",
-    password=password,
-    database="example"
-    )
-    cursor = conn.cursor()
-
-    cursor.execute("DROP TABLE IF EXISTS widgets")
-    cursor.execute("CREATE TABLE widgets (name VARCHAR(255), description VARCHAR(255))")
-
-    cursor.close()
-    conn.commit()
-    conn.close()
-
-    return 'init database'
+    return 'Insert has been successful!'
 
 if __name__ == "__main__":
     app.run(host ='0.0.0.0')
