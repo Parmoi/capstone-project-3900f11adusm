@@ -44,9 +44,15 @@ def db_init():
 
 @app.route('/insertcollector')
 def db_collector_insert():
-    dbm.insert_collector("bob@gmail.com", "bob", "jacob", "password")
+    dbm.insert_collector("bob@gmail.com", "bob728", "0444444444", "password", "home!", "placeholder")
 
     return 'Insert has been successful!'
+
+@app.route('/updatecollector')
+def db_collector_update():
+    dbm.update_collector_info("bob728", "newtest@gmail.com", "bob1000", "0444444", "password", "home!22", "placeholder")
+
+    return 'Update has been successful!'
 
 if __name__ == "__main__":
     app.run(host ='0.0.0.0')
