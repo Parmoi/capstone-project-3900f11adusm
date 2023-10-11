@@ -61,8 +61,6 @@ function Register({ setLogin }) {
           navigate('/dashboard');
         }
       });
-
-
   }
 
   return (

@@ -59,6 +59,13 @@ def register():
     # return email + name + password
     # token creation
 
+@app.route('/login', methods=['POST'])
+def login():
+    # check if collector not in database via email
+    # raise InputError('Email address not registered')
+
+    return jsonify({'response': 'Logging in account!.'})
+
 
 # for testing api calls
 @app.route('/api')
