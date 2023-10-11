@@ -50,7 +50,7 @@ def db_collector_insert():
 
 @app.route('/updatecollector')
 def db_collector_update():
-    dbm.update_collector_info("bob728", "newtest@gmail.com", "bob1000", "0444444", "password", "home!22", "placeholder")
+    dbm.update_collector_info("bob728", "newtest@gmail.com", "bob1000", "0444444", "password", "home!22")
 
     return 'Update has been successful!'
 

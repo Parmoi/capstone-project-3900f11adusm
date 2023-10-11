@@ -66,7 +66,7 @@ def insert_collector(email, username, phone, password, address, profile_picture)
 
 # Function to update user information
 # (idea is that you press "update info" and it will update all accordingly)
-def update_collector_info(curr_username, new_email, new_username, new_phone, new_password, new_address, new_profile_picture):
+def update_collector_info(curr_username, new_email, new_username, new_phone, new_password, new_address):
     
     engine, conn, metadata = db_connect()
     
@@ -79,8 +79,7 @@ def update_collector_info(curr_username, new_email, new_username, new_phone, new
                          'username': new_username,
                          'phone': new_phone,
                          'password': new_password,
-                         'address': new_address,
-                         'profile_picture': new_profile_picture
+                         'address': new_address
                      }))
     conn.execute(update_stmt)
     conn.close()
