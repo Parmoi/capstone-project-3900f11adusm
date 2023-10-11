@@ -1,6 +1,11 @@
 import json
+<<<<<<< HEAD
 from flask import Flask
 from flask_cors import CORS, cross_origin
+=======
+from flask import Flask, jsonify
+from flask_cors import CORS
+>>>>>>> main
 import psycopg2
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 import os
@@ -8,7 +13,6 @@ import db_manager as dbm
 
 app = Flask(__name__)
 CORS(app)
-app.config['CORS_HEADERS'] = 'Content-Type'
 password = os.environ['POSTGRES_PASSWORD']
 
 @app.route('/')
@@ -61,6 +65,10 @@ def register(name, email, password):
     # token creation
 
 
+# for testing api calls
+@app.route('/api')
+def api():
+    return jsonify({'message': 'This is a unique API call.'})
 
 if __name__ == "__main__":
     app.run(host ='0.0.0.0')
