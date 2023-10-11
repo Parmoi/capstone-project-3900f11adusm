@@ -46,7 +46,7 @@ def db_init():
 
 @app.route('/insertcollector')
 def db_collector_insert():
-    dbm.insert_collector("bob@gmail.com", "bob", "jacob", "password")
+    dbm.insert_collector("bob@gmail.com", "bob222", "bob jacobs","0444444444", "password", "home!")
 
     return 'Insert has been successful!'
 
