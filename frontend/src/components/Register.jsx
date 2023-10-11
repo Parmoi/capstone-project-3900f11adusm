@@ -13,7 +13,7 @@ import { apiCall } from '../App';
 
 const theme = createTheme();
 
-function Register() {
+function Register({ setLogin }) {
   const navigate = useNavigate();
   const [emailError, setEmailError] = React.useState(false);
   const [nameError, setNameError] = React.useState(false);
@@ -44,8 +44,6 @@ function Register() {
       return;
     }
 
-    console.log(data);
-
     // call api with data
     const options = {
       method: 'POST',
@@ -57,7 +55,7 @@ function Register() {
       })
     };
 
-    apiCall(() => { }, options)
+    apiCall(() => {setLogin(true)}, options)
       .then((res) => {
         if (!res) {
           navigate('/dashboard');

@@ -51,11 +51,11 @@ def db_collector_insert():
     return 'Insert has been successful!'
 
 @app.route('/register', methods=['POST'])
-def register(name, email, password):
+def register():
     # check if collector already in database via email
     # raise InputError('Email address already registered')
-    return 'hi'
-    return email + name + password
+    return jsonify({'message': 'This is a unique API call.'})
+    # return email + name + password
     # dbm.insert_collector(email, name, password)
     # token creation
 

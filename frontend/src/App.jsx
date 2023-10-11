@@ -283,39 +283,31 @@ const SignedInNav = () => {
 };
 
 function App() {
-  const [message, setMessage] = useState('');
+  const [loggedIn, setLoggedIn] = useState(false);
 
-  useEffect(() => {
-    fetch('/api')
-      .then(response => response.json())
-      .then(data => setMessage(data.message));
-  }, []);
-
-  return (
-    <div>
-      <h1>{message}</h1>
-    </div>
-  );
-  
   return (
     <Fragment>
       <ThemeProvider theme={theme}>
         <Helmet bodyAttributes={{ style: 'background-color : white' }} />
         <Box sx={{ display: 'flex', flexDirection: 'column', rowGap: '10ch', alignItems: 'center', justifyContent: 'center' }}>
-          <BrowserRouter>
-            {/* <SignedInNav /> */}
-            <SignedOutNav />
+          { !loggedIn
+           ?  <BrowserRouter>
+              <SignedOutNav />
+              <Routes>
+                <Route path="/" element={<span>Home page</span>} />
+                <Route path="/login" element={<SignIn setLogin={setLoggedIn}/>} />
+                <Route path="/register" element={<Register setLogin={setLoggedIn}/>} />
+              </Routes>
+              </BrowserRouter>
+          : <BrowserRouter>
+            <SignedInNav />
             <Routes>
-              {/* home page stub */}
-              {/* separate routes based on if they are available signed in/out, check token (?) */}
-              <Route path="/" element={<span>Home page</span>} />
-              <Route path="/login" element={<SignIn />} />
-              <Route path="/register" element={<Register />} />
               <Route path="/profile" element={<span>Profile</span>} />
               <Route path="/wantlist" element={<span>Wantlist</span>} />
               <Route path="/dashboard" element={<span>Dashboard</span>} />
             </Routes>
           </BrowserRouter>
+          } 
         </Box>
       </ThemeProvider>
     </Fragment>
