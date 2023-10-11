@@ -1,11 +1,13 @@
 import json
-from flask import Flask
+from flask import Flask, jsonify
+from flask_cors import CORS
 import psycopg2
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 import os
 import db_manager as dbm
 
 app = Flask(__name__)
+CORS(app)
 password = os.environ['POSTGRES_PASSWORD']
 
 @app.route('/')
@@ -47,6 +49,11 @@ def db_collector_insert():
     dbm.insert_collector("bob@gmail.com", "bob", "jacob", "password")
 
     return 'Insert has been successful!'
+
+# for testing api calls
+@app.route('/api')
+def api():
+    return jsonify({'message': 'This is a unique API call.'})
 
 if __name__ == "__main__":
     app.run(host ='0.0.0.0')
