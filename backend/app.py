@@ -1,11 +1,6 @@
 import json
-<<<<<<< HEAD
-from flask import Flask
-from flask_cors import CORS, cross_origin
-=======
 from flask import Flask, jsonify
 from flask_cors import CORS
->>>>>>> main
 import psycopg2
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 import os
