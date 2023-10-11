@@ -1,11 +1,14 @@
 import json
 from flask import Flask
+from flask_cors import CORS, cross_origin
 import psycopg2
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 import os
 import db_manager as dbm
 
 app = Flask(__name__)
+CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 password = os.environ['POSTGRES_PASSWORD']
 
 @app.route('/')
@@ -47,6 +50,17 @@ def db_collector_insert():
     dbm.insert_collector("bob@gmail.com", "bob", "jacob", "password")
 
     return 'Insert has been successful!'
+
+@app.route('/register', methods=['POST'])
+def register(name, email, password):
+    # check if collector already in database via email
+    # raise InputError('Email address already registered')
+    return 'hi'
+    return email + name + password
+    # dbm.insert_collector(email, name, password)
+    # token creation
+
+
 
 if __name__ == "__main__":
     app.run(host ='0.0.0.0')

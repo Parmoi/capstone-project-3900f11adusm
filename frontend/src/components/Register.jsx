@@ -9,6 +9,7 @@ import Container from '@mui/material/Container';
 import { createTheme, useTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import validator from 'validator';
+import { apiCall } from '../App';
 
 const theme = createTheme();
 
@@ -46,6 +47,24 @@ function Register() {
     console.log(data);
 
     // call api with data
+    const options = {
+      method: 'POST',
+      route: '/register',
+      body: JSON.stringify({
+        email: data.get('email'),
+        password: data.get('password'),
+        name: data.get('name'),
+      })
+    };
+
+    apiCall(() => { }, options)
+      .then((res) => {
+        if (!res) {
+          navigate('/dashboard');
+        }
+      });
+
+
   }
 
   return (
