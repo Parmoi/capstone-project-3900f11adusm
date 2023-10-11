@@ -15,13 +15,13 @@ services:
     depends_on:
       db:
         condition: service_healthy
-  frontend:
-    build:
-      context: ./frontend
-    ports:
-      - 3000:3000
-    depends_on:
-      - server
+  # frontend:
+  #   build:
+  #     context: ./frontend
+  #   ports:
+  #     - 3000:3000
+  #   depends_on:
+  #     - server
   db:
     image: postgres
     restart: always
