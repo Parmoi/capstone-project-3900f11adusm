@@ -54,9 +54,9 @@ def db_collector_insert():
 def register():
     # check if collector already in database via email
     # raise InputError('Email address already registered')
-    return jsonify({'message': 'This is a unique API call.'})
+    dbm.insert_collector(email, name, name, '', password, '')
+    return jsonify({'response': 'Account successfully registered!.'})
     # return email + name + password
-    # dbm.insert_collector(email, name, password)
     # token creation
 
 

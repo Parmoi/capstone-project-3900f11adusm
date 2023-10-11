@@ -54,24 +54,16 @@ export async function apiCall(onSuccess, options, ...optional) {
     headers: {
       'Content-type': 'application/json',
     },
-    // body: JSON.stringify({ email: 'dsdas' })
     body: options.body
   }
   console.log(url);
   console.log(params);
 
-  // if (localStorage.getItem('token')) {
-  //   params.headers.Authorization = `Bearer ${localStorage.getItem('token')}`;
-  // }
-
   const response = await fetch(url, params);
   const data = await response.json();
-  console.log(data);
   if (data.error) {
-    console.log(data.error)
     return data.error;
   } else {
-    console.log('success');
     return onSuccess(data, ...optional);
   }
 }
