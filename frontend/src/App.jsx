@@ -29,6 +29,25 @@ import CreditScoreIcon from '@mui/icons-material/CreditScore';
 import SignIn from './components/SignIn';
 import Register from './components/Register';
 
+// API call for testing
+// import { useState, useEffect } from 'react';
+
+// function App() {
+//   const [message, setMessage] = useState('');
+
+//   useEffect(() => {
+//     fetch('/api')
+//       .then(response => response.json())
+//       .then(data => setMessage(data.message));
+//   }, []);
+
+//   return (
+//     <div>
+//       <h1>{message}</h1>
+//     </div>
+//   );
+// }
+
 import {
   BrowserRouter,
   Routes,
