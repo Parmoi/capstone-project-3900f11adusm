@@ -77,6 +77,11 @@ def login():
 
     return jsonify({'response': 'Logging in account!.'})
 
+@app.route('/logout', methods=['POST'])
+def logout():
+    # remove token/session
+
+    return jsonify({'response': 'Logging out account!.'})
 
 # for testing api calls
 @app.route('/api')
