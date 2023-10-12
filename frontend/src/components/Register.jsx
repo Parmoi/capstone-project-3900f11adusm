@@ -86,6 +86,7 @@ function Register({ setLogin }) {
               margin="normal"
               required
               fullWidth
+              backgroundColor='white'
               name="name"
               label="Name"
               type="name"
