@@ -224,6 +224,21 @@ def insert_campaign(name, description, start_date, end_date):
     |          Helper Functions          |
     |------------------------------------| """
 
+# Function checks if a collector exists in the DB.
+def validate_account(email, password):
+    engine, conn, metadata = db_connect()
+
+    # Loads in the collector table into our metadata
+    collectors = db.Table('collectors', metadata, autoload_with=engine)
+
+    select_stmt = db.select(collectors).where(collectors.c.email == email)
+    
+    execute = conn.execute(select_stmt)
+    collector_info = execute.fetchone()._asdict()
+    conn.close()
+
+    return (collector_info is not None)
+
 # Function to connect to the db and return [engine, conn, metadata]
 def db_connect():
     # Create an engine and connect to the db

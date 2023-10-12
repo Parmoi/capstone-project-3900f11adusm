@@ -28,9 +28,11 @@ import CreditScoreIcon from '@mui/icons-material/CreditScore';
 
 import SignIn from './components/SignIn';
 import Register from './components/Register';
+import Profile from './components/Profile';
 import WantList from './components/WantList';
+import CollectionList from './components/CollectionList';
+import HomePage from './components/homePage';
 
-// API call for testing
 import { useState, useEffect } from 'react';
 
 
@@ -39,7 +41,7 @@ import {
   Routes,
   Route,
   Link,
-  Navigate,
+  useNavigate,
   // useParams,
   // useNavigate,
   // Outlet,
@@ -151,9 +153,11 @@ const SignedOutNav = () => {
   );
 };
 
-const SignedInNav = () => {
+const SignedInNav = ({ logout }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
+  const navigate = useNavigate();
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -234,7 +238,7 @@ const SignedInNav = () => {
               <ListItemIcon>
                 <LibraryAddCheckIcon />
               </ListItemIcon>
-              Collections
+              <Link to="/collection" style={{ textDecoration: 'none', color: 'inherit' }}>Collection</Link>
             </MenuItem>
             <MenuItem onClick={handleClose}>
               <ListItemIcon>
@@ -262,7 +266,11 @@ const SignedInNav = () => {
               Order History
             </MenuItem>
             <Divider />
-            <MenuItem onClick={handleClose}>
+            <MenuItem onClick={() => {
+              handleClose();
+              logout();
+              navigate('/');
+              }}>
               <ListItemIcon>
                 <Logout fontSize="small" />
               </ListItemIcon>
@@ -278,6 +286,19 @@ const SignedInNav = () => {
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
 
+  function logout () {
+    const options = {
+      method: 'POST',
+      route: '/logout',
+    };
+    apiCall(() => 
+    {
+      setLoggedIn(false);
+    }
+    , options);
+  }
+
+
   return (
     <Fragment>
       <ThemeProvider theme={theme}>
@@ -287,16 +308,17 @@ function App() {
            ?  <BrowserRouter>
               <SignedOutNav />
               <Routes>
-                <Route path="/" element={<span>Home page</span>} />
+                <Route path="/" element={<HomePage/>} />
                 <Route path="/login" element={<SignIn setLogin={setLoggedIn}/>} />
                 <Route path="/register" element={<Register setLogin={setLoggedIn}/>} />
               </Routes>
               </BrowserRouter>
           : <BrowserRouter>
-            <SignedInNav />
+            <SignedInNav logout={logout}/>
             <Routes>
-              <Route path="/profile" element={<span>Profile</span>} />
+              <Route path="/profile" element={<Profile />} />
               <Route path="/wantlist" element={<WantList />} />
+              <Route path="/collection" element={<CollectionList />} />
               <Route path="/dashboard" element={<span>Dashboard</span>} />
             </Routes>
           </BrowserRouter>
