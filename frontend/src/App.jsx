@@ -41,7 +41,7 @@ import {
   Routes,
   Route,
   Link,
-  Navigate,
+  useNavigate,
   // useParams,
   // useNavigate,
   // Outlet,
@@ -153,9 +153,11 @@ const SignedOutNav = () => {
   );
 };
 
-const SignedInNav = () => {
+const SignedInNav = ({ logout }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
+  const navigate = useNavigate();
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -264,7 +266,11 @@ const SignedInNav = () => {
               Order History
             </MenuItem>
             <Divider />
-            <MenuItem onClick={handleClose}>
+            <MenuItem onClick={() => {
+              handleClose();
+              logout();
+              navigate('/');
+              }}>
               <ListItemIcon>
                 <Logout fontSize="small" />
               </ListItemIcon>
@@ -279,6 +285,19 @@ const SignedInNav = () => {
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
+
+  function logout () {
+    const options = {
+      method: 'POST',
+      route: '/logout',
+    };
+    apiCall(() => 
+    {
+      setLoggedIn(false);
+    }
+    , options);
+  }
+
 
   return (
     <Fragment>
@@ -295,7 +314,7 @@ function App() {
               </Routes>
               </BrowserRouter>
           : <BrowserRouter>
-            <SignedInNav />
+            <SignedInNav logout={logout}/>
             <Routes>
               <Route path="/profile" element={<Profile />} />
               <Route path="/wantlist" element={<WantList />} />

@@ -106,6 +106,11 @@ def login():
     else:
         raise ValueError("Invalid login email")
 
+@app.route('/logout', methods=['POST'])
+def logout():
+    # remove token/session
+
+    return jsonify({'response': 'Logging out account!.'})
 
 # for testing api calls
 @APP.route('/api')
