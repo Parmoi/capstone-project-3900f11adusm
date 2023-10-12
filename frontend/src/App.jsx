@@ -28,6 +28,7 @@ import CreditScoreIcon from '@mui/icons-material/CreditScore';
 
 import SignIn from './components/SignIn';
 import Register from './components/Register';
+import Profile from './components/Profile';
 import WantList from './components/WantList';
 import CollectionList from './components/CollectionList';
 import HomePage from './components/homePage';
@@ -315,7 +316,7 @@ function App() {
           : <BrowserRouter>
             <SignedInNav logout={logout}/>
             <Routes>
-              <Route path="/profile" element={<span>Profile</span>} />
+              <Route path="/profile" element={<Profile />} />
               <Route path="/wantlist" element={<WantList />} />
               <Route path="/collection" element={<CollectionList />} />
               <Route path="/dashboard" element={<span>Dashboard</span>} />
