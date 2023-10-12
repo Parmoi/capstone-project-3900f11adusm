@@ -9,10 +9,11 @@ import Container from '@mui/material/Container';
 import { createTheme, useTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import validator from 'validator';
+import { apiCall } from '../App';
 
 const theme = createTheme();
 
-function Register() {
+function Register({ setLogin }) {
   const navigate = useNavigate();
   const [emailError, setEmailError] = React.useState(false);
   const [nameError, setNameError] = React.useState(false);
@@ -43,9 +44,23 @@ function Register() {
       return;
     }
 
-    console.log(data);
-
     // call api with data
+    const options = {
+      method: 'POST',
+      route: '/register',
+      body: JSON.stringify({
+        email: data.get('email'),
+        password: data.get('password'),
+        name: data.get('name'),
+      })
+    };
+
+    apiCall(() => {setLogin(true)}, options)
+      .then((res) => {
+        if (!res) {
+          navigate('/dashboard');
+        }
+      });
   }
 
   return (

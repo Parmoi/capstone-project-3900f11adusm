@@ -30,6 +30,8 @@ import SignIn from './components/SignIn';
 import Register from './components/Register';
 import WantList from './components/WantList';
 import CollectionList from './components/CollectionList';
+import { useState, useEffect } from 'react';
+
 
 import {
   BrowserRouter,
@@ -42,6 +44,30 @@ import {
   // Outlet,
 } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
+
+const PORT = 5000;
+
+export async function apiCall(onSuccess, options, ...optional) {
+  const url = `http://localhost:${PORT}${options.route}`;
+  const params = {
+    method: options.method,
+    headers: {
+      'Content-type': 'application/json',
+    },
+    body: options.body
+  }
+  console.log(url);
+  console.log(params);
+
+  const response = await fetch(url, params);
+  const data = await response.json();
+  if (data.error) {
+    return data.error;
+  } else {
+    return onSuccess(data, ...optional);
+  }
+}
+
 
 const theme = createTheme({
   palette: {
@@ -213,7 +239,7 @@ const SignedInNav = () => {
               <ListItemIcon>
                 <VisibilityIcon />
               </ListItemIcon>
-              <Link to="/wantlist" style={{ textDecoration: 'none', color: 'inherit' }}>Wantlist</Link>
+              Wantlist
             </MenuItem>
             <Divider />
             <MenuItem onClick={handleClose}>
@@ -249,26 +275,32 @@ const SignedInNav = () => {
 };
 
 function App() {
+  const [loggedIn, setLoggedIn] = useState(false);
+
   return (
     <Fragment>
       <ThemeProvider theme={theme}>
         <Helmet bodyAttributes={{ style: 'background-color : white' }} />
         <Box sx={{ display: 'flex', flexDirection: 'column', rowGap: '10ch', alignItems: 'center', justifyContent: 'center' }}>
-          <BrowserRouter>
+          { !loggedIn
+           ?  <BrowserRouter>
+              <SignedOutNav />
+              <Routes>
+                <Route path="/" element={<span>Home page</span>} />
+                <Route path="/login" element={<SignIn setLogin={setLoggedIn}/>} />
+                <Route path="/register" element={<Register setLogin={setLoggedIn}/>} />
+              </Routes>
+              </BrowserRouter>
+          : <BrowserRouter>
             <SignedInNav />
-            {/* <SignedOutNav /> */}
             <Routes>
-              {/* home page stub */}
-              {/* separate routes based on if they are available signed in/out, check token (?) */}
-              <Route path="/" element={<span>Home page</span>} />
-              <Route path="/login" element={<SignIn />} />
-              <Route path="/register" element={<Register />} />
               <Route path="/profile" element={<span>Profile</span>} />
-              <Route path="/wantlist" element={<WantList />} />
+              <Route path="/wantlist" element={<WantList/>} />
+              <Route path="/collection" element={<Collection />} />
               <Route path="/dashboard" element={<span>Dashboard</span>} />
-              <Route path="/collection" element={<CollectionList />} />
             </Routes>
           </BrowserRouter>
+          } 
         </Box>
       </ThemeProvider>
     </Fragment>
