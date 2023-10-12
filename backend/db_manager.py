@@ -30,13 +30,41 @@ def database_setup():
     # Creates a collector table and adds it to metadata
     collector_table = db.Table(
         "collectors", metadata, # Names cannot be uppercase
-        db.Column("collectorID", db.Integer, db.Identity(),primary_key = True),
+        db.Column("id", db.Integer, db.Identity(),primary_key = True),
         db.Column("email", db.String),
         db.Column("username", db.String, unique=True),
+        db.Column("real_name", db.String),
         db.Column("phone", db.VARCHAR(10)),
         db.Column("password", db.String),
         db.Column("address", db.String),
         db.Column( "profile_picture",db.VARCHAR(20)) # For image
+    )
+
+    # Creates a collectible table
+    collectible_table = db.Table(
+        "collectibles", metadata,
+        db.Column("id", db.Integer, db.Identity(), primary_key = True),
+        db.Column("name", db.String),
+        # db.Column("image", db.VARCHAR) # For image
+    )
+
+    # Creates a collectible campaign table
+    campaign_table = db.Table(
+        "collectible_campaigns", metadata,
+        db.Column("id", db.Integer, db.Identity(), primary_key = True),
+        db.Column("name", db.String),
+        db.Column("description", db.String),
+        db.Column("start_date", db.Date),
+        db.Column("end_date", db.Date)
+    )
+
+    # Creates a wantlist table
+    # Ties a user and collectible together
+    wantlist_table = db.Table(
+        "wants", metadata,
+        db.Column("id",db.Integer, db.Identity(), primary_key = True),
+        db.Column("collectorID", db.Integer, db.ForeignKey("collectors.id")),
+        db.Column("collectibleID", db.Integer, db.ForeignKey("collectibles.id"))
     )
 
     # Creates all tables stored within metadata
@@ -44,7 +72,7 @@ def database_setup():
     conn.close()
 
 # Function to insert collector into our db
-def insert_collector(email, username, phone, password, address, profile_picture):
+def insert_collector(email, username, real_name, phone, password, address):
 
     # Create an engine and connect to the db
     engine, conn, metadata = db_connect()
@@ -55,11 +83,11 @@ def insert_collector(email, username, phone, password, address, profile_picture)
     # Inserts a collector into the collector table
     insert_stmt = db.insert(collectors).values(
         {"email": email, 
-         "username": username, 
+         "username": username,
+         "real_name": real_name,
          "phone": phone,
          "password": password,
-         "address": address,
-         "profile_picture": profile_picture}
+         "address": address}
         )
     conn.execute(insert_stmt)
     conn.close()
