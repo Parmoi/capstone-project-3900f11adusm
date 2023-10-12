@@ -28,6 +28,7 @@ import CreditScoreIcon from '@mui/icons-material/CreditScore';
 
 import SignIn from './components/SignIn';
 import Register from './components/Register';
+import HomePage from './components/homePage';
 
 // API call for testing
 import { useState, useEffect } from 'react';
@@ -286,7 +287,7 @@ function App() {
            ?  <BrowserRouter>
               <SignedOutNav />
               <Routes>
-                <Route path="/" element={<span>Home page</span>} />
+                <Route path="/" element={<HomePage/>} />
                 <Route path="/login" element={<SignIn setLogin={setLoggedIn}/>} />
                 <Route path="/register" element={<Register setLogin={setLoggedIn}/>} />
               </Routes>
