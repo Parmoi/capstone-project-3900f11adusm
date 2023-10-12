@@ -1,4 +1,4 @@
-import React, { useMemo, Fragment } from 'react';
+import React, { useMemo } from 'react';
 
 import {
 
@@ -15,42 +15,42 @@ import { Box, Button, IconButton } from '@mui/material';
 // stub data
 const data = [
   {
-    image: '',
+    image: 'https://ilarge.lisimg.com/image/8825948/980full-homer-simpson.jpg',
     name: 'Homer',
     collectionName: 'Winter 2022',
     yearReleased: 1999,
     dateAdded: 1800,
   },
   {
-    image: '',
+    image: 'https://tse4.mm.bing.net/th?id=OIP.e4tAXeZ6G0YL4OE5M8KTwAHaMq&pid=Api',
     name: 'Marge',
     collectionName: 'Winter 2022',
     yearReleased: 1899,
     dateAdded: 1800,
   },
   {
-    image: '',
+    image: 'https://tse2.mm.bing.net/th?id=OIP.j7EknM6CUuEct_kx7o-dNQHaMN&pid=Api',
     name: 'Bart',
     collectionName: 'Winter 2022',
     yearReleased: 1499,
     dateAdded: 1800,
   },
   {
-    image: '',
+    image: 'https://tse3.mm.bing.net/th?id=OIP.6761X25CX3UUjklkDCnjSwHaHa&pid=Api',
     name: 'Dog',
     collectionName: 'Winter 2022',
     yearReleased: 1989,
     dateAdded: 1800,
   },
   {
-    image: '',
+    image: 'https://tse3.mm.bing.net/th?id=OIP.JqWjPHsW5aJIZDnPYMGovQHaJQ&pid=Api',
     name: 'Lisa',
     collectionName: 'Winter 2022',
     yearReleased: 1709,
     dateAdded: 1800,
   },
   {
-    image: '',
+    image: 'https://tse1.mm.bing.net/th?id=OIP.qVV8kcLdcLysZ5OOCzhKLAHaF7&pid=Api',
     name: 'Rando',
     collectionName: 'Winter 2022',
     yearReleased: 1909,
@@ -67,6 +67,24 @@ const WantList = () => {
       {
         accessorKey: 'image',
         header: 'Image Placeholder',
+        Cell: ({ row }) => (
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '1rem',
+            }}
+          >
+            <img
+              alt="collectible image"
+              height={50}
+              src={row.original.image}
+              loading="lazy"
+            />
+          </Box>
+
+        ),
         enableColumnActions: false,
         enableColumnFilter: false,
       },
