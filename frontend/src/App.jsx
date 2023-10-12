@@ -30,6 +30,8 @@ import SignIn from './components/SignIn';
 import Register from './components/Register';
 import WantList from './components/WantList';
 import CollectionList from './components/CollectionList';
+import HomePage from './components/homePage';
+
 import { useState, useEffect } from 'react';
 
 
@@ -286,7 +288,7 @@ function App() {
            ?  <BrowserRouter>
               <SignedOutNav />
               <Routes>
-                <Route path="/" element={<span>Home page</span>} />
+                <Route path="/" element={<HomePage/>} />
                 <Route path="/login" element={<SignIn setLogin={setLoggedIn}/>} />
                 <Route path="/register" element={<Register setLogin={setLoggedIn}/>} />
               </Routes>
