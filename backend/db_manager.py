@@ -177,6 +177,21 @@ def insert_collectible(collectible_name, campaign_name):
     |      Functions for wantlist        |
     |------------------------------------| """
 
+# Function to add collectible to wantlist
+def insert_wantlist(collector_id, collectible_name):
+    
+    engine, conn, metadata = db_connect()
+
+    # Loads in the wants table into our metadata
+    wants = db.Table('wants', metadata, autoload_with=engine)
+
+    want_insert_stmt = db.insert(wants).values(
+        {'collector_id': collector_id,
+         'collectible_id': find_collectible_id(collectible_name)
+         })
+    conn.execute(want_insert_stmt)
+
+    conn.close()
 
 """ |------------------------------------|
     |Functions for collectible_campaigns |

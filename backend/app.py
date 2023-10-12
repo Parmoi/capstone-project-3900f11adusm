@@ -72,6 +72,12 @@ def db_collectible_insert():
 
     return 'Collectible insert successful!'
 
+@app.route('/insertwantlist')
+def db_wantlist_insert():
+    dbm.insert_wantlist(1, "random collectible")
+
+    return 'Added collectible to wantlist'
+
 @app.route('/register', methods=['POST'])
 def register():
     # check if collector already in database via email
