@@ -50,6 +50,16 @@ def db_collector_insert():
 
     return 'Insert has been successful!'
 
+@app.route('/updatecollector')
+def db_collector_update():
+    dbm.update_collector(1, "bob2@gmail.com", "bob!!!!!!", "bob", "4444444444", "new", "new home!")
+
+    return 'Update has been successful!'
+
+@app.route('/returncollector')
+def db_collector_return():
+    return jsonify(dbm.return_collector(1))
+
 # for testing api calls
 @app.route('/api')
 def api():

@@ -94,23 +94,40 @@ def insert_collector(email, username, real_name, phone, password, address):
 
 # Function to update user information
 # (idea is that you press "update info" and it will update all accordingly)
-def update_collector_info(curr_username, new_email, new_username, new_phone, new_password, new_address):
+def update_collector(id, new_email, new_username, new_name, new_phone, new_password, new_address):
     
     engine, conn, metadata = db_connect()
     
     collectors = db.Table('collectors', metadata, autoload_with=engine)
 
     update_stmt = (db.update(collectors)
-                     .where(collectors.c.username == curr_username)
+                     .where(collectors.c.id == id)
                      .values({
                          'email': new_email,
                          'username': new_username,
+                         'real_name': new_name,
                          'phone': new_phone,
                          'password': new_password,
                          'address': new_address
                      }))
     conn.execute(update_stmt)
     conn.close()
+
+# Function returns user info given a user's id
+def return_collector(id):
+
+    engine, conn, metadata = db_connect()
+
+    # Loads in the collector table into our metadata
+    collectors = db.Table('collectors', metadata, autoload_with=engine)
+
+    select_stmt = db.select(collectors).where(collectors.c.id == id)
+    
+    execute = conn.execute(select_stmt)
+    collector_info = execute.fetchone()._asdict()
+    conn.close()
+
+    return collector_info
 
 # Function to connect to the db and return [engine, conn, metadata]
 def db_connect():
