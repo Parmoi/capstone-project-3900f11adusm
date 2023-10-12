@@ -231,7 +231,9 @@ def validate_account(email, password):
     # Loads in the collector table into our metadata
     collectors = db.Table('collectors', metadata, autoload_with=engine)
 
-    select_stmt = db.select(collectors).where(collectors.c.email == email)
+    select_stmt = db.select(collectors).where(
+                        (collectors.c.email == email) &
+                        (collectors.c.password == password))
     
     execute = conn.execute(select_stmt)
     collector_info = execute.fetchone()._asdict()
