@@ -94,6 +94,7 @@ def insert_collector(email, username, real_name, phone, password, address):
 
 # Function to update user information
 # (idea is that you press "update info" and it will update all accordingly)
+# If you don't want to change certain details, just enter the old information
 def update_collector(id, new_email, new_username, new_name, new_phone, new_password, new_address):
     
     engine, conn, metadata = db_connect()
