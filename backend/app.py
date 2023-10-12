@@ -1,10 +1,11 @@
 import json
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 import psycopg2
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 import os
 import db_manager as dbm
+import auth
 
 app = Flask(__name__)
 CORS(app)
@@ -71,6 +72,17 @@ def login():
 @app.route('/api')
 def api():
     return jsonify({'message': 'This is a unique API call.'})
+
+# JWT
+@app.route('/logintoken', methods=['POST'])
+def create_token():
+
+    email = request.json.get('email', None)
+    password = request.json.get('password', None)
+    auth.create_token(email, password)
+
+    return { 'msg': 'Success!!!'}
+
 
 if __name__ == "__main__":
     app.run(host ='0.0.0.0')
