@@ -28,9 +28,10 @@ import CreditScoreIcon from '@mui/icons-material/CreditScore';
 
 import SignIn from './components/SignIn';
 import Register from './components/Register';
+import WantList from './components/WantList';
+import CollectionList from './components/CollectionList';
 import HomePage from './components/homePage';
 
-// API call for testing
 import { useState, useEffect } from 'react';
 
 
@@ -234,13 +235,13 @@ const SignedInNav = () => {
               <ListItemIcon>
                 <LibraryAddCheckIcon />
               </ListItemIcon>
-              Collections
+              <Link to="/collection" style={{ textDecoration: 'none', color: 'inherit' }}>Collection</Link>
             </MenuItem>
             <MenuItem onClick={handleClose}>
               <ListItemIcon>
                 <VisibilityIcon />
               </ListItemIcon>
-              Wantlist
+              <Link to="/wantlist" style={{ textDecoration: 'none', color: 'inherit' }}>Wantlist</Link>
             </MenuItem>
             <Divider />
             <MenuItem onClick={handleClose}>
@@ -296,7 +297,8 @@ function App() {
             <SignedInNav />
             <Routes>
               <Route path="/profile" element={<span>Profile</span>} />
-              <Route path="/wantlist" element={<span>Wantlist</span>} />
+              <Route path="/wantlist" element={<WantList />} />
+              <Route path="/collection" element={<CollectionList />} />
               <Route path="/dashboard" element={<span>Dashboard</span>} />
             </Routes>
           </BrowserRouter>
