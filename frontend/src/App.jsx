@@ -28,16 +28,13 @@ import CreditScoreIcon from '@mui/icons-material/CreditScore';
 
 import SignIn from './components/SignIn';
 import Register from './components/Register';
+import Profile from './components/Profile';
 import WantList from './components/WantList';
 import CollectionList from './components/CollectionList';
-<<<<<<< HEAD
-import Profile from './components/Profile'
-=======
 import HomePage from './components/homePage';
 
 import { useState, useEffect } from 'react';
 
->>>>>>> deba3acf67b01a5bf634c216280cdcd38873c4be
 
 import {
   BrowserRouter,
@@ -300,7 +297,7 @@ function App() {
           : <BrowserRouter>
             <SignedInNav />
             <Routes>
-              <Route path="/profile" element={<span>Profile</span>} />
+              <Route path="/profile" element={<Profile />} />
               <Route path="/wantlist" element={<WantList />} />
               <Route path="/collection" element={<CollectionList />} />
               <Route path="/dashboard" element={<span>Dashboard</span>} />
