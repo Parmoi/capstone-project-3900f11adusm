@@ -239,7 +239,7 @@ const SignedInNav = () => {
               <ListItemIcon>
                 <VisibilityIcon />
               </ListItemIcon>
-              Wantlist
+              <Link to="/wantlist" style={{ textDecoration: 'none', color: 'inherit' }}>Wantlist</Link>
             </MenuItem>
             <Divider />
             <MenuItem onClick={handleClose}>
@@ -295,8 +295,8 @@ function App() {
             <SignedInNav />
             <Routes>
               <Route path="/profile" element={<span>Profile</span>} />
-              <Route path="/wantlist" element={<WantList/>} />
-              <Route path="/collection" element={<Collection />} />
+              <Route path="/wantlist" element={<WantList />} />
+              <Route path="/collection" element={<CollectionList />} />
               <Route path="/dashboard" element={<span>Dashboard</span>} />
             </Routes>
           </BrowserRouter>

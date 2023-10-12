@@ -15,6 +15,20 @@ import { Box, Button, IconButton } from '@mui/material';
 // data stub waiting for backend
 const data = [
     {
+        image: 'https://tse3.mm.bing.net/th?id=OIP.JqWjPHsW5aJIZDnPYMGovQHaJQ&pid=Api',
+        name: 'Lisa',
+        collectionName: 'Winter 2022',
+        yearReleased: 1709,
+        dateAdded: 1800,
+    },
+    {
+        image: 'https://tse1.mm.bing.net/th?id=OIP.qVV8kcLdcLysZ5OOCzhKLAHaF7&pid=Api',
+        name: 'Rando',
+        collectionName: 'Winter 2022',
+        yearReleased: 1909,
+        dateAdded: 1801,
+    },
+    {
       image: 'https://ilarge.lisimg.com/image/8825948/980full-homer-simpson.jpg',
       name: 'Homer',
       collectionName: 'Winter 2022',
@@ -41,20 +55,6 @@ const data = [
       collectionName: 'Winter 2022',
       yearReleased: 1989,
       dateAdded: 1800,
-    },
-    {
-      image: 'https://tse3.mm.bing.net/th?id=OIP.JqWjPHsW5aJIZDnPYMGovQHaJQ&pid=Api',
-      name: 'Lisa',
-      collectionName: 'Winter 2022',
-      yearReleased: 1709,
-      dateAdded: 1800,
-    },
-    {
-      image: 'https://tse1.mm.bing.net/th?id=OIP.qVV8kcLdcLysZ5OOCzhKLAHaF7&pid=Api',
-      name: 'Rando',
-      collectionName: 'Winter 2022',
-      yearReleased: 1909,
-      dateAdded: 1801,
     },
   ]
   
