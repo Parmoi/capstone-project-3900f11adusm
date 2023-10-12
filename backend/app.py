@@ -106,7 +106,7 @@ def login():
     else:
         raise ValueError("Invalid login email")
 
-@app.route('/logout', methods=['POST'])
+@APP.route('/logout', methods=['POST'])
 def logout():
     # remove token/session
 
