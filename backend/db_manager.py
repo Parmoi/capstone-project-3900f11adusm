@@ -1,4 +1,5 @@
 import sqlalchemy as db
+from datetime import datetime
 import psycopg2
 import os
 
@@ -63,13 +64,25 @@ def database_setup():
     wantlist_table = db.Table(
         "wants", metadata,
         db.Column("id",db.Integer, db.Identity(), primary_key = True),
-        db.Column("collectorID", db.Integer, db.ForeignKey("collectors.id")),
-        db.Column("collectibleID", db.Integer, db.ForeignKey("collectibles.id"))
+        db.Column("collector_id", db.Integer, db.ForeignKey("collectors.id")),
+        db.Column("collectible_id", db.Integer, db.ForeignKey("collectibles.id"))
+    )
+
+    # Creates a belongs_to †able that ties collectible and campaigns
+    belongs_to_table = db.Table(
+        "belongs_to", metadata,
+        db.Column("id",db.Integer, db.Identity(), primary_key = True),
+        db.Column("campaign_id", db.Integer, db.ForeignKey("collectible_campaigns.id")),
+        db.Column("collectible_id", db.Integer, db.ForeignKey("collectibles.id"))
     )
 
     # Creates all tables stored within metadata
     metadata.create_all(engine)
     conn.close()
+
+""" |------------------------------------|
+    |     Functions for collectors       |
+    |------------------------------------| """
 
 # Function to insert collector into our db
 def insert_collector(email, username, real_name, phone, password, address):
@@ -130,6 +143,72 @@ def return_collector(id):
 
     return collector_info
 
+""" |------------------------------------|
+    |     Functions for collectibles     |
+    |------------------------------------| """
+
+# Function to add a collectible to db
+# * collectible_name: name of collectible we want to insert
+# * campaign_name: campaign the collectible belongs to
+def insert_collectible(collectible_name, campaign_name):
+
+    engine, conn, metadata = db_connect()
+
+    # Loads in the collectible and belongs_to table into our metadata
+    collectibles = db.Table('collectibles', metadata, autoload_with=engine)
+    belongs_to = db.Table('belongs_to', metadata, autoload_with=engine)
+
+    # Adds collectible to collectibles table
+    collectible_insert_stmt = db.insert(collectibles).values(
+        {"name": collectible_name}
+    )
+    conn.execute(collectible_insert_stmt)
+
+    # Adds belong_to relationship for the collectible
+    belongsto_insert_stmt = db.insert(belongs_to).values({
+        'campaign_id': find_campaign_id(campaign_name),
+        'collectible_id': find_collectible_id(collectible_name)
+        })
+    conn.execute(belongsto_insert_stmt)
+
+    conn.close()
+
+""" |------------------------------------|
+    |      Functions for wantlist        |
+    |------------------------------------| """
+
+
+""" |------------------------------------|
+    |Functions for collectible_campaigns |
+    |------------------------------------| """
+
+# Function to insert new campaign
+# * start_date/end_date are string in format "DD/MM/YYYY"
+def insert_campaign(name, description, start_date, end_date):
+
+    date_format = '%d/%m/%Y'
+    start_date_obj = datetime.strptime(start_date, date_format)
+    end_date_obj = datetime.strptime(end_date, date_format)
+
+    engine, conn, metadata = db_connect()
+
+    # Loads in the campaign table into our metadata
+    campaigns = db.Table('collectible_campaigns', metadata, autoload_with=engine)
+
+    # Adds campaign to collectible_campaigns table
+    campaign_insert_stmt = db.insert(campaigns).values(
+        {'name': name,
+         'description': description,
+         'start_date': start_date_obj,
+         'end_date': end_date_obj}
+    )
+    conn.execute(campaign_insert_stmt)
+    conn.close()
+
+""" |------------------------------------|
+    |          Helper Functions          |
+    |------------------------------------| """
+
 # Function to connect to the db and return [engine, conn, metadata]
 def db_connect():
     # Create an engine and connect to the db
@@ -140,3 +219,37 @@ def db_connect():
     metadata = db.MetaData()
 
     return engine, conn, metadata
+
+# Function to convert collectible name to collectible id
+# Returns collection id as int
+def find_collectible_id(collectible_name):
+
+    engine, conn, metadata = db_connect()
+
+    # Loads in the campaign table into our metadata
+    collectibles = db.Table('collectibles', metadata, autoload_with=engine)
+
+    select_stmt = db.select(collectibles.c.id).where(collectibles.c.name == collectible_name)
+
+    execute = conn.execute(select_stmt)
+    collectibleId = execute.fetchone()._asdict().get("id")
+    conn.close()
+    
+    return collectibleId
+
+# Function to convert campaign name to campaign id
+# Returns campaign id as int
+def find_campaign_id(campaign_name):
+
+    engine, conn, metadata = db_connect()
+
+    # Loads in the campaign table into our metadata
+    campaigns = db.Table('collectible_campaigns', metadata, autoload_with=engine)
+
+    select_stmt = db.select(campaigns.c.id).where(campaigns.c.name == campaign_name)
+
+    execute = conn.execute(select_stmt)
+    campaignId = execute.fetchone()._asdict().get("id")
+    conn.close()
+    
+    return campaignId

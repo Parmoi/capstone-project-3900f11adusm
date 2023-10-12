@@ -60,6 +60,17 @@ def db_collector_update():
 def db_collector_return():
     return jsonify(dbm.return_collector(1))
 
+@app.route('/insertcampaign')
+def db_campaign_insert():
+    dbm.insert_campaign("random campaign", "this is a description", "24/12/2022", "24/12/2023")
+
+    return 'Campaign insert successful!'
+
+@app.route('/insertcollectible')
+def db_collectible_insert():
+    dbm.insert_collectible("random collectible", "random campaign")
+
+    return 'Collectible insert successful!'
 
 @app.route('/register', methods=['POST'])
 def register():
@@ -85,3 +96,4 @@ def api():
 
 if __name__ == "__main__":
     app.run(host ='0.0.0.0')
+
