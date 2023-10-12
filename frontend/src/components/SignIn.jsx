@@ -8,15 +8,30 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, useTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
+import { apiCall } from '../App';
 
-function SignIn() {
-
+function SignIn({ setLogin }) {
+  const navigate = useNavigate();
   const login = (e) => {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
 
-    console.log(data);
-    // login api call
+    // call api with data
+    const options = {
+      method: 'POST',
+      route: '/login',
+      body: JSON.stringify({
+        email: data.get('email'),
+        password: data.get('password'),
+      })
+    };
+
+    apiCall(() => {setLogin(true)}, options)
+      .then((res) => {
+        if (!res) {
+          navigate('/dashboard');
+        }
+      });
   }
 
   return (
