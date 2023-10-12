@@ -28,6 +28,7 @@ import CreditScoreIcon from '@mui/icons-material/CreditScore';
 
 import SignIn from './components/SignIn';
 import Register from './components/Register';
+import WantList from './components/WantList';
 
 // API call for testing
 import { useState, useEffect } from 'react';
