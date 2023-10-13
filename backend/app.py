@@ -1,15 +1,20 @@
 import json
 from flask import Flask, jsonify, request
 from flask_cors import CORS
+from jinja2.runtime import identity
 import psycopg2
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 import os
 import db_manager as dbm
+from flask_jwt_extended import create_access_token, JWTManager, jwt_required, get_jwt_identity
 import auth
 
 app = Flask(__name__)
 CORS(app)
 password = os.environ['POSTGRES_PASSWORD']
+
+app.config['JWT_SECRET_KEY'] = 'secret'
+jwt = JWTManager(app)
 
 @app.route('/')
 def hello_world():
@@ -51,6 +56,8 @@ def db_collector_insert():
 
     return 'Insert has been successful!'
 
+
+
 @app.route('/updatecollector')
 def db_collector_update():
     dbm.update_collector(1, "bob2@gmail.com", "bob!!!!!!", "bob", "4444444444", "new", "new home!")
@@ -84,16 +91,28 @@ def login():
 def api():
     return jsonify({'message': 'This is a unique API call.'})
 
+
 # JWT
 @app.route('/logintoken', methods=['POST'])
 def create_token():
-
+    '''If users login user name and passord correct, generate and return token to user'''
     email = request.json.get('email', None)
     password = request.json.get('password', None)
-    auth.create_token(email, password)
+    # identity = add_claims_to_access_token(email)
+    # identity = jwt.user_lookup_loader({ 'identity': email})
+    access_token = create_access_token(email)
+    # access_token = auth.create_token(email, password)
+    return jsonify(access_token=access_token)
 
-    return { 'msg': 'Success!!!'}
-
+@app.route("/protected", methods=["GET"])
+@jwt_required()
+def protected():
+    '''Example of protected route. Requires JWT authentication to access'''
+    # Access the identity of the current user with get_jwt_identity
+    current_user = get_jwt_identity()
+    # print(current_user)
+    # return jsonify(user=current_user), 200
+    return jsonify(msg="hello")
 
 if __name__ == "__main__":
     app.run(host ='0.0.0.0')
