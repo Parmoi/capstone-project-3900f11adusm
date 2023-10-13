@@ -11,6 +11,7 @@ import auth
 
 app = Flask(__name__)
 CORS(app)
+
 password = os.environ['POSTGRES_PASSWORD']
 
 app.config['JWT_SECRET_KEY'] = 'secret'
@@ -98,10 +99,14 @@ def create_token():
     '''If users login user name and passord correct, generate and return token to user'''
     email = request.json.get('email', None)
     password = request.json.get('password', None)
+
+    if check
     # identity = add_claims_to_access_token(email)
     # identity = jwt.user_lookup_loader({ 'identity': email})
-    access_token = create_access_token(email)
+    # access_token = create_access_token(email)
     # access_token = auth.create_token(email, password)
+    access_token = token = auth.create_token(email)
+
     return jsonify(access_token=access_token)
 
 @app.route("/protected", methods=["GET"])

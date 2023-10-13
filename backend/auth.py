@@ -18,14 +18,15 @@ import bcrypt
 # 5. Server validates JWT
 # 6. Server returns response
 
+
 # Other Considerations:
 # Could use Google Oauth2 
 # Blacklist for expired/unauthorized tokens (possibly client side to be stored)
 
+os.environ["AUTH_SALT"] = bcrypt.gensalt()
 
 
 def hash_password(password):
-    salt = bcrypt.gensalt()
     hashed_pw = bcrypt.hash_pw(password, salt)
     return hashed_pw
 
@@ -33,18 +34,14 @@ def validate_password(password):
 
     engine, conn, metadata = db_manager.db_connect()
     collectors = db.Table('collectors', metadata, autoload_with=engine)
-    select_stmt = db.select(collectors.password).where(collectors.c.id == id)
+    select_stmt = db.select(collectors.c.password).where(collectors.c.id == id)
     execute = conn.execute(select_stmt)
+
     user_hashed_pw = execute.fetchone()._asdict()
-
-    conn.close()
-
     hashed_pw = hash_password(password)
 
-    user_hashed_pw = "Get hashed password from database"
-
-
-    return user_hashed_pw == bcrypt.hash_pw(password, salt)
+    conn.close()
+    return user_hashed_pw == hashed_pw
 
 
 
