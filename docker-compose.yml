@@ -6,6 +6,7 @@ services:
       - 5000:5000
     environment:
       - POSTGRES_PASSWORD=mysecretpassword
+      - JWT_SECRET_KEY=secret
     healthcheck:
       test: [ "CMD", "pg_isready" ]
       interval: 10s
@@ -28,12 +29,15 @@ services:
     user: postgres
     secrets:
       - db-password
+      # - jwt_secret
     volumes:
       - db-data:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=example
       - POSTGRES_PASSWORD_FILE=/run/secrets/db-password
-      - AUTH_SALT=salty
+      # - AUTH_SALT=Null
+      - JWT_SECRET_KEY=secret
+
     expose:
       - 5432:5432
     healthcheck:

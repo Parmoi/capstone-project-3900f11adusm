@@ -11,9 +11,6 @@ db_host = "db"
 # Function to setup our database
 def database_setup():
 
-    # Set environment variable for password hashing salt
-    os.environ["AUTH_SALT"] = bcrypt.gensalt()
-
     # Establish connection
     conn = psycopg2.connect(
         user=db_user,
@@ -90,6 +87,8 @@ def database_setup():
 # Function to insert collector into our db
 def insert_collector(email, username, real_name, phone, password, address):
 
+    # TODO: makes sure user with email does not already exist. Raise exception
+
     # Create an engine and connect to the db
     engine, conn, metadata = db_connect()
 
@@ -149,7 +148,6 @@ def return_collector(id):
 """ |------------------------------------|
     |     Functions for collectibles     |
     |------------------------------------| """
-
 # Function to add a collectible to db
 # * collectible_name: name of collectible we want to insert
 # * campaign_name: campaign the collectible belongs to
