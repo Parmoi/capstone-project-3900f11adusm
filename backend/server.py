@@ -1,15 +1,20 @@
 import json
+import os
+import psycopg2
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-import psycopg2
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
-import os
-import db_manager as dbm
 
+import helper.config as config
+import db.db_manager as dbm
+
+APP = Flask(__name__)
+APP.config.from_object(config.DevelopmentConfig)
+CORS(APP)
 
 def defaultHandler(err):
     response = err.get_response()
-    response.data = dumps({
+    response.data = json.dumps({
         "code": err.code,
         "name": "System Error",
         "message": err.get_description(),
@@ -17,8 +22,6 @@ def defaultHandler(err):
     response.content_type = 'application/json'
     return response
 
-APP = Flask(__name__)
-CORS(APP)
 password = os.environ['POSTGRES_PASSWORD']
 
 APP.config['TRAP_HTTP_EXCEPTIONS'] = True
@@ -135,4 +138,4 @@ def api():
     return jsonify({'message': 'This is a unique API call.'})
 
 if __name__ == "__main__":
-    APP.run(host ='0.0.0.0')
+    APP.run(host ='0.0.0.0', port=config.port)
