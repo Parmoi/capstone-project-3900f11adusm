@@ -28,6 +28,7 @@ import CreditScoreIcon from '@mui/icons-material/CreditScore';
 
 import SignIn from './components/SignIn';
 import Register from './components/Register';
+import Profile from './components/Profile';
 import WantList from './components/WantList';
 import CollectionList from './components/CollectionList';
 import HomePage from './components/homePage';
@@ -40,7 +41,7 @@ import {
   Routes,
   Route,
   Link,
-  Navigate,
+  useNavigate,
   // useParams,
   // useNavigate,
   // Outlet,
@@ -152,9 +153,11 @@ const SignedOutNav = () => {
   );
 };
 
-const SignedInNav = () => {
+const SignedInNav = ({ logout }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
+  const navigate = useNavigate();
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -263,7 +266,11 @@ const SignedInNav = () => {
               Order History
             </MenuItem>
             <Divider />
-            <MenuItem onClick={handleClose}>
+            <MenuItem onClick={() => {
+              handleClose();
+              logout();
+              navigate('/');
+              }}>
               <ListItemIcon>
                 <Logout fontSize="small" />
               </ListItemIcon>
@@ -278,6 +285,19 @@ const SignedInNav = () => {
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
+
+  function logout () {
+    const options = {
+      method: 'POST',
+      route: '/logout',
+    };
+    apiCall(() => 
+    {
+      setLoggedIn(false);
+    }
+    , options);
+  }
+
 
   return (
     <Fragment>
@@ -294,9 +314,9 @@ function App() {
               </Routes>
               </BrowserRouter>
           : <BrowserRouter>
-            <SignedInNav />
+            <SignedInNav logout={logout}/>
             <Routes>
-              <Route path="/profile" element={<span>Profile</span>} />
+              <Route path="/profile" element={<Profile />} />
               <Route path="/wantlist" element={<WantList />} />
               <Route path="/collection" element={<CollectionList />} />
               <Route path="/dashboard" element={<span>Dashboard</span>} />
