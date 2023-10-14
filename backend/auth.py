@@ -1,8 +1,11 @@
+import app
 import db_manager
 import sqlalchemy as db
 from flask import jsonify
 from flask_jwt_extended import create_access_token
 import bcrypt
+import os
+import jwt
 
 
 
@@ -21,31 +24,38 @@ import bcrypt
 
 # Other Considerations:
 # Could use Google Oauth2 
+# Authentication vs Athorization
 # Blacklist for expired/unauthorized tokens (possibly client side to be stored)
 
-os.environ["AUTH_SALT"] = bcrypt.gensalt()
 
 
 def hash_password(password):
+    salt = os.environ["AUTH_SALT"]
     hashed_pw = bcrypt.hash_pw(password, salt)
     return hashed_pw
 
-def validate_password(password):
+def validate_password(username, password):
 
-    engine, conn, metadata = db_manager.db_connect()
-    collectors = db.Table('collectors', metadata, autoload_with=engine)
-    select_stmt = db.select(collectors.c.password).where(collectors.c.id == id)
-    execute = conn.execute(select_stmt)
+    # engine, conn, metadata = db_manager.db_connect()
+    # collectors = db.Table('collectors', metadata, autoload_with=engine)
+    # select_stmt = db.select(collectors.c.password).where(collectors.c.id == id)
+    # execute = conn.execute(select_stmt)
+    # user_hashed_pw = execute.fetchone()._asdict()
+    # conn.close()
 
-    user_hashed_pw = execute.fetchone()._asdict()
+    user = db_manager.return_collector(username)
+    user_hashed_pw = user.password
     hashed_pw = hash_password(password)
-
-    conn.close()
     return user_hashed_pw == hashed_pw
 
 
 
-def create_token(email):
+def create_token(id):
+    user = db_manager.return_collector(id)
+    encoded_jwt = jwt.encode({
+        'iss': 
+        })
+
     access_token = create_access_token(indentity=email)
     return jsonify(access_token)
 
@@ -62,6 +72,10 @@ def update_password(password):
 
 
 
+
+
     return 
 
 
+    
+    

@@ -10,6 +10,9 @@ db_host = "db"
 # Function to setup our database
 def database_setup():
 
+    # Set environment variable for password hashing salt
+    os.environ["AUTH_SALT"] = bcrypt.gensalt()
+
     # Establish connection
     conn = psycopg2.connect(
         user=db_user,
