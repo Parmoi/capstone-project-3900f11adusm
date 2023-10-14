@@ -1,6 +1,7 @@
 import sqlalchemy as db
 from datetime import datetime
 import psycopg2
+import bcrypt
 import os
 
 db_name = "collectibles_db"
@@ -286,3 +287,25 @@ def find_campaign_id(campaign_name):
     conn.close()
     
     return campaignId
+
+def validate_email(email):
+    engine, conn, metadata = db_connect()
+    collectors = db.Table('collectors', metadata, autoload_with=engine)
+    select_stmt = db.select(collectors).where((collectors.c.email == email))
+    execute = conn.execute(select_stmt)
+    collector_info = execute.fetchone()._asdict()
+    conn.close()
+    return collector_info is not None
+
+def validate_password(email, password):
+
+    engine, conn, metadata = db_connect()
+    collectors = db.Table('collectors', metadata, autoload_with=engine)
+    select_stmt = db.select(collectors).where((collectors.c.email == email))
+    execute = conn.execute(select_stmt)
+    user = execute.fetchone()._asdict()
+    conn.close()
+
+    user_hashed_pw = user['password'].encode('utf-8')
+    input_pw_bytes = password.encode('utf-8')
+    return bcrypt.checkpw(input_pw_bytes, user_hashed_pw)
