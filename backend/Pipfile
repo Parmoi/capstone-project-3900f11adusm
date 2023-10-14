@@ -9,6 +9,8 @@ flask-sqlalchemy = "*"
 psycopg2 = "*"
 python-dotenv = "*"
 flask-cors = "*"
+bcrypt = "*"
+pyjwt = "*"
 
 [dev-packages]
 
