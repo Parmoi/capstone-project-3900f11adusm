@@ -1,6 +1,6 @@
 // src/LandingPage.js
 import React from 'react';
-import home_page_icon from './home_page_icon.png'
+import home_page_icon from '../images/home_page_icon.png'
 
 function HomePage() {
   
