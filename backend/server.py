@@ -4,8 +4,8 @@ from flask_cors import CORS
 import helpers.config as config
 import helpers.exceptions as exceptions
 
-import main.db_manager as dbm
-import main.auth as auth
+from main import db_manager as dbm
+from main import auth
 
 APP = Flask(__name__)
 APP.config.from_object(config.DevelopmentConfig)
@@ -44,4 +44,4 @@ def logout():
 
 
 if __name__ == "__main__":
-    APP.run(host ='0.0.0.0', port=config.port)
+    APP.run(host =config.host, port=config.port)
