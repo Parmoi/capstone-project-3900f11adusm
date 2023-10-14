@@ -10,5 +10,5 @@ def generate_token(id):
     token = jwt.encode(payload, KEY, algorithm='HS256')
     return token.decode()
 
-def get_user(token):
+def get_token_data(token):
     return jwt.decode(token, KEY, algorithm='HS256')['id']
