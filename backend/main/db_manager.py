@@ -293,7 +293,7 @@ def validate_email(email):
     collectors = db.Table('collectors', metadata, autoload_with=engine)
     select_stmt = db.select(collectors).where((collectors.c.email == email))
     execute = conn.execute(select_stmt)
-    collector_info = execute.fetchone()._asdict()
+    collector_info = execute.fetchone()#._asdict()
     conn.close()
     return collector_info is not None
 

@@ -11,15 +11,15 @@ def login(email, password):
     raise InputError('Email address not registered')
     '''
     if not dbm.validate_email(email) or not dbm.validate_password(email, password):
-        return jsonify({"msg": "Bad username or password"}), 401
+        return jsonify({"status": 401, "msg": "Bad username or password"})
 
     # Successful login returns acces and refresh tokens to client cookies
-    response = jsonify({"msg": "login successful"})
+    response = jsonify({"status": 200, "msg": "login successful"})
     access_token = create_access_token(identity=email, fresh=True)
     refresh_token = create_refresh_token(identity=email)
     set_access_cookies(response, access_token)
     set_refresh_cookies(response, refresh_token)
-    return response, 200
+    return response
 
 
 def register(email, password, name):
@@ -32,16 +32,16 @@ def register(email, password, name):
     password = hash.hash_password(password)
     dbm.insert_collector(email, name, name, '', password, '')
 
-    response = jsonify({'msg': 'Account successfully registered!.'})
+    response = jsonify({'status': 200, 'msg': 'Account successfully registered!.'})
     access_token = create_access_token(identity=email, fresh=True)
     refresh_token = create_refresh_token(identity=email)
     set_access_cookies(response, access_token)
     set_refresh_cookies(response, refresh_token)
-    return response, 200
+    return response
 
 def logout():
     ''' Removes cookies from client '''
 
-    response = jsonify({"msg": "logout successful"})
+    response = jsonify({"status": 200, "msg": "logout successful"})
     unset_jwt_cookies(response)
-    return response, 200
+    return response

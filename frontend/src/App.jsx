@@ -11,6 +11,7 @@ import CollectionList from './pages/CollectionList';
 import HomePage from './pages/homePage';
 import SignedInNav from './components/SignedInNav';
 import SignedOutNav from './components/SignedOutNav';
+import ErrModal from './components/ErrModal';
 
 import { useState } from 'react';
 
@@ -35,9 +36,12 @@ export async function apiCall(onSuccess, options, ...optional) {
 
   const response = await fetch(url, params);
   const data = await response.json();
-  if (data.error) {
-    return data.error;
+  if (data.status !== 200) {
+    console.log('there is an error');
+    console.log(data);
+    return data;
   } else {
+    console.log(data);
     return onSuccess(data, ...optional);
   }
 }
@@ -60,6 +64,10 @@ const theme = createTheme({
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
+  const [errOpen, setErrOpen] = React.useState(false);
+  const handleErrClose = () => setErrOpen(false);
+  const [errMsg, setErrMsg] = React.useState('');
+
 
   function logout () {
     const options = {
@@ -78,6 +86,7 @@ function App() {
     <Fragment>
       <ThemeProvider theme={theme}>
         <Helmet bodyAttributes={{ style: 'background-color : white' }} />
+        <ErrModal errMsg={errMsg} open={errOpen} handleClose={handleErrClose}/>
         <Box sx={{ display: 'flex', flexDirection: 'column', rowGap: '10ch', alignItems: 'center', justifyContent: 'center' }}>
           { !loggedIn
            ?  <BrowserRouter>
