@@ -26,6 +26,10 @@ APP.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
 APP.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=30)
 APP.config["JWT_COOKIE_CSRF_PROTECT"] = False
 
+@APP.route('/')
+def entry():
+    return '<h1>Hello, Collector<h1\>'
+
 @APP.route('/initdb')
 def db_init():
     dbm.database_setup()
