@@ -5,9 +5,7 @@ from flask import jsonify
 from flask_jwt_extended import (create_access_token, set_access_cookies, unset_jwt_cookies, 
                                 create_refresh_token, set_refresh_cookies)
 
-InputError = 400
-AccessError = 403
-OK = 200
+from error import ( InputError, AccessError, OK )
 
 def login(email, password):
     if not dbm.validate_email(email) or not dbm.validate_password(email, password):
