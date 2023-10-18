@@ -11,7 +11,6 @@ import CollectionList from './pages/CollectionList';
 import HomePage from './pages/homePage';
 import SignedInNav from './components/SignedInNav';
 import SignedOutNav from './components/SignedOutNav';
-import ErrModal from './components/ErrModal';
 
 import { useState } from 'react';
 
@@ -36,12 +35,10 @@ export async function apiCall(onSuccess, options, ...optional) {
 
   const response = await fetch(url, params);
   const data = await response.json();
+  console.log(data);
   if (data.status !== 200) {
-    console.log('there is an error');
-    console.log(data);
     return data;
   } else {
-    console.log(data);
     return onSuccess(data, ...optional);
   }
 }
