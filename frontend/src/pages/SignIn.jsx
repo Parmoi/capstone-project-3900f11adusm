@@ -6,12 +6,12 @@ import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import { createTheme, useTheme, ThemeProvider } from '@mui/material/styles';
+import { useTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import { apiCall } from '../App';
 import Alert from '@mui/material/Alert';
 
-function SignIn({ setLogin }) {
+function SignIn({ setLogin, setToken }) {
   const [error, setError] = React.useState(false);
   const [errContent, setErrContent] = React.useState('');
   const navigate = useNavigate();
@@ -30,7 +30,11 @@ function SignIn({ setLogin }) {
       })
     };
 
-    apiCall(() => {setLogin(true)}, options)
+    apiCall((data) => {
+      setLogin(true);
+      setToken(data.auth_token);
+      console.log(data.auth_token);
+    }, options)
       .then((res) => {
         if (res) {
           // set error msg if api call returns error

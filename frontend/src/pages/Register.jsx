@@ -14,7 +14,7 @@ import Alert from '@mui/material/Alert';
 
 const theme = createTheme();
 
-function Register({ setLogin }) {
+function Register({ setLogin, setToken }) {
   const navigate = useNavigate();
   const [emailError, setEmailError] = React.useState(false);
   const [nameError, setNameError] = React.useState(false);
@@ -59,7 +59,11 @@ function Register({ setLogin }) {
       })
     };
 
-    apiCall(() => {setLogin(true)}, options)
+    apiCall((data) => {
+      setLogin(true);
+      setToken(data.auth_token);
+      console.log(data.auth_token);
+    }, options)
       .then((res) => {
         if (res) {
           // set error msg if api call returns error

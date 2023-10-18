@@ -67,7 +67,7 @@ function App() {
   const [errOpen, setErrOpen] = React.useState(false);
   const handleErrClose = () => setErrOpen(false);
   const [errMsg, setErrMsg] = React.useState('');
-
+  const [token, setToken] = React.useState('');
 
   function logout () {
     const options = {
@@ -77,6 +77,7 @@ function App() {
     apiCall(() => 
     {
       setLoggedIn(false);
+      setToken('');
     }
     , options);
   }
@@ -93,8 +94,8 @@ function App() {
               <SignedOutNav />
               <Routes>
                 <Route path="/" element={<HomePage/>} />
-                <Route path="/login" element={<SignIn setLogin={setLoggedIn}/>} />
-                <Route path="/register" element={<Register setLogin={setLoggedIn}/>} />
+                <Route path="/login" element={<SignIn setLogin={setLoggedIn} setToken={setToken}/>} />
+                <Route path="/register" element={<Register setLogin={setLoggedIn} setToken={setToken}/>} />
               </Routes>
               </BrowserRouter>
           : <BrowserRouter>
