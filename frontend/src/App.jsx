@@ -35,8 +35,7 @@ export async function apiCall(onSuccess, options, ...optional) {
 
   const response = await fetch(url, params);
   const data = await response.json();
-  console.log(data);
-  if (data.status !== 200) {
+  if (response.status !== 200) {
     return data;
   } else {
     return onSuccess(data, ...optional);

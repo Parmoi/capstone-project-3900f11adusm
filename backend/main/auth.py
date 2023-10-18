@@ -9,12 +9,12 @@ from error import ( InputError, AccessError, OK )
 
 def login(email, password):
     if not dbm.validate_email(email) or not dbm.validate_password(email, password):
-        return jsonify({"status": InputError, "msg": "Invalid username and/or password"}), InputError
+        return jsonify({"msg": "Invalid username and/or password"}), InputError
 
     # Successful login returns access and refresh tokens to client cookies
     access_token = create_access_token(identity=email, fresh=True)
     refresh_token = create_refresh_token(identity=email)
-    response = jsonify({"status": OK, "msg": "login successful"})
+    response = jsonify({"msg": "login successful"})
 
     set_access_cookies(response, access_token)
     set_refresh_cookies(response, refresh_token)
@@ -23,14 +23,14 @@ def login(email, password):
 
 def register(email, password, name):
     if dbm.validate_email(email):
-        return jsonify({"status": InputError, "msg": "Email is already registered"}), InputError
+        return jsonify({"msg": "Email is already registered"}), InputError
 
     password = hash.hash_password(password)
     dbm.insert_collector(email, name, name, '', password, '')
 
     access_token = create_access_token(identity=email, fresh=True)
     refresh_token = create_refresh_token(identity=email)
-    response = jsonify({'status': OK, 'msg': 'Account successfully registered!.'})
+    response = jsonify({'msg': 'Account successfully registered!.'})
 
     set_access_cookies(response, access_token)
     set_refresh_cookies(response, refresh_token)
@@ -39,6 +39,6 @@ def register(email, password, name):
 def logout():
     ''' Removes cookies from client '''
 
-    response = jsonify({"status": OK, "msg": "logout successful"})
+    response = jsonify({"msg": "logout successful"})
     unset_jwt_cookies(response)
     return response, OK
