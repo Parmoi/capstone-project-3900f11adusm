@@ -64,11 +64,8 @@ const theme = createTheme({
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
-  const [errOpen, setErrOpen] = React.useState(false);
-  const handleErrClose = () => setErrOpen(false);
-  const [errMsg, setErrMsg] = React.useState('');
   const [token, setToken] = React.useState(null);
-  
+
   function logout () {
     const options = {
       method: 'POST',
@@ -87,7 +84,7 @@ function App() {
     <Fragment>
       <ThemeProvider theme={theme}>
         <Helmet bodyAttributes={{ style: 'background-color : white' }} />
-        <ErrModal errMsg={errMsg} open={errOpen} handleClose={handleErrClose}/>
+        {/* <ErrModal errMsg={errMsg} open={errOpen} handleClose={handleErrClose}/> */}
         <Box sx={{ display: 'flex', flexDirection: 'column', rowGap: '10ch', alignItems: 'center', justifyContent: 'center' }}>
           { !loggedIn
            ?  <BrowserRouter>
