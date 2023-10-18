@@ -1,5 +1,6 @@
 import sqlalchemy as db
 from datetime import datetime
+from werkzeug.utils import secure_filename
 import psycopg2
 import bcrypt
 import os
@@ -309,3 +310,11 @@ def validate_password(email, password):
     user_hashed_pw = user['password'].encode('utf-8')
     input_pw_bytes = password.encode('utf-8')
     return bcrypt.checkpw(input_pw_bytes, user_hashed_pw)
+
+# Function that returns a path to the user's pfp
+def return_pfp_path(id):
+    image_name = f"pfp_{id}.jpg"
+    pfp_path = os.path.join('/images', secure_filename(image_name))
+
+    return pfp_path
+    

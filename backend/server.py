@@ -55,6 +55,9 @@ def login():
 def logout():
     return auth.logout()
 
+@APP.route('/pfp')
+def pfp():
+    return dbm.return_pfp_path(1)
 
 # @APP.after_request
 # def refresh_expiring_jwts(response):
