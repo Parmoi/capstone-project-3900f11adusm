@@ -87,8 +87,19 @@ def database_setup():
 
 # Function to insert collector into our db
 def insert_collector(email, username, real_name, phone, password, address):
+    """insert_collector.
 
-    # TODO: makes sure user with email does not already exist. Raise exception
+    Insert a new collector into the database.
+    Returns the new users unique id that was created when inserted.
+
+    Args:
+        email: collectors email
+        username: collectors user name
+        real_name: collectors real name
+        phone: collectors phone number
+        password: collectors hashed password
+        address: collectors address
+    """
 
     # Create an engine and connect to the db
     engine, conn, metadata = db_connect()
@@ -106,12 +117,27 @@ def insert_collector(email, username, real_name, phone, password, address):
          "address": address}
         )
     conn.execute(insert_stmt)
+
+    select_stmt = db.select(collectors.c.id).where(collectors.c.email == email)
+    execute = conn.execute(select_stmt)
+    collector_id = execute.fetchone()._asdict().get("id")
+
     conn.close()
 
-# Function to update user information
-# (idea is that you press "update info" and it will update all accordingly)
-# If you don't want to change certain details, just enter the old information
+    return collector_id
+
 def update_collector(id, new_email, new_username, new_name, new_phone, new_password, new_address):
+    """update_collector.
+
+    Args:
+        id:
+        new_email:
+        new_username:
+        new_name:
+        new_phone:
+        new_password:
+        new_address:
+    """
     
     engine, conn, metadata = db_connect()
     
@@ -128,6 +154,7 @@ def update_collector(id, new_email, new_username, new_name, new_phone, new_passw
                          'address': new_address
                      }))
     conn.execute(update_stmt)
+
     conn.close()
 
 # Function returns user info given a user's id
@@ -142,9 +169,49 @@ def return_collector(id):
     
     execute = conn.execute(select_stmt)
     collector_info = execute.fetchone()._asdict()
+
     conn.close()
 
     return collector_info
+
+def get_collector_id(email='', username=''):
+    """get_collector_id.
+
+    Get collectors id associated with email address from database
+
+    Args:
+        email: users email
+    """
+    engine, conn, metadata = db_connect()
+    collectors = db.Table('collectors', metadata, autoload_with=engine)
+
+    select_stmt = None
+    if email:
+        select_stmt = db.select(collectors.c.id).where(collectors.c.email == email)
+    elif username:
+        select_stmt = db.select(collectors.c.id).where(collectors.c.username == username)
+
+    execute = conn.execute(select_stmt)
+    collector_id = execute.fetchone()._asdict().get("id")
+    conn.close()
+    return collector_id
+
+def get_collector_pw(id='', email=''):
+    engine, conn, metadata = db_connect()
+    collectors = db.Table('collectors', metadata, autoload_with=engine)
+
+    select_stmt = ''
+    if id:
+        select_stmt = db.select(collectors).where((collectors.c.id == id))
+    elif email:
+        select_stmt = db.select(collectors).where((collectors.c.email == email))
+
+
+    execute = conn.execute(select_stmt)
+    password = execute.fetchone()._asdict('password')
+    conn.close()
+
+    return password
 
 """ |------------------------------------|
     |     Functions for collectibles     |
