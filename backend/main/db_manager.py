@@ -40,7 +40,7 @@ def database_setup():
         db.Column("phone", db.VARCHAR(10)),
         db.Column("password", db.String),
         db.Column("address", db.String),
-        db.Column( "profile_picture",db.VARCHAR(20)) # For image
+        db.Column("profile_picture",db.VARCHAR(20)) # For image
     )
 
     # Creates a collectible table
@@ -316,5 +316,7 @@ def return_pfp_path(id):
     image_name = f"pfp_{id}.jpg"
     pfp_path = os.path.join('/images', secure_filename(image_name))
 
-    return pfp_path
+    # return pfp_path + " is " + str(os.path.exists(pfp_path)) #pfp_path
+    return os.getcwd()
     
+    # backend/images/pfp_1.jpg
