@@ -10,6 +10,7 @@ import { createTheme, useTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import validator from 'validator';
 import { apiCall } from '../App';
+import Alert from '@mui/material/Alert';
 
 const theme = createTheme();
 
@@ -18,6 +19,9 @@ function Register({ setLogin }) {
   const [emailError, setEmailError] = React.useState(false);
   const [nameError, setNameError] = React.useState(false);
   const [pwdError, setPwdError] = React.useState(false);
+
+  const [error, setError] = React.useState(false);
+  const [errContent, setErrContent] = React.useState('');
 
 
   const validateEmail = (e) => {
@@ -57,7 +61,12 @@ function Register({ setLogin }) {
 
     apiCall(() => {setLogin(true)}, options)
       .then((res) => {
-        if (!res) {
+        if (res) {
+          // set error msg if api call returns error
+          setErrContent(`Error: ${res.msg}`);
+          setError(true);
+        }
+        else {
           navigate('/dashboard');
         }
       });
@@ -119,6 +128,9 @@ function Register({ setLogin }) {
               onBlur={(e) => validatePwd(e)}
               helperText={pwdError ? 'Password must not be empty' : ''}
             />
+            <div>
+              {error ? <Alert severity='error'>{errContent}</Alert> : <></> }
+            </div>
             <Button
               type="submit"
               fullWidth

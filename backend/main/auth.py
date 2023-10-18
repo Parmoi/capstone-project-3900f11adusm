@@ -6,12 +6,8 @@ from flask_jwt_extended import (create_access_token, set_access_cookies, unset_j
                                 create_refresh_token, set_refresh_cookies)
 
 def login(email, password):
-    '''
-    check if collector not in database via email
-    raise InputError('Email address not registered')
-    '''
     if not dbm.validate_email(email) or not dbm.validate_password(email, password):
-        return jsonify({"status": 401, "msg": "Bad username or password"})
+        return jsonify({"status": 401, "msg": "Invalid username and/or password"})
 
     # Successful login returns acces and refresh tokens to client cookies
     response = jsonify({"status": 200, "msg": "login successful"})
@@ -23,11 +19,8 @@ def login(email, password):
 
 
 def register(email, password, name):
-    '''
-    Check if collector already in database via email.
-        raises: InputError('Email address already registered')
-
-    '''
+    if dbm.validate_email(email):
+        return jsonify({"status": 401, "msg": "Email is already registered"})
 
     password = hash.hash_password(password)
     dbm.insert_collector(email, name, name, '', password, '')
