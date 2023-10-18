@@ -1,4 +1,4 @@
-import main.db_manager as db_manager
+import main.db_manager as dbm
 import bcrypt
 
 # Authentication Protocol
@@ -16,7 +16,8 @@ def hash_password(password):
     hashed_pw = bcrypt.hashpw(pw_bytes, bcrypt.gensalt())
     return hashed_pw.decode('utf-8')
 
+
 def update_password(password):
-    engine, conn, metadata = db_manager.db_connect()
+    engine, conn, metadata = dbm.db_connect()
     hashed_pw = hash_password(password)
     return 
