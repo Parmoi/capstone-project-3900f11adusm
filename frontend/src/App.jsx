@@ -67,8 +67,8 @@ function App() {
   const [errOpen, setErrOpen] = React.useState(false);
   const handleErrClose = () => setErrOpen(false);
   const [errMsg, setErrMsg] = React.useState('');
-  const [token, setToken] = React.useState('');
-
+  const [token, setToken] = React.useState(null);
+  
   function logout () {
     const options = {
       method: 'POST',
@@ -77,7 +77,7 @@ function App() {
     apiCall(() => 
     {
       setLoggedIn(false);
-      setToken('');
+      setToken(null);
     }
     , options);
   }

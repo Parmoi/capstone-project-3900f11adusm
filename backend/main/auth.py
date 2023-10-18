@@ -12,9 +12,10 @@ def login(email, password):
     # Successful login returns access and refresh tokens to client cookies
     access_token = create_access_token(identity=email, fresh=True)
     refresh_token = create_refresh_token(identity=email)
+    response = jsonify({"status": 200, "msg": "login successful", 'auth_token': access_token})
+    
     set_access_cookies(response, access_token)
     set_refresh_cookies(response, refresh_token)
-    response = jsonify({"status": 200, "msg": "login successful", 'auth_token': access_token})
     return response, 200
 
 
@@ -27,9 +28,10 @@ def register(email, password, name):
 
     access_token = create_access_token(identity=email, fresh=True)
     refresh_token = create_refresh_token(identity=email)
+    response = jsonify({'status': 200, 'msg': 'Account successfully registered!.', 'auth_token': access_token})
+
     set_access_cookies(response, access_token)
     set_refresh_cookies(response, refresh_token)
-    response = jsonify({'status': 200, 'msg': 'Account successfully registered!.', 'auth_token': access_token})
     return response, 200
 
 def logout():
