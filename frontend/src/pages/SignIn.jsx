@@ -30,10 +30,8 @@ function SignIn({ setLogin, setToken }) {
       })
     };
 
-    apiCall((data) => {
+    apiCall(() => {
       setLogin(true);
-      setToken(data.auth_token);
-      console.log(data.auth_token);
     }, options)
       .then((res) => {
         if (res) {

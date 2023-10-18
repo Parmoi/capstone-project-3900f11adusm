@@ -61,7 +61,6 @@ const theme = createTheme({
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
-  const [token, setToken] = React.useState(null);
 
   function logout () {
     const options = {
@@ -71,7 +70,6 @@ function App() {
     apiCall(() => 
     {
       setLoggedIn(false);
-      setToken(null);
     }
     , options);
   }
@@ -88,8 +86,8 @@ function App() {
               <SignedOutNav />
               <Routes>
                 <Route path="/" element={<HomePage/>} />
-                <Route path="/login" element={<SignIn setLogin={setLoggedIn} setToken={setToken}/>} />
-                <Route path="/register" element={<Register setLogin={setLoggedIn} setToken={setToken}/>} />
+                <Route path="/login" element={<SignIn setLogin={setLoggedIn}/>} />
+                <Route path="/register" element={<Register setLogin={setLoggedIn}/>} />
               </Routes>
               </BrowserRouter>
           : <BrowserRouter>
