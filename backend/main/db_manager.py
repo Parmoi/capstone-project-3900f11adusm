@@ -63,7 +63,7 @@ def database_setup():
     # Creates a wantlist table
     # Ties a user and collectible together
     wantlist_table = db.Table(
-        "wants", metadata,
+        "wantlist", metadata,
         db.Column("id",db.Integer, db.Identity(), primary_key = True),
         db.Column("collector_id", db.Integer, db.ForeignKey("collectors.id")),
         db.Column("collectible_id", db.Integer, db.ForeignKey("collectibles.id"))
@@ -86,7 +86,8 @@ def database_setup():
     |------------------------------------| """
 
 # Function to insert collector into our db
-def insert_collector(email, username, real_name, phone, password, address):
+# TODO: Add first_name and last_name fields to user db, or keep like this i dunno
+def insert_collector(email, username, password, first_name, last_name,  phone, address):
     """insert_collector.
 
     Insert a new collector into the database.
@@ -106,6 +107,8 @@ def insert_collector(email, username, real_name, phone, password, address):
 
     # Loads in the collector table into our metadata
     collectors = db.Table('collectors', metadata, autoload_with=engine)
+
+    real_name = first_name + last_name
 
     # Inserts a collector into the collector table
     insert_stmt = db.insert(collectors).values(
@@ -158,29 +161,28 @@ def update_collector(id, new_email, new_username, new_name, new_phone, new_passw
     conn.close()
 
 # Function returns user info given a user's id
-def return_collector(id):
+def get_collector(id):
 
     engine, conn, metadata = db_connect()
 
     # Loads in the collector table into our metadata
     collectors = db.Table('collectors', metadata, autoload_with=engine)
-
     select_stmt = db.select(collectors).where(collectors.c.id == id)
-    
     execute = conn.execute(select_stmt)
     collector_info = execute.fetchone()._asdict()
-
     conn.close()
 
     return collector_info
 
-def get_collector_id(email='', username=''):
+def get_collector_id(email=None, username=None):
     """get_collector_id.
 
-    Get collectors id associated with email address from database
+    Get collectors user id associated with email address or username from database.
+    Returns None if user does not exist.
 
     Args:
         email: users email
+        username: users username
     """
     engine, conn, metadata = db_connect()
     collectors = db.Table('collectors', metadata, autoload_with=engine)
@@ -192,26 +194,44 @@ def get_collector_id(email='', username=''):
         select_stmt = db.select(collectors.c.id).where(collectors.c.username == username)
 
     execute = conn.execute(select_stmt)
-    collector_id = execute.fetchone()._asdict().get("id")
+
+    execute_return_object = execute.fetchone()
+    if execute_return_object is None:
+        return None
+
+    collector_id = execute_return_object._asdict().get('id', None)
     conn.close()
     return collector_id
 
-def get_collector_pw(id='', email=''):
+
+# TODO: do a check that the collector acturally exists
+def get_collector_pw(id=None, email=None):
+    """get_wantlist.
+
+    Returns the hashed password of the user associated with user_id or email.
+    Returns None if id and email not given.
+
+    Args:
+        id: users id
+        email: users email
+    """
     engine, conn, metadata = db_connect()
     collectors = db.Table('collectors', metadata, autoload_with=engine)
 
-    select_stmt = ''
+    select_stmt = None
     if id:
         select_stmt = db.select(collectors).where((collectors.c.id == id))
     elif email:
         select_stmt = db.select(collectors).where((collectors.c.email == email))
-
+    else:
+        return None
 
     execute = conn.execute(select_stmt)
-    password = execute.fetchone()._asdict('password')
+    password = execute.fetchone()._asdict().get('password')
     conn.close()
 
     return password
+
 
 """ |------------------------------------|
     |     Functions for collectibles     |
@@ -252,15 +272,19 @@ def insert_wantlist(collector_id, collectible_name):
     engine, conn, metadata = db_connect()
 
     # Loads in the wants table into our metadata
-    wants = db.Table('wants', metadata, autoload_with=engine)
+    wantlist = db.Table('wantlist', metadata, autoload_with=engine)
 
-    want_insert_stmt = db.insert(wants).values(
+    want_insert_stmt = db.insert(wantlist).values(
         {'collector_id': collector_id,
          'collectible_id': find_collectible_id(collectible_name)
          })
     conn.execute(want_insert_stmt)
 
     conn.close()
+
+# TODO: Neets to be implemented
+def get_wantlist(user_id):
+    return {'wantlist': 'db_manager.py: get_wantlist() not yet implemented!'}
 
 """ |------------------------------------|
     |Functions for collectible_campaigns |
@@ -293,22 +317,6 @@ def insert_campaign(name, description, start_date, end_date):
     |          Helper Functions          |
     |------------------------------------| """
 
-# Function checks if a collector exists in the DB.
-def validate_account(email, password):
-    engine, conn, metadata = db_connect()
-
-    # Loads in the collector table into our metadata
-    collectors = db.Table('collectors', metadata, autoload_with=engine)
-
-    select_stmt = db.select(collectors).where(
-                        (collectors.c.email == email) &
-                        (collectors.c.password == password))
-    
-    execute = conn.execute(select_stmt)
-    collector_info = execute.fetchone()._asdict()
-    conn.close()
-
-    return (collector_info is not None)
 
 # Function to connect to the db and return [engine, conn, metadata]
 def db_connect():
@@ -335,6 +343,8 @@ def find_collectible_id(collectible_name):
     execute = conn.execute(select_stmt)
     collectibleId = execute.fetchone()._asdict().get("id")
     conn.close()
+
+    # TODO: Value error if doesn't exist or return error code or something?
     
     return collectibleId
 
@@ -355,24 +365,3 @@ def find_campaign_id(campaign_name):
     
     return campaignId
 
-def validate_email(email):
-    engine, conn, metadata = db_connect()
-    collectors = db.Table('collectors', metadata, autoload_with=engine)
-    select_stmt = db.select(collectors).where((collectors.c.email == email))
-    execute = conn.execute(select_stmt)
-    collector_info = execute.fetchone()._asdict()
-    conn.close()
-    return collector_info is not None
-
-def validate_password(email, password):
-
-    engine, conn, metadata = db_connect()
-    collectors = db.Table('collectors', metadata, autoload_with=engine)
-    select_stmt = db.select(collectors).where((collectors.c.email == email))
-    execute = conn.execute(select_stmt)
-    user = execute.fetchone()._asdict()
-    conn.close()
-
-    user_hashed_pw = user['password'].encode('utf-8')
-    input_pw_bytes = password.encode('utf-8')
-    return bcrypt.checkpw(input_pw_bytes, user_hashed_pw)
