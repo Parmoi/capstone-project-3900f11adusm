@@ -68,7 +68,7 @@ def register_collector(email, username, password, first_name = '', last_name='',
     if email:
         collector_id = dbm.get_collector_id(email=email)
         if collector_id is not None:
-            return jsonify({'status': 401, 'msg': 'Email address already registered!'}), 401
+            return jsonify({'msg': 'Email address already registered!'}), 401
     elif username:
         collector_id = dbm.get_collector_id(username=username)
         if collector_id is not None:
