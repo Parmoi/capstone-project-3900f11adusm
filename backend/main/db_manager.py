@@ -256,27 +256,25 @@ def insert_collectible(collectible_name, campaign_name):
     conn.execute(collectible_insert_stmt)
     conn.close()
 
-
-"""
-Function to return collectibles whose name matches the collectible_name
-
-Example Output:
-[
-    {
-        "campaign_name": "random campaign",
-        "collectible_name": "collectible 1",
-        "date_released": "Fri, 01 Jan 2021 00:00:00 GMT"
-    },
-    {
-        "campaign_name": "random campaign",
-        "collectible_name": "collectible 2",
-        "date_released": "Fri, 01 Jan 2021 00:00:00 GMT"
-    }
-]
-
-"""
 def find_collectible(collectible_name):
+    """
+    Function to return collectibles whose name matches the collectible_name
 
+    Example output (json):
+    [
+        {
+            "campaign_name": "random campaign",
+            "collectible_name": "collectible 1",
+            "date_released": "Fri, 01 Jan 2021 00:00:00 GMT"
+        },
+        {
+            "campaign_name": "random campaign",
+            "collectible_name": "collectible 2",
+            "date_released": "Fri, 01 Jan 2021 00:00:00 GMT"
+        }
+    ]
+
+    """
     engine, conn, metadata = db_connect()
 
     # Loads in the collectible and campaign tables into our metadata
@@ -345,12 +343,59 @@ def insert_campaign(name, description, start_date, end_date):
     # Adds campaign to collectible_campaigns table
     campaign_insert_stmt = db.insert(campaigns).values(
         {'name': name,
+         'image': image_url_placeholder,
          'description': description,
          'start_date': start_date_obj,
          'end_date': end_date_obj}
     )
     conn.execute(campaign_insert_stmt)
     conn.close()
+
+    # Function that returns the campaigns that are currently running
+def find_current_campaigns():
+    """
+    Function that returns the current running campaigns.
+
+    Example output (json):
+    [
+        {
+            "description":"random desc",
+            "end_date":"Wed, 01 Jan 2025 00:00:00 GMT",
+            "id":3,
+            "image":"https://ilarge.lisimg.com/image/8825948/980full-homer-simpson.jpg",
+            "name":"campaign 3",
+            "start_date":"Fri, 01 Jan 1999 00:00:00 GMT"
+        },
+        {
+            "description":"random desc",
+            "end_date":"Tue, 01 Jan 2030 00:00:00 GMT",
+            "id":4,
+            "image":"https://ilarge.lisimg.com/image/8825948/980full-homer-simpson.jpg",
+            "name":"campaign 4",
+            "start_date":"Fri, 01 Jan 1999 00:00:00 GMT"
+        }
+    ]
+    
+    """
+    engine, conn, metadata = db_connect()
+
+    # Load in the campaign table into our metadata
+    camp = db.Table('collectible_campaigns', metadata, autoload_with=engine)
+    
+    cur_date = date.today()
+
+    search_stmt = db.select(camp).where((cur_date >= camp.c.start_date) & (cur_date < camp.c.end_date))
+
+    execute = conn.execute(search_stmt)
+    conn.close()
+
+    result_list = []
+    results = execute.fetchall()
+
+    for row in results:
+        result_list.append(row._asdict())
+
+    return result_list
 
 """ |------------------------------------|
     |          Helper Functions          |
