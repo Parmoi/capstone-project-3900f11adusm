@@ -14,7 +14,7 @@ import Alert from '@mui/material/Alert';
 
 const theme = createTheme();
 
-function Register({ setLogin, setToken }) {
+function Register({ setLogin }) {
   const navigate = useNavigate();
   const [emailError, setEmailError] = React.useState(false);
   const [nameError, setNameError] = React.useState(false);

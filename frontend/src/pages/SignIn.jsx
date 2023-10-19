@@ -11,7 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { apiCall } from '../App';
 import Alert from '@mui/material/Alert';
 
-function SignIn({ setLogin, setToken }) {
+function SignIn({ setLogin }) {
   const [error, setError] = React.useState(false);
   const [errContent, setErrContent] = React.useState('');
   const navigate = useNavigate();
