@@ -1,9 +1,10 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useState } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
+import { useHistory } from 'react-router-dom';
 // import IconButton from '@mui/material/IconButton';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import { styled, alpha } from '@mui/material/styles';
@@ -72,11 +73,83 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     },
 }));
 
+
+
 const SignedInNav = ({ logout }) => {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
     const navigate = useNavigate();
-  
+    // add the search function
+    const [searchQuery, setSearchQuery] = useState('');
+    const [filteredItems, setFilteredItems] = useState([]);
+    const history = useHistory();
+
+    const items = [
+      {
+        image: 'https://ilarge.lisimg.com/image/8825948/980full-homer-simpson.jpg',
+        name: 'Homer',
+        collectionName: 'Winter 2022',
+        yearReleased: 1999,
+        dateAdded: 1800,
+      },
+      {
+        image: 'https://tse4.mm.bing.net/th?id=OIP.e4tAXeZ6G0YL4OE5M8KTwAHaMq&pid=Api',
+        name: 'Marge',
+        collectionName: 'Winter 2022',
+        yearReleased: 1899,
+        dateAdded: 1800,
+      },
+      {
+        image: 'https://tse2.mm.bing.net/th?id=OIP.j7EknM6CUuEct_kx7o-dNQHaMN&pid=Api',
+        name: 'Bart',
+        collectionName: 'Winter 2022',
+        yearReleased: 1499,
+        dateAdded: 1800,
+      },
+      {
+        image: 'https://tse3.mm.bing.net/th?id=OIP.6761X25CX3UUjklkDCnjSwHaHa&pid=Api',
+        name: 'Dog',
+        collectionName: 'Winter 2022',
+        yearReleased: 1989,
+        dateAdded: 1800,
+      },
+      {
+        image: 'https://tse3.mm.bing.net/th?id=OIP.JqWjPHsW5aJIZDnPYMGovQHaJQ&pid=Api',
+        name: 'Lisa',
+        collectionName: 'Winter 2022',
+        yearReleased: 1709,
+        dateAdded: 1800,
+      },
+      {
+        image: 'https://tse1.mm.bing.net/th?id=OIP.qVV8kcLdcLysZ5OOCzhKLAHaF7&pid=Api',
+        name: 'Rando',
+        collectionName: 'Winter 2022',
+        yearReleased: 1909,
+        dateAdded: 1801,
+      },
+    ]
+
+    const handleInputChange = (event) => {
+      setSearchQuery(event.target.value);
+      filterItems(event.target.value);
+    };
+
+    const filterItems = (query) => {
+      const filtered = items.filter((item) =>
+        item.name.toLowerCase().includes(query.toLowerCase())
+      );
+      setFilteredItems(filtered);
+    };
+
+    const handleKeyPress = (event) => {
+      if (event.key === 'Enter') {
+        // Handle the search logic here. You can display the filtered items.
+        // console.log('Search for:', searchQuery);
+        // console.log('Filtered Items:', filteredItems);
+        history.push(`/results?query=${encodeURIComponent(searchQuery)}`);
+      }
+    };
+      
     const handleClick = (event) => {
       setAnchorEl(event.currentTarget);
     };
@@ -99,8 +172,16 @@ const SignedInNav = ({ logout }) => {
               <StyledInputBase
                 placeholder="Search…"
                 inputProps={{ 'aria-label': 'search' }}
+                value={searchQuery}
+                onChange={handleInputChange}
+                onKeyPress={handleKeyPress}
               />
             </Search>
+            <div>
+              {filteredItems.map((item, index) => (
+                <div key={index}>{item.name}</div>
+              ))}
+            </div>
             <Box>
               <Button color="inherit">
                 <Tooltip title="Menu">
