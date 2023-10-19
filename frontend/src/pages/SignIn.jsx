@@ -6,12 +6,16 @@ import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import { createTheme, useTheme, ThemeProvider } from '@mui/material/styles';
+import { useTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import { apiCall } from '../App';
+import Alert from '@mui/material/Alert';
 
 function SignIn({ setLogin }) {
+  const [error, setError] = React.useState(false);
+  const [errContent, setErrContent] = React.useState('');
   const navigate = useNavigate();
+  
   const login = (e) => {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
@@ -26,9 +30,16 @@ function SignIn({ setLogin }) {
       })
     };
 
-    apiCall(() => {setLogin(true)}, options)
+    apiCall(() => {
+      setLogin(true);
+    }, options)
       .then((res) => {
-        if (!res) {
+        if (res) {
+          // set error msg if api call returns error
+          setErrContent(`Error: ${res.msg}`);
+          setError(true);
+        }
+        else {
           navigate('/dashboard');
         }
       });
@@ -52,9 +63,6 @@ function SignIn({ setLogin }) {
             Sign in
           </Typography>
           <Box component="form" onSubmit={login} noValidate sx={{ mt: 1 }}>
-            {/* <div>
-                {error ? <Alert severity='error'>{errContent}</Alert> : <></> }
-              </div> */}
             <TextField
               margin="normal"
               required
@@ -75,6 +83,9 @@ function SignIn({ setLogin }) {
               id="password"
               autoComplete="current-password"
             />
+            <div>
+              {error ? <Alert severity='error'>{errContent}</Alert> : <></> }
+            </div>
             <Button
               type="submit"
               fullWidth
@@ -84,6 +95,7 @@ function SignIn({ setLogin }) {
             >
               Sign In
             </Button>
+            
           </Box>
         </Box>
       </Container>

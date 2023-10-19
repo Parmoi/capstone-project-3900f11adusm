@@ -1,6 +1,6 @@
 import os
 from flask import Flask, jsonify, request
-from flask_jwt_extended import JWTManager
+from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity, create_access_token, set_access_cookies
 from flask_cors import CORS
 from datetime import timedelta
 
@@ -35,67 +35,76 @@ def db_init():
     dbm.database_setup()
     return 'Database has been setup successfully!'
 
-@APP.route('/register', methods=['POST'])
-def register():
-    data = request.get_json()
-    email = str(data["email"])
-    password = str(data["password"])
-    username = str(data["name"])
-
-    return auth.register(email, password, username)
-
 @APP.route('/login', methods=['POST'])
 def login():
     email = request.json.get('email', None)
     password = request.json.get('password', None)
-
-    return auth.login(email, password)
+    return auth.login(password, email=email)
 
 @APP.route('/logout', methods=['POST'])
 def logout():
     return auth.logout()
 
-@APP.route('/add')
-def add_stuff():
-    dbm.insert_campaign("random campaign", "this is a random description", "2021-01-01", "2023-01-01")
-    dbm.insert_collectible("random collectible", "random campaign")
-    dbm.insert_collectible("hello world!", "random campaign")
-    dbm.insert_collector("ff@gmail.com", "bobby", "pass")
-    dbm.insert_collectible("another collectible", "random campaign")
-    dbm.insert_collectible("hello its me collectible!", "random campaign")
+@APP.route('/register', methods=['POST'])
+def register():
+    email = request.json.get('email', None)
+    username = request.json.get('username', None)
+    password = request.json.get('password', None)
+    phone = request.json.get('phone', None)
+    address = request.json.get('address', None)
 
-    return 'Added successfully!'
+    # TODO: Frontend can include first and last name fields in json if they want
+    name = request.json.get('name', None)
+    first_name = request.json.get('first_name', None)
+    last_name = request.json.get('last_name', None)
 
-@APP.route('/find')
-def find():
-    return jsonify(dbm.find_collectible("hello world!"))
+    if name is not None:
+        first_name = name
+        last_name = ''
 
-@APP.route('/find2')
-def find2():
-    return jsonify(dbm.find_collectible("random collectible"))
+    return auth.register_collector(email, username, password, first_name=first_name, last_name=last_name, phone=phone, address=address)
 
-@APP.route('/update')
-def update_coll():
-    dbm.update_collector(1, "username", "new_username")
-    return "update successful!"
+@APP.route('/refresh', methods=['POST'])
+@jwt_required(fresh=True)
+def refresh_token():
+    '''
+    Refresh access token, makes user have to tokenticate credentials again
+    '''
+    user_id = get_jwt_identity()
+    return auth.refresh(user_id)
 
-# @APP.after_request
-# def refresh_expiring_jwts(response):
-#     '''Refreshes users token if it is going to expire withing a given amount of time'''
 
-#     exp_in = 60
+@APP.route('/profile', methods=['GET'])
+@jwt_required(fresh=False)
+def profile():
+    user_id = get_jwt_identity()
+    return jsonify(dbm.get_collector(user_id)), 200
 
-#     try:
-#         exp_timestamp = get_jwt()["exp"]
-#         now = datetime.now(timezone.utc)
-#         target_timestamp = datetime.timestamp(now + timedelta(minutes=exp_in))
-#         if target_timestamp > exp_timestamp:
-#             access_token = create_access_token(identity=get_jwt_identity())
-#             set_access_cookies(response, access_token)
-#         return response
-#     except (RuntimeError, KeyError):
-#         # Case where there is not a valid JWT. Just return the original response
-#         return response
+# TODO: Implement the wantlist function. Not sure how to select a users wantlist
+#       Is the relational database set up so that each time a user is created, a wantlist
+#       is instantiated. Or wantlist can be searched for and its contents retruned by
+#       user id?
+@APP.route('/wantlist', methods=['GET'])
+@jwt_required(fresh=False)
+def wantlist():
+    user_id = get_jwt_identity()
+    return jsonify(dbm.get_wantlist(user_id)), 200
+
+
+# Example stubs for /dashboard and /collection
+# @APP.route('/dashboard', methods=['GET'])
+# @jwt_required(fresh=False)
+# def dashboard():
+#     user_id = get_jwt_identity()
+#     return jsonify(dbm.get_dashboard(user_id)), 200
+
+# @APP.route('/collection', methods=['GET'])
+# @jwt_required(fresh=False)
+# def collection():
+#     user_id = get_jwt_identity()
+#     return jsonify(dbm.get_collection(user_id)), 200
+
+
 
 # @APP.route("/protected", methods=["GET"])
 # @jwt_required()
@@ -119,22 +128,26 @@ def update_coll():
 #     current_user = get_jwt_identity()
 #     return jsonify(logged_in_as=current_user), 200
 
-# @APP.route('/refresh', methods=['POST'])
-# @jwt_required(fresh=True)
-# def refresh_token():
-#     '''
-#     Refresh access token, makes user have to tokenticate credentials again
-#     '''
 
-#     # Create the new access token
-#     user = get_jwt_identity()
-#     access_token = create_access_token(identity=user)
+# Uncomment to have access token refreshed automatically after evert request is made
+# If it is going to expire within a certain amount of time (optional)
+# @APP.after_request
+# def refresh_expiring_jwts(response):
+#     '''Refreshes users token if it is going to expire withing a given amount of time'''
 
-#     # Retruns a non fresh access token
-#     response = jsonify({'refresh': True})
-#     set_access_cookies(response, access_token)
-#     return response, 200
+#     exp_in = 60
 
+#     try:
+#         exp_timestamp = get_jwt()["exp"]
+#         now = datetime.now(timezone.utc)
+#         target_timestamp = datetime.timestamp(now + timedelta(minutes=exp_in))
+#         if target_timestamp > exp_timestamp:
+#             access_token = create_access_token(identity=get_jwt_identity())
+#             set_access_cookies(response, access_token)
+#         return response
+#     except (RuntimeError, KeyError):
+#         # Case where there is not a valid JWT. Just return the original response
+#         return response
 
 if __name__ == "__main__":
     APP.run(host =config.host, port=config.port)
