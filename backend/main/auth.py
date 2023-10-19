@@ -6,6 +6,7 @@ from flask import jsonify
 from flask_jwt_extended import (create_access_token, set_access_cookies, unset_jwt_cookies, 
                                 create_refresh_token, set_refresh_cookies)
 
+from error import ( InputError, AccessError, OK )
 
 def login(password, email=None, username=None):
     """login.
@@ -23,16 +24,16 @@ def login(password, email=None, username=None):
     if email:
         collector_id = dbm.get_collector_id(email=email)
         if collector_id is None:
-            return jsonify({"msg": "Invalid email!"}), 401
+            return jsonify({"msg": "Invalid email!"}), InputError
     elif username:
         collector_id = dbm.get_collector_id(username=username)
         if collector_id is None:
-            return jsonify({"msg": "Invalid username!"}), 401
+            return jsonify({"msg": "Invalid username!"}), InputError
     else:
-        return jsonify({"msg": "No email or username provided!"}), 401
+        return jsonify({"msg": "No email or username provided!"}), InputError
 
     if not validate_password(email, password):
-        return jsonify({"msg": "Invalid password!"}), 401
+        return jsonify({"msg": "Invalid password!"}), InputError
 
     user_id = dbm.get_collector_id(email=email, username=username)
     response = jsonify({"msg": "login successful"})
@@ -40,13 +41,13 @@ def login(password, email=None, username=None):
     refresh_token = create_refresh_token(identity=user_id)
     set_access_cookies(response, access_token)
     set_refresh_cookies(response, refresh_token)
-    return response, 200
+    return response, OK
 
 def logout():
     ''' Removes cookies from client '''
     response = jsonify({"msg": "logout successful"})
     unset_jwt_cookies(response)
-    return response, 200
+    return response, OK
 
 
 def register_collector(email, username, password, first_name = '', last_name='', phone='', address=''):
@@ -68,25 +69,25 @@ def register_collector(email, username, password, first_name = '', last_name='',
     if email:
         collector_id = dbm.get_collector_id(email=email)
         if collector_id is not None:
-            return jsonify({'msg': 'Email address already registered!'}), 401
+            return jsonify({'msg': 'Email address already registered!'}), InputError
     elif username:
         collector_id = dbm.get_collector_id(username=username)
         if collector_id is not None:
-            return jsonify({'msg': 'User name already registered!'}), 401
+            return jsonify({'msg': 'User name already registered!'}), InputError
 
     password = hash.hash_password(password)
 
     # TODO: Kinda sloppy handing all theses variables over, wouldn't it be easier to create a class
     collector_id = dbm.insert_collector(email, username, password, first_name = first_name, last_name=last_name, phone=phone, address=address)
     if collector_id is None:
-        return jsonify({'msg': 'Account unsuccessfully registered!'}), 401
+        return jsonify({'msg': 'Account unsuccessfully registered!'}), InputError
 
     response = jsonify({'msg': 'Account successfully registered!.'})
     access_token = create_access_token(identity=collector_id, fresh=True)
     refresh_token = create_refresh_token(identity=collector_id)
     set_access_cookies(response, access_token)
     set_refresh_cookies(response, refresh_token)
-    return response, 200
+    return response, OK
 
 
 def validate_password(email, password):
@@ -114,4 +115,4 @@ def refresh(user_id):
     access_token = create_access_token(identity=user_id)
     response = jsonify({'refresh': True})
     set_access_cookies(response, access_token)
-    return response, 200
+    return response, OK
