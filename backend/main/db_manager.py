@@ -1,5 +1,5 @@
 import sqlalchemy as db
-from datetime import datetime
+from datetime import date
 import psycopg2
 import bcrypt
 import os
@@ -8,6 +8,8 @@ db_name = "collectibles_db"
 db_user = "postgres"
 db_password = os.environ['POSTGRES_PASSWORD']
 db_host = "db"
+
+image_url_placeholder = "https://ilarge.lisimg.com/image/8825948/980full-homer-simpson.jpg"
 
 # Function to setup our database
 def database_setup():
@@ -39,7 +41,7 @@ def database_setup():
         db.Column("phone", db.VARCHAR(10)),
         db.Column("password", db.String),
         db.Column("address", db.String),
-        db.Column( "profile_picture",db.VARCHAR(20)) # For image
+        db.Column( "profile_picture",db.String)
     )
 
     # Creates a collectible table
@@ -47,7 +49,8 @@ def database_setup():
         "collectibles", metadata,
         db.Column("id", db.Integer, db.Identity(), primary_key = True),
         db.Column("name", db.String),
-        # db.Column("image", db.VARCHAR) # For image
+        db.Column("image", db.String),
+        db.Column("campaign_id", db.Integer, db.ForeignKey("collectible_campaigns.id"))
     )
 
     # Creates a collectible campaign table
@@ -55,6 +58,7 @@ def database_setup():
         "collectible_campaigns", metadata,
         db.Column("id", db.Integer, db.Identity(), primary_key = True),
         db.Column("name", db.String),
+        db.Column("image", db.String),
         db.Column("description", db.String),
         db.Column("start_date", db.Date),
         db.Column("end_date", db.Date)
@@ -69,14 +73,6 @@ def database_setup():
         db.Column("collectible_id", db.Integer, db.ForeignKey("collectibles.id"))
     )
 
-    # Creates a belongs_to †able that ties collectible and campaigns
-    belongs_to_table = db.Table(
-        "belongs_to", metadata,
-        db.Column("id",db.Integer, db.Identity(), primary_key = True),
-        db.Column("campaign_id", db.Integer, db.ForeignKey("collectible_campaigns.id")),
-        db.Column("collectible_id", db.Integer, db.ForeignKey("collectibles.id"))
-    )
-
     # Creates all tables stored within metadata
     metadata.create_all(engine)
     conn.close()
@@ -86,7 +82,7 @@ def database_setup():
     |------------------------------------| """
 
 # Function to insert collector into our db
-def insert_collector(email, username, real_name, phone, password, address):
+def insert_collector(email, username, password):
 
     # TODO: makes sure user with email does not already exist. Raise exception
 
@@ -100,33 +96,29 @@ def insert_collector(email, username, real_name, phone, password, address):
     insert_stmt = db.insert(collectors).values(
         {"email": email, 
          "username": username,
-         "real_name": real_name,
-         "phone": phone,
-         "password": password,
-         "address": address}
+         "password": password}
         )
     conn.execute(insert_stmt)
     conn.close()
 
-# Function to update user information
-# (idea is that you press "update info" and it will update all accordingly)
-# If you don't want to change certain details, just enter the old information
-def update_collector(id, new_email, new_username, new_name, new_phone, new_password, new_address):
-    
+# Function to update user information (have to specify the field to change)
+def update_collector(id, field, new_info):
+
+    # TODO: Have the function raise an error if the field is not valid
+
+    # possible_fields = ["email", "username", "real_name", "phone", "password", "address"]
+
+    # if field not in possible_fields:
+    #     return
+
     engine, conn, metadata = db_connect()
-    
+
     collectors = db.Table('collectors', metadata, autoload_with=engine)
 
     update_stmt = (db.update(collectors)
-                     .where(collectors.c.id == id)
-                     .values({
-                         'email': new_email,
-                         'username': new_username,
-                         'real_name': new_name,
-                         'phone': new_phone,
-                         'password': new_password,
-                         'address': new_address
-                     }))
+                   .where(collectors.c.id == id)
+                   .values({field : new_info}))
+    
     conn.execute(update_stmt)
     conn.close()
 
@@ -149,6 +141,7 @@ def return_collector(id):
 """ |------------------------------------|
     |     Functions for collectibles     |
     |------------------------------------| """
+
 # Function to add a collectible to db
 # * collectible_name: name of collectible we want to insert
 # * campaign_name: campaign the collectible belongs to
@@ -158,22 +151,62 @@ def insert_collectible(collectible_name, campaign_name):
 
     # Loads in the collectible and belongs_to table into our metadata
     collectibles = db.Table('collectibles', metadata, autoload_with=engine)
-    belongs_to = db.Table('belongs_to', metadata, autoload_with=engine)
 
     # Adds collectible to collectibles table
     collectible_insert_stmt = db.insert(collectibles).values(
-        {"name": collectible_name}
+        {"name": collectible_name,
+         "image": image_url_placeholder,
+         "campaign_id": find_campaign_id(campaign_name)}
     )
+    
     conn.execute(collectible_insert_stmt)
-
-    # Adds belong_to relationship for the collectible
-    belongsto_insert_stmt = db.insert(belongs_to).values({
-        'campaign_id': find_campaign_id(campaign_name),
-        'collectible_id': find_collectible_id(collectible_name)
-        })
-    conn.execute(belongsto_insert_stmt)
-
     conn.close()
+
+
+"""
+Function to return collectibles whose name matches the collectible_name
+
+Example Output:
+[
+    {
+        "campaign_name": "random campaign",
+        "collectible_name": "collectible 1",
+        "date_released": "Fri, 01 Jan 2021 00:00:00 GMT"
+    },
+    {
+        "campaign_name": "random campaign",
+        "collectible_name": "collectible 2",
+        "date_released": "Fri, 01 Jan 2021 00:00:00 GMT"
+    }
+]
+
+"""
+def find_collectible(collectible_name):
+
+    engine, conn, metadata = db_connect()
+
+    # Loads in the collectible and campaign tables into our metadata
+    collectibles = db.Table('collectibles', metadata, autoload_with=engine)
+    campaigns = db.Table('collectible_campaigns', metadata, autoload_with=engine)
+    coll = collectibles.alias('coll')
+    camp = campaigns.alias('camp')
+
+    joined_tbl = db.join(coll, camp, coll.c.campaign_id == camp.c.id)
+
+    search_stmt = db.select(
+        camp.c.name.label("campaign_name"), coll.c.name.label("collectible_name"), camp.c.start_date.label("date_released")
+        ).select_from(joined_tbl).where(coll.c.name == collectible_name)
+
+    execute = conn.execute(search_stmt)
+    conn.close()
+
+    result_list = []
+    results = execute.fetchall()
+
+    for row in results:
+        result_list.append(row._asdict())
+
+    return result_list
 
 """ |------------------------------------|
     |      Functions for wantlist        |
@@ -200,12 +233,11 @@ def insert_wantlist(collector_id, collectible_name):
     |------------------------------------| """
 
 # Function to insert new campaign
-# * start_date/end_date are string in format "DD/MM/YYYY"
+# * start_date/end_date are string in format "YYYY-MM-DD"
 def insert_campaign(name, description, start_date, end_date):
 
-    date_format = '%d/%m/%Y'
-    start_date_obj = datetime.strptime(start_date, date_format)
-    end_date_obj = datetime.strptime(end_date, date_format)
+    start_date_obj = date.fromisoformat(start_date)
+    end_date_obj = date.fromisoformat(end_date)
 
     engine, conn, metadata = db_connect()
 

@@ -40,9 +40,9 @@ def register():
     data = request.get_json()
     email = str(data["email"])
     password = str(data["password"])
-    name = str(data["name"])
+    username = str(data["name"])
 
-    return auth.register(email, password, name)
+    return auth.register(email, password, username)
 
 @APP.route('/login', methods=['POST'])
 def login():
@@ -55,6 +55,29 @@ def login():
 def logout():
     return auth.logout()
 
+@APP.route('/add')
+def add_stuff():
+    dbm.insert_campaign("random campaign", "this is a random description", "2021-01-01", "2023-01-01")
+    dbm.insert_collectible("random collectible", "random campaign")
+    dbm.insert_collectible("hello world!", "random campaign")
+    dbm.insert_collector("ff@gmail.com", "bobby", "pass")
+    dbm.insert_collectible("another collectible", "random campaign")
+    dbm.insert_collectible("hello its me collectible!", "random campaign")
+
+    return 'Added successfully!'
+
+@APP.route('/find')
+def find():
+    return jsonify(dbm.find_collectible("hello world!"))
+
+@APP.route('/find2')
+def find2():
+    return jsonify(dbm.find_collectible("random collectible"))
+
+@APP.route('/update')
+def update_coll():
+    dbm.update_collector(1, "username", "new_username")
+    return "update successful!"
 
 # @APP.after_request
 # def refresh_expiring_jwts(response):

@@ -22,7 +22,7 @@ def login(email, password):
     return response, 200
 
 
-def register(email, password, name):
+def register(email, password, username):
     '''
     Check if collector already in database via email.
         raises: InputError('Email address already registered')
@@ -30,7 +30,7 @@ def register(email, password, name):
     '''
 
     password = hash.hash_password(password)
-    dbm.insert_collector(email, name, name, '', password, '')
+    dbm.insert_collector(email, username, password)
 
     response = jsonify({'msg': 'Account successfully registered!.'})
     access_token = create_access_token(identity=email, fresh=True)
