@@ -77,7 +77,7 @@ function App() {
   return (
     <Fragment>
       <ThemeProvider theme={theme}>
-        <Helmet bodyAttributes={{ style: 'background-color : white' }} />
+        <Helmet bodyAttributes={{ style: 'background-color : #cccccc' }} />
         {/* <ErrModal errMsg={errMsg} open={errOpen} handleClose={handleErrClose}/> */}
         <Box sx={{ display: 'flex', flexDirection: 'column', rowGap: '10ch', alignItems: 'center', justifyContent: 'center' }}>
           { !loggedIn
