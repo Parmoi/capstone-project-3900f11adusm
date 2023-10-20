@@ -5,6 +5,7 @@ from flask_jwt_extended import (
     JWTManager,
     jwt_required,
     get_jwt_identity,
+    verify_jwt_in_request,
     create_access_token,
     set_access_cookies,
 )
@@ -15,7 +16,14 @@ from datetime import timedelta
 import helpers.config as config
 import helpers.exceptions as exceptions
 
-from main import db_manager as dbm
+from main.database import db_manager as dbm
+from main.database import (
+    db_collectors,
+    db_campaigns,
+    db_waintlist,
+    db_collectibles,
+    db_collections,
+)
 from main import auth
 from main.error import InputError, AccessError, OK
 from mock_data import mock_data_init
@@ -62,7 +70,7 @@ def init_mock_data():
 @APP.route("/get_collectors", methods=["GET"])
 def get_collectors():
     # return json.dumps(dbm.get_all_collectors()), OK
-    return jsonify(dbm.get_all_collectors()), OK
+    return db_collectors.get_all_collectors()
 
 
 """ |------------------------------------|
@@ -87,26 +95,11 @@ def register():
     email = request.json.get("email", None)
     username = request.json.get("username", None)
     password = request.json.get("password", None)
-    phone = request.json.get("phone", None)
-    address = request.json.get("address", None)
-
-    # TODO: Frontend can include first and last name fields in json if they want
-    # name = request.json.get('name', None)
-    first_name = request.json.get("first_name", None)
-    last_name = request.json.get("last_name", None)
-
-    # if name is not None:
-    #     first_name = name
-    #     last_name = ''
 
     return auth.register_collector(
         email,
         username,
         password,
-        first_name=first_name,
-        last_name=last_name,
-        phone=phone,
-        address=address,
     )
 
 
@@ -149,7 +142,39 @@ def refresh_token():
 @jwt_required(fresh=False)
 def profile():
     user_id = get_jwt_identity()
-    return jsonify(dbm.get_collector(user_id)), OK
+    return db_collectors.get_collector(user_id)
+
+
+@APP.route("/profile/update", methods=["POST"])
+@jwt_required(fresh=False)
+def profile_update():
+    user_id = get_jwt_identity()
+
+    email = request.json.get("email", None)
+    username = request.json.get("username", None)
+    password = request.json.get("password", None)
+    first_name = request.json.get("first_name", None)
+    last_name = request.json.get("last_name", None)
+    phone = request.json.get("phone", None)
+    address = request.json.get("address", None)
+
+    return db_collectors.update_collector(
+        id=user_id,
+        email=email,
+        username=username,
+        first_name=first_name,
+        last_name=last_name,
+        phone=phone,
+        password=password,
+        address=address,
+    )
+
+
+@APP.route("/profile/collection", methods=["GET"])
+@jwt_required(fresh=False)
+def get_collection():
+    user_id = get_jwt_identity()
+    return db_collections.get_collection(user_id)
 
 
 # @APP.route('/collection', methods=['GET'])
@@ -167,7 +192,7 @@ def profile():
 @jwt_required(fresh=False)
 def wantlist():
     user_id = get_jwt_identity()
-    return jsonify(dbm.get_wantlist(user_id)), OK
+    return jsonify(db_waintlist.get_wantlist(user_id)), OK
 
 
 # Example stubs for /dashboard and /collection
@@ -182,6 +207,63 @@ def wantlist():
 # def collection():
 #     user_id = get_jwt_identity()
 #     return jsonify(dbm.get_collection(user_id)), OK
+
+""" |------------------------------------|
+    |           Campaign Routes          |
+    |------------------------------------| """
+
+
+@APP.route("/campaign/register", methods=["POST"])
+# @jwt_required(fresh=False)
+def register_campaign():
+    # verify_jwt_in_request()
+
+    name = request.json.get("name", None)
+    description = request.json.get("desc", None)
+    start_date = request.json.get("start", None)
+    end_date = request.json.get("end", None)
+    collectible_fields = request.json.get("fields", None)
+
+    return db_campaigns.register_campaign(
+        name, description, start_date, end_date, collectible_fields
+    )
+
+
+@APP.route("/campaign/get_campaign", methods=["GET"])
+# @jwt_required(fresh=False)
+def get_campaign():
+    # verify_jwt_in_request()
+
+    name = request.json.get("name", None)
+    id = request.json.get("id", None)
+
+    return jsonify(db_campaigns.get_campaign(name=name, id=id)), OK
+
+
+""" |------------------------------------|
+    |         Collectible Routes         |
+    |------------------------------------| """
+
+
+@APP.route("/campaign/register_collectible", methods=["POST"])
+# @jwt_required(fresh=False)
+def register_collectible():
+    # verify_jwt_in_request()
+
+    campaign_id = request.json.get("campaign_id", None)
+    name = request.json.get("name", None)
+    description = request.json.get("description", None)
+    image = request.json.get("image", None)
+    collectible_fields = request.json.get("collectible_fields", None)
+
+    return (
+        jsonify(
+            db_collectibles.register_collectible(
+                campaign_id, name, description, image, collectible_fields
+            )
+        ),
+        OK,
+    )
 
 
 """ |------------------------------------|

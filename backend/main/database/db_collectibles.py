@@ -1,49 +1,82 @@
 import sqlalchemy as db
+from flask import jsonify
 import db_manager as dbm
 import db_campaigns
+from main.error import OK, InputError, AccessError
 
 """ |------------------------------------|
     |     Functions for collectibles     |
     |------------------------------------| """
 
-# Function to add a collectible to db
-# * collectible_name: name of collectible we want to insert
-# * campaign_name: campaign the collectible belongs to
-def insert_collectible(collectible_name, campaign_name):
+
+# TODO: Error checking
+def register_collectible(campaign_id, name, description, image, collectible_fields):
+    """register_collectible.
+
+    Register a collectible in a campaign.
+
+    Args:
+        campaign_id: id of campaign collectible belongs to
+        name: name of collectible
+        description: description of collectible
+        image: Image URL of collectible
+        collectible_fields: dictionary of optional fields
+    """
+
+    collectible_dict = {
+        "name": name,
+        "description": description,
+        "image": image,
+        "campaign_id": campaign_id,
+    } | collectible_fields
+
+    coll_table_name = db_campaigns.get_campaign_coll_table(campaign_id)
 
     engine, conn, metadata = dbm.db_connect()
+    collectibles = db.Table(coll_table_name, metadata, autoload_with=engine)
+    insert_stmt = db.insert(collectibles).values(collectible_dict)
 
-    # Loads in the collectible and belongs_to table into our metadata
-    collectibles = db.Table('collectibles', metadata, autoload_with=engine)
-
-    # Adds collectible to collectibles table
-    collectible_insert_stmt = db.insert(collectibles).values(
-        {"name": collectible_name,
-         "image": dbm.image_url_placeholder,
-         "campaign_id": db_campaigns.find_campaign_id(campaign_name)}
-    )
-    
-    conn.execute(collectible_insert_stmt)
+    conn.execute(insert_stmt)
     conn.close()
+
+    return (
+        jsonify(
+            {
+                "msg": "Collectible succesfully registered!",
+                "campaign_id": campaign_id,
+                "collectible_id": find_collectible_id(campaign_id, name),
+            }
+        ),
+        OK,
+    )
+
+
+""" |------------------------------------|
+    |  Helper functions for collectibles |
+    |------------------------------------| """
+
 
 # Function to convert collectible name to collectible id
 # Returns collection id as int
-def find_collectible_id(collectible_name):
-
+def find_collectible_id(campaign_id, collectible_name):
     engine, conn, metadata = dbm.db_connect()
 
+    collectible_table_name = db_campaigns.get_campaign_coll_table(campaign_id)
     # Loads in the campaign table into our metadata
-    collectibles = db.Table('collectibles', metadata, autoload_with=engine)
+    collectibles = db.Table(collectible_table_name, metadata, autoload_with=engine)
 
-    select_stmt = db.select(collectibles.c.id).where(collectibles.c.name == collectible_name)
+    select_stmt = db.select(collectibles.c.id).where(
+        collectibles.c.name == collectible_name
+    )
 
     execute = conn.execute(select_stmt)
-    collectibleId = execute.fetchone()._asdict().get("id")
+    collectible_id = execute.fetchone()._asdict().get("id")
     conn.close()
 
     # TODO: Value error if doesn't exist or return error code or something?
-    
-    return collectibleId
+
+    return collectible_id
+
 
 def search_collectibles(collectible_name):
     """
@@ -68,16 +101,22 @@ def search_collectibles(collectible_name):
     engine, conn, metadata = dbm.db_connect()
 
     # Loads in the collectible and campaign tables into our metadata
-    collectibles = db.Table('collectibles', metadata, autoload_with=engine)
-    campaigns = db.Table('collectible_campaigns', metadata, autoload_with=engine)
-    coll = collectibles.alias('coll')
-    camp = campaigns.alias('camp')
+    collectibles = db.Table("collectibles", metadata, autoload_with=engine)
+    campaigns = db.Table("campaigns", metadata, autoload_with=engine)
+    coll = collectibles.alias("coll")
+    camp = campaigns.alias("camp")
 
     joined_tbl = db.join(coll, camp, coll.c.campaign_id == camp.c.id)
 
-    search_stmt = db.select(
-        camp.c.name.label("campaign_name"), coll.c.name.label("collectible_name"), camp.c.start_date.label("date_released")
-        ).select_from(joined_tbl).where(coll.c.name == collectible_name)
+    search_stmt = (
+        db.select(
+            camp.c.name.label("campaign_name"),
+            coll.c.name.label("collectible_name"),
+            camp.c.start_date.label("date_released"),
+        )
+        .select_from(joined_tbl)
+        .where(coll.c.name == collectible_name)
+    )
 
     execute = conn.execute(search_stmt)
     conn.close()

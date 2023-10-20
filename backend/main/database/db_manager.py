@@ -33,7 +33,7 @@ def database_setup():
     collector_table = db.Table(
         "collectors", metadata, # Names cannot be uppercase
         db.Column("id", db.Integer, db.Identity(),primary_key = True),
-        db.Column("email", db.String),
+        db.Column("email", db.String, unique=True),
         db.Column("username", db.String, unique=True),
         db.Column("first_name", db.String),
         db.Column("last_name", db.String),
@@ -49,18 +49,19 @@ def database_setup():
         db.Column("id", db.Integer, db.Identity(), primary_key = True),
         db.Column("name", db.String),
         db.Column("image", db.String),
-        db.Column("campaign_id", db.Integer, db.ForeignKey("collectible_campaigns.id"))
+        db.Column("campaign_id", db.Integer, db.ForeignKey("campaigns.id"))
     )
 
     # Creates a collectible campaign table
     campaign_table = db.Table(
-        "collectible_campaigns", metadata,
+        "campaigns", metadata,
         db.Column("id", db.Integer, db.Identity(), primary_key = True),
-        db.Column("name", db.String),
+        db.Column("name", db.String, unique=True),
         db.Column("image", db.String),
         db.Column("description", db.String),
         db.Column("start_date", db.Date),
-        db.Column("end_date", db.Date)
+        db.Column("end_date", db.Date),
+        db.Column("collectibles_table", db.String),
     )
 
     # Creates a collections table
@@ -68,6 +69,7 @@ def database_setup():
         "collections", metadata,
         db.Column("id",db.Integer, db.Identity(), primary_key = True),
         db.Column("collector_id", db.Integer, db.ForeignKey("collectors.id")),
+        db.Column("campaign_id", db.Integer, db.ForeignKey("campaigns.id")),
         db.Column("collectible_id", db.Integer, db.ForeignKey("collectibles.id"))
     )
 
@@ -98,6 +100,5 @@ def db_connect():
     metadata = db.MetaData()
 
     return engine, conn, metadata
-
 
 

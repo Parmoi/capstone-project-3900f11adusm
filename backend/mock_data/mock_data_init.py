@@ -1,4 +1,4 @@
-from main import db_manager as dbm
+from main.database import db_manager as dbm
 from sqlalchemy import text
 
 def read_sql_file(filename):

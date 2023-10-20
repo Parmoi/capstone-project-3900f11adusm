@@ -1,4 +1,5 @@
 import sqlalchemy as db
+from flask import jsonify
 import db_manager as dbm
 import db_collectibles
 
@@ -8,6 +9,7 @@ import db_collectibles
 
 
 # Function to add collectible to wantlist
+# TODO: Not done
 def insert_wantlist(collector_id, collectible_name):
     engine, conn, metadata = dbm.db_connect()
 
@@ -17,7 +19,7 @@ def insert_wantlist(collector_id, collectible_name):
     want_insert_stmt = db.insert(wantlist).values(
         {
             "collector_id": collector_id,
-            "collectible_id": db_collectibles.find_collectible_id(collectible_name),
+            # "collectible_id": db_collectibles.find_collectible_id(collectible_name),
         }
     )
     conn.execute(want_insert_stmt)
