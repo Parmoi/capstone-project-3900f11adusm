@@ -63,24 +63,6 @@ def database_setup():
         db.Column("end_date", db.Date)
     )
 
-    # Creates a collectible table
-    collectible_table = db.Table(
-        "collectibles", metadata,
-        db.Column("id", db.Integer, db.Identity(), primary_key = True),
-        db.Column("name", db.String),
-        db.Column("description", db.String),
-        db.Column("type", db.String),
-        # db.Column("image", db.VARCHAR) # For image
-    )
-
-    # Creates a belongs_to †able that ties collectible and campaigns
-    belongs_to_table = db.Table(
-        "belongs_to", metadata,
-        db.Column("id",db.Integer, db.Identity(), primary_key = True),
-        db.Column("campaign_id", db.Integer, db.ForeignKey("collectible_campaigns.id")),
-        db.Column("collectible_id", db.Integer, db.ForeignKey("collectibles.id"))
-    )
-
     # Creates a collections table
     collections_table = db.Table(
         "collections", metadata,
