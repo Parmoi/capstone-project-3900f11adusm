@@ -14,6 +14,7 @@ WORKDIR /server
 
 ENV FLASK_APP=server.py
 ENV PYTHONPATH "${PYTHONPATH}:/server/main"
+ENV PYTHONPATH "${PYTHONPATH}:/server/main/database"
 ENV PYTHONPATH "${PYTHONPATH}:/server/helpers"
 
 # Create a non-privileged user that the app will run under.
