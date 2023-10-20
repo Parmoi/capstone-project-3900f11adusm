@@ -52,7 +52,7 @@ def register_campaign(name, description, start_date, end_date, collectible_field
         db.Column("description", db.String),
         db.Column("image", db.String),
         db.Column("campaign_id", db.Integer, db.ForeignKey("campaigns.id")),
-        * (db.Column(collectible_col) for collectible_col in collectible_fields),
+        *(db.Column(collectible_col, db.String) for collectible_col in collectible_fields),
     )
 
     metadata.create_all(engine)
@@ -64,7 +64,7 @@ def register_campaign(name, description, start_date, end_date, collectible_field
         jsonify(
             {
                 "msg": "Campaign successfully registered!",
-                "campaign_id": find_campaign_id(name),
+                "campaign_id": get_campaign_id(name),
             }
         ),
         OK,
@@ -92,6 +92,61 @@ def get_campaign(name=None, id=None):
     return jsonify(campaign), 200
 
 
+# TODO: Error checking, Docstring
+def get_all_campaigns():
+    engine, conn, metadata = dbm.db_connect()
+
+    campaigns = db.Table("campaigns", metadata, autoload_with=engine)
+    select_stmt = db.select(campaigns)
+    results = conn.execute(select_stmt)
+    conn.close()
+
+    all_campaign_rows = results.all()
+    campaigns = [row._asdict() for row in all_campaign_rows]
+
+    return jsonify({"campaigns": campaigns}), 200
+
+
+# TODO: Error checking, Docstring
+def get_campaign_collectibles(campaign_id):
+    coll_table_name = get_campaign_coll_table(campaign_id)
+
+    engine, conn, metadata = dbm.db_connect()
+    campaign_collectibles = db.Table(coll_table_name, metadata, autoload_with=engine)
+    select_stmt = db.select(campaign_collectibles)
+    results = conn.execute(select_stmt)
+    conn.close()
+
+    all_collectible_rows = results.all()
+    collectibles = [row._asdict() for row in all_collectible_rows]
+
+    return (
+        jsonify(
+            {
+                "campaign_id": campaign_id,
+                "campaign_name": get_campaign_name(campaign_id),
+                "collectibles": collectibles,
+            }
+        ),
+        200,
+    )
+
+def get_campaign_collectible_fields(campaign_id):
+    coll_table_name = get_campaign_coll_table(campaign_id)
+
+    engine, conn, metadata = dbm.db_connect()
+    campaign_collectibles = db.Table(coll_table_name, metadata, autoload_with=engine)
+    select_stmt = db.select(campaign_collectibles)
+    result = conn.execute(select_stmt)
+    conn.close()
+    
+    column_names = result.keys()
+    default_cols = ["id", "name", "description", "image", "campaign_id"]
+
+    return [column for column in column_names if column not in default_cols]
+
+
+
 """ |------------------------------------|
     |   Helper functions for campaigns   |
     |------------------------------------| """
@@ -99,21 +154,21 @@ def get_campaign(name=None, id=None):
 
 def get_campaign_coll_table(campaign_id):
     engine, conn, metadata = dbm.db_connect()
-
-    # Loads in the collectible and belongs_to table into our metadata
     campaigns = db.Table("campaigns", metadata, autoload_with=engine)
-
-    select_stmt = db.select(campaigns.c.collectible_table).where(
+    select_stmt = db.select(campaigns.c.collectibles_table).where(
         campaigns.c.id == campaign_id
     )
-
     execute = conn.execute(select_stmt)
-    collectible_table = execute.fetchone()._asdict().get("collectible_table")
+    conn.close()
+
+    collectibles_table = execute.fetchone()._asdict().get("collectibles_table")
+
+    return collectibles_table
 
 
 # Function to convert campaign name to campaign id
 # Returns campaign id as int
-def find_campaign_id(campaign_name):
+def get_campaign_id(campaign_name):
     engine, conn, metadata = dbm.db_connect()
 
     # Loads in the campaign table into our metadata
@@ -128,7 +183,7 @@ def find_campaign_id(campaign_name):
     return campaign_id
 
 
-def find_campaign_name(campaign_id):
+def get_campaign_name(campaign_id):
     engine, conn, metadata = dbm.db_connect()
 
     # Loads in the campaign table into our metadata

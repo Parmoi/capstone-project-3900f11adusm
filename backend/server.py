@@ -6,8 +6,6 @@ from flask_jwt_extended import (
     jwt_required,
     get_jwt_identity,
     verify_jwt_in_request,
-    create_access_token,
-    set_access_cookies,
 )
 
 from flask_cors import CORS
@@ -63,14 +61,17 @@ def db_init():
 
 @APP.route("/init_mock_data", methods=["GET"])
 def init_mock_data():
-    mock_data_init.execute_sql_file("./mock_data/collectors.sql")
+    mock_data_init.execute_sql_file("./mock_data/mock_collectors.sql")
+    db_campaigns.register_campaign(
+        "mock",
+        "Mock collectibles campaign!",
+        "2023-10-23",
+        "2023-10-23",
+        ["rarity", "condition", "color"],
+    )
+    mock_data_init.execute_sql_file("./mock_data/mock_collectibles.sql")
+
     return jsonify(msg="Mock data initialised!"), OK
-
-
-@APP.route("/get_collectors", methods=["GET"])
-def get_collectors():
-    # return json.dumps(dbm.get_all_collectors()), OK
-    return db_collectors.get_all_collectors()
 
 
 """ |------------------------------------|
@@ -170,43 +171,10 @@ def profile_update():
     )
 
 
-@APP.route("/profile/collection", methods=["GET"])
-@jwt_required(fresh=False)
-def get_collection():
-    user_id = get_jwt_identity()
-    return db_collections.get_collection(user_id)
+@APP.route("/get_collectors", methods=["GET"])
+def get_collectors():
+    return db_collectors.get_all_collectors()
 
-
-# @APP.route('/collection', methods=['GET'])
-# @jwt_required(fresh=False)
-# def profile():
-#     user_id = get_jwt_identity()
-#     return jsonify(dbm.get_collection(user_id)), OK
-
-
-# TODO: Implement the wantlist function. Not sure how to select a users wantlist
-#       Is the relational database set up so that each time a user is created, a wantlist
-#       is instantiated. Or wantlist can be searched for and its contents retruned by
-#       user id?
-@APP.route("/wantlist", methods=["GET"])
-@jwt_required(fresh=False)
-def wantlist():
-    user_id = get_jwt_identity()
-    return jsonify(db_waintlist.get_wantlist(user_id)), OK
-
-
-# Example stubs for /dashboard and /collection
-# @APP.route('/dashboard', methods=['GET'])
-# @jwt_required(fresh=False)
-# def dashboard():
-#     user_id = get_jwt_identity()
-#     return jsonify(dbm.get_dashboard(user_id)), OK
-
-# @APP.route('/collection', methods=['GET'])
-# @jwt_required(fresh=False)
-# def collection():
-#     user_id = get_jwt_identity()
-#     return jsonify(dbm.get_collection(user_id)), OK
 
 """ |------------------------------------|
     |           Campaign Routes          |
@@ -237,12 +205,15 @@ def get_campaign():
     name = request.json.get("name", None)
     id = request.json.get("id", None)
 
-    return jsonify(db_campaigns.get_campaign(name=name, id=id)), OK
+    return db_campaigns.get_campaign(name=name, id=id)
 
 
-""" |------------------------------------|
-    |         Collectible Routes         |
-    |------------------------------------| """
+@APP.route("/campaign/get_campaigns", methods=["GET"])
+# @jwt_required(fresh=False)
+def get_all_campaigns():
+    # verify_jwt_in_request()
+
+    return db_campaigns.get_all_campaigns()
 
 
 @APP.route("/campaign/register_collectible", methods=["POST"])
@@ -256,14 +227,70 @@ def register_collectible():
     image = request.json.get("image", None)
     collectible_fields = request.json.get("collectible_fields", None)
 
-    return (
-        jsonify(
-            db_collectibles.register_collectible(
-                campaign_id, name, description, image, collectible_fields
-            )
-        ),
-        OK,
+    return db_collectibles.register_collectible(
+        campaign_id, name, description, image, collectible_fields
     )
+
+
+@APP.route("/campaign/get_collectibles", methods=["GET"])
+# @jwt_required(fresh=False)
+def get_campaign_collectibles():
+    # verify_jwt_in_request()
+
+    campaign_id = request.json.get("campaign_id", None)
+
+    return db_campaigns.get_campaign_collectibles(campaign_id)
+
+
+@APP.route("/campaign/collectible_opt_fields", methods=["GET"])
+# @jwt_required(fresh=False)
+def get_campaign_opt_col_names():
+    """Returns the optional columns for campain collectibles"""
+    # verify_jwt_in_request()
+
+    campaign_id = request.json.get("campaign_id", None)
+
+    return db_campaigns.get_campaign_collectible_fields(campaign_id)
+
+
+""" |------------------------------------|
+    |         Collection Routes         |
+    |------------------------------------| """
+
+
+# @APP.route("/profile/collection", methods=["GET"])
+# @jwt_required(fresh=False)
+# def get_collection():
+#     user_id = get_jwt_identity()
+#     return db_collections.get_collection(user_id)
+
+
+""" |------------------------------------|
+    |           Wantlist Routes          |
+    |------------------------------------| """
+
+
+# TODO: Implement the wantlist function. Not sure how to select a users wantlist
+#       Is the relational database set up so that each time a user is created, a wantlist
+#       is instantiated. Or wantlist can be searched for and its contents retruned by
+#       user id?
+@APP.route("/wantlist", methods=["GET"])
+@jwt_required(fresh=False)
+def wantlist():
+    user_id = get_jwt_identity()
+    return jsonify(db_waintlist.get_wantlist(user_id)), OK
+
+
+""" |------------------------------------|
+    |           Dashboard Routes         |
+    |------------------------------------| """
+
+# Example stubs for /dashboard and /collection
+# @APP.route('/dashboard', methods=['GET'])
+# @jwt_required(fresh=False)
+# def dashboard():
+#     user_id = get_jwt_identity()
+#     return jsonify(dbm.get_dashboard(user_id)), OK
 
 
 """ |------------------------------------|

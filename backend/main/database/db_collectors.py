@@ -100,12 +100,10 @@ def get_all_collectors():
     collectors = db.Table("collectors", metadata, autoload_with=engine)
     select_stmt = db.select(collectors)
     result = conn.execute(select_stmt)
+    conn.close()
 
     all_collectors_rows = result.all()
     all_collectors = [row._asdict() for row in all_collectors_rows]
-    # all_collectors_dict = dict()
-    # for collector in all_collectors:
-    #     all_collectors_dict[collector["id"]] = collector
 
     return jsonify({"collectors": all_collectors}), OK
 
