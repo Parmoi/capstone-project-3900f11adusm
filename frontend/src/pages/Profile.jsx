@@ -51,7 +51,7 @@ const ProfileBox = () => {
   );
 };
 
-const SocialMediaDisplay = () => {
+const SocialMediaDisplay = ({displaySocials}) => {
   return (
     <List sx={style}>
       <ListItem secondaryAction={ <ListItemText primary="@Bob"/> }>
@@ -90,12 +90,12 @@ const SocialMediaDisplay = () => {
         </Button>
       </ListItem>
       <Divider variant="middle"/>
-        <Button variant="contained" sx={{marginLeft: "16px", marginTop: "16px", marginBottom: "8px"}}>Edit</Button>
+      <Button onClick={() => { displaySocials(true); }} variant="contained" sx={{marginLeft: "16px", marginTop: "16px", marginBottom: "8px"}}>Edit</Button>
     </List>
   );
 }
 
-const SocialMediaEdit = () => {
+const SocialMediaEdit = ({displaySocials}) => {
   return (
     <List sx={style}>
       <ListItem secondaryAction={ <TextField fullWidth id="Address" label="Address" variant="outlined" size='small' sx={{width: 200}}/> }>
@@ -134,14 +134,12 @@ const SocialMediaEdit = () => {
         </Button>
       </ListItem>
       <Divider variant="middle"/>
-        <Button variant="contained" sx={{marginLeft: "16px", marginTop: "16px", marginBottom: "8px"}}>Edit</Button>
+        <Button onClick={() => { displaySocials(false); }} variant="contained" sx={{marginLeft: "16px", marginTop: "16px", marginBottom: "8px"}}>Edit</Button>
     </List>
   );
 }
 
-const ProfileDetailsDisplay = ({ editDetails }) => {
-  // editDetails(true);
-
+const ProfileDetailsDisplay = ({displayDetails}) => {
   return (
     <List sx={style}>
       <ListItem secondaryAction={ <ListItemText primary="Bob"/> }>
@@ -164,12 +162,12 @@ const ProfileDetailsDisplay = ({ editDetails }) => {
         <ListItemText primary="Address"/>
       </ListItem>
       <Divider variant="middle"/>
-      <Button variant="contained" sx={{margin: "16px"}}>Edit</Button>
+      <Button onClick={() => { displayDetails(true) }} variant="contained" sx={{margin: "16px"}}>Edit</Button>
     </List>
   );
 }
 
-const ProfileDetailsEdit = () => {
+const ProfileDetailsEdit = ({displayDetails}) => {
   return (
     <List sx={style}>
       <ListItem secondaryAction={ <TextField fullWidth id="Username" label="Username" variant="outlined" size='small' sx={{width: 500}}/> }>
@@ -192,7 +190,7 @@ const ProfileDetailsEdit = () => {
         <ListItemText primary="Address"/>
       </ListItem>
       <Divider variant="middle"/>
-      <Button variant="contained" sx={{marginLeft: "16px", marginTop: "16px", marginBottom: "8px"}}>Save</Button>
+      <Button onClick={() => { displayDetails(false) }} variant="contained" sx={{marginLeft: "16px", marginTop: "16px", marginBottom: "8px"}}>Save</Button>
     </List>
   );
 }
@@ -200,8 +198,8 @@ const ProfileDetailsEdit = () => {
 const theme = createTheme();
 
 function Profile() {
-  const [mediaDisplay, mediaEdit] = useState(false);
-  const [detailsDisplay, detailsEdit] = useState(false);
+  const [editDetails, displayDetails] = useState(false);
+  const [editSocials, displaySocials] = useState(false);
 
   return (
     <ThemeProvider theme={theme}>
@@ -210,17 +208,15 @@ function Profile() {
         <Grid container spacing={2}>
           <Grid item xs={4}>
             <ProfileBox/>
-            { !mediaDisplay 
-            ? <SocialMediaDisplay/>
-            : <SocialMediaEdit/> 
-            
+            { !editSocials 
+            ? <SocialMediaDisplay displaySocials={displaySocials} />
+            : <SocialMediaEdit displaySocials={displaySocials} /> 
             }
           </Grid>
           <Grid item xs={8}>
-            { !detailsDisplay 
-            ? <ProfileDetailsDisplay/>
-            : <ProfileDetailsEdit/>
-            
+            { !editDetails 
+            ? <ProfileDetailsDisplay displayDetails={displayDetails}/> 
+            : <ProfileDetailsEdit displayDetails={displayDetails}/>             
             }
             <CollectionCompletion/>
           </Grid>
