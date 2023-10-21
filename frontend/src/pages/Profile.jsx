@@ -1,28 +1,43 @@
 import * as React from 'react';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import TextField from '@mui/material/TextField';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
 import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
+import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgress';
 import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import Paper from '@mui/material/Paper';
-import Link from '@mui/material/Link';
-import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
 
-const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
-  ...theme.typography.body2,
-  padding: theme.spacing(1),
-  textAlign: 'center',
-  color: theme.palette.text.secondary,
+import TwitterIcon from '@mui/icons-material/Twitter';
+import InstagramIcon from '@mui/icons-material/Instagram';
+import FacebookIcon from '@mui/icons-material/Facebook';
+import WhatsAppIcon from '@mui/icons-material/WhatsApp';
+
+import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
+import { Divider } from '@mui/material';
+
+const style = {
+  alignItems: 'center', 
+  marginTop: "20px", 
+  backgroundColor: "White",
+  borderRadius: '4px'
+};
+
+const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
+  height: 10,
+  borderRadius: 5,
+  [`&.${linearProgressClasses.colorPrimary}`]: {
+    backgroundColor: theme.palette.grey[theme.palette.mode === 'light' ? 200 : 800],
+  },
+  [`& .${linearProgressClasses.bar}`]: {
+    borderRadius: 5,
+    backgroundColor: theme.palette.mode === 'light' ? '#1a90ff' : '#308fe8',
+  },
 }));
 
 const theme = createTheme();
@@ -30,107 +45,117 @@ const theme = createTheme();
 function Profile() {
   return (
     <ThemeProvider theme={theme}>
-      <Container component="main" sx={{ py: 12, backgroundColor: 'blue' }} maxWidth="xl">
+      <Container component="main" sx={{ py: 6, }} maxWidth="lg">
         <CssBaseline />
-        <Box sx={{
-            marginTop: 8,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            backgroundColor: 'Black'
-          }}
-        >
           <Grid container spacing={2}>
             <Grid item xs={4}>
-              <Box>
-                <Item>Avatar and Icon</Item>
-              </Box>
+              <Stack direction="column" spacing={2} sx={style} >
+                <Box component="span">
+                  <Avatar 
+                    variant="outlined"
+                    sx={{ width: 150, height: 150, marginTop: "16px"}}
+                  />
+                </Box>
+                <Typography variant="h5">Bob</Typography>
+                <Typography variant="p1">Collector</Typography>
+                <Box component="span">
+                  <Button variant="contained" sx={{marginLeft: "8px", marginBottom: "16px"}}>Change Icon</Button>
+                </Box>
+              </Stack>
+              <List sx={style}>
+                <ListItem secondaryAction={ <ListItemText primary="@Bob"/> }>
+                  <TwitterIcon label="Twitter"/>
+                  <ListItemText primary="Twitter" sx={{marginLeft: "8px"}}/>
+                </ListItem>
+                <Divider variant="middle"/>
+                <ListItem secondaryAction={ <ListItemText primary="Bob"/> }>
+                  <FacebookIcon/>
+                  <ListItemText primary="Facebook" sx={{marginLeft: "8px"}}/>
+                </ListItem>
+                <Divider variant="middle"/>
+                <ListItem secondaryAction={ <ListItemText primary="Bob"/> }>
+                  <InstagramIcon/>
+                  <ListItemText primary="Instagram" sx={{marginLeft: "8px"}}/>
+                </ListItem>
+                <Divider variant="middle"/>
+                <ListItem secondaryAction={ <ListItemText primary="Bob"/> }>
+                  <WhatsAppIcon/>
+                  <ListItemText primary="WhatsApp" sx={{marginLeft: "8px"}}/>
+                </ListItem>
+                <Divider variant="middle"/>
+                  <Button variant="contained" sx={{margin: "16px"}}>Edit</Button>
+              </List>
             </Grid>
             <Grid item xs={8}>
-              <Box>
-                <Item>Addresses</Item>
-              </Box>
-            </Grid>
-            <Grid item xs={4}>
-              <Box>
-                <Item>Social Media</Item>
-              </Box>
-            </Grid>
-            <Grid item xs={8}>
-              <Box>
-                <Item>Progress Bar</Item>
+              {/* <Grid md={12} sx={style}>
+                <div>
+                  <List sx={style}>
+                      <ListItem secondaryAction={ <ListItemText primary="Bob"/> }>
+                        <ListItemText primary="Username"/>
+                      </ListItem>
+                      <Divider variant="middle"/>
+                      <ListItem secondaryAction={ <ListItemText primary="Bob"/> }>
+                        <ListItemText primary="Full Name"/>
+                      </ListItem>
+                      <Divider variant="middle"/>
+                      <ListItem secondaryAction={ <ListItemText primary="bob@email.com"/> }>
+                        <ListItemText primary="Email"/>
+                      </ListItem>
+                      <Divider variant="middle"/>
+                      <ListItem secondaryAction={ <ListItemText primary="Unknown"/> }>
+                        <ListItemText primary="Phone Number"/>
+                      </ListItem>
+                      <Divider variant="middle"/>
+                      <ListItem secondaryAction={ <ListItemText primary="Unknown"/> }>
+                        <ListItemText primary="Address"/>
+                      </ListItem>
+                      <Divider variant="middle"/>
+                      <Button variant="contained" sx={{margin: "16px"}}>Edit</Button>
+                  </List>
+                </div>
+              </Grid> */}
+
+              <Grid md={12} sx={style}>
+                <div>
+                  <List sx={style}>
+                      <ListItem secondaryAction={ <TextField fullWidth id="Username" label="Username" variant="outlined" size='small' sx={{width: 500}}/> }>
+                        <ListItemText primary="Username"/>
+                      </ListItem>
+                      <Divider variant="middle"/>
+                      <ListItem secondaryAction={ <TextField fullWidth id="Full Name" label="Full Name" variant="outlined" size='small' sx={{width: 500}}/> }>
+                        <ListItemText primary="Full Name"/>
+                      </ListItem>
+                      <Divider variant="middle"/>
+                      <ListItem secondaryAction={ <TextField fullWidth id="Email" label="Email" variant="outlined" size='small' sx={{width: 500}}/> }>
+                        <ListItemText primary="Email"/>
+                      </ListItem>
+                      <Divider variant="middle"/>
+                      <ListItem secondaryAction={ <TextField fullWidth id="Phone Number" label="Phone Number" variant="outlined" size='small' sx={{width: 500}}/> }>
+                        <ListItemText primary="Phone Number"/>
+                      </ListItem>
+                      <Divider variant="middle"/>
+                      <ListItem secondaryAction={ <TextField fullWidth id="Address" label="Address" variant="outlined" size='small' sx={{width: 500}}/> }>
+                        <ListItemText primary="Address"/>
+                      </ListItem>
+                      <Divider variant="middle"/>
+                      <Button variant="contained" sx={{margin: "16px"}}>Save</Button>
+                  </List>
+                </div>
+              </Grid>
+
+
+              <Box sx={style} p="8px">
+                <Typography variant="h5" sx={{margin: "8px"}}>Collection Completion</Typography>
+                <List sx={{alignItems: "center"}} p={8}>
+                  <Typography sx={{margin: "8px"}}>Campaign Name</Typography>
+                  <BorderLinearProgress variant="determinate" value={50} sx={{margin: "8px"}}/>
+                  <Divider sx={{margin: "8px"}}/>
+                  <Typography sx={{margin: "8px"}}>Campaign Name</Typography>
+                  <BorderLinearProgress variant="determinate" value={50} sx={{margin: "8px"}}/>
+                </List> 
               </Box>
             </Grid>
           </Grid>
-        </Box>
-        {/* <Grid container sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            backgroundColor: 'red'
-          }} 
-        > */}
-        {/* <Grid item xs={8}>
-          <Item>xs=8</Item>
-        </Grid>
-        <Grid item xs={4}>
-          <Item>xs=4</Item>
-        </Grid> */}
-          {/* <Box sx={{ my: 3, mx: 2, backgroundColor: 'purple' }}>
-            <Grid container alignItems="center" justifyContent="center" sx={{backgroundColor: 'white'}}>
-              <Grid item xs={2}>
-                <Stack direction="column" spacing={3} >
-                  <Avatar 
-                    sx={{ width: "300px", height: "300px", margin: "auto" }}
-                  />
-                  <Button variant="contained">Change Icon</Button>
-                </Stack>
-              </Grid>
-              <Grid item xs={2}></Grid>
-              <Grid item xs={3}>
-                <Stack direction="column" spacing={3}>
-                  <Typography gutterBottom variant="h6" component="div">
-                    Username
-                  </Typography>
-                  <TextField label="Username" />
-                  <Typography gutterBottom variant="h6" component="div">
-                    Given Name
-                  </Typography>
-                  <TextField label="John Smith" />
-                </Stack>
-              </Grid>
-            </Grid>
-          </Box> */}
-
-          {/* <Grid item xs={12} sm={6} md={4} sx={{ py: 8, backgroundColor: 'purple' }}>
-            <Box
-              sx={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column', backgroundColor: 'white' }}
-            >
-              <CardMedia
-                component="div"
-                sx={{
-                  // 16:9
-                  pt: '56.25%',
-                }}
-                image="https://source.unsplash.com/random?wallpapers"
-              />
-              <CardContent sx={{ flexGrow: 1 }}>
-                <Typography gutterBottom variant="h5" component="h2">
-                  Heading
-                </Typography>
-                <Typography>
-                  This is a media card. You can use this section to describe the content.
-                </Typography>
-              </CardContent>
-              <CardActions>
-                <Button size="small">View</Button>
-                <Button size="small">Edit</Button>
-              </CardActions>
-            </Box>
-          </Grid> */}
-          
-          
-        {/* </Grid> */}
       </Container>
     </ThemeProvider>
   );
