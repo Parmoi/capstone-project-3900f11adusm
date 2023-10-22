@@ -30,6 +30,7 @@ export async function apiCall(onSuccess, options, ...optional) {
     headers: {
       'Content-type': 'application/json',
     },
+    credentials: 'include',
     body: options.body
   }
 

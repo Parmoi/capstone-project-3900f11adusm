@@ -137,8 +137,8 @@ const ProfileDetailsDisplay = ({displayDetails, style}) => {
       route: '/profile',
     };
 
-    apiCall(() => { }, options)
-      .then(data => { setData(data) })
+    apiCall((d) => { setData(d); }, options)
+      .then(data => { setData(data); })
   }
 
   useEffect(() => {
@@ -153,19 +153,19 @@ const ProfileDetailsDisplay = ({displayDetails, style}) => {
         <ListItemText primary="Username"/>
       </ListItem>
       <Divider variant="middle"/>
-      <ListItem secondaryAction={ <ListItemText primary={data['first_name']}/> }>
+      <ListItem secondaryAction={ <ListItemText primary={"data['first_name']"}/> }>
         <ListItemText primary="Full Name"/>
       </ListItem>
       <Divider variant="middle"/>
-      <ListItem secondaryAction={ <ListItemText primary={data['email']}/> }>
+      <ListItem secondaryAction={ <ListItemText primary={"data['email']"}/> }>
         <ListItemText primary="Email"/>
       </ListItem>
       <Divider variant="middle"/>
-      <ListItem secondaryAction={ <ListItemText primary={data['phone']}/> }>
+      <ListItem secondaryAction={ <ListItemText primary={"data['phone']"}/> }>
         <ListItemText primary="Phone Number"/>
       </ListItem>
       <Divider variant="middle"/>
-      <ListItem secondaryAction={ <ListItemText primary={data['address']}/> }>
+      <ListItem secondaryAction={ <ListItemText primary={"data['address']"}/> }>
         <ListItemText primary="Address"/>
       </ListItem>
       <Divider variant="middle"/>
