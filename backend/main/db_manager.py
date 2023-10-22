@@ -265,12 +265,14 @@ def find_collectible(collectible_name):
         {
             "campaign_name": "random campaign",
             "collectible_name": "collectible 1",
-            "date_released": "Fri, 01 Jan 2021 00:00:00 GMT"
+            "date_released": "Fri, 01 Jan 2021 00:00:00 GMT",
+            "image":"https://ilarge.lisimg.com/image/8825948/980full-homer-simpson.jpg"
         },
         {
             "campaign_name": "random campaign",
             "collectible_name": "collectible 2",
-            "date_released": "Fri, 01 Jan 2021 00:00:00 GMT"
+            "date_released": "Fri, 01 Jan 2021 00:00:00 GMT",
+            "image":"https://ilarge.lisimg.com/image/8825948/980full-homer-simpson.jpg"
         }
     ]
 
@@ -286,7 +288,7 @@ def find_collectible(collectible_name):
     joined_tbl = db.join(coll, camp, coll.c.campaign_id == camp.c.id)
 
     search_stmt = db.select(
-        camp.c.name.label("campaign_name"), coll.c.name.label("collectible_name"), camp.c.start_date.label("date_released")
+        camp.c.name.label("campaign_name"), coll.c.name.label("collectible_name"), camp.c.start_date.label("date_released"), coll.c.image.label("image")
         ).select_from(joined_tbl).where(coll.c.name == collectible_name)
 
     execute = conn.execute(search_stmt)
