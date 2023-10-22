@@ -31,7 +31,7 @@ APP.config.from_object(config.DevelopmentConfig)
 APP.config["TRAP_HTTP_EXCEPTIONS"] = True
 APP.register_error_handler(Exception, exceptions.defaultHandler)
 
-CORS(APP)
+CORS(APP, supports_credentials=True)
 
 # JWT App Settings
 JWTManager(APP)
