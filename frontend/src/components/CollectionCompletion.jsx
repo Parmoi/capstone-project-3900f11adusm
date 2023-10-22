@@ -27,9 +27,9 @@ LinearProgressWithLabel.propTypes = {
 };
 
 
-const CollectionCompletion = () => {
+const CollectionCompletion = ({style}) => {
   return (
-    <Box sx={{alignItems: 'center', marginTop: "20px", backgroundColor: "White", borderRadius: '4px'}} p="8px">
+    <Box sx={style} p="8px">
       <Typography variant="h5" sx={{margin: "8px"}}>Collection Completion</Typography>
       <List sx={{alignItems: "center"}} p={8}>
         <Typography sx={{margin: "8px"}}>Campaign Name</Typography>
