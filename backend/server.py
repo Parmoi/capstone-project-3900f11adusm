@@ -272,7 +272,7 @@ def get_campaign_opt_col_names():
     |------------------------------------| """
 
 
-@APP.route("/collection", methods=["POST"])
+@APP.route("/collection/add", methods=["POST"])
 @jwt_required(fresh=False)
 def insert_collectible():
     user_id = get_jwt_identity()
