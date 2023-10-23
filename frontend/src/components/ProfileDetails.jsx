@@ -190,54 +190,50 @@ const ProfileDetailsEdit = ({displayDetails, style}) => {
       method: 'POST',
       route: '/profile/update',
       body: JSON.stringify({
-        // email: data.get('email'),
+        email: data.get('email'),
         username: data.get('username'),
         // first_name: data.get('first_name'),
         // last_name: data.get('last_name'),
-        // phone: data.get('phone'),
-        // address: data.get('address'),
+        phone: data.get('phone'),
+        address: data.get('address'),
       })
     };
 
     apiCall(() => {
       displayDetails(false);
-    }, options)
-      .then((res) => {
-        if (res) {
-
-        }
-      });
+    }, options);
+      console.log(options.body);
   }
 
 
   return (
     <List sx={style}>
-      <ListItem secondaryAction={ <TextField fullWidth id="username" label="Username" name="username" autoComplete="username" size='small' autoFocus sx={{width: 500}}/> }>
-        <ListItemText primary="Username"/>
-      </ListItem>
-      <Divider variant="middle"/>
-      <ListItem secondaryAction={ <TextField fullWidth id="first_name" label="First Name" variant="outlined" size='small' sx={{width: 500}}/> }>
-        <ListItemText primary="First Name"/>
-      </ListItem>
-      <Divider variant="middle"/>
-      <ListItem secondaryAction={ <TextField fullWidth id="last_name" label="Last Name" variant="outlined" size='small' sx={{width: 500}}/> }>
-        <ListItemText primary="Last Name"/>
-      </ListItem>
-      <Divider variant="middle"/>
-      <ListItem secondaryAction={ <TextField fullWidth id="email" label="email" variant="outlined" size='small' sx={{width: 500}}/> }>
-        <ListItemText primary="Email"/>
-      </ListItem>
-      <Divider variant="middle"/>
-      <ListItem secondaryAction={ <TextField fullWidth id="phone" label="phone" variant="outlined" size='small' sx={{width: 500}}/> }>
-        <ListItemText primary="Phone Number"/>
-      </ListItem>
-      <Divider variant="middle"/>
-      <ListItem secondaryAction={ <TextField fullWidth id="address" label="address" variant="outlined" size='small' sx={{width: 500}}/> }>
-        <ListItemText primary="Address"/>
-      </ListItem>
-      <Divider variant="middle"/>
       <Box component="form" onSubmit={edit} noValidate sx={{ mt: 1 }}>
-      <Button type="submit" variant="contained" sx={{marginLeft: "16px", marginTop: "16px", marginBottom: "8px"}}>Save</Button>
+        <ListItem secondaryAction={ <TextField fullWidth id="username" label="Username" name="username" autoComplete="username" size='small' autoFocus sx={{width: 500}}/> }>
+          <ListItemText primary="Username"/>
+        </ListItem>
+        <Divider variant="middle"/>
+        <ListItem secondaryAction={ <TextField fullWidth id="first_name" label="First Name" name="first_name" autoComplete="first_name" size='small' sx={{width: 500}}/> }>
+          <ListItemText primary="First Name"/>
+        </ListItem>
+        <Divider variant="middle"/>
+        <ListItem secondaryAction={ <TextField fullWidth id="last_name" label="Last Name" name="last_name" autoComplete="last_name" size='small' sx={{width: 500}}/> }>
+          <ListItemText primary="Last Name"/>
+        </ListItem>
+        <Divider variant="middle"/>
+        <ListItem secondaryAction={ <TextField fullWidth id="email" label="Email" name="email" autoComplete="email" size='small' sx={{width: 500}}/> }>
+          <ListItemText primary="Email"/>
+        </ListItem>
+        <Divider variant="middle"/>
+        <ListItem secondaryAction={ <TextField fullWidth id="phone" label="Phone" name="phone" autoComplete="phone" size='small' sx={{width: 500}}/> }>
+          <ListItemText primary="Phone Number"/>
+        </ListItem>
+        <Divider variant="middle"/>
+        <ListItem secondaryAction={ <TextField fullWidth id="address" label="Address" name="address" autoComplete="username" size='small' sx={{width: 500}}/> }>
+          <ListItemText primary="Address"/>
+        </ListItem>
+        <Divider variant="middle"/>
+        <Button type="submit" variant="contained" sx={{marginLeft: "16px", marginTop: "16px", marginBottom: "8px"}}>Save</Button>
       </Box>
     </List>
   );
