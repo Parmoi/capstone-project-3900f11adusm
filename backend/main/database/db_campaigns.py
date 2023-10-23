@@ -145,6 +145,67 @@ def get_campaign_collectible_fields(campaign_id):
 
     return [column for column in column_names if column not in default_cols]
 
+def get_campaigns_in_period(time_period):
+    """
+    Function to return campaigns depending on the time_period entered.
+
+    Args:
+    - time_period: specify what time period we want the campaigns from (past/current/future)
+    
+    Expected Output:
+    {"campaigns":
+    [
+        {
+            "collectibles_table":"mock collectibles",
+            "description":"random desc",
+            "end_date":"Wed, 01 Jan 2025 00:00:00 GMT",
+            "id":3,
+            "image":"https://ilarge.lisimg.com/image/8825948/980full-homer-simpson.jpg",
+            "name":"mock",
+            "start_date":"Fri, 01 Jan 1999 00:00:00 GMT"
+        },
+        {
+            "collectibles_table":"campaign 4_collectibles",
+            "description":"random desc",
+            "end_date":"Tue, 01 Jan 2030 00:00:00 GMT",
+            "id":4,
+            "image":"https://ilarge.lisimg.com/image/8825948/980full-homer-simpson.jpg",
+            "name":"campaign 4",
+            "start_date":"Fri, 01 Jan 1999 00:00:00 GMT"
+        }
+    ]}
+    """
+
+    # Error checking for valid time_period input
+    valid_periods = ['past', 'current', 'future']
+
+    if time_period not in valid_periods:
+        return jsonify({"msg": "Invalid time_period entered."}), InputError
+
+    engine, conn, metadata = dbm.db_connect()
+
+    camp = db.Table("campaigns", metadata, autoload_with=engine)
+
+    cur_date = date.today()
+    search_stmt = db.select(camp)
+
+    if time_period == 'past':
+        search_stmt = db.select(camp).where(camp.c.end_date <= cur_date)
+    elif time_period == 'current':
+        search_stmt = db.select(camp).where((camp.c.start_date <= cur_date) & (camp.c.end_date > cur_date))
+    else:
+        search_stmt = db.select(camp).where(camp.c.start_date > cur_date)
+
+    execute = conn.execute(search_stmt)
+    conn.close()
+
+    result_list = []
+    results = execute.fetchall()
+
+    for row in results:
+        result_list.append(row._asdict())
+
+    return jsonify({"campaigns": result_list}), OK
 
 
 """ |------------------------------------|
