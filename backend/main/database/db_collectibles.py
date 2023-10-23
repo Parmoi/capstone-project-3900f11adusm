@@ -87,11 +87,13 @@ def search_collectibles(collectible_name):
         {
             "campaign_name": "random campaign",
             "collectible_name": "collectible 1",
+            "collectible_image": "https://ilarge.lisimg.com/image/8825948/980full-homer-simpson.jpg",
             "date_released": "Fri, 01 Jan 2021 00:00:00 GMT"
         },
         {
             "campaign_name": "random campaign",
             "collectible_name": "collectible 2",
+            "collectible_image": "https://ilarge.lisimg.com/image/8825948/980full-homer-simpson.jpg",
             "date_released": "Fri, 01 Jan 2021 00:00:00 GMT"
         }
     ]
@@ -113,6 +115,7 @@ def search_collectibles(collectible_name):
             camp.c.name.label("campaign_name"),
             coll.c.name.label("collectible_name"),
             camp.c.start_date.label("date_released"),
+            coll.c.image.label("collectible_image")
         )
         .select_from(joined_tbl)
         .where(coll.c.name == collectible_name)
