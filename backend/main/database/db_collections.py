@@ -21,9 +21,32 @@ def insert_collectible(user_id, campaign_id, collectible_id):
         campaign_id: id of campaign which collectible belongs to
         collectible_id: id of collectible in campaign
     """
+
+    campaign_coll_table = db_campaigns.get_campaign_coll_table(campaign_id)
+    if campaign_coll_table is None:
+        return (
+            jsonify(
+                {
+                    "msg": "Collectible campaign {} not valid id!".format(campaign_id),
+                }
+            ),
+            InputError,
+        )
+
+    if db_collectibles.find_collectible_id(campaign_id, collectible_id) is None:
+        return (
+            jsonify(
+                {
+                    "msg": "Colletible {} in campain {} does not exist!".format(
+                        collectible_id, campaign_id
+                    ),
+                }
+            ),
+            InputError,
+        )
+
     engine, conn, metadata = dbm.db_connect()
     collections = db.Table("collections", metadata, autoload_with=engine)
-
     insert_stmt = db.insert(collections).values(
         {
             "collector_id": user_id,
@@ -31,17 +54,31 @@ def insert_collectible(user_id, campaign_id, collectible_id):
             "collectible_id": collectible_id,
         }
     )
-    conn.execute(insert_stmt)
+    result = conn.execute(insert_stmt)
     conn.close()
 
-    return (
-        jsonify(
-            {
-                "msg": "Collectible successfully added to collection!",
-            }
-        ),
-        OK,
-    )
+    if result is None:
+        return (
+            jsonify(
+                {
+                    "msg": "Collectible {} unable to be added to collection!".format(
+                        collectible_id
+                    ),
+                }
+            ),
+            InputError,
+        )
+    else:
+        return (
+            jsonify(
+                {
+                    "msg": "Collectible {} successfully added to collection!".format(
+                        collectible_id
+                    ),
+                }
+            ),
+            OK,
+        )
 
 
 # TODO: Error checking for invalid user id
