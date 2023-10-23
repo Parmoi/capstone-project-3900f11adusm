@@ -272,11 +272,14 @@ def get_campaign_opt_col_names():
     |------------------------------------| """
 
 
-# @APP.route("/profile/collection", methods=["GET"])
-# @jwt_required(fresh=False)
-# def get_collection():
-#     user_id = get_jwt_identity()
-#     return db_collections.get_collection(user_id)
+@APP.route("/collection/add", methods=["POST"])
+@jwt_required(fresh=False)
+def insert_collectible():
+    user_id = get_jwt_identity()
+    campaign_id = request.json.get("campaign_id", None)
+    collectible_id = request.json.get("collectible_id", None)
+
+    return db_collections.insert_collectible(user_id, campaign_id, collectible_id)
 
 
 """ |------------------------------------|
