@@ -131,15 +131,17 @@ const ProfileDetailsDisplay = ({displayDetails, style}) => {
 
   const [data, setData] = useState([]);
 
-  const fetchInfo = () => {
-    const options = {
+  const fetchInfo = () => { 
+    return fetch('http://localhost:5000/profile', {
       method: 'GET',
-      route: '/profile',
-    };
-
-    apiCall((d) => { setData(d); }, options)
-      .then(data => { setData(data); })
-  }
+      headers: {
+        'Content-type': 'application/json',
+      },
+      credentials: 'include'
+    }) 
+      .then((res) => res.json()) 
+      .then((d) => setData(d)) 
+    }
 
   useEffect(() => {
     fetchInfo();
@@ -149,23 +151,27 @@ const ProfileDetailsDisplay = ({displayDetails, style}) => {
 
   return (
     <List sx={style}>
-      <ListItem secondaryAction={ <ListItemText primary={JSON.stringify(data, null, 2) }/> }>
+      <ListItem secondaryAction={ <ListItemText primary={data.username ? data.username : 'Unknown'}/> }>
         <ListItemText primary="Username"/>
       </ListItem>
       <Divider variant="middle"/>
-      <ListItem secondaryAction={ <ListItemText primary={"data['first_name']"}/> }>
-        <ListItemText primary="Full Name"/>
+      <ListItem secondaryAction={ <ListItemText primary={data.real_name ? data.real_name : 'Unknown'}/> }>
+        <ListItemText primary="First Name"/>
       </ListItem>
       <Divider variant="middle"/>
-      <ListItem secondaryAction={ <ListItemText primary={"data['email']"}/> }>
+      <ListItem secondaryAction={ <ListItemText primary={data.real_name ? data.real_name : 'Unknown'}/> }>
+        <ListItemText primary="Last Name"/>
+      </ListItem>
+      <Divider variant="middle"/>
+      <ListItem secondaryAction={ <ListItemText primary={data.email ? data.email : 'Unknown'}/> }>
         <ListItemText primary="Email"/>
       </ListItem>
       <Divider variant="middle"/>
-      <ListItem secondaryAction={ <ListItemText primary={"data['phone']"}/> }>
+      <ListItem secondaryAction={ <ListItemText primary={data.phone ? data.phone : 'Unknown'}/> }>
         <ListItemText primary="Phone Number"/>
       </ListItem>
       <Divider variant="middle"/>
-      <ListItem secondaryAction={ <ListItemText primary={"data['address']"}/> }>
+      <ListItem secondaryAction={ <ListItemText primary={data.address ? data.address : 'Unknown'}/> }>
         <ListItemText primary="Address"/>
       </ListItem>
       <Divider variant="middle"/>
@@ -174,30 +180,65 @@ const ProfileDetailsDisplay = ({displayDetails, style}) => {
   );
 }
 
-const ProfileDetailsEdit = ({displayDetails, style}) => {
+const ProfileDetailsEdit = ({displayDetails, style}) => {  
+  const edit = (e) => {
+    e.preventDefault();
+    const data = new FormData(e.currentTarget);
+
+    // call api with data
+    const options = {
+      method: 'POST',
+      route: '/profile/update',
+      body: JSON.stringify({
+        // email: data.get('email'),
+        username: data.get('username'),
+        // first_name: data.get('first_name'),
+        // last_name: data.get('last_name'),
+        // phone: data.get('phone'),
+        // address: data.get('address'),
+      })
+    };
+
+    apiCall(() => {
+      displayDetails(false);
+    }, options)
+      .then((res) => {
+        if (res) {
+
+        }
+      });
+  }
+
+
   return (
     <List sx={style}>
-      <ListItem secondaryAction={ <TextField fullWidth id="Username" label="Username" variant="outlined" size='small' sx={{width: 500}}/> }>
+      <ListItem secondaryAction={ <TextField fullWidth id="username" label="Username" name="username" autoComplete="username" size='small' autoFocus sx={{width: 500}}/> }>
         <ListItemText primary="Username"/>
       </ListItem>
       <Divider variant="middle"/>
-      <ListItem secondaryAction={ <TextField fullWidth id="Full Name" label="Full Name" variant="outlined" size='small' sx={{width: 500}}/> }>
-        <ListItemText primary="Full Name"/>
+      <ListItem secondaryAction={ <TextField fullWidth id="first_name" label="First Name" variant="outlined" size='small' sx={{width: 500}}/> }>
+        <ListItemText primary="First Name"/>
       </ListItem>
       <Divider variant="middle"/>
-      <ListItem secondaryAction={ <TextField fullWidth id="Email" label="Email" variant="outlined" size='small' sx={{width: 500}}/> }>
+      <ListItem secondaryAction={ <TextField fullWidth id="last_name" label="Last Name" variant="outlined" size='small' sx={{width: 500}}/> }>
+        <ListItemText primary="Last Name"/>
+      </ListItem>
+      <Divider variant="middle"/>
+      <ListItem secondaryAction={ <TextField fullWidth id="email" label="email" variant="outlined" size='small' sx={{width: 500}}/> }>
         <ListItemText primary="Email"/>
       </ListItem>
       <Divider variant="middle"/>
-      <ListItem secondaryAction={ <TextField fullWidth id="Phone Number" label="Phone Number" variant="outlined" size='small' sx={{width: 500}}/> }>
+      <ListItem secondaryAction={ <TextField fullWidth id="phone" label="phone" variant="outlined" size='small' sx={{width: 500}}/> }>
         <ListItemText primary="Phone Number"/>
       </ListItem>
       <Divider variant="middle"/>
-      <ListItem secondaryAction={ <TextField fullWidth id="Address" label="Address" variant="outlined" size='small' sx={{width: 500}}/> }>
+      <ListItem secondaryAction={ <TextField fullWidth id="address" label="address" variant="outlined" size='small' sx={{width: 500}}/> }>
         <ListItemText primary="Address"/>
       </ListItem>
       <Divider variant="middle"/>
-      <Button onClick={() => { displayDetails(false) }} variant="contained" sx={{marginLeft: "16px", marginTop: "16px", marginBottom: "8px"}}>Save</Button>
+      <Box component="form" onSubmit={edit} noValidate sx={{ mt: 1 }}>
+      <Button type="submit" variant="contained" sx={{marginLeft: "16px", marginTop: "16px", marginBottom: "8px"}}>Save</Button>
+      </Box>
     </List>
   );
 }
