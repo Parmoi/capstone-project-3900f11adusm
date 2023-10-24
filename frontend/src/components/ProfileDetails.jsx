@@ -7,6 +7,7 @@ import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import Alert from '@mui/material/Alert';
 
 import TwitterIcon from '@mui/icons-material/Twitter';
 import InstagramIcon from '@mui/icons-material/Instagram';
@@ -131,23 +132,27 @@ const ProfileDetailsDisplay = ({displayDetails, style}) => {
 
   const [data, setData] = useState([]);
 
-  const fetchInfo = () => { 
-    return fetch('http://localhost:5000/profile', {
+  const fetchInfo = () => {
+    const options = {
       method: 'GET',
-      headers: {
-        'Content-type': 'application/json',
-      },
-      credentials: 'include'
-    }) 
-      .then((res) => res.json()) 
-      .then((d) => setData(d)) 
-    }
+      route: '/profile'
+    };
+
+    apiCall((d) => {
+      setData(d);
+    }, options)
+    .then((res) => {
+      if (res) {
+        // set error msg if api call returns error
+        
+      }
+    });
+  }
 
   useEffect(() => {
     fetchInfo();
   }, []);
 
-  // console.log(data)
 
   return (
     <List sx={style}>
@@ -181,6 +186,9 @@ const ProfileDetailsDisplay = ({displayDetails, style}) => {
 }
 
 const ProfileDetailsEdit = ({displayDetails, style}) => {  
+  const [error, setError] = React.useState(false);
+  const [errContent, setErrContent] = React.useState('');
+
   const edit = (e) => {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
@@ -199,10 +207,18 @@ const ProfileDetailsEdit = ({displayDetails, style}) => {
       })
     };
 
+    console.log(data);
+
     apiCall(() => {
       displayDetails(false);
-    }, options);
-      console.log(options.body);
+    }, options)
+    .then((res) => {
+      if (res) {
+        // set error msg if api call returns error
+        setErrContent(`Error: ${res.msg}`);
+        setError(true);
+      }
+    });
   }
 
 
@@ -233,6 +249,9 @@ const ProfileDetailsEdit = ({displayDetails, style}) => {
           <ListItemText primary="Address"/>
         </ListItem>
         <Divider variant="middle"/>
+        <div>
+          {error ? <Alert severity='error'>{errContent}</Alert> : <></> }
+        </div>
         <Button type="submit" variant="contained" sx={{marginLeft: "16px", marginTop: "16px", marginBottom: "8px"}}>Save</Button>
       </Box>
     </List>
