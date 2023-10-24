@@ -82,6 +82,16 @@ def database_setup():
         db.Column("collectible_id", db.Integer, db.ForeignKey("collectibles.id"))
     )
 
+    # Creates a belongs_to table
+    # Tells us what collectibles belong to what campaign
+    belongs_to = db.Table(
+        "belongs_to", metadata,
+        db.Column("id", db.Integer, db.Identity(), primary_key = True),
+        db.Column("collectible_name", db.String),
+        db.column("collectible_id", db.Integer, db.ForeignKey("collectors.id")),
+        db.Column("campaign_id", db.Integer, db.ForeignKey("campaigns.id"))
+    )
+
     # Creates all tables stored within metadata
     metadata.create_all(engine)
     conn.close()

@@ -18,7 +18,7 @@ from main.database import db_manager as dbm
 from main.database import (
     db_collectors,
     db_campaigns,
-    db_waintlist,
+    db_wantlist,
     db_collectibles,
     db_collections,
 )
