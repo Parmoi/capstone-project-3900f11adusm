@@ -5,16 +5,40 @@ import Container from '@mui/material/Container';
 
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import { ProfileBox, ProfileDetailsDisplay, ProfileDetailsEdit, SocialMediaDisplay, SocialMediaEdit } from '../components/ProfileDetails'
 import CollectionCompletion from '../components/CollectionCompletion';
+
+import { apiCall } from '../App';
 
 const theme = createTheme();
 
 function Profile() {
   const [editDetails, displayDetails] = useState(false);
   const [editSocials, displaySocials] = useState(false);
+  const [data, setData] = useState([]);
+
+  const fetchInfo = () => {
+    const options = {
+      method: 'GET',
+      route: '/profile'
+    };
+
+    apiCall((d) => {
+      setData(d);
+    }, options)
+    .then((res) => {
+      if (res) {
+        // set error msg if api call returns error
+        
+      }
+    });
+  }
+
+  useEffect(() => {
+    fetchInfo();
+  }, []);
 
   const style = {
     alignItems: 'center', 
@@ -29,7 +53,7 @@ function Profile() {
       <CssBaseline/>
         <Grid container spacing={2}>
           <Grid item xs={4}>
-            <ProfileBox style={style}/>
+            <ProfileBox style={style} data={data}/>
             { !editSocials 
             ? <SocialMediaDisplay displaySocials={displaySocials} style={style} />
             : <SocialMediaEdit displaySocials={displaySocials} style={style} /> 
@@ -37,7 +61,7 @@ function Profile() {
           </Grid>
           <Grid item xs={8}>
             { !editDetails 
-            ? <ProfileDetailsDisplay displayDetails={displayDetails} style={style} /> 
+            ? <ProfileDetailsDisplay displayDetails={displayDetails} style={style} data={data} /> 
             : <ProfileDetailsEdit displayDetails={displayDetails} style={style} />             
             }
             <CollectionCompletion style={style} />
