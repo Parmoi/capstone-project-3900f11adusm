@@ -58,8 +58,6 @@ def register_campaign(name, description, start_date, end_date, collectible_field
     metadata.create_all(engine)
     conn.close()
 
-    # Create collectible table for this campaign.
-
     return (
         jsonify(
             {

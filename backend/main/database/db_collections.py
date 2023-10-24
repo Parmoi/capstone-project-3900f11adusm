@@ -96,7 +96,7 @@ def remove_collectible(user_id, collection_id):
 def get_collection(user_id):
     """get_collection.
 
-    Return list conataining all collectibles in users collection.
+    Return list conataining all collectibles and their details in users collection.
 
     Args:
         user_id: collectors user id
@@ -105,10 +105,12 @@ def get_collection(user_id):
         "collection": [
             {
                 "id": collection_id,
+                "campaign_id": campaign_id,
+                "collectible_id": collectible_id,
                 "name": collectible_name,
                 "description": collectible_description,
                 "image": collectible_image,
-                "campaign_id": campaign_id,
+                ... ()
             },
         ],
     }
@@ -136,14 +138,15 @@ def get_collection(user_id):
     # for collection in collection_list:
     # [db_collectibles.get_collectible(collection.get("campaign_id"), collection.get("collectible_id"))).update("collection_id"=collection.get("id")} for collection in collection_list]
     collection = []
-    for collection in collection_list:
+    for collection_row in collection_rows:
         collectible = db_collectibles.get_collectible(
-            collection.get("campaign_id"), collection.get("collectible_id")
+            collection_row.get("campaign_id"), collection_row.get("collectible_id")
         )
-        # collectible.update("")
-        collection.append(collec)
+        collectible["collectible_id"] = collectible.pop("id")
+        collectible.update(id=collection_row.get("id"))
+        collection.append(collectible)
 
-    return jsonify({"collection": collection_list}), OK
+    return jsonify({"collection": collection}), OK
 
 
 """ |------------------------------------|

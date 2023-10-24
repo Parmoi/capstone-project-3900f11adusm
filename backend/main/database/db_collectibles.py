@@ -86,7 +86,7 @@ def get_collectible(campaign_id, collectible_id):
     conn.close()
 
     if result is None:
-        return None
+        return {}
 
     return result.fetchone()._asdict()
 

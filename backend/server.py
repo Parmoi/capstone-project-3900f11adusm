@@ -283,7 +283,7 @@ def insert_collectible():
 
 
 
-@APP.route("/collection", methods=["GET"])
+@APP.route("/collection/get", methods=["GET"])
 @jwt_required(fresh=False)
 def get_collection():
     user_id = get_jwt_identity()
