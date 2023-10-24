@@ -124,10 +124,11 @@ def refresh_token():
     user_id = get_jwt_identity()
     return auth.refresh(user_id)
 
-@APP.route("/search")
+@APP.route("/search", methods=["GET"])
 def first_search():
     search_query = request.json.get("query", None)
-    return db_collectibles.search_collectibles(search_query)
+    # return db_collectibles.search_collectibles(search_query)
+    return db_campaigns.get_campaign_collectibles(1)
 
 
 # Uncomment to have access token refreshed automatically after evert request is made
