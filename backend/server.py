@@ -236,13 +236,13 @@ def register_collectible():
     # verify_jwt_in_request()
 
     campaign_id = request.json.get("campaign_id", None)
-    name = request.json.get("name", None)
+    collectible_name = request.json.get("name", None)
     description = request.json.get("description", None)
     image = request.json.get("image", None)
     collectible_fields = request.json.get("collectible_fields", None)
 
     return db_collectibles.register_collectible(
-        campaign_id, name, description, image, collectible_fields
+        campaign_id, collectible_name, description, image, collectible_fields
     )
 
 
@@ -268,7 +268,7 @@ def get_campaign_opt_col_names():
 
 
 """ |------------------------------------|
-    |         Collection Routes         |
+    |         Collection Routes          |
     |------------------------------------| """
 
 
@@ -280,6 +280,14 @@ def insert_collectible():
     collectible_id = request.json.get("collectible_id", None)
 
     return db_collections.insert_collectible(user_id, campaign_id, collectible_id)
+
+
+
+@APP.route("/collection", methods=["GET"])
+@jwt_required(fresh=False)
+def get_collection():
+    user_id = get_jwt_identity()
+    return db_collections.get_collection(user_id)
 
 
 """ |------------------------------------|
