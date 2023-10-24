@@ -281,13 +281,19 @@ def insert_collectible():
 
     return db_collections.insert_collectible(user_id, campaign_id, collectible_id)
 
-
-
 @APP.route("/collection/get", methods=["GET"])
 @jwt_required(fresh=False)
 def get_collection():
     user_id = get_jwt_identity()
     return db_collections.get_collection(user_id)
+
+@APP.route("/collection/delete", methods=["DELETE"])
+@jwt_required(fresh=False)
+def remove_collectible():
+    user_id = get_jwt_identity()
+    collection_id = request.json.get("id", None)
+
+    return db_collections.remove_collectible(user_id, collection_id)
 
 
 """ |------------------------------------|

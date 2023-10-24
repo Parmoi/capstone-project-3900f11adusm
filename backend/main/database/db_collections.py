@@ -92,6 +92,37 @@ def remove_collectible(user_id, collection_id):
     """
 
 
+    if not user_owns_collection(user_id, collection_id):
+        return (
+            jsonify(
+                {
+                    "msg": "User {} does not own collection {}".format(
+                        user_id, collection_id
+                    ),
+                }
+            ),
+            InputError,
+        )
+
+
+    engine, conn, metadata = dbm.db_connect()
+    collections = db.Table("collections", metadata, autoload_with=engine)
+
+    dlt_stmt = db.delete(collections).where(collections.c.id == collection_id)
+    result = conn.execute(dlt_stmt)
+    conn.close()
+
+    return (
+        jsonify(
+            {
+                "msg": "Collection row {} successfully removed to collection!".format(
+                    collection_id
+                ),
+            }
+        ),
+        OK,
+    )
+
 # TODO: Error checking for invalid user id
 def get_collection(user_id):
     """get_collection.
@@ -152,3 +183,13 @@ def get_collection(user_id):
 """ |------------------------------------|
     |  Helper Functions for collections  |
     |------------------------------------| """
+
+def user_owns_collection(user_id, collection_id):
+
+    engine, conn, metadata = dbm.db_connect()
+    collections = db.Table("collections", metadata, autoload_with=engine)
+    select_stmt = db.select(collections).where(collections.c.id == user_id)
+    result = conn.execute(select_stmt)
+    conn.close()
+
+    return result.fetchone()._asdict().get("collector_id") == user_id
