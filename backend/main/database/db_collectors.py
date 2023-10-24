@@ -67,7 +67,7 @@ def update_collector(
         address: collectors address
     """
 
-    update_dict = {k: v for k, v in locals().items() if v is not None}
+    update_dict = {k: v for k, v in locals().items() if v != "" or v is None}
 
     if "password" in update_dict.keys():
         update_dict["password"] = auth.hash_password(update_dict["password"])
@@ -80,8 +80,8 @@ def update_collector(
     conn.execute(update_stmt)
 
     select_stmt = db.select(collectors).where(collectors.c.id == id)
-    execute = conn.execute(select_stmt)
-    collector_info = execute.fetchone()._asdict()
+    result = conn.execute(select_stmt)
+    collector_info = result.fetchone()._asdict()
 
     conn.close()
 
@@ -124,8 +124,8 @@ def get_collector(user_id):
     # Loads in the collector table into our metadata
     collectors = db.Table("collectors", metadata, autoload_with=engine)
     select_stmt = db.select(collectors).where(collectors.c.id == user_id)
-    execute = conn.execute(select_stmt)
-    collector_info = execute.fetchone()._asdict()
+    result = conn.execute(select_stmt)
+    collector_info = result.fetchone()._asdict()
     conn.close()
 
     return jsonify(collector_info), OK
@@ -155,13 +155,13 @@ def get_collector_id(email=None, username=None):
             collectors.c.username == username
         )
 
-    execute = conn.execute(select_stmt)
+    result = conn.execute(select_stmt)
 
-    execute_return_object = execute.fetchone()
-    if execute_return_object is None:
+    collector = result.fetchone()
+    if collector is None:
         return None
 
-    collector_id = execute_return_object._asdict().get("id", None)
+    collector_id = collector._asdict().get("id", None)
     conn.close()
     return collector_id
 

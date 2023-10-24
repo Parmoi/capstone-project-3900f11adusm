@@ -58,8 +58,6 @@ def register_campaign(name, description, start_date, end_date, collectible_field
     metadata.create_all(engine)
     conn.close()
 
-    # Create collectible table for this campaign.
-
     return (
         jsonify(
             {
@@ -219,10 +217,13 @@ def get_campaign_coll_table(campaign_id):
     select_stmt = db.select(campaigns.c.collectibles_table).where(
         campaigns.c.id == campaign_id
     )
-    execute = conn.execute(select_stmt)
+    result = conn.execute(select_stmt)
     conn.close()
 
-    collectibles_table = execute.fetchone()._asdict().get("collectibles_table")
+    if result is None:
+        return None
+
+    collectibles_table = result.fetchone()._asdict().get("collectibles_table")
 
     return collectibles_table
 
