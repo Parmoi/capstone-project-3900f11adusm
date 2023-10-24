@@ -182,13 +182,6 @@ def get_collection(user_id):
 def user_has_collectible(user_id, campaign_id, collectible_id):
     engine, conn, metadata = dbm.db_connect()
     collections = db.Table("collections", metadata, autoload_with=engine)
-    # select_stmt = (
-    #     db.select(collections)
-    #     .where(collections.c.id == user_id)
-    #     .where(collections.c.campaign_id == campaign_id)
-    #     .where(collections.c.collectible_id == collectible_id)
-    #     .exists()
-    # )
     exists_criteria = (
         db.select(collections)
         .where(

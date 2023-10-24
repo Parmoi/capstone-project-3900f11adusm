@@ -74,6 +74,17 @@ def init_mock_data():
     return jsonify(msg="Mock data initialised!"), OK
 
 
+# @APP.route("/add")
+# def add_random():
+#     db_campaigns.register_campaign("campaign 1", "random desc", "1999-01-01", "2000-01-01", [])
+#     db_campaigns.register_campaign("campaign 2", "random desc", "1999-01-01", "2001-01-01", [])
+#     db_campaigns.register_campaign("campaign 3", "random desc", "1999-01-01", "2025-01-01", [])
+#     db_campaigns.register_campaign("campaign 4", "random desc", "1999-01-01", "2030-01-01", [])
+#     db_campaigns.register_campaign("campaign 5", "random desc", "1999-01-01", "2023-10-19", [])
+#     db_campaigns.register_campaign("campaign 6", "random desc", "2024-10-19", "2030-10-19", [])
+#     db_campaigns.register_campaign("campaign 7", "random desc", "1999-01-01", "2023-10-20", [])
+#     return "add successful"
+
 """ |------------------------------------|
     |       Authentication Routes        |
     |------------------------------------| """
@@ -113,21 +124,11 @@ def refresh_token():
     user_id = get_jwt_identity()
     return auth.refresh(user_id)
 
+@APP.route("/search")
+def first_search():
+    search_query = request.json.get("query", None)
+    return db_collectibles.search_collectibles(search_query)
 
-# @APP.route("/add")
-# def add_random():
-#     db_campaigns.register_campaign("campaign 1", "random desc", "1999-01-01", "2000-01-01", [])
-#     db_campaigns.register_campaign("campaign 2", "random desc", "1999-01-01", "2001-01-01", [])
-#     db_campaigns.register_campaign("campaign 3", "random desc", "1999-01-01", "2025-01-01", [])
-#     db_campaigns.register_campaign("campaign 4", "random desc", "1999-01-01", "2030-01-01", [])
-#     db_campaigns.register_campaign("campaign 5", "random desc", "1999-01-01", "2023-10-19", [])
-#     db_campaigns.register_campaign("campaign 6", "random desc", "2024-10-19", "2030-10-19", [])
-#     db_campaigns.register_campaign("campaign 7", "random desc", "1999-01-01", "2023-10-20", [])
-#     return "add successful"
-
-# @APP.route("/search1")
-# def first_search():
-#     return db_campaigns.find
 
 # Uncomment to have access token refreshed automatically after evert request is made
 # If it is going to expire within a certain amount of time (optional)
