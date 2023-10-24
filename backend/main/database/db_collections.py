@@ -91,7 +91,6 @@ def remove_collectible(user_id, collection_id):
         collection_id: id of collection entry corresponding to collectible to be removed.
     """
 
-
     if not user_owns_collection(user_id, collection_id):
         return (
             jsonify(
@@ -103,7 +102,6 @@ def remove_collectible(user_id, collection_id):
             ),
             InputError,
         )
-
 
     engine, conn, metadata = dbm.db_connect()
     collections = db.Table("collections", metadata, autoload_with=engine)
@@ -122,6 +120,7 @@ def remove_collectible(user_id, collection_id):
         ),
         OK,
     )
+
 
 # TODO: Error checking for invalid user id
 def get_collection(user_id):
@@ -180,12 +179,43 @@ def get_collection(user_id):
     return jsonify({"collection": collection}), OK
 
 
+def user_has_collectible(user_id, campaign_id, collectible_id):
+    engine, conn, metadata = dbm.db_connect()
+    collections = db.Table("collections", metadata, autoload_with=engine)
+    # select_stmt = (
+    #     db.select(collections)
+    #     .where(collections.c.id == user_id)
+    #     .where(collections.c.campaign_id == campaign_id)
+    #     .where(collections.c.collectible_id == collectible_id)
+    #     .exists()
+    # )
+    exists_criteria = (
+        db.select(collections)
+        .where(
+            (collections.c.collector_id == user_id)
+            & (collections.c.campaign_id == campaign_id)
+            & (collections.c.collectible_id == collectible_id)
+        )
+    )
+    stmt = db.exists(exists_criteria).select()
+    result = conn.execute(stmt)
+    conn.close()
+    return (
+        jsonify(
+            {
+                "msg": result.fetchone()._asdict().get("anon_1"),
+            }
+        ),
+        OK,
+    )
+
+
 """ |------------------------------------|
     |  Helper Functions for collections  |
     |------------------------------------| """
 
-def user_owns_collection(user_id, collection_id):
 
+def user_owns_collection(user_id, collection_id):
     engine, conn, metadata = dbm.db_connect()
     collections = db.Table("collections", metadata, autoload_with=engine)
     select_stmt = db.select(collections).where(collections.c.id == user_id)
