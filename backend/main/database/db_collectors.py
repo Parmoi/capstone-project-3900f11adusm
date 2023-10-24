@@ -67,7 +67,7 @@ def update_collector(
         address: collectors address
     """
 
-    update_dict = {k: v for k, v in locals().items() if v is not "" or None}
+    update_dict = {k: v for k, v in locals().items() if v != "" or v is None}
 
     if "password" in update_dict.keys():
         update_dict["password"] = auth.hash_password(update_dict["password"])
