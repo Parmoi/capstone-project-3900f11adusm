@@ -56,6 +56,28 @@ def register_collectible(campaign_id, name, description, image, collectible_fiel
     |------------------------------------| """
 
 
+def get_collectible(campaign_id, collectible_id):
+    """get_collectible.
+
+    Args:
+        campaign_id:
+        collectible_id:
+    """
+
+    collectible_table_name = db_campaigns.get_campaign_coll_table(campaign_id)
+
+    engine, conn, metadata = dbm.db_connect()
+    collectibles = db.Table(collectible_table_name, metadata, autoload_with=engine)
+    select_stmt = db.select(collectibles).where(collectibles.c.id == collectible_id)
+    result = conn.execute(select_stmt)
+    conn.close()
+
+    if result is None:
+        return None
+
+    return result.fetchone()._asdict()
+
+
 # Function to convert collectible name to collectible id
 # Returns collection id as int
 def find_collectible_id(campaign_id, collectible_name):
