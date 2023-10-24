@@ -113,6 +113,7 @@ def refresh_token():
     user_id = get_jwt_identity()
     return auth.refresh(user_id)
 
+
 # @APP.route("/add")
 # def add_random():
 #     db_campaigns.register_campaign("campaign 1", "random desc", "1999-01-01", "2000-01-01", [])
@@ -236,13 +237,13 @@ def register_collectible():
     # verify_jwt_in_request()
 
     campaign_id = request.json.get("campaign_id", None)
-    name = request.json.get("name", None)
+    collectible_name = request.json.get("name", None)
     description = request.json.get("description", None)
     image = request.json.get("image", None)
     collectible_fields = request.json.get("collectible_fields", None)
 
     return db_collectibles.register_collectible(
-        campaign_id, name, description, image, collectible_fields
+        campaign_id, collectible_name, description, image, collectible_fields
     )
 
 
@@ -268,7 +269,7 @@ def get_campaign_opt_col_names():
 
 
 """ |------------------------------------|
-    |         Collection Routes         |
+    |         Collection Routes          |
     |------------------------------------| """
 
 
@@ -280,6 +281,32 @@ def insert_collectible():
     collectible_id = request.json.get("collectible_id", None)
 
     return db_collections.insert_collectible(user_id, campaign_id, collectible_id)
+
+
+@APP.route("/collection/get", methods=["GET"])
+@jwt_required(fresh=False)
+def get_collection():
+    user_id = get_jwt_identity()
+    return db_collections.get_collection(user_id)
+
+
+@APP.route("/collection/delete", methods=["DELETE"])
+@jwt_required(fresh=False)
+def remove_collectible():
+    user_id = get_jwt_identity()
+    collection_id = request.json.get("id", None)
+
+    return db_collections.remove_collectible(user_id, collection_id)
+
+
+@APP.route("/collection/check", methods=["GET"])
+@jwt_required(fresh=False)
+def user_has_collectible():
+    user_id = get_jwt_identity()
+    collectible_id = request.json.get("collectible_id", None)
+    campaign_id = request.json.get("campaign_id", None)
+
+    return db_collections.user_has_collectible(user_id, campaign_id, collectible_id)
 
 
 """ |------------------------------------|

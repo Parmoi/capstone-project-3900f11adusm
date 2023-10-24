@@ -10,7 +10,7 @@ from main.error import OK, InputError, AccessError
 
 
 # TODO: Error checking
-def register_collectible(campaign_id, name, description, image, collectible_fields):
+def register_collectible(campaign_id, collectible_name, description, image, collectible_fields):
     """register_collectible.
 
     Register a collectible in a campaign.
@@ -24,7 +24,7 @@ def register_collectible(campaign_id, name, description, image, collectible_fiel
     """
 
     collectible_dict = {
-        "name": name,
+        "name": collectible_name,
         "description": description,
         "image": image,
         "campaign_id": campaign_id,
@@ -35,7 +35,6 @@ def register_collectible(campaign_id, name, description, image, collectible_fiel
     engine, conn, metadata = dbm.db_connect()
     collectibles = db.Table(coll_table_name, metadata, autoload_with=engine)
     insert_stmt = db.insert(collectibles).values(collectible_dict)
-
     conn.execute(insert_stmt)
     conn.close()
 
@@ -44,11 +43,25 @@ def register_collectible(campaign_id, name, description, image, collectible_fiel
             {
                 "msg": "Collectible succesfully registered!",
                 "campaign_id": campaign_id,
-                "collectible_id": find_collectible_id(campaign_id, name),
+                "collectible_id": find_collectible_id(campaign_id, collectible_name),
             }
         ),
         OK,
     )
+
+
+def update_collectible(campaign_id, name, description, image, collectible_fields):
+    """register_collectible.
+
+    Register a collectible in a campaign.
+
+    Args:
+        campaign_id: id of campaign collectible belongs to
+        name: name of collectible
+        description: description of collectible
+        image: Image URL of collectible
+        collectible_fields: dictionary of optional fields
+    """
 
 
 """ |------------------------------------|
@@ -56,9 +69,40 @@ def register_collectible(campaign_id, name, description, image, collectible_fiel
     |------------------------------------| """
 
 
+def get_collectible(campaign_id, collectible_id):
+    """get_collectible.
+
+    Args:
+        campaign_id:
+        collectible_id:
+    """
+
+    collectible_table_name = db_campaigns.get_campaign_coll_table(campaign_id)
+
+    engine, conn, metadata = dbm.db_connect()
+    collectibles = db.Table(collectible_table_name, metadata, autoload_with=engine)
+    select_stmt = db.select(collectibles).where(collectibles.c.id == collectible_id)
+    result = conn.execute(select_stmt)
+    conn.close()
+
+    if result is None:
+        return {}
+
+    return result.fetchone()._asdict()
+
+
 # Function to convert collectible name to collectible id
 # Returns collection id as int
 def find_collectible_id(campaign_id, collectible_name):
+    """find_collectible_id.
+
+    Function to convert collectible name to collectible id
+    Returns collection id as int
+
+    Args:
+        campaign_id:
+        collectible_name:
+    """
     engine, conn, metadata = dbm.db_connect()
 
     collectible_table_name = db_campaigns.get_campaign_coll_table(campaign_id)
@@ -69,11 +113,12 @@ def find_collectible_id(campaign_id, collectible_name):
         collectibles.c.name == collectible_name
     )
 
-    execute = conn.execute(select_stmt)
-    collectible_id = execute.fetchone()._asdict().get("id")
+    result = conn.execute(select_stmt)
     conn.close()
+    if result is None:
+        return None
 
-    # TODO: Value error if doesn't exist or return error code or something?
+    collectible_id = result.fetchone()._asdict().get("id")
 
     return collectible_id
 
@@ -115,7 +160,7 @@ def search_collectibles(collectible_name):
             camp.c.name.label("campaign_name"),
             coll.c.name.label("collectible_name"),
             camp.c.start_date.label("date_released"),
-            coll.c.image.label("collectible_image")
+            coll.c.image.label("collectible_image"),
         )
         .select_from(joined_tbl)
         .where(coll.c.name == collectible_name)
