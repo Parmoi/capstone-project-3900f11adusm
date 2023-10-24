@@ -15,18 +15,18 @@ import FacebookIcon from '@mui/icons-material/Facebook';
 
 import { Divider } from '@mui/material';
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
 import { apiCall } from '../App';
 
-const ProfileBox = ({style}) => {
+const ProfileBox = ({style, data}) => {
   return (
     <Stack direction="column" spacing={2} sx={style} >
       <Box component="span">
         <Avatar 
           variant="outlined"
           alt="Bob Ret"
-          src="/src/images/home_page_icon.png"
+          src={data.image_url ? data.image_url : ''}
           display="flex"
           sx={{ width: 150, height: 150, marginTop: "16px", fontSize: "60px"}}
         />
@@ -128,31 +128,7 @@ const SocialMediaEdit = ({displaySocials, style}) => {
   );
 }
 
-const ProfileDetailsDisplay = ({displayDetails, style}) => {
-
-  const [data, setData] = useState([]);
-
-  const fetchInfo = () => {
-    const options = {
-      method: 'GET',
-      route: '/profile'
-    };
-
-    apiCall((d) => {
-      setData(d);
-    }, options)
-    .then((res) => {
-      if (res) {
-        // set error msg if api call returns error
-        
-      }
-    });
-  }
-
-  useEffect(() => {
-    fetchInfo();
-  }, []);
-
+const ProfileDetailsDisplay = ({displayDetails, style, data}) => {
 
   return (
     <List sx={style}>
@@ -200,8 +176,8 @@ const ProfileDetailsEdit = ({displayDetails, style}) => {
       body: JSON.stringify({
         email: data.get('email'),
         username: data.get('username'),
-        // first_name: data.get('first_name'),
-        // last_name: data.get('last_name'),
+        first_name: data.get('first_name'),
+        last_name: data.get('last_name'),
         phone: data.get('phone'),
         address: data.get('address'),
       })
