@@ -64,6 +64,7 @@ function SignIn({ setLogin }) {
           </Typography>
           <Box component="form" onSubmit={login} noValidate sx={{ mt: 1 }}>
             <TextField
+              sx={{backgroundColor:'white'}}
               margin="normal"
               required
               fullWidth
@@ -74,6 +75,7 @@ function SignIn({ setLogin }) {
               autoFocus
             />
             <TextField
+              sx={{backgroundColor:'white'}}
               margin="normal"
               required
               fullWidth

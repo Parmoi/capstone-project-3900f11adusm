@@ -94,6 +94,7 @@ function Register({ setLogin }) {
           </Typography>
           <Box component="form" onSubmit={register} noValidate sx={{ mt: 1 }}>
             <TextField
+              sx={{backgroundColor:'white'}}
               margin="normal"
               required
               fullWidth
@@ -107,6 +108,7 @@ function Register({ setLogin }) {
               helperText={nameError ? 'Name must not be empty' : ''}
             />
             <TextField
+              sx={{backgroundColor:'white'}}
               margin="normal"
               required
               fullWidth
@@ -119,6 +121,7 @@ function Register({ setLogin }) {
               helperText={emailError ? 'Email must be valid' : ''}
             />
             <TextField
+              sx={{backgroundColor:'white'}}
               margin="normal"
               required
               fullWidth
