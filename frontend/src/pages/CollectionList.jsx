@@ -25,15 +25,15 @@ const stubData = [
     image: 'https://ilarge.lisimg.com/image/8825948/980full-homer-simpson.jpg',
     name: 'Homer',
     collectionName: 'Winter 2022',
-    dateReleased: '23/5/2014',
-    dateAdded: '3/3/2014',
+    dateReleased: '23/05/2014',
+    dateAdded: '03/03/2014',
   },
   {
     image: 'https://tse4.mm.bing.net/th?id=OIP.e4tAXeZ6G0YL4OE5M8KTwAHaMq&pid=Api',
     name: 'Marge',
     collectionName: 'Winter 2022',
-    dateReleased: '3/2/2014',
-    dateAdded: '3/1/2014',
+    dateReleased: '03/02/2014',
+    dateAdded: '03/01/2014',
   },
   {
     image: 'https://tse2.mm.bing.net/th?id=OIP.j7EknM6CUuEct_kx7o-dNQHaMN&pid=Api',
@@ -67,31 +67,31 @@ const stubData = [
 
 // sourced from https://github.com/KevinVandy/material-react-table/blob/v1/apps/material-react-table-docs/examples/custom-top-toolbar/sandbox/src/JS.js
 function CollectionList() {
-  const [data, setData] = React.useState([]);
+  const [data, setData] = React.useState(stubData);
 
-  const fetchData = () => {
-    console.log('fetching data');
-    // call api with data
-    const options = {
-      method: 'GET',
-      route: "/collection/get",
-    };
+  // const fetchData = () => {
+  //   console.log('fetching data');
+  //   // call api with data
+  //   const options = {
+  //     method: 'GET',
+  //     route: "/collection/get",
+  //   };
 
-    apiCall((d) => {
-      console.log(d);
-      setData(d);
-    }, options)
-      .then((res) => {
-        if (res) {
-          // set error msg if api call returns error
+  //   apiCall((d) => {
+  //     console.log(d);
+  //     setData(d);
+  //   }, options)
+  //     .then((res) => {
+  //       if (res) {
+  //         // set error msg if api call returns error
 
-        }
-      });
-  }
+  //       }
+  //     });
+  // }
 
-  React.useEffect(() => {
-    fetchData();
-  }, []);
+  // React.useEffect(() => {
+  //   fetchData();
+  // }, []);
 
   const columns = useMemo(
     //column definitions...
@@ -217,7 +217,7 @@ function CollectionList() {
               }
             };
 
-            apiCall(() => {}, options)
+            apiCall(() => { }, options)
               .then((res) => {
                 if (res) {
                   // set error msg if api call returns error
