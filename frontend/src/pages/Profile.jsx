@@ -1,66 +1,76 @@
 import * as React from 'react';
-import Avatar from '@mui/material/Avatar';
-import TextField from '@mui/material/TextField';
-import Box from '@mui/material/Box';
+import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid';
-import Divider from '@mui/material/Divider';
-import Typography from '@mui/material/Typography';
-import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
+import Container from '@mui/material/Container';
 
-import { useTheme, ThemeProvider } from '@mui/material/styles';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 
+import { useState, useEffect } from 'react';
 
-const Profile = () => {
-    return (
-      <ThemeProvider theme={useTheme()}>
-        <Box sx={{ width: '100%', maxWidth: '100%', bgcolor: 'background.paper' }}>
-          <Box sx={{ my: 3, mx: 2 }}>
-            <Grid container alignItems="center" justifyContent="center">
-              <Grid item xs={2}>
-                <Stack direction="column" spacing={3} >
-                  <Avatar 
-                    sx={{ width: "300px", height: "300px", margin: "auto" }}
-                  />
-                  <Button variant="contained">Change Icon</Button>
-                </Stack>
-              </Grid>
-              <Grid item xs={2}></Grid>
-              <Grid item xs={3}>
-                <Stack direction="column" spacing={3}>
-                  <Typography gutterBottom variant="h6" component="div">
-                    Username
-                  </Typography>
-                  <TextField label="Username" />
-                  <Typography gutterBottom variant="h6" component="div">
-                    Given Name
-                  </Typography>
-                  <TextField label="John Smith" />
-                </Stack>
-              </Grid>
-            </Grid>
-          </Box>
-          <Divider variant="middle" />
-          <Box sx={{ m: 2 }}>
-            <Stack direction="column" spacing={3}>
-              <Typography gutterBottom variant="h6" component="div">
-                Address
-              </Typography>
-              <TextField label="Type your home address here" />
-              <Typography gutterBottom variant="h6" component="div">
-                Email Address
-              </Typography>
-              <TextField label="address@gmail.com" />
-              <Typography gutterBottom variant="h6" component="div">
-                Phone Number
-              </Typography>
-              <TextField label="0489 329 892" />
-            </Stack>
-          </Box>
-        </Box>
-      </ThemeProvider>
-    );
+import { ProfileBox, ProfileDetailsDisplay, ProfileDetailsEdit, SocialMediaDisplay, SocialMediaEdit } from '../components/ProfileDetails'
+import CollectionCompletion from '../components/CollectionCompletion';
+
+import { apiCall } from '../App';
+
+const theme = createTheme();
+
+function Profile() {
+  const [editDetails, displayDetails] = useState(false);
+  const [editSocials, displaySocials] = useState(false);
+  const [data, setData] = useState([]);
+
+  const fetchInfo = () => {
+    const options = {
+      method: 'GET',
+      route: '/profile'
+    };
+
+    apiCall((d) => {
+      setData(d);
+    }, options)
+    .then((res) => {
+      if (res) {
+        // set error msg if api call returns error
+        
+      }
+    });
   }
+
+  useEffect(() => {
+    fetchInfo();
+  }, []);
+
+  const style = {
+    alignItems: 'center', 
+    marginTop: "20px", 
+    backgroundColor: "White",
+    borderRadius: '4px'
+  };
+
+  return (
+    <ThemeProvider theme={theme}>
+      <Container component="main" sx={{ py: 6, }} maxWidth="lg">
+      <CssBaseline/>
+        <Grid container spacing={2}>
+          <Grid item xs={4}>
+            <ProfileBox style={style} data={data}/>
+            { !editSocials 
+            ? <SocialMediaDisplay displaySocials={displaySocials} style={style} />
+            : <SocialMediaEdit displaySocials={displaySocials} style={style} /> 
+            }
+          </Grid>
+          <Grid item xs={8}>
+            { !editDetails 
+            ? <ProfileDetailsDisplay displayDetails={displayDetails} style={style} data={data} /> 
+            : <ProfileDetailsEdit displayDetails={displayDetails} style={style} />             
+            }
+            <CollectionCompletion style={style} />
+          </Grid>
+        </Grid>
+      </Container>
+    </ThemeProvider>
+  );
+}
 
 
 export default Profile;
