@@ -124,12 +124,6 @@ def refresh_token():
     user_id = get_jwt_identity()
     return auth.refresh(user_id)
 
-@APP.route("/search", methods=["GET"])
-def first_search():
-    search_query = request.json.get("query", None)
-    # return db_collectibles.search_collectibles(search_query)
-    return db_campaigns.get_campaign_collectibles(1)
-
 
 # Uncomment to have access token refreshed automatically after evert request is made
 # If it is going to expire within a certain amount of time (optional)
@@ -160,7 +154,7 @@ def first_search():
 @jwt_required(fresh=False)
 def profile():
     user_id = get_jwt_identity()
-    return db_collectors.get_collector(user_id)
+    return db_collectors.get_collector(user_id=user_id)
 
 
 @APP.route("/profile/update", methods=["POST"])
@@ -191,6 +185,13 @@ def profile_update():
 @APP.route("/get_collectors", methods=["GET"])
 def get_collectors():
     return db_collectors.get_all_collectors()
+
+
+@APP.route("/search", methods=["GET"])
+def first_search():
+    search_query = request.json.get("query", None)
+    # return db_collectibles.search_collectibles(search_query)
+    return db_campaigns.get_campaign_collectibles(1)
 
 
 """ |------------------------------------|
@@ -242,10 +243,9 @@ def register_collectible():
     collectible_name = request.json.get("name", None)
     description = request.json.get("description", None)
     image = request.json.get("image", None)
-    collectible_fields = request.json.get("collectible_fields", None)
 
     return db_collectibles.register_collectible(
-        campaign_id, collectible_name, description, image, collectible_fields
+        campaign_id, collectible_name, description, image
     )
 
 
@@ -259,17 +259,6 @@ def get_campaign_collectibles():
     return db_campaigns.get_campaign_collectibles(campaign_id)
 
 
-@APP.route("/campaign/collectible_opt_fields", methods=["GET"])
-# @jwt_required(fresh=False)
-def get_campaign_opt_col_names():
-    """Returns the optional columns for campain collectibles"""
-    # verify_jwt_in_request()
-
-    campaign_id = request.json.get("campaign_id", None)
-
-    return db_campaigns.get_campaign_collectible_fields(campaign_id)
-
-
 """ |------------------------------------|
     |         Collection Routes          |
     |------------------------------------| """
@@ -279,10 +268,9 @@ def get_campaign_opt_col_names():
 @jwt_required(fresh=False)
 def insert_collectible():
     user_id = get_jwt_identity()
-    campaign_id = request.json.get("campaign_id", None)
     collectible_id = request.json.get("collectible_id", None)
 
-    return db_collections.insert_collectible(user_id, campaign_id, collectible_id)
+    return db_collections.insert_collectible(user_id, collectible_id)
 
 
 @APP.route("/collection/get", methods=["GET"])
@@ -306,9 +294,8 @@ def remove_collectible():
 def user_has_collectible():
     user_id = get_jwt_identity()
     collectible_id = request.json.get("collectible_id", None)
-    campaign_id = request.json.get("campaign_id", None)
 
-    return db_collections.user_has_collectible(user_id, campaign_id, collectible_id)
+    return db_collections.user_has_collectible(user_id, collectible_id)
 
 
 """ |------------------------------------|

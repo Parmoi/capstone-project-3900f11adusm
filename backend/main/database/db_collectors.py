@@ -67,7 +67,8 @@ def update_collector(
         address: collectors address
     """
 
-    update_dict = {k: v for k, v in locals().items() if v != "" or v is None}
+    update_dict = {k: v for k, v in locals().items() if v != "" and v is not None}
+    print(update_dict)
 
     if "password" in update_dict.keys():
         update_dict["password"] = auth.hash_password(update_dict["password"])
@@ -86,7 +87,9 @@ def update_collector(
     conn.close()
 
     return (
-        jsonify({"msg": "Collector successfully updated!", "collector": collector_info}),
+        jsonify(
+            {"msg": "Collector successfully updated!", "collector": collector_info}
+        ),
         OK,
     )
 
@@ -108,9 +111,8 @@ def get_all_collectors():
     return jsonify({"collectors": all_collectors}), OK
 
 
-
 # TODO: user error check
-def get_collector(user_id):
+def get_collector(user_id=None, email=None, username=None):
     """get_collector.
 
     Returns dict with collectors details
@@ -123,16 +125,25 @@ def get_collector(user_id):
 
     # Loads in the collector table into our metadata
     collectors = db.Table("collectors", metadata, autoload_with=engine)
-    select_stmt = db.select(collectors).where(collectors.c.id == user_id)
+    select_stmt = None
+    if email:
+        select_stmt = db.select(collectors).where(collectors.c.email == email)
+    elif username:
+        select_stmt = db.select(collectors).where(collectors.c.username == username)
+    elif user_id:
+        select_stmt = db.select(collectors).where(collectors.c.id == user_id)
+
     result = conn.execute(select_stmt)
     collector_info = result.fetchone()._asdict()
     conn.close()
 
     return jsonify(collector_info), OK
 
+
 """ |------------------------------------|
     |  Helper functions for collectors   |
     |------------------------------------| """
+
 
 def get_collector_id(email=None, username=None):
     """get_collector_id.
