@@ -34,7 +34,6 @@ def register_campaign(name, description, start_date, end_date, collectible_field
     insert_stmt = db.insert(campaigns).values(
         {
             "name": name,
-            # "collectibles_table": collectibles_table_name,
             "description": description,
             "start_date": start_date_obj,
             "end_date": end_date_obj,
