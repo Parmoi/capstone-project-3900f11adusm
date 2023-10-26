@@ -9,6 +9,8 @@ import Profile from './pages/Profile';
 import WantList from './pages/WantList';
 import CollectionList from './pages/CollectionList';
 import HomePage from './pages/homePage';
+import SellPage from './pages/SellPage';
+
 import SignedInNav from './components/SignedInNav';
 import SignedOutNav from './components/SignedOutNav';
 
@@ -85,7 +87,8 @@ function App() {
            ?  <BrowserRouter>
               <SignedOutNav />
               <Routes>
-                <Route path="/" element={<HomePage/>} />
+                <Route path="/" element={<SellPage/>} />
+                {/* <Route path="/" element={<HomePage/>} /> */}
                 <Route path="/login" element={<SignIn setLogin={setLoggedIn}/>} />
                 <Route path="/register" element={<Register setLogin={setLoggedIn}/>} />
               </Routes>
