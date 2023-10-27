@@ -14,4 +14,23 @@ Wrote novel functionality section for proposal. Had meeting working out project 
 Worked on creating storyboards.
 
 Week 4:
-Had meeting on Monday discussing divison of work from backlog created on Jira. Assigned signin/registration page for frontend.
+Had meeting on Monday discussing divison of work from backlog and user stories created on Jira. Assigned signin/registration page for frontend.
+Started work for setting up react files and creating sign in and register page for the frontend.
+Created frontend api routes for pages present. Finished format for sign in and register page.
+
+Week 5:
+Had docker set up for project environment to create consistency for the frontend and backend. Had backend set up by other members, tested
+connection to frontend via routes. Created stubs for dashboard and home page (assigned to Simon) and created navbars that are different if user
+is signed in or not. Created dropdown menu for pages in navbar, links to profile, lists, offers and sign out. Most links are stubs for now, to be
+implemented in later sprints. Created frontend UI for collection and want list so that it can display collectibles in a table format from stub data.
+Had demo A on friday, and retrospective during lab time. Started and completed retrospective A report, and Dylan sent in demo video to client.
+Assigned tasks on jira for sprint 2, given user stories to complete collection and wantlist once backend routes established and error checking for frontend.
+
+Week 6:
+Had meeting to clarify token system and search mechanics, enforced hard deadlines (next Sunday) for jira tasks, assigned error checking and wantlist/collection list.
+Started working on error checking for sign in and register pages, created alert popups. Worked on adjusting dates in wantlist/collection to accept 'DD/MM/YYYY' format.
+Finished error checking for sign in/register and implementing dates including filtering by date using a date picker. Had status update meeting on Friday.
+
+Week 7:
+Had meeting on Wednesday, discussing doing error checking for later sprints, writing stub APIs to return results from backend to frontend and having clearer
+documentation for what api routes return. Started work on sell/trade page and implementing stepper to guide user through progress.
