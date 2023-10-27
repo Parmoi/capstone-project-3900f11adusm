@@ -276,11 +276,29 @@ def get_campaign_opt_col_names():
 @APP.route("/collection/add", methods=["POST"])
 @jwt_required(fresh=False)
 def insert_collectible():
-    user_id = get_jwt_identity()
-    campaign_id = request.json.get("campaign_id", None)
-    collectible_id = request.json.get("collectible_id", None)
+    '''
+    Inserts collectible into collection list
+    Returns collection id created
 
-    return db_collections.insert_collectible(user_id, campaign_id, collectible_id)
+    Args:
+        user_id: UUID
+        collectible_id: int
+
+    Returns:
+    {
+        'collection_id': int
+    }
+    '''
+
+    return jsonify({
+        'collection_id': 1
+    }, 200)
+
+    # user_id = get_jwt_identity()
+    # campaign_id = request.json.get("campaign_id", None)
+    # collectible_id = request.json.get("collectible_id", None)
+
+    # return db_collections.insert_collectible(user_id, campaign_id, collectible_id)
 
 
 @APP.route("/collection/get", methods=["GET"])
@@ -295,9 +313,9 @@ def get_collection():
     Returns:
     [
         {
-            id: UUID, (collection id)
-            campaign_id: UUID,
-            collectible_id: UUID,
+            id: int, (collection id)
+            campaign_id: int,
+            collectible_id: int,
             name: "string", (name of collectible)
             campaign_name: "string",
             image: "url",
@@ -308,7 +326,7 @@ def get_collection():
     ]
     '''
 
-    return [
+    return jsonify([
         {
             'id': 1,
             'name': 'Homer',
@@ -339,7 +357,7 @@ def get_collection():
             'date_added': '03/08/2014',
             'date_released': '03/01/2014',
         },
-    ]
+    ], 200)
     # user_id = get_jwt_identity()
     # return db_collections.get_collection(user_id)
 
@@ -352,12 +370,18 @@ def remove_collectible():
 
     Args:
         user_id: int (collector's id)
-        collection_id: int ()
-    '''
-    user_id = get_jwt_identity()
-    collection_id = request.json.get("id", None)
+        collection_id: int (id of entry to be deleted)
 
-    return db_collections.remove_collectible(user_id, collection_id)
+    Returns {
+        collection_id: int
+    }
+    '''
+
+    return jsonify({'collection_id': 1}, 200)
+    # user_id = get_jwt_identity()
+    # collection_id = request.json.get("id", None)
+
+    # return db_collections.remove_collectible(user_id, collection_id)
 
 
 @APP.route("/collection/check", methods=["GET"])
@@ -382,8 +406,117 @@ def user_has_collectible():
 @APP.route("/wantlist", methods=["GET"])
 @jwt_required(fresh=False)
 def wantlist():
-    user_id = get_jwt_identity()
-    return jsonify(db_waintlist.get_wantlist(user_id)), OK
+    '''
+    Returns list of collectibles in user's want list along with details about collectible to be displayed
+
+    Args:
+        user_id: collectors user id
+
+    Returns:
+    [
+        {
+            id: int, (collection id)
+            campaign_id: int,
+            collectible_id: int,
+            name: "string", (name of collectible)
+            campaign_name: "string",
+            image: "url",
+            date_added: "DD/MM/YYYY", (date collectible was added to collection list)
+            date_released: "DD/MM/YYYY", (date collection/campaign was released)
+        },
+        ...
+    ]
+    '''
+
+    return jsonify([
+        {
+            'id': 1,
+            'name': 'Homer',
+            'campaign_name': 'Simpsons',
+            'campaign_id': 1,
+            'collectible_id': 1,
+            'image': 'https://ilarge.lisimg.com/image/8825948/980full-homer-simpson.jpg',
+            'date_added': '23/05/2014',
+            'date_released': '03/03/2014',
+        },
+        {
+            "id": 2,
+            "image": 'https://tse4.mm.bing.net/th?id=OIP.e4tAXeZ6G0YL4OE5M8KTwAHaMq&pid=Api',
+            "name": 'Marge',
+            'campaign_id': 12,
+            'collectible_id': 12,
+            "campaign_name": 'Winter 2022',
+            'date_added': '03/02/2014',
+            'date_released': '03/01/2014',
+        },
+        {
+            "id": 3,
+            "image": 'https://tse2.mm.bing.net/th?id=OIP.j7EknM6CUuEct_kx7o-dNQHaMN&pid=Api',
+            "name": 'Bart',
+            'campaign_id': 1,
+            'collectible_id': 2,
+            "campaign_name": 'Simpsons',
+            'date_added': '03/08/2014',
+            'date_released': '03/01/2014',
+        },
+    ], 200)
+    # user_id = get_jwt_identity()
+    # return jsonify(db_waintlist.get_wantlist(user_id)), OK
+
+@APP.route("/wantlist/add", methods=["POST"])
+@jwt_required(fresh=False)
+def insert_wantlist():
+    '''
+    Inserts collectible into wantlist
+    Returns wantlist id created
+
+    Args:
+        user_id: UUID
+        collectible_id: int
+
+    Returns:
+    {
+        'wantlist_id': int
+    }
+    '''
+
+    return jsonify({
+        'wantlist_id': 1
+    }, 200)
+
+@APP.route("/wantlist/delete", methods=["DELETE"])
+@jwt_required(fresh=False)
+def remove_wantlist():
+    '''
+    Deletes collectible from user's wantlist
+
+    Args:
+        user_id: int (collector's id)
+        wantlist: int (id of entry to be deleted)
+
+    Returns {
+        wantlist_id: int
+    }
+    '''
+
+    return jsonify({'wantlist_id': 1}, 200)
+
+@APP.route("/wantlist/move", methods=["POST"])
+@jwt_required(fresh=False)
+def move_collectible():
+    '''
+    Moves collectible from user's wantlist to collection
+
+    Args:
+        user_id: int (collector's id)
+        wantlist: int (id of entry to be moved)
+
+    Returns {
+        collection_id: int (id of new entry created in collection)
+    }
+    '''
+
+    return jsonify({'collection_id': 1}, 200)
 
 
 """ |------------------------------------|
