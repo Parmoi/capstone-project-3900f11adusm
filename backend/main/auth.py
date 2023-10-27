@@ -75,19 +75,9 @@ def register_collector(email, username, password):
         password:
     """
 
-    # if email:
-    #     collector_id = db_collectors.get_collector_id(email=email)
-    #     if collector_id is not None:
-    #         return jsonify({"msg": "Email address already registered!"}), InputError
-    # elif username:
-    #     collector_id = db_collectors.get_collector_id(username=username)
-    #     if collector_id is not None:
-    #         return jsonify({"msg": "User name already registered!"}), InputError
-
     collector_id = db_collectors.get_collector_id(email=email, username=username)
     if collector_id is not None:
         return jsonify({"msg": "Email or user name already registered!"}), InputError
-
 
     password = hash_password(password)
 
@@ -99,7 +89,6 @@ def register_collector(email, username, password):
 
     if status != OK:
         return jsonify({"msg": "Account unsuccessfully registered!"}), status
-
 
     collector_id = db_collectors.get_collector_id(email=email, username=username)
 
@@ -129,6 +118,7 @@ def refresh(user_id):
     |------------------------------------| """
 
 
+# TODO: Return proper error on user does not exist
 def validate_password(email, password):
     """validate_password.
 
@@ -140,9 +130,14 @@ def validate_password(email, password):
         password: user password to be validated
     """
 
-    user_hashed_pw_bytes = db_collectors.get_collector_pw(email=email).encode("utf-8")
-    input_pw_bytes = password.encode("utf-8")
-    return bcrypt.checkpw(input_pw_bytes, user_hashed_pw_bytes)
+    user_hashed_pw = db_collectors.get_collector_pw(email=email)
+    # collector = db_collectors.get_collector(email=email)
+    if user_hashed_pw is not None:
+        user_hashed_pw_bytes = user_hashed_pw.encode("utf-8")
+        input_pw_bytes = password.encode("utf-8")
+        return bcrypt.checkpw(input_pw_bytes, user_hashed_pw_bytes)
+    else:
+        return
 
 
 def hash_password(password):
@@ -150,8 +145,3 @@ def hash_password(password):
     hashed_pw = bcrypt.hashpw(pw_bytes, bcrypt.gensalt())
     return hashed_pw.decode("utf-8")
 
-# TODO: This is not finished
-def update_password(password):
-    engine, conn, metadata = dbm.db_connect()
-    hashed_pw = hash_password(password)
-    return

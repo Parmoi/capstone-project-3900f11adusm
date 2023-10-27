@@ -10,7 +10,7 @@ from main.error import OK, InputError, AccessError
 
 
 # TODO: Error checking
-def register_collectible(campaign_id, collectible_name, description, image, collectible_fields):
+def register_collectible(campaign_id, collectible_name, description, image):
     """register_collectible.
 
     Register a collectible in a campaign.
@@ -28,12 +28,10 @@ def register_collectible(campaign_id, collectible_name, description, image, coll
         "description": description,
         "image": image,
         "campaign_id": campaign_id,
-    } | collectible_fields
-
-    coll_table_name = db_campaigns.get_campaign_coll_table(campaign_id)
+    }
 
     engine, conn, metadata = dbm.db_connect()
-    collectibles = db.Table(coll_table_name, metadata, autoload_with=engine)
+    collectibles = db.Table("collectibles", metadata, autoload_with=engine)
     insert_stmt = db.insert(collectibles).values(collectible_dict)
     conn.execute(insert_stmt)
     conn.close()
@@ -41,9 +39,11 @@ def register_collectible(campaign_id, collectible_name, description, image, coll
     return (
         jsonify(
             {
-                "msg": "Collectible succesfully registered!",
+                "msg": "Collectible {} succesfully registered!".format(
+                    collectible_name
+                ),
                 "campaign_id": campaign_id,
-                "collectible_id": find_collectible_id(campaign_id, collectible_name),
+                "collectible_id": find_collectible_id(collectible_name),
             }
         ),
         OK,
@@ -197,3 +197,58 @@ def search_collectibles(collectible_name):
         result_list.append(row._asdict())
 
     return result_list
+
+
+""" |------------------------------------|
+    |  Helper functions for collectibles |
+    |------------------------------------| """
+
+
+def get_collectible(collectible_id):
+    """get_collectible.
+
+    Args:
+        collectible_id:
+    """
+    engine, conn, metadata = dbm.db_connect()
+
+    collectibles = db.Table("collectibles", metadata, autoload_with=engine)
+    select_stmt = db.select(collectibles).where(collectibles.c.id == collectible_id)
+    result = conn.execute(select_stmt)
+    conn.close()
+
+    if result is None:
+        return {}
+
+    return result.fetchone()._asdict()
+
+
+# Function to convert collectible name to collectible id
+# Returns collection id as int
+def find_collectible_id(collectible_name):
+    """find_collectible_id.
+
+    Function to convert collectible name to collectible id
+    Returns collection id as int
+
+    Args:
+        campaign_id:
+        collectible_name:
+    """
+    engine, conn, metadata = dbm.db_connect()
+
+    # Loads in the campaign table into our metadata
+    collectibles = db.Table("collectibles", metadata, autoload_with=engine)
+
+    select_stmt = db.select(collectibles.c.id).where(
+        collectibles.c.name == collectible_name
+    )
+
+    result = conn.execute(select_stmt)
+    conn.close()
+    if result is None:
+        return None
+
+    collectible_id = result.fetchone()._asdict().get("id")
+
+    return collectible_id

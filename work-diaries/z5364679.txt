@@ -31,3 +31,33 @@ architecture of the web application. From this, we decided who would
 work on what component. At the beginning period of the development, I 
 would be working on the front-end side of the project as the beginning 
 will be front-end heavy.
+
+Week 4
+
+This week, I set about establishing the profile page. We also had discussions
+on how each component should interact with one another. I had setup a baseline
+file structure for the backend. I then went about producing the profile page of 
+our web application.
+
+
+Week 5
+
+This week, we presented our first demo. There were some issues with getting
+everything to working order but that can be considered a part of the first 
+sprint and organising and seeing what we can achieve within a given sprint.
+By the time of the demo, we had a working backend, database and frontend.
+All these components were able to communicate with one another and work 
+as intended. The work I did this week involved setting up a docker environment
+for our backend and database so that everyone can have the same running environment
+while in development. And getting the connection of our backend API working with the 
+frontend.
+
+
+Week 6
+
+This week, I re-organised the file structure of the backend to separate the 
+responsibilities of each component. I worked on the profile page and updating
+the profile information. Throughout the week, we held multiple stand-ups 
+to establish that we were following the tasks outlined in 'To Try' list.
+I was responsible for checking everything was going as intended, who worked on
+what and how they're going along in their work.
