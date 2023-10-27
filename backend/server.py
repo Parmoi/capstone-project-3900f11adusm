@@ -153,6 +153,17 @@ def refresh_token():
 @APP.route("/profile", methods=["GET"])
 @jwt_required(fresh=False)
 def profile():
+    """
+    returns:
+        {
+        Username: "string",
+        first_name: "string",
+        last_name: "string",
+        email: "email_string",
+        phone: "string" (numbers),
+        address: "string"
+        }
+    """
     user_id = get_jwt_identity()
     return db_collectors.get_collector(user_id=user_id)
 
@@ -160,6 +171,21 @@ def profile():
 @APP.route("/profile/update", methods=["POST"])
 @jwt_required(fresh=False)
 def profile_update():
+    """
+    Updates the profile details of the user. Returns detailed
+    error messages if the user provides invalid data.
+    
+    Example: "username already taken"
+
+    Args:
+        username: string
+        email: valid email format.
+        first_name: string
+        last_name: string
+        phone: string (numbers) 
+        address: string
+    """
+
     user_id = get_jwt_identity()
 
     email = request.json.get("email", None)
