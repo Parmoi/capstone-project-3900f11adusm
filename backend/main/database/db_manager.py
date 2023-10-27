@@ -52,7 +52,6 @@ def database_setup():
         db.Column("description", db.String),
         db.Column("start_date", db.Date),
         db.Column("end_date", db.Date),
-        db.Column("collectibles_table", db.String),
     )
 
     # Creates a collectible table
@@ -61,6 +60,7 @@ def database_setup():
         metadata,
         db.Column("id", db.Integer, db.Identity(), primary_key=True),
         db.Column("name", db.String),
+        db.Column("description", db.String),
         db.Column("image", db.String),
         db.Column("campaign_id", db.Integer, db.ForeignKey("campaigns.id")),
     )
@@ -72,9 +72,7 @@ def database_setup():
         db.Column("id", db.Integer, db.Identity(), primary_key=True),
         db.Column("collector_id", db.Integer, db.ForeignKey("collectors.id")),
         db.Column("campaign_id", db.Integer, db.ForeignKey("campaigns.id")),
-        db.Column("collectible_id", db.Integer) 
-        # db.Column("user_image", db.String),
-        # db.Column("condition", db.String),
+        db.Column("collectible_id", db.Integer),
     )
 
     # Creates a wantlist table
