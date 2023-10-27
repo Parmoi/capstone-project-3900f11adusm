@@ -18,17 +18,27 @@ def get_wantlist(user_id):
         user_id (int): id of the user whose wantlist we want to find
 
     Returns:
-        [dictionary]: list of dictionary objects with collectible details
+        tuple: holds get_wantlist message and the wantlist
     
     Example Output:
     {
         "msg": "Wantlist has been successfully delivered!",
-        "wantlist": {
+        "wantlist": [
+            {
+            "campaign_name": "cool_superheroes",
             "collectible_name": "random",
+            "collectible_description": "hahahahahah!",
             "collectible_image": "https://ilarge.lisimg.com/image/8825948/980full-homer-simpson.jpg",
-            "campaign_name": "cool_superhero",
-            "date_added": ????
-        }
+            "date_added": "Fri, 27 Oct 2023 00:00:00 GMT"
+            },
+            {
+            "campaign_name": "cool_superheroes",
+            "collectible_name": "random2",
+            "collectible_description": "hahahahahah!",
+            "collectible_image": "https://ilarge.lisimg.com/image/8825948/980full-homer-simpson.jpg",
+            "date_added": "Fri, 27 Oct 2023 00:00:00 GMT"
+            }
+        ]
     }
     """
     engine, conn, metadata = dbm.db_connect()
@@ -41,13 +51,14 @@ def get_wantlist(user_id):
     # Join the tables
     join = db.join(want, coll, 
                    (want.c.collector_id == user_id) & 
-                   (want.c.collectible_id == coll.collectible_id)
+                   (want.c.collectible_id == coll.c.id)
                    ).join(camp, coll.c.campaign_id == camp.c.id)
     
     search_stmt = (
         db.select(
             coll.c.name.label("collectible_name"),
             coll.c.image.label("collectible_image"),
+            coll.c.description.label("collectible_description"),
             camp.c.name.label("campaign_name"),
             want.c.date_added.label("date_added")
         )
@@ -59,8 +70,8 @@ def get_wantlist(user_id):
 
     return jsonify(
         {
-        "msg": "Wantlist has been successfully delivered!",
-        "wantlist": wantlist
+            "msg": "Wantlist has been successfully delivered!",
+            "wantlist": wantlist
         }
     ), OK
 
@@ -74,7 +85,7 @@ def insert_wantlist(collector_id, collectible_name):
         collectible_name (string): name of the collectible to add to wantlist
     
     Return:
-        a jasonified dictionary that holds the message, collector_id and 
+        JSON: jasonified dictionary that holds the message, collector_id and 
         collectible_id
     
     Example Output:
@@ -82,7 +93,7 @@ def insert_wantlist(collector_id, collectible_name):
         "msg": "Collectible has been added to wantlist successfully!",
         "collector_id": 1,
         "collectible_id": 1,
-        "date_added": ???
+        "date_added": "Fri, 27 Oct 2023 00:00:00 GMT"
     }
     """
     engine, conn, metadata = dbm.db_connect()
@@ -149,8 +160,10 @@ def remove_from_wantlist(collector_id, collectible_name):
     conn.execute(delete_stmt)
     conn.close()
 
-    return {
-        "msg": "Collectible has been removed from wantlist!",
-        "collector_id": collector_id,
-        "collectible_id": collectible_id
-    }
+    return jsonify(
+        {
+            "msg": "Collectible has been removed from wantlist!",
+            "collector_id": collector_id,
+            "collectible_id": collectible_id
+        }
+    ), OK

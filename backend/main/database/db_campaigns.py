@@ -9,7 +9,7 @@ from main.error import OK, InputError, AccessError
     |------------------------------------| """
 
 
-def register_campaign(name, description, start_date, end_date, collectible_fields):
+def register_campaign(name, description, start_date, end_date):
     """insert_campaign.
 
     Function to insert new campaign.
