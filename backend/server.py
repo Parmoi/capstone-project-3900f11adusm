@@ -286,13 +286,74 @@ def insert_collectible():
 @APP.route("/collection/get", methods=["GET"])
 @jwt_required(fresh=False)
 def get_collection():
-    user_id = get_jwt_identity()
-    return db_collections.get_collection(user_id)
+    '''
+    Returns list of collectibles in user's collection along with details about collectible to be displayed
+
+    Args:
+        user_id: collectors user id
+
+    Returns:
+    [
+        {
+            id: UUID, (collection id)
+            campaign_id: UUID,
+            collectible_id: UUID,
+            name: "string", (name of collectible)
+            campaign_name: "string",
+            image: "url",
+            date_added: "DD/MM/YYYY", (date collectible was added to collection list)
+            date_released: "DD/MM/YYYY", (date collection/campaign was released)
+        },
+        ...
+    ]
+    '''
+
+    return [
+        {
+            'id': 1,
+            'name': 'Homer',
+            'campaign_name': 'Simpsons',
+            'campaign_id': 1,
+            'collectible_id': 1,
+            'image': 'https://ilarge.lisimg.com/image/8825948/980full-homer-simpson.jpg',
+            'date_added': '23/05/2014',
+            'date_released': '03/03/2014',
+        },
+        {
+            "id": 2,
+            "image": 'https://tse4.mm.bing.net/th?id=OIP.e4tAXeZ6G0YL4OE5M8KTwAHaMq&pid=Api',
+            "name": 'Marge',
+            'campaign_id': 12,
+            'collectible_id': 12,
+            "campaign_name": 'Winter 2022',
+            'date_added': '03/02/2014',
+            'date_released': '03/01/2014',
+        },
+        {
+            "id": 3,
+            "image": 'https://tse2.mm.bing.net/th?id=OIP.j7EknM6CUuEct_kx7o-dNQHaMN&pid=Api',
+            "name": 'Bart',
+            'campaign_id': 1,
+            'collectible_id': 2,
+            "campaign_name": 'Simpsons',
+            'date_added': '03/08/2014',
+            'date_released': '03/01/2014',
+        },
+    ]
+    # user_id = get_jwt_identity()
+    # return db_collections.get_collection(user_id)
 
 
 @APP.route("/collection/delete", methods=["DELETE"])
 @jwt_required(fresh=False)
 def remove_collectible():
+    '''
+    Deletes collectible from user's collection
+
+    Args:
+        user_id: int (collector's id)
+        collection_id: int ()
+    '''
     user_id = get_jwt_identity()
     collection_id = request.json.get("id", None)
 

@@ -126,24 +126,25 @@ def remove_collectible(user_id, collection_id):
 def get_collection(user_id):
     """get_collection.
 
-    Return list conataining all collectibles and their details in users collection.
+    Returns list of collectibles in user's collection along with details about collectible to be displayed
 
     Args:
         user_id: collectors user id
 
-    get_collection() = {
-        "collection": [
-            {
-                "id": collection_id,
-                "campaign_id": campaign_id,
-                "collectible_id": collectible_id,
-                "name": collectible_name,
-                "description": collectible_description,
-                "image": collectible_image,
-                ... ()
-            },
-        ],
-    }
+    Returns:
+    [
+        {
+            id: UUID, (collection id)
+            campaign_id: UUID,
+            collectible_id: UUID,
+            name: "string", (name of collectible)
+            campaign_name: "string",
+            image: "url",
+            date_added: "DD/MM/YYYY", (date collectible was added to collection list)
+            date_released: "DD/MM/YYYY", (date collection/campaign was released)
+        },
+        ...
+    ]
     """
 
     engine, conn, metadata = dbm.db_connect()
