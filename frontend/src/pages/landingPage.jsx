@@ -2,7 +2,7 @@
 import React from 'react';
 import landing_page_icon from '../images/landing_page_icon.png'
 
-function landingPage() {
+function LandingPage() {
   
   //style of image
   const ImageAdjust = {
@@ -21,4 +21,4 @@ function landingPage() {
   );
 }
 
-export default landingPage;
+export default LandingPage;
