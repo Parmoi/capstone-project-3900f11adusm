@@ -10,7 +10,7 @@ import {
 
 } from 'material-react-table';
 
-import { Box, Button, IconButton } from '@mui/material';
+import { Box, Button,} from '@mui/material';
 
 // stub data
 const data = [
