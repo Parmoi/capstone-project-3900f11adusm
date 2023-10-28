@@ -156,6 +156,7 @@ def profile():
     """
     returns:
         {
+        profile_picture: "string",
         Username: "string",
         first_name: "string",
         last_name: "string",
@@ -178,6 +179,7 @@ def profile_update():
     Example: "username already taken"
 
     Args:
+        profile_picture: string
         username: string
         email: valid email format.
         first_name: string
