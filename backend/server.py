@@ -327,32 +327,6 @@ def wantlist():
     user_id = get_jwt_identity()
     return jsonify(db_wantlist.get_wantlist(user_id)), OK
 
-@APP.route("/add")
-def add_random():
-    db_collectors.insert_collector("potato@gmail.com", "bob", "pass")
-    db_collectors.insert_collector("amazing@gmail.com", "hello", "pass")
-    db_campaigns.register_campaign("random", "potato", "30-12-2020", "30-12-2025")
-    db_collectibles.register_collectible(1, "new_collectible!", "hahahahahah!", "")
-    db_collectibles.register_collectible(1, "another_collectible!", "hahahahahah!", "")
-    db_collectibles.register_collectible(1, "collectible 1!", "hahahahahah!", "")
-    db_collectibles.register_collectible(1, "collectible 2!", "hahahahahah!", "")
-    db_collectibles.register_collectible(1, "collectible 3!", "hahahahahah!", "")
-    db_wantlist.insert_wantlist(1, "new_collectible!")
-    db_wantlist.insert_wantlist(1, "another_collectible!")
-    db_wantlist.insert_wantlist(2, "new_collectible!")
-    db_wantlist.insert_wantlist(2, "another_collectible!")
-    db_campaigns.register_campaign("campaign 1", "random desc", "01-01-1999", "01-01-2000")
-    db_campaigns.register_campaign("campaign 2", "random desc", "01-01-1999", "01-01-2001")
-    db_campaigns.register_campaign("campaign 3", "random desc", "01-01-1999", "01-01-2025")
-    db_campaigns.register_campaign("campaign 4", "random desc", "01-01-1999", "01-01-2030")
-    db_campaigns.register_campaign("campaign 5", "random desc", "01-01-1999", "19-10-2023")
-    db_campaigns.register_campaign("campaign 6", "random desc", "19-10-2024", "19-10-2030")
-    db_campaigns.register_campaign("campaign 7", "random desc", "01-01-1999", "20-10-2023")
-    return db_campaigns.get_campaigns_in_period('current')
-    # return db_wantlist.remove_from_wantlist(1, "new_collectible!")
-    # return db_collectibles.search_collectibles("collectible")
-
-
 """ |------------------------------------|
     |           Dashboard Routes         |
     |------------------------------------| """
