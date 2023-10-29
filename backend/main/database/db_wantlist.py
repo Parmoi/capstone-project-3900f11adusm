@@ -18,28 +18,33 @@ def get_wantlist(user_id):
         user_id (int): id of the user whose wantlist we want to find
 
     Returns:
-        tuple: holds get_wantlist message and the wantlist
+        JSON, int: JSON holds the wantlist, int is the error code
     
     Example Output:
     {
-        "msg": "Wantlist has been successfully delivered!",
-        "wantlist": [
+        [
             {
-            "campaign_name": "cool_superheroes",
-            "collectible_name": "random",
-            "collectible_description": "hahahahahah!",
-            "collectible_image": "https://ilarge.lisimg.com/image/8825948/980full-homer-simpson.jpg",
-            "date_added": "Fri, 27 Oct 2023 00:00:00 GMT"
+                "id": 1, (id of collection)
+                "collectible_id": 1,
+                "name": "new_collectible!", (name of collectible)
+                "image": "https://ilarge.lisimg.com/image/8825948/980full-homer-simpson.jpg",
+                "campaign_id": 1,
+                "campaign_name": "random",
+                "date_added": "29/10/2023",
+                "date_released": "30/12/2020"
             },
             {
-            "campaign_name": "cool_superheroes",
-            "collectible_name": "random2",
-            "collectible_description": "hahahahahah!",
-            "collectible_image": "https://ilarge.lisimg.com/image/8825948/980full-homer-simpson.jpg",
-            "date_added": "Fri, 27 Oct 2023 00:00:00 GMT"
+                "id": 1, (id of collection)
+                "name": "another_collectible!", (id of collection)
+                "collectible_id": 2,
+                "image": "",
+                "campaign_id": 1,
+                "campaign_name": "random",
+                "date_added": "29/10/2023",
+                "date_released": "30/12/2020"
             }
         ]
-    }
+    }, OK
     """
     engine, conn, metadata = dbm.db_connect()
 
@@ -56,11 +61,13 @@ def get_wantlist(user_id):
     
     search_stmt = (
         db.select(
-            coll.c.name.label("collectible_name"),
-            coll.c.image.label("collectible_image"),
-            coll.c.description.label("collectible_description"),
+            coll.c.id.label("collectible_id"),
+            coll.c.name.label("name"),
+            coll.c.image.label("image"),
+            camp.c.id.label("campaign_id"),
             camp.c.name.label("campaign_name"),
-            want.c.date_added.label("date_added")
+            want.c.date_added.label("date_added"),
+            camp.c.start_date.label("date_released")
         )
         .select_from(join)
     )
@@ -68,12 +75,12 @@ def get_wantlist(user_id):
     wantlist = db_helpers.rows_to_list(conn.execute(search_stmt).fetchall())
     conn.close()
 
-    return jsonify(
-        {
-            "msg": "Wantlist has been successfully delivered!",
-            "wantlist": wantlist
-        }
-    ), OK
+    # Stub of wantlist requires "id" (of collection), but I'm not too sure how
+    # it works, so for now we will add "id": 1 to all dictionaries
+    for want_dict in wantlist:
+        want_dict["id"] = 1
+
+    return jsonify(wantlist), OK
 
 
 # TODO: Error checking (valid user, valid collectible name)
@@ -85,16 +92,10 @@ def insert_wantlist(collector_id, collectible_name):
         collectible_name (string): name of the collectible to add to wantlist
     
     Return:
-        JSON: jasonified dictionary that holds the message, collector_id and 
-        collectible_id
+        JSON, int: JSON that holds the wantlist id, int is the error code
     
     Example Output:
-    {
-        "msg": "Collectible has been added to wantlist successfully!",
-        "collector_id": 1,
-        "collectible_id": 1,
-        "date_added": "Fri, 27 Oct 2023 00:00:00 GMT"
-    }
+        {"wantlist_id": 1}, 200
     """
     engine, conn, metadata = dbm.db_connect()
 
@@ -117,14 +118,9 @@ def insert_wantlist(collector_id, collectible_name):
     conn.execute(insert_stmt)
     conn.close()
 
-    return jsonify(
-        {
-            "msg": "Collectible has been added to wantlist successfully!",
-            "collector_id": collector_id,
-            "collectible_id": collectible_id,
-            "date_added": curr_date
-         }
-    ), OK
+    wantlist_id = find_wantlist_id(collector_id, collectible_name)
+
+    return jsonify({"wantlist_id": wantlist_id}), OK
 
 # TODO: error checking (valid user, valid collectible name)
 def remove_from_wantlist(collector_id, collectible_name):
@@ -136,14 +132,10 @@ def remove_from_wantlist(collector_id, collectible_name):
         collectible_name (string): name of collectible we want to remove from
                                    wantlist
     Returns:
-        tuple that contains msg, collector_id and collectible_id
+        JSON, id: JSON of our wantlist id, and id of the error code
     
     Example Output:
-    {
-        "msg": "Collectible has been removed from wantlist!",
-        "collector_id": 1,
-        "collectible_id": 1
-    }
+        {"wantlist_id": 1}, 200
     """
     engine, conn, metadata = dbm.db_connect()
 
@@ -153,6 +145,9 @@ def remove_from_wantlist(collector_id, collectible_name):
     # Find the id of the collectible
     collectible_id = db_collectibles.find_collectible_id(collectible_name)
 
+    # Find the wantlist_id of this interaction
+    wantlist_id = find_wantlist_id(collector_id, collectible_name)
+
     delete_stmt = db.delete(want).where(
         (want.c.collector_id == collector_id) &
         (want.c.collectible_id == collectible_id))
@@ -160,10 +155,34 @@ def remove_from_wantlist(collector_id, collectible_name):
     conn.execute(delete_stmt)
     conn.close()
 
-    return jsonify(
-        {
-            "msg": "Collectible has been removed from wantlist!",
-            "collector_id": collector_id,
-            "collectible_id": collectible_id
-        }
-    ), OK
+    return jsonify({"wantlist_id": wantlist_id}), OK
+
+def find_wantlist_id(collector_id, collectible_name):
+    """Give the wantlist_id that corresponds to the given collector and collectible
+
+    Args:
+        collector_id (int): id of the collector
+        collectible_name (string): name of the collectible
+    
+    Returns:
+        int: int corresponding to wantlist row that matches collector id and
+             collectible name
+    """
+
+    engine, conn, metadata = dbm.db_connect()
+
+    # Loads in our wantlist table
+    want = db.Table("wantlist", metadata, autoload_with=engine)
+
+    # Find the id associated with the collectible_name
+    collectible_id = db_collectibles.find_collectible_id(collectible_name)
+
+    select_stmt = db.select(want.c.id).where(
+        (want.c.collector_id == collector_id) & 
+        (want.c.collectible_id == collectible_id))
+
+    # Find and return the corresponding wantlist id
+    wantlist_id = conn.execute(select_stmt).fetchone()._asdict().get("id")
+    conn.close()
+
+    return wantlist_id

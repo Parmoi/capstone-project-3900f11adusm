@@ -1,7 +1,8 @@
 import sqlalchemy as db
 from flask import jsonify
 import db_manager as dbm
-from datetime import date
+import db_helpers
+from datetime import date, datetime
 from main.error import OK, InputError, AccessError
 
 """ |------------------------------------|
@@ -18,13 +19,12 @@ def register_campaign(name, description, start_date, end_date):
     Args:
         name: name of collectible campaign
         description: description of collectible campaign
-        start_date: start_date of campaign ("YYYY-MM-DD")
-        end_date: end date of campaign ("YYYY-MM-DD")
+        start_date: start_date of campaign ("DD-MM-YYY")
+        end_date: end date of campaign ("DD-MM-YYY")
         collectible_fields: list of fields/columns for collectibles in this campaign
     """
-
-    start_date_obj = date.fromisoformat(start_date)
-    end_date_obj = date.fromisoformat(end_date)
+    start_date_obj = datetime.strptime(start_date, "%d-%m-%Y").date()
+    end_date_obj = datetime.strptime(end_date, "%d-%m-%Y").date()
 
     engine, conn, metadata = dbm.db_connect()
 
@@ -113,34 +113,37 @@ def get_campaign_collectibles(campaign_id):
 
 
 def get_campaigns_in_period(time_period):
-    """
-    Function to return campaigns depending on the time_period entered.
+    """Function to return campaigns depending on the time_period entered.
 
     Args:
-    - time_period: specify what time period we want the campaigns from (past/current/future)
+        time_period (string): ("past", "current", "future") specifies what time
+                              period we want the campaigns from
+
+    Return:
+        JSON, int: JSON that holds a list of campaigns (or our error message), 
+                   int is the error code
 
     Expected Output:
-    {"campaigns":
-    [
-        {
-            "collectibles_table":"mock collectibles",
-            "description":"random desc",
-            "end_date":"Wed, 01 Jan 2025 00:00:00 GMT",
-            "id":3,
-            "image":"https://ilarge.lisimg.com/image/8825948/980full-homer-simpson.jpg",
-            "name":"mock",
-            "start_date":"Fri, 01 Jan 1999 00:00:00 GMT"
-        },
-        {
-            "collectibles_table":"campaign 4_collectibles",
-            "description":"random desc",
-            "end_date":"Tue, 01 Jan 2030 00:00:00 GMT",
-            "id":4,
-            "image":"https://ilarge.lisimg.com/image/8825948/980full-homer-simpson.jpg",
-            "name":"campaign 4",
-            "start_date":"Fri, 01 Jan 1999 00:00:00 GMT"
-        }
-    ]}
+        {"campaigns":
+            [
+                {
+                    "id": 1,
+                    "name": "random",
+                    "image": null,
+                    "description": "potato",
+                    "start_date": "30/12/2020"
+                    "end_date": "30/12/2025",
+                },
+                {
+                    "id": 4,
+                    "name": "campaign 3",
+                    "image": null,
+                    "description": "random desc",
+                    "start_date": "01/01/1999"
+                    "end_date": "01/01/2025",
+                },
+            ]
+        }, OK
     """
 
     # Error checking for valid time_period input
@@ -156,6 +159,7 @@ def get_campaigns_in_period(time_period):
     cur_date = date.today()
     search_stmt = db.select(camp)
 
+    # Generate a search statement depending on the period we want
     if time_period == "past":
         search_stmt = db.select(camp).where(camp.c.end_date <= cur_date)
     elif time_period == "current":
@@ -165,16 +169,11 @@ def get_campaigns_in_period(time_period):
     else:
         search_stmt = db.select(camp).where(camp.c.start_date > cur_date)
 
-    execute = conn.execute(search_stmt)
+    # Finds the list of campaigns
+    campaign_list = db_helpers.rows_to_list(conn.execute(search_stmt).fetchall())
     conn.close()
 
-    result_list = []
-    results = execute.fetchall()
-
-    for row in results:
-        result_list.append(row._asdict())
-
-    return jsonify({"campaigns": result_list}), OK
+    return jsonify({"campaigns": campaign_list}), OK
 
 
 """ |------------------------------------|
