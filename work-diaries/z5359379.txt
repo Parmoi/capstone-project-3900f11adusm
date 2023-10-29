@@ -24,3 +24,49 @@ writing answers to part C of the proposal. Met again on Wednesday. Discussed a
 new implementation of the trade system, modelled after Steam's trading system.
 Helped in making changes to the storyboard to accomodate these changes. Used
 user stories from lectures to rewrite all our user stories.
+
+
+Week 4
+
+Had a meeting on Monday discussing the division of work and the structure of our
+user stories. Made a start on making the database persistent, and learnt how our
+backend would function.
+
+Week 5
+
+To ensure that everyone's environments were consistent, Uguudei set up Docker, 
+and had it up and running for that week. This way we could ensure our code ran
+correctly on every system. I worked on making a persistent database, and pushed 
+the working code through. Also wrote the backend functions dealing with the 
+registration/login of users. Made it so that even if the Docker environment was 
+closed and reopened, the details of the user would persist. Created backend 
+function to edit user information. We also had our project demo that week, where
+we were able to show that our frontend and backend were connected, even though 
+not much functionality was implemented. After the demo, we planned how our 
+second sprint would look, and the tasks we wished to cover.
+
+Week 6
+
+Discussed the integration of a token verification system with the group, as well
+as a status update where everyone was at. Finished insert functionality for 
+wantlist, and inserting collectible/campaign. Had a meeting to assign everyone 
+tasks, and set hard deadlines. I began working on implementing the search 
+function. Cleaned up some messy code for collectibles/collectors and 
+successfully implemented the backend for the search function. Had progress 
+meeting that Wednesday.
+
+Week 7
+
+Began working on the function to find campaigns in a certain period. Had another
+meeting that Wednesday discussing progress blockers and issues found while 
+coding (such as undocumented confusing code). Another progress update here as 
+well. Finished working on returning campaigns in a certain period, and began 
+working on the functions dealing with wantlist. Ran into a progress blocker with
+unclear database structure (campaign collectibles). Wrote code for that 
+structure, then had to refactor because the changes were rolled back. Finished 
+off the wantlist functions, including get, insert, and remove, and ensured that 
+they were all consistent with the frontend's expectations. Added a helper 
+function that converted a certain column type to string (in line with frontend's
+expectations). Missed a meeting during the week, but I ensured my group was
+updated on my progress, and I clearly communicated what I was doing, and was 
+open to being assigned tasks.
