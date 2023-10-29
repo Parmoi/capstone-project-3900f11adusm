@@ -343,6 +343,71 @@ def wantlist():
 
 
 """ |------------------------------------|
+    |           Exchange Routes          |
+    |------------------------------------| """
+
+@APP.route("/exchange/history", method=["GET"])
+@jwt_required(fresh=False)
+def exchange_history():
+    user_id = get_jwt_identity()
+
+    stub_return = {     # return a json list
+        "exchange_history" : [{
+            "traded_collectible_id": "",
+            "traded_collectible_name": "",
+            "traded_collectible_img": "",
+            "traded_campaign_id": "",
+            "traded_campaign_name": "",
+            "traded_campaign_img": "",
+            "accepted_collectible_id": "",
+            "accepted_collectible_name": "",
+            "accepted_collectible_img": "",
+            "accepted_campaign_id": "",
+            "accepted_campaign_name": "",
+            "accepted_campaign_img": "",
+            "trader_collector_id": "",      # The id of the other collector, not the collector viewing
+            "trader_profile_img": "",       # The profile image of the other collector
+            "trader_username": "person2",
+            "offer_made_date": "2023/10/25",
+            "accepted_date": "2023/10/29",        
+        }] 
+    }
+
+    return jsonify(stub_return), OK
+
+@APP.route("/exchange/available", method=["GET"])
+@jwt_required(fresh=False)
+def exchange_history():
+    user_id = get_jwt_identity()
+
+    collectible_id = request.json.get("collectible_id", None)
+
+    stub_return = {     # return a json list
+
+    }
+
+    return jsonify(stub_return), OK
+
+
+@APP.route("/exchange/makeoffer", method=["POST"])
+@jwt_required(fresh=False)
+def exchange_history():
+    user_id = get_jwt_identity()
+
+    offer_collectible_id = request.json.get("offer_collectible_id", None)
+
+    stub_return = {
+        "": "",
+        "": "",
+        "": "",
+        "": "",
+        "": "",
+        "": "",        
+    }
+
+    return jsonify(stub_return), OK
+
+""" |------------------------------------|
     |           Dashboard Routes         |
     |------------------------------------| """
 
