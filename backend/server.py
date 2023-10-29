@@ -18,7 +18,7 @@ from main.database import db_manager as dbm
 from main.database import (
     db_collectors,
     db_campaigns,
-    db_waintlist,
+    db_wantlist,
     db_collectibles,
     db_collections,
 )
@@ -72,18 +72,6 @@ def init_mock_data():
     mock_data_init.execute_sql_file("./mock_data/mock_collectibles.sql")
 
     return jsonify(msg="Mock data initialised!"), OK
-
-
-# @APP.route("/add")
-# def add_random():
-#     db_campaigns.register_campaign("campaign 1", "random desc", "1999-01-01", "2000-01-01", [])
-#     db_campaigns.register_campaign("campaign 2", "random desc", "1999-01-01", "2001-01-01", [])
-#     db_campaigns.register_campaign("campaign 3", "random desc", "1999-01-01", "2025-01-01", [])
-#     db_campaigns.register_campaign("campaign 4", "random desc", "1999-01-01", "2030-01-01", [])
-#     db_campaigns.register_campaign("campaign 5", "random desc", "1999-01-01", "2023-10-19", [])
-#     db_campaigns.register_campaign("campaign 6", "random desc", "2024-10-19", "2030-10-19", [])
-#     db_campaigns.register_campaign("campaign 7", "random desc", "1999-01-01", "2023-10-20", [])
-#     return "add successful"
 
 """ |------------------------------------|
     |       Authentication Routes        |
@@ -339,8 +327,7 @@ def user_has_collectible():
 @jwt_required(fresh=False)
 def wantlist():
     user_id = get_jwt_identity()
-    return jsonify(db_waintlist.get_wantlist(user_id)), OK
-
+    return jsonify(db_wantlist.get_wantlist(user_id)), OK
 
 """ |------------------------------------|
     |           Exchange Routes          |
