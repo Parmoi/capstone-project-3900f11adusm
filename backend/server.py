@@ -383,7 +383,17 @@ def exchange_history():
     collectible_id = request.json.get("collectible_id", None)
 
     stub_return = {     # return a json list
-
+        "exchange_history" : [{
+            "collector_id": "",         # The collector who posted the trade
+            "collector_username": "",
+            "collectible_id": "",
+            "collectible_name": "",
+            "item_img": "",             # collector uploaded image. irl image
+            "creation_date": "",
+            "post_title": "",
+            "suggested_worth": "",
+            "description": ""           # collector uploaded description
+        }] 
     }
 
     return jsonify(stub_return), OK
