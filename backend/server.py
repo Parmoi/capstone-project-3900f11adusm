@@ -18,7 +18,7 @@ from main.database import db_manager as dbm
 from main.database import (
     db_collectors,
     db_campaigns,
-    db_waintlist,
+    db_wantlist,
     db_collectibles,
     db_collections,
 )
@@ -357,7 +357,7 @@ def get_collection():
             'date_added': '03/08/2014',
             'date_released': '03/01/2014',
         },
-    ], 200)
+    ]), 200
     # user_id = get_jwt_identity()
     # return db_collections.get_collection(user_id)
 
@@ -377,7 +377,7 @@ def remove_collectible():
     }
     '''
 
-    return jsonify({'collection_id': 1}, 200)
+    return jsonify({'collection_id': 1}), 200
     # user_id = get_jwt_identity()
     # collection_id = request.json.get("id", None)
 
@@ -403,7 +403,7 @@ def user_has_collectible():
 #       Is the relational database set up so that each time a user is created, a wantlist
 #       is instantiated. Or wantlist can be searched for and its contents retruned by
 #       user id?
-@APP.route("/wantlist", methods=["GET"])
+@APP.route("/wantlist/get", methods=["GET"])
 @jwt_required(fresh=False)
 def wantlist():
     '''
@@ -459,7 +459,7 @@ def wantlist():
             'date_added': '03/08/2014',
             'date_released': '03/01/2014',
         },
-    ], 200)
+    ]), 200
     # user_id = get_jwt_identity()
     # return jsonify(db_waintlist.get_wantlist(user_id)), OK
 
@@ -482,7 +482,7 @@ def insert_wantlist():
 
     return jsonify({
         'wantlist_id': 1
-    }, 200)
+    }), 200
 
 @APP.route("/wantlist/delete", methods=["DELETE"])
 @jwt_required(fresh=False)
@@ -499,7 +499,7 @@ def remove_wantlist():
     }
     '''
 
-    return jsonify({'wantlist_id': 1}, 200)
+    return jsonify({'wantlist_id': 1}), 200
 
 @APP.route("/wantlist/move", methods=["POST"])
 @jwt_required(fresh=False)
@@ -516,7 +516,7 @@ def move_collectible():
     }
     '''
 
-    return jsonify({'collection_id': 1}, 200)
+    return jsonify({'collection_id': 1}), 200
 
 
 """ |------------------------------------|

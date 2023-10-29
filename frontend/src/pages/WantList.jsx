@@ -14,60 +14,43 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import moment from 'moment';
 
+import { apiCall } from '../App';
 
-// stub data
-const stubData = [
-  {
-    image: 'https://ilarge.lisimg.com/image/8825948/980full-homer-simpson.jpg',
-    name: 'Homer',
-    collectionName: 'Winter 2022',
-    dateReleased: '23/5/2014',
-    dateAdded: '3/3/2014',
-  },
-  {
-    image: 'https://tse4.mm.bing.net/th?id=OIP.e4tAXeZ6G0YL4OE5M8KTwAHaMq&pid=Api',
-    name: 'Marge',
-    collectionName: 'Winter 2022',
-    dateReleased: '3/2/2014',
-    dateAdded: '3/1/2014',
-  },
-  {
-    image: 'https://tse2.mm.bing.net/th?id=OIP.j7EknM6CUuEct_kx7o-dNQHaMN&pid=Api',
-    name: 'Bart',
-    collectionName: 'Winter 2022',
-    dateReleased: '4/2/2014',
-    dateAdded: '3/12/2014',
-  },
-  {
-    image: 'https://tse3.mm.bing.net/th?id=OIP.6761X25CX3UUjklkDCnjSwHaHa&pid=Api',
-    name: 'Dog',
-    collectionName: 'Winter 2022',
-    dateReleased: '3/4/2014',
-    dateAdded: '3/6/2014',
-  },
-  {
-    image: 'https://tse3.mm.bing.net/th?id=OIP.JqWjPHsW5aJIZDnPYMGovQHaJQ&pid=Api',
-    name: 'Lisa',
-    collectionName: 'Winter 2022',
-    dateReleased: '3/7/2014',
-    dateAdded: '3/8/2014',
-  },
-  {
-    image: 'https://tse1.mm.bing.net/th?id=OIP.qVV8kcLdcLysZ5OOCzhKLAHaF7&pid=Api',
-    name: 'Rando',
-    collectionName: 'Winter 2022',
-    dateReleased: '3/10/2014',
-    dateAdded: '3/2/2014',
-  },
-]
 
 // sourced from https://github.com/KevinVandy/material-react-table/blob/v1/apps/material-react-table-docs/examples/custom-top-toolbar/sandbox/src/JS.js
 const WantList = () => {
-  const [data, setData] = React.useState(stubData);
+  const [data, setData] = React.useState([]);
+
+  const fetchData = () => {
+    // call api with data
+    const options = {
+      method: 'GET',
+      route: "/wantlist/get",
+    };
+
+    apiCall((d) => {
+      console.log(d);
+      setData(d);
+    }, options)
+      .then((res) => {
+        if (res) {
+          // set error msg if api call returns error
+
+        }
+      });
+  }
+
+  React.useEffect(() => {
+    fetchData();
+  }, []);
 
   const columns = useMemo(
     //column definitions...
     () => [
+      {
+        accessorKey: 'id',
+        header: 'id',
+      },
       {
         accessorKey: 'image',
         header: 'Image',
@@ -96,12 +79,12 @@ const WantList = () => {
         header: 'Name',
       },
       {
-        accessorKey: 'collectionName',
-        header: 'Collection Name',
+        accessorKey: 'campaign_name',
+        header: 'Campaign Name',
       },
       {
         accessorKey: 'dateReleased',
-        accessorFn: (row) => moment(row.dateReleased, "DD/MM/YYYY"), //convert to Date for sorting and filtering
+        accessorFn: (row) => moment(row.date_released, "DD/MM/YYYY"), //convert to Date for sorting and filtering
             id: 'dateReleased',
             header: 'Date Released',
             filterFn: 'lessThanOrEqualTo',
@@ -134,7 +117,7 @@ const WantList = () => {
       },
       {
         accessorKey: 'dateAdded',
-        accessorFn: (row) => moment(row.dateAdded, "DD/MM/YYYY"), //convert to Date for sorting and filtering
+        accessorFn: (row) => moment(row.date_added, "DD/MM/YYYY"), //convert to Date for sorting and filtering
             id: 'dateAdded',
             header: 'Date Added',
             filterFn: 'lessThanOrEqualTo',
@@ -177,19 +160,50 @@ const WantList = () => {
       data={data}
       enableRowSelection
       positionToolbarAlertBanner="bottom" //show selected rows count on bottom toolbar
+      initialState={{ columnVisibility: { id: false } }}
 
       //add custom action buttons to top-left of top toolbar
 
       renderBottomToolbarCustomActions={({ table }) => {
         const handleDelete= () => {
           table.getSelectedRowModel().flatRows.map((row) => {
-            alert('deleting ' + row.getValue('name'));
+            const options = {
+              method: 'DELETE',
+              route: "/wantlist/delete",
+              body: {
+                'id': row.getValue('id'),
+              }
+            };
+            console.log(row.getValue('id'));
+
+            apiCall(() => { }, options)
+              .then((res) => {
+                if (res) {
+                  // set error msg if api call returns error
+
+                }
+              });
           });
         };
 
         const handleMove= () => {
           table.getSelectedRowModel().flatRows.map((row) => {
-            alert('moving ' + row.getValue('name'));
+            const options = {
+              method: 'POST',
+              route: "/wantlist/move",
+              body: {
+                'id': row.getValue('id'),
+              }
+            };
+            console.log(row.getValue('id'));
+
+            apiCall(() => { }, options)
+              .then((res) => {
+                if (res) {
+                  // set error msg if api call returns error
+
+                }
+              });
           });
         };
 
