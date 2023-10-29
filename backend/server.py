@@ -353,6 +353,7 @@ def exchange_history():
 
     stub_return = {     # return a json list
         "exchange_history" : [{
+            "exchange_id": "",
             "traded_collectible_id": "",
             "traded_collectible_name": "",
             "traded_collectible_img": "",
@@ -377,16 +378,17 @@ def exchange_history():
 
 @APP.route("/exchange/available", method=["GET"])
 @jwt_required(fresh=False)
-def exchange_history():
+def available_exchanges():
     user_id = get_jwt_identity()
 
     collectible_id = request.json.get("collectible_id", None)
 
     stub_return = {     # return a json list
-        "exchange_history" : [{
+        "trade_posts" : [{
+            "trade_id": "",             # ID of the posted trade, will be used for making offers to the trade.
             "collector_id": "",         # The collector who posted the trade
             "collector_username": "",
-            "collectible_id": "",
+            "collectible_id": collectible_id,
             "collectible_name": "",
             "item_img": "",             # collector uploaded image. irl image
             "creation_date": "",
@@ -401,18 +403,23 @@ def exchange_history():
 
 @APP.route("/exchange/makeoffer", method=["POST"])
 @jwt_required(fresh=False)
-def exchange_history():
-    user_id = get_jwt_identity()
+def make_offer():
+    """
+    Accepts parameters for an offer to a collectible setup for trade.
+    Should store the information as a 
+    """
+    user_id = get_jwt_identity()       # collector making the offer for trade
 
-    offer_collectible_id = request.json.get("offer_collectible_id", None)
+
+    trade_id = request.json.get("trade_id", None)               # ID of the trade the collector is making an offer to.
+    offer_collectible_id = request.json.get("collectible_id", None)
+    description = request.json.get("description", None)         # description of offer.
+    offer_img = request.json.get("offer_img", None)             # offer maker uploaded image of collectible they're offering for the trade.
+    offer_title = request.json.get("offer_title", None)         # title of the offer being made for the trade item.
+
 
     stub_return = {
-        "": "",
-        "": "",
-        "": "",
-        "": "",
-        "": "",
-        "": "",        
+        "msg": "Offer has been successfully sent."
     }
 
     return jsonify(stub_return), OK
