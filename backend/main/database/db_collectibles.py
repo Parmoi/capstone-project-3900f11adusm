@@ -119,7 +119,7 @@ def search_collectibles(collectible_name):
         collectible_name (string): name of collectible we want to find
     
     Returns:
-        tuple: holds search message and a list of collectibles found
+        JSON, int: JSON holds list of collectibles found, int is the error code
     
     Example Output:
     {
@@ -129,10 +129,9 @@ def search_collectibles(collectible_name):
                 "collectible_description": "hahahahahah!",
                 "collectible_image": "",
                 "collectible_name": "new_collectible!",
-                "date_released": "Wed, 30 Dec 2020 00:00:00 GMT"
+                "date_released": "30/12/2020"
             }
         ]
-        "msg": "Collectible search is successful!",
     }
     """
 
@@ -158,12 +157,7 @@ def search_collectibles(collectible_name):
 
     coll_list = db_helpers.rows_to_list(conn.execute(search_stmt).fetchall())
 
-    return jsonify(
-        {
-            "msg": "Collectible search is successful!",
-            "collectibles": coll_list
-        }
-    ), OK
+    return jsonify({"collectibles": coll_list}), OK
 
 
 """ |------------------------------------|
