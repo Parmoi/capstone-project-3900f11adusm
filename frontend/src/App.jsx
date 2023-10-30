@@ -82,7 +82,7 @@ function App() {
       <ThemeProvider theme={theme}>
         <Helmet bodyAttributes={{ style: 'background-color : #cccccc' }} />
         {/* <ErrModal errMsg={errMsg} open={errOpen} handleClose={handleErrClose}/> */}
-        <Box sx={{ display: 'flex', flexDirection: 'column', rowGap: '10ch', alignItems: 'center', justifyContent: 'center' }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', rowGap: '10ch', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
           { !loggedIn
            ?  <BrowserRouter>
               <SignedOutNav />

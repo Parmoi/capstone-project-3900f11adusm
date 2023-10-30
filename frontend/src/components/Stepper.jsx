@@ -6,7 +6,7 @@ import StepLabel from '@mui/material/StepLabel';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 
-const steps = ['Select collectible', 'Add title', 'Add suggested worth', 'Enter a description', 'Add images', 'Post listing'];
+const steps = ['Select collectible', 'Add title', 'Enter a description', 'Add images', 'Post listing'];
 
 // Derived from https://mui.com/material-ui/react-stepper/
 const SellStepper = ({ stepperContent }) => {
@@ -49,23 +49,26 @@ const SellStepper = ({ stepperContent }) => {
         </React.Fragment>
       ) : (
         <React.Fragment>
-          <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', mt: '50px', height: '100%' }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', mt: '20vh'  }}>
             {stepperContent[activeStep]}
           </Box>
-          <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
-            <Button
-              color="inherit"
-              disabled={activeStep === 0}
-              onClick={handleBack}
-              sx={{ mr: 1 }}
-            >
-              Back
-            </Button>
-            <Box sx={{ flex: '1 1 auto' }} />
-
-            <Button onClick={handleNext}>
-              {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
-            </Button>
+          <Box>
+            <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2, mt: '15vh' }}>
+              <Button
+                color="inherit"
+                disabled={activeStep === 0}
+                onClick={handleBack}
+                sx={{ mr: 1 }}
+              >
+                Back
+              </Button>
+              <Box sx={{ flex: '1 1 auto' }} />
+              {activeStep !== steps.length - 1 
+              ? <Button onClick={handleNext}>
+                  Next
+                </Button>
+              : null}
+            </Box>
           </Box>
         </React.Fragment>
       )}
