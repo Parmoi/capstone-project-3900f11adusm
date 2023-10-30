@@ -8,6 +8,7 @@ import Register from './pages/Register';
 import Profile from './pages/Profile';
 import WantList from './pages/WantList';
 import CollectionList from './pages/CollectionList';
+import OffersList from './pages/OffersList';
 import HomePage from './pages/homePage';
 import SignedInNav from './components/SignedInNav';
 import SignedOutNav from './components/SignedOutNav';
@@ -56,6 +57,9 @@ const theme = createTheme({
     support: {
       main: "#B4CDED",
     },
+    error : {
+      main: "#F46786",
+    }
   }
 });
 
@@ -97,6 +101,7 @@ function App() {
               <Route path="/wantlist" element={<WantList />} />
               <Route path="/collection" element={<CollectionList />} />
               <Route path="/dashboard" element={<span>Dashboard</span>} />
+              <Route path="/offers" element={<OffersList/>} />
             </Routes>
           </BrowserRouter>
           } 

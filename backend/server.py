@@ -330,10 +330,37 @@ def wantlist():
     return jsonify(db_wantlist.get_wantlist(user_id)), OK
 
 """ |------------------------------------|
+    |           Offers Routes            |
+    |------------------------------------| """
+
+@APP.route("/offers/get", methods=["GET"])
+@jwt_required(fresh=False)
+def offers_get():
+
+    stub_data = { 
+        "offers_list" : [{
+            "offer_id": "",
+            "collectible_id": "",
+            "collectible_name": "Homer",
+            "offer_status": "SENT",         # status can be SENT, ACCEPTED or DECLINED
+            "collectible_img": "",
+            "trader_collector_id": "",      # id of the collector offer was sent to
+            "trader_profile_img": "",       # The profile image of the other collector that offer was sent to
+            "trader_name": "person2",
+            "date_offer": "02/06/2003",
+            "date_updated": "02/06/2004",        
+        }] 
+    }
+
+    return jsonify(stub_data), OK
+
+
+
+""" |------------------------------------|
     |           Exchange Routes          |
     |------------------------------------| """
 
-@APP.route("/exchange/history", method=["GET"])
+@APP.route("/exchange/history", methods=["GET"])
 @jwt_required(fresh=False)
 def exchange_history():
     user_id = get_jwt_identity()
@@ -363,7 +390,7 @@ def exchange_history():
 
     return jsonify(stub_return), OK
 
-@APP.route("/exchange/available", method=["GET"])
+@APP.route("/exchange/available", methods=["GET"])
 @jwt_required(fresh=False)
 def available_exchanges():
     user_id = get_jwt_identity()
@@ -388,7 +415,7 @@ def available_exchanges():
     return jsonify(stub_return), OK
 
 
-@APP.route("/exchange/makeoffer", method=["POST"])
+@APP.route("/exchange/makeoffer", methods=["POST"])
 @jwt_required(fresh=False)
 def make_offer():
     """
