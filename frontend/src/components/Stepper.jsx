@@ -25,8 +25,8 @@ const SellStepper = ({ stepperContent }) => {
   };
 
   return (
-    <Box sx={{ width: '100%' }}>
-      <Stepper activeStep={activeStep}>
+    <Box sx={{ width: '100%', flex: 1 }}>
+      <Stepper activeStep={activeStep} sx={{mt:'5vh'}}>
         {steps.map((label, index) => {
           const stepProps = {};
           const labelProps = {};
@@ -37,17 +37,6 @@ const SellStepper = ({ stepperContent }) => {
           );
         })}
       </Stepper>
-      {activeStep === steps.length ? (
-        <React.Fragment>
-          <Typography sx={{ mt: 2, mb: 1 }}>
-            All steps completed - you&apos;re finished
-          </Typography>
-          <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
-            <Box sx={{ flex: '1 1 auto' }} />
-            <Button onClick={handleReset}>Reset</Button>
-          </Box>
-        </React.Fragment>
-      ) : (
         <React.Fragment>
           <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', mt: '20vh'  }}>
             {stepperContent[activeStep]}
@@ -58,20 +47,22 @@ const SellStepper = ({ stepperContent }) => {
                 color="inherit"
                 disabled={activeStep === 0}
                 onClick={handleBack}
-                sx={{ mr: 1 }}
+                sx={{ position: 'absolute', left: 10, bottom: 10 }}
               >
                 Back
               </Button>
               <Box sx={{ flex: '1 1 auto' }} />
               {activeStep !== steps.length - 1 
-              ? <Button onClick={handleNext}>
+              ? <Button 
+                  onClick={handleNext}
+                  sx={{ position: 'absolute', right: 10, bottom: 10 }}
+                >
                   Next
                 </Button>
               : null}
             </Box>
           </Box>
         </React.Fragment>
-      )}
     </Box>
   );
 }
