@@ -148,6 +148,10 @@ const SellPage = () => {
     }
 
     const PostListing = () => {
+        const postData = () => {
+            // api call to post new trade
+        }
+
         return(
             <Box sx={{height: '100%'}}>
                 <Typography variant='h5' mb='50px'>Check new trade post</Typography>
@@ -164,7 +168,7 @@ const SellPage = () => {
                     aria-disabled
                     value={description}
                     />
-                    <Button variant='contained'>POST</Button>
+                    <Button variant='contained' onClick={postData}>POST</Button>
                 </FormControl>
             </Box>
         );
