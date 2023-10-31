@@ -368,6 +368,8 @@ def wantlist():
 @jwt_required(fresh=False)
 def post_trade():
     '''
+    Creates trade post, returns post_id
+
     Args: 
         collection_id
         post_title
