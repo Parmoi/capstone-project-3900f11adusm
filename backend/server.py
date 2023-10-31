@@ -18,7 +18,7 @@ from main.database import db_manager as dbm
 from main.database import (
     db_collectors,
     db_campaigns,
-    db_waintlist,
+    db_wantlist,
     db_collectibles,
     db_collections,
 )
@@ -72,18 +72,6 @@ def init_mock_data():
     mock_data_init.execute_sql_file("./mock_data/mock_collectibles.sql")
 
     return jsonify(msg="Mock data initialised!"), OK
-
-
-# @APP.route("/add")
-# def add_random():
-#     db_campaigns.register_campaign("campaign 1", "random desc", "1999-01-01", "2000-01-01", [])
-#     db_campaigns.register_campaign("campaign 2", "random desc", "1999-01-01", "2001-01-01", [])
-#     db_campaigns.register_campaign("campaign 3", "random desc", "1999-01-01", "2025-01-01", [])
-#     db_campaigns.register_campaign("campaign 4", "random desc", "1999-01-01", "2030-01-01", [])
-#     db_campaigns.register_campaign("campaign 5", "random desc", "1999-01-01", "2023-10-19", [])
-#     db_campaigns.register_campaign("campaign 6", "random desc", "2024-10-19", "2030-10-19", [])
-#     db_campaigns.register_campaign("campaign 7", "random desc", "1999-01-01", "2023-10-20", [])
-#     return "add successful"
 
 """ |------------------------------------|
     |       Authentication Routes        |
@@ -156,6 +144,7 @@ def profile():
     """
     returns:
         {
+        profile_picture: "string",
         Username: "string",
         first_name: "string",
         last_name: "string",
@@ -178,6 +167,7 @@ def profile_update():
     Example: "username already taken"
 
     Args:
+        profile_picture: string
         username: string
         email: valid email format.
         first_name: string
@@ -337,8 +327,116 @@ def user_has_collectible():
 @jwt_required(fresh=False)
 def wantlist():
     user_id = get_jwt_identity()
-    return jsonify(db_waintlist.get_wantlist(user_id)), OK
+    return jsonify(db_wantlist.get_wantlist(user_id)), OK
 
+""" |------------------------------------|
+    |           Offers Routes            |
+    |------------------------------------| """
+
+@APP.route("/offers/get", methods=["GET"])
+@jwt_required(fresh=False)
+def offers_get():
+
+    stub_data = { 
+        "offers_list" : [{
+            "offer_id": "",
+            "collectible_id": "",
+            "collectible_name": "Homer",
+            "offer_status": "SENT",         # status can be SENT, ACCEPTED or DECLINED
+            "collectible_img": "",
+            "trader_collector_id": "",      # id of the collector offer was sent to
+            "trader_profile_img": "",       # The profile image of the other collector that offer was sent to
+            "trader_name": "person2",
+            "date_offer": "02/06/2003",
+            "date_updated": "02/06/2004",        
+        }] 
+    }
+
+    return jsonify(stub_data), OK
+
+
+
+""" |------------------------------------|
+    |           Exchange Routes          |
+    |------------------------------------| """
+
+@APP.route("/exchange/history", methods=["GET"])
+@jwt_required(fresh=False)
+def exchange_history():
+    user_id = get_jwt_identity()
+
+    stub_return = {     # return a json list
+        "exchange_history" : [{
+            "exchange_id": "",
+            "traded_collectible_id": "",
+            "traded_collectible_name": "",
+            "traded_collectible_img": "",
+            "traded_campaign_id": "",
+            "traded_campaign_name": "",
+            "traded_campaign_img": "",
+            "accepted_collectible_id": "",
+            "accepted_collectible_name": "",
+            "accepted_collectible_img": "",
+            "accepted_campaign_id": "",
+            "accepted_campaign_name": "",
+            "accepted_campaign_img": "",
+            "trader_collector_id": "",      # The id of the other collector, not the collector viewing
+            "trader_profile_img": "",       # The profile image of the other collector
+            "trader_username": "person2",
+            "offer_made_date": "2023/10/25",
+            "accepted_date": "2023/10/29",        
+        }] 
+    }
+
+    return jsonify(stub_return), OK
+
+@APP.route("/exchange/available", methods=["GET"])
+@jwt_required(fresh=False)
+def available_exchanges():
+    user_id = get_jwt_identity()
+
+    collectible_id = request.json.get("collectible_id", None)
+
+    stub_return = {     # return a json list
+        "trade_posts" : [{
+            "trade_id": "",             # ID of the posted trade, will be used for making offers to the trade.
+            "collector_id": "",         # The collector who posted the trade
+            "collector_username": "",
+            "collectible_id": collectible_id,
+            "collectible_name": "",
+            "item_img": "",             # collector uploaded image. irl image
+            "creation_date": "",
+            "post_title": "",
+            "suggested_worth": "",
+            "description": ""           # collector uploaded description
+        }] 
+    }
+
+    return jsonify(stub_return), OK
+
+
+@APP.route("/exchange/makeoffer", methods=["POST"])
+@jwt_required(fresh=False)
+def make_offer():
+    """
+    Accepts parameters for an offer to a collectible setup for trade.
+    Should store the information as a 
+    """
+    user_id = get_jwt_identity()       # collector making the offer for trade
+
+
+    trade_id = request.json.get("trade_id", None)               # ID of the trade the collector is making an offer to.
+    offer_collectible_id = request.json.get("collectible_id", None)
+    description = request.json.get("description", None)         # description of offer.
+    offer_img = request.json.get("offer_img", None)             # offer maker uploaded image of collectible they're offering for the trade.
+    offer_title = request.json.get("offer_title", None)         # title of the offer being made for the trade item.
+
+
+    stub_return = {
+        "msg": "Offer has been successfully sent."
+    }
+
+    return jsonify(stub_return), OK
 
 """ |------------------------------------|
     |           Dashboard Routes         |

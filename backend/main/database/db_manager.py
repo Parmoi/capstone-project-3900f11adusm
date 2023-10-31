@@ -50,8 +50,8 @@ def database_setup():
         db.Column("name", db.String, unique=True),
         db.Column("image", db.String),
         db.Column("description", db.String),
-        db.Column("start_date", db.Date),
-        db.Column("end_date", db.Date),
+        db.Column("start_date", db.DATE),
+        db.Column("end_date", db.DATE),
     )
 
     # Creates a collectible table
@@ -83,6 +83,7 @@ def database_setup():
         db.Column("id", db.Integer, db.Identity(), primary_key=True),
         db.Column("collector_id", db.Integer, db.ForeignKey("collectors.id")),
         db.Column("collectible_id", db.Integer, db.ForeignKey("collectibles.id")),
+        db.Column("date_added", db.DATE)
     )
 
     # Creates all tables stored within metadata

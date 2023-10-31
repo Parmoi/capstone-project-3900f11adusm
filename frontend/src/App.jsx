@@ -8,6 +8,7 @@ import Register from './pages/Register';
 import Profile from './pages/Profile';
 import WantList from './pages/WantList';
 import CollectionList from './pages/CollectionList';
+import OffersList from './pages/OffersList';
 import LandingPage from './pages/landingPage';
 import SignedInNav from './components/SignedInNav';
 import SignedOutNav from './components/SignedOutNav';
@@ -60,6 +61,9 @@ const theme = createTheme({
     support: {
       main: "#B4CDED",
     },
+    error : {
+      main: "#F46786",
+    }
   }
 });
 
@@ -108,9 +112,8 @@ function App() {
               <Route path="/profile" element={<Profile />} />
               <Route path="/wantlist" element={<WantList />} />
               <Route path="/collection" element={<CollectionList />} />
-              <Route path="/campaign" element={<Campaign/>} />
-              <Route path="/results/:query" element={<ResultsPage/>} />
-              <Route path="*" element={<Navigate to="/" />} />
+              <Route path="/dashboard" element={<span>Dashboard</span>} />
+              <Route path="/offers" element={<OffersList/>} />
             </Routes>
             
           </BrowserRouter>
