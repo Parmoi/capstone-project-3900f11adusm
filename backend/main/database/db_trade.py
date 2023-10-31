@@ -84,6 +84,7 @@ def get_trade_posts(collectible_name):
     )
 
     trade_posts = db_helpers.rows_to_list(conn.execute(select_stmt).fetchall())
+    conn.close()
 
     return jsonify(trade_posts), OK
 
