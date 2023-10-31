@@ -10,7 +10,9 @@ import {
 
 } from 'material-react-table';
 
-import { Box, Button,} from '@mui/material';
+import { Box, Button,Typography} from '@mui/material';
+import { useLocation } from 'react-router-dom';
+import Timer from '../components/Timer'
 
 // stub data
 const data = [
@@ -109,65 +111,73 @@ const Campaign = () => {
     //end
   );
 
-  // React.useEffect(() => {
-  //   // new data acquired, refresh table
-  // });
+  const location = useLocation();
+  // const query = location.state?.
+
 
 
   return (
-    <MaterialReactTable
-      title="Wantlist"
-      columns={columns}
-      data={data}
-      enableRowSelection
-      positionToolbarAlertBanner="bottom" //show selected rows count on bottom toolbar
+    <>
+      <Box sx={{ my: 0, }}>
+        <Typography variant="h2" align="center" color="#2c3e50" gutterBottom>
+          {location.state?.campaign_name}
+        </Typography>
+        <Timer startDate={location.state?.start_date} endDate={location.state?.end_date}></Timer>
+      </Box>
+      <MaterialReactTable
+        title="Wantlist"
+        columns={columns}
+        data={data}
+        enableRowSelection
+        positionToolbarAlertBanner="bottom" //show selected rows count on bottom toolbar
 
-      //add custom action buttons to top-left of top toolbar
+        //add custom action buttons to top-left of top toolbar
 
-      renderBottomToolbarCustomActions={({ table }) => (
+        renderBottomToolbarCustomActions={({ table }) => (
 
-        <Box sx={{ display: 'flex', gap: '1rem', p: '4px' }}>
-          <Button
-            color="secondary"
-            disabled={!table.getIsSomeRowsSelected()}
-            onClick={() => {
-              // api call to backend
-              // setData to new data
-              alert('Move to collections');
-            }}
-            variant="contained"
-          >
-            Move to collections
-          </Button>
+          <Box sx={{ display: 'flex', gap: '1rem', p: '4px' }}>
+            <Button
+              color="secondary"
+              disabled={!table.getIsSomeRowsSelected()}
+              onClick={() => {
+                // api call to backend
+                // setData to new data
+                alert('Move to collections');
+              }}
+              variant="contained"
+            >
+              Move to collections
+            </Button>
 
-          <Button
-            color="error"
-            disabled={!table.getIsSomeRowsSelected()}
-            onClick={() => {
-              // api call to backend
-              // setData to new data
-              alert('Delete selected collectibles');
-            }}
-            variant="contained"
-          >
-            Delete selected
-          </Button>
-        </Box>
+            <Button
+              color="error"
+              disabled={!table.getIsSomeRowsSelected()}
+              onClick={() => {
+                // api call to backend
+                // setData to new data
+                alert('Delete selected collectibles');
+              }}
+              variant="contained"
+            >
+              Delete selected
+            </Button>
+          </Box>
 
-      )}
+        )}
 
-      //customize built-in buttons in the top-right of top toolbar
+        //customize built-in buttons in the top-right of top toolbar
 
-      renderToolbarInternalActions={({ table }) => (
+        renderToolbarInternalActions={({ table }) => (
 
-        <Box>
-          {/* add custom button to print table  */}
-          <MRT_ToggleDensePaddingButton table={table} />
-          <MRT_FullScreenToggleButton table={table} />
-        </Box>
-      )}
+          <Box>
+            {/* add custom button to print table  */}
+            <MRT_ToggleDensePaddingButton table={table} />
+            <MRT_FullScreenToggleButton table={table} />
+          </Box>
+        )}
 
-    />
+      />
+    </>
   );
 };
 
