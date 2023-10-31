@@ -176,7 +176,7 @@ const SignedInNav = ({ logout }) => {
                 <ListItemIcon>
                   <PriceCheckIcon />
                 </ListItemIcon>
-                Offers
+                <Link to="/offers" style={{ textDecoration: 'none', color: 'inherit' }}>Offers Sent</Link>
               </MenuItem>
               <MenuItem onClick={handleClose}>
                 <ListItemIcon>

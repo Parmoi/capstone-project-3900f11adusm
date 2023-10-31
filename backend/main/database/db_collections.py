@@ -11,7 +11,7 @@ from main.error import OK, InputError, AccessError
     |------------------------------------| """
 
 
-def insert_collectible(user_id, campaign_id, collectible_id):
+def insert_collectible(user_id, collectible_id):
     """insert_collectible.
 
     Inserts a collectible to users collection
@@ -22,24 +22,13 @@ def insert_collectible(user_id, campaign_id, collectible_id):
         collectible_id: id of collectible in campaign
     """
 
-    campaign_coll_table = db_campaigns.get_campaign_coll_table(campaign_id)
-    if campaign_coll_table is None:
-        return (
-            jsonify(
-                {
-                    "msg": "Collectible campaign {} not valid id!".format(campaign_id),
-                }
-            ),
-            InputError,
-        )
+    collectible = db_collectibles.get_collectible(collectible_id)
 
-    if db_collectibles.get_collectible(campaign_id, collectible_id) is None:
+    if collectible is None:
         return (
             jsonify(
                 {
-                    "msg": "Colletible {} in campain {} does not exist!".format(
-                        collectible_id, campaign_id
-                    ),
+                    "msg": "Colletible {} does not exist!".format(collectible_id),
                 }
             ),
             InputError,
@@ -50,7 +39,7 @@ def insert_collectible(user_id, campaign_id, collectible_id):
     insert_stmt = db.insert(collections).values(
         {
             "collector_id": user_id,
-            "campaign_id": campaign_id,
+            "campaign_id": collectible.get("campaign_id"),
             "collectible_id": collectible_id,
         }
     )
@@ -135,8 +124,8 @@ def get_collection(user_id):
         "collection": [
             {
                 "id": collection_id,
-                "campaign_id": campaign_id,
                 "collectible_id": collectible_id,
+                "campaign_id": campaign_id,
                 "name": collectible_name,
                 "description": collectible_description,
                 "image": collectible_image,
@@ -165,12 +154,10 @@ def get_collection(user_id):
     rows = results.fetchall()
     collection_rows = [row._asdict() for row in rows]
 
-    # for collection in collection_list:
-    # [db_collectibles.get_collectible(collection.get("campaign_id"), collection.get("collectible_id"))).update("collection_id"=collection.get("id")} for collection in collection_list]
     collection = []
     for collection_row in collection_rows:
         collectible = db_collectibles.get_collectible(
-            collection_row.get("campaign_id"), collection_row.get("collectible_id")
+            collection_row.get("collectible_id")
         )
         collectible["collectible_id"] = collectible.pop("id")
         collectible.update(id=collection_row.get("id"))
@@ -179,23 +166,12 @@ def get_collection(user_id):
     return jsonify({"collection": collection}), OK
 
 
-def user_has_collectible(user_id, campaign_id, collectible_id):
+def user_has_collectible(user_id, collectible_id):
     engine, conn, metadata = dbm.db_connect()
     collections = db.Table("collections", metadata, autoload_with=engine)
-    # select_stmt = (
-    #     db.select(collections)
-    #     .where(collections.c.id == user_id)
-    #     .where(collections.c.campaign_id == campaign_id)
-    #     .where(collections.c.collectible_id == collectible_id)
-    #     .exists()
-    # )
-    exists_criteria = (
-        db.select(collections)
-        .where(
-            (collections.c.collector_id == user_id)
-            & (collections.c.campaign_id == campaign_id)
-            & (collections.c.collectible_id == collectible_id)
-        )
+    exists_criteria = db.select(collections).where(
+        (collections.c.collector_id == user_id)
+        & (collections.c.collectible_id == collectible_id)
     )
     stmt = db.exists(exists_criteria).select()
     result = conn.execute(stmt)
@@ -218,7 +194,7 @@ def user_has_collectible(user_id, campaign_id, collectible_id):
 def user_owns_collection(user_id, collection_id):
     engine, conn, metadata = dbm.db_connect()
     collections = db.Table("collections", metadata, autoload_with=engine)
-    select_stmt = db.select(collections).where(collections.c.id == user_id)
+    select_stmt = db.select(collections).where(collections.c.id == collection_id)
     result = conn.execute(select_stmt)
     conn.close()
 
