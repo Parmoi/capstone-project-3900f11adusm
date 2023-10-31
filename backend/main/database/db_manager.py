@@ -86,6 +86,29 @@ def database_setup():
         db.Column("date_added", db.DATE)
     )
 
+    # Creates a trade_posts table that lists all current trade posts
+    trade_posts_table = db.Table(
+        "trade_posts",
+        metadata,
+        db.Column("id", db.Integer, db.Identity(), primary_key=True),
+        db.Column("collector_id", db.Integer, db.ForeignKey("collectors.id")),
+        db.Column("collection_id", db.Integer, db.ForeignKey("collections.id")),
+        db.Column("post_title", db.String),
+        db.Column("post_description", db.String),
+        db.Column("post_images", db.String)
+    )
+
+    trade_offers_table = db.Table(
+        "trade_offers",
+        metadata,
+        db.Column("id", db.Integer, db.Identity(), primary_key=True),
+        db.Column("trade_post_id", db.Integer, db.ForeignKey("trade_posts.id")),
+        db.Column("trade_sender_id", db.Integer, db.ForeignKey("collectors.id")),
+        db.Column("collection_send_id", db.Integer, db.ForeignKey("collections.id")),
+        db.Column("trade_receiver_id", db.Integer, db.ForeignKey("collectors.id")),
+        db.Column("collection_receive_id", db.Integer, db.ForeignKey("collections.id"))
+    )
+
     # Creates all tables stored within metadata
     metadata.create_all(engine)
     conn.close()
