@@ -361,6 +361,30 @@ def wantlist():
     return jsonify(db_wantlist.get_wantlist(user_id)), OK
 
 """ |------------------------------------|
+    |           Trade Routes             |
+    |------------------------------------| """
+
+@APP.route("/trade/post", methods=["POST"])
+@jwt_required(fresh=False)
+def post_trade():
+    '''
+    Args: 
+        collection_id
+        post_title
+        post_description
+        post_images: [] (list of post image urls)
+
+    '''
+    user_id = get_jwt_identity()
+
+    stub_data = {
+        "trade_post_id": ""
+    }
+
+    return jsonify(stub_data), OK
+
+
+""" |------------------------------------|
     |           Offers Routes            |
     |------------------------------------| """
 

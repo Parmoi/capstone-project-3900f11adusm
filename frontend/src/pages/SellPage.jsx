@@ -10,6 +10,7 @@ import TextField from '@mui/material/TextField';
 
 import { apiCall } from '../App';
 import { CoPresent } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
 
 const SellPage = () => {
     const [collectibleID, setCollectibleID] = React.useState('');
@@ -17,24 +18,25 @@ const SellPage = () => {
     const [title, setTitle] = React.useState('');
     const [description, setDescription] = React.useState('');
     const [collectibles, setCollectibles] = React.useState([]);
+    const navigate = useNavigate();
 
     const fetchData = () => {
         // call api with data
         const options = {
-          method: 'GET',
-          route: "/collection/get",
+            method: 'GET',
+            route: "/collection/get",
         };
     
         apiCall((d) => {
-          console.log(d);
-          setCollectibles(d);
+            console.log(d);
+            setCollectibles(d);
         }, options)
-          .then((res) => {
+        .then((res) => {
             if (res) {
-              // set error msg if api call returns error
+            // set error msg if api call returns error
     
             }
-          });
+        });
       }
     
     React.useEffect(() => {
@@ -150,6 +152,20 @@ const SellPage = () => {
     const PostListing = () => {
         const postData = () => {
             // api call to post new trade
+            const options = {
+                method: 'POST',
+                route: "/trade/post",
+            };
+          
+            apiCall(() => {
+                navigate('/dashboard');
+            }, options)
+            .then((res) => {
+                if (res) {
+                // set error msg if api call returns error
+        
+                }
+            });
         }
 
         return(
