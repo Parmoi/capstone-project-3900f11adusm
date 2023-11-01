@@ -121,7 +121,7 @@ function App() {
               <Route path="/offers" element={<OffersList/>} />
               <Route path="/trade" element={<SellPage/>} />
               <Route path='/campaign' element={<Campaign/>}></Route>
-              <Route path='/results/:query' element={<ResultsPage/>}></Route>
+              <Route path='/search/:query' element={<ResultsPage/>}></Route>
             </Routes>
             
           </BrowserRouter>

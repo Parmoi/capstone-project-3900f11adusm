@@ -94,7 +94,7 @@ const SignedInNav = ({ logout }) => {
 
     const handleSearchKeyPress = (event) => {
       if(event.key === 'Enter') {
-        navigate(`/results/${searchInput}`); // Navigate to /search/:query when Enter is pressed
+        navigate(`/search/${searchInput}`); // Navigate to /search/:query when Enter is pressed
       }
     };
 
