@@ -33,7 +33,7 @@ function CollectionList() {
 
     apiCall((d) => {
       console.log(d);
-      setData(d);
+      setData(d.collection);
     }, options)
       .then((res) => {
         if (res) {
