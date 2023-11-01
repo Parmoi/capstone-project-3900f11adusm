@@ -89,7 +89,7 @@ function ExchangeHistory() {
       },
       {
         accessorKey: 'trader_profile_img',
-        header: 'Trader Collector Profile',
+        header: 'Trader Profile',
         Cell: ({ row }) => (
           <Box
             sx={{
