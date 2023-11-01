@@ -69,7 +69,7 @@ function Register({ setLogin }) {
           setError(true);
         }
         else {
-          navigate('/dashboard');
+          navigate('/');
         }
       });
   }

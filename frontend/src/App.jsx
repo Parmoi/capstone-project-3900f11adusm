@@ -112,8 +112,10 @@ function App() {
               <Route path="/profile" element={<Profile />} />
               <Route path="/wantlist" element={<WantList />} />
               <Route path="/collection" element={<CollectionList />} />
-              <Route path="/dashboard" element={<span>Dashboard</span>} />
+              <Route path="/dashboard" element={<HomePage/>} />
               <Route path="/offers" element={<OffersList/>} />
+              <Route path='/campaign' element={<Campaign/>}></Route>
+              <Route path='/results/:query' element={<ResultsPage/>}></Route>
             </Routes>
             
           </BrowserRouter>

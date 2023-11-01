@@ -101,7 +101,7 @@ const SignedInNav = ({ logout }) => {
       <Box sx={{ flexGrow: 1 }}>
         <AppBar position="fixed" sx={{ height: "10ch", display: 'flex', justifyContent: 'center', backgroundColor: 'primary.main' }}>
           <Toolbar sx={{ justifyContent: 'space-between' }}>
-            <Link to="/dashboard" style={linkStyle}>
+            <Link to="/" style={linkStyle}>
               <Typography variant="h6" component="div" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly', color: 'secondary.main' }}>
                 <SmartToyIcon />&nbsp;CollectiblesCorner
               </Typography>

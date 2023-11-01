@@ -40,7 +40,7 @@ function SignIn({ setLogin }) {
           setError(true);
         }
         else {
-          navigate('/dashboard');
+          navigate('/');
         }
       });
   }

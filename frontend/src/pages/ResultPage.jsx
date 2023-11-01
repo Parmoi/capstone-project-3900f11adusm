@@ -19,6 +19,7 @@ import {
 } from 'material-react-table';
 
 import { Box, Button, IconButton } from '@mui/material';
+import { apiCall } from "../App";
 
 function ResultsPage() {
     const { query } = useParams();
