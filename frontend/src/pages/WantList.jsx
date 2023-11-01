@@ -69,6 +69,10 @@ const WantList = () => {
     //column definitions...
     () => [
       {
+        accessorKey: 'id',
+        header: 'id',
+      },
+      {
         accessorKey: 'image',
         header: 'Image',
         Cell: ({ row }) => (
@@ -177,6 +181,7 @@ const WantList = () => {
       data={data}
       enableRowSelection
       positionToolbarAlertBanner="bottom" //show selected rows count on bottom toolbar
+      initialState={{ columnVisibility: { id: false } }}
 
       //add custom action buttons to top-left of top toolbar
 

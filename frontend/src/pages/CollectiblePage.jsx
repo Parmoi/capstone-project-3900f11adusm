@@ -8,8 +8,10 @@ import {
     Container,
     Paper,
 } from '@mui/material'
+import { useParams } from 'react-router-dom';
 import { useTheme, ThemeProvider } from '@mui/material/styles';
 import { apiCall } from '../App';
+import { CoPresent } from '@mui/icons-material';
 
 // stub images
 // const images = [
@@ -35,13 +37,18 @@ const CollectiblePage = () => {
       {
         "collectible_images": []
       }
-    );
+  );
+  
+  const params = useParams();
+  const c_id = params.id;
+  console.log(c_id);
+  
 
   const fetchData = () => {
     // call api with data
     const options = {
       method: 'GET',
-      route: "/collectible/get",
+      route: `/collectible/get?collectible_id=${c_id}`,
     };
 
     apiCall((d) => {
