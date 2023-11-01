@@ -113,15 +113,12 @@ function App() {
               <Route path="/profile" element={<Profile />} />
               <Route path="/wantlist" element={<WantList />} />
               <Route path="/collection" element={<CollectionList />} />
-<<<<<<< HEAD
               <Route path="/exchange-history" element={<ExchangeHistory />}/>
               <Route path="/dashboard" element={<span>Dashboard</span>} />
-=======
               <Route path="/dashboard" element={<HomePage/>} />
               <Route path="/offers" element={<OffersList/>} />
               <Route path='/campaign' element={<Campaign/>}></Route>
               <Route path='/results/:query' element={<ResultsPage/>}></Route>
->>>>>>> 1fc15a49447c64dbb9b84862b1be9bfbfd5c9292
             </Routes>
             
           </BrowserRouter>
