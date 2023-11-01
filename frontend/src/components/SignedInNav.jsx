@@ -199,7 +199,7 @@ const SignedInNav = ({ logout }) => {
                 <ListItemIcon>
                   <CreditScoreIcon />
                 </ListItemIcon>
-                Order History
+                <Link to="/exchange-history" style={{ textDecoration: 'none', color: 'inherit' }}>Exchange History</Link>
               </MenuItem>
               <Divider />
               <MenuItem onClick={() => {

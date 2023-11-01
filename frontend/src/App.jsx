@@ -15,6 +15,7 @@ import OffersList from './pages/OffersList';
 import LandingPage from './pages/landingPage';
 import SignedInNav from './components/SignedInNav';
 import SignedOutNav from './components/SignedOutNav';
+import ExchangeHistory from './pages/ExchangeHistory';
 import Campaign from './pages/campaign';
 import ResultsPage from './pages/ResultPage';
 import SellPage from './pages/SellPage';
@@ -115,6 +116,8 @@ function App() {
               <Route path="/profile" element={<Profile />} />
               <Route path="/wantlist" element={<WantList />} />
               <Route path="/collection" element={<CollectionList />} />
+              <Route path="/exchange-history" element={<ExchangeHistory />}/>
+              <Route path="/dashboard" element={<span>Dashboard</span>} />
               <Route path="/dashboard" element={<HomePage/>} />
               <Route path="/offers" element={<OffersList/>} />
               <Route path='/campaign' element={<Campaign/>}></Route>
