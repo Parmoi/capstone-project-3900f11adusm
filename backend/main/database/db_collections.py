@@ -40,7 +40,6 @@ def insert_collectible(user_id, collectible_id):
     insert_stmt = db.insert(collections).values(
         {
             "collector_id": user_id,
-            # "campaign_id": collectible.get("campaign_id"),
             "collectible_id": collectible_id,
         }
     )
@@ -145,22 +144,18 @@ def get_collection(collector_id):
         collections,
         collectibles,
         (collections.c.collectible_id == collectibles.c.id)
-        & (collections.c.collector_id == collector_id)
+        & (collections.c.collector_id == collector_id),
     )
-    
-    # .join(campains, collectibles.c.campaign_id == campains.c.id)
 
     select_stmt = db.select(
-        collections.c.id,
-        collectibles.c.id.label("collectible_id"),
-        # campains.c.campains.label("campaign_id"),
-        collectibles.c.campaign_id,
-        collectibles.c.name,
-        collectibles.c.description,
-        collectibles.c.image
-    )
+        collections.c.id.label("id"),
+        collections.c.collectible_id.label("collectible_id"),
+        collectibles.c.campaign_id.label("campaign_id"),
+        collectibles.c.name.label("name"),
+        collectibles.c.description.label("description"),
+        collectibles.c.image.label("image"),
+    ).select_from(join)
 
-    # select_stmt = db.select(collections).where(collections.c.collector_id == user_id)
     results = conn.execute(select_stmt)
     conn.close()
 
@@ -175,19 +170,8 @@ def get_collection(collector_id):
         )
 
     rows = results.fetchall()
-    
-    collection_rows = [row._asdict() for row in rows]
-    
 
-
-    # collection = []
-    # for collection_row in collection_rows:
-    #     collectible = db_collectibles.get_collectible(
-    #         collection_row.get("collectible_id")
-    #     )
-    #     collectible["collectible_id"] = collectible.pop("id")
-    #     collectible.update(id=collection_row.get("id"))
-    #     collection.append(collectible)
+    collection = db_helpers.rows_to_list(rows)
 
     return jsonify({"collection": collection}), OK
 

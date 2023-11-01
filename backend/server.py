@@ -21,7 +21,7 @@ from main.database import (
     db_wantlist,
     db_collectibles,
     db_collections,
-    db_trade
+    db_trade,
 )
 from main import auth
 from main.error import InputError, AccessError, OK
@@ -406,7 +406,7 @@ def move_collectible():
 
     user_id = get_jwt_identity()
     wantlist_id = request.json.get("wantlist_id", None)
-    
+
     return db_wantlist.move_to_collection(user_id, wantlist_id)
 
 
