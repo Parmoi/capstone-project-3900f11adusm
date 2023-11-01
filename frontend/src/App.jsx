@@ -9,11 +9,13 @@ import Profile from './pages/Profile';
 import WantList from './pages/WantList';
 import CollectionList from './pages/CollectionList';
 import OffersList from './pages/OffersList';
+import HomePage from './pages/homePage';
+import SellPage from './pages/SellPage';
+
 import LandingPage from './pages/landingPage';
 import SignedInNav from './components/SignedInNav';
 import SignedOutNav from './components/SignedOutNav';
 import ExchangeHistory from './pages/ExchangeHistory';
-import HomePage from './pages/homePage'
 import Campaign from './pages/campaign';
 import ResultsPage from './pages/ResultPage';
 
@@ -96,7 +98,7 @@ function App() {
       <ThemeProvider theme={theme}>
         <Helmet bodyAttributes={{ style: 'background-color : #cccccc' }} />
         {/* <ErrModal errMsg={errMsg} open={errOpen} handleClose={handleErrClose}/> */}
-        <Box sx={{ display: 'flex', flexDirection: 'column', rowGap: '10ch', alignItems: 'center', justifyContent: 'center' }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', rowGap: '10ch', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
           { !loggedIn
            ?  <BrowserRouter>
               <SignedOutNav />
@@ -117,6 +119,7 @@ function App() {
               <Route path="/dashboard" element={<span>Dashboard</span>} />
               <Route path="/dashboard" element={<HomePage/>} />
               <Route path="/offers" element={<OffersList/>} />
+              <Route path="/trade" element={<SellPage/>} />
               <Route path='/campaign' element={<Campaign/>}></Route>
               <Route path='/results/:query' element={<ResultsPage/>}></Route>
             </Routes>
