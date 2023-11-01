@@ -377,10 +377,9 @@ def post_trade():
         post_images: [] (list of post image urls)
 
     '''
-    user_id = get_jwt_identity()
 
     stub_data = {
-        "trade_post_id": ""
+        "trade_post_id": 1
     }
 
     return jsonify(stub_data), OK

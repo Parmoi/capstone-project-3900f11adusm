@@ -9,7 +9,6 @@ import Select from '@mui/material/Select';
 import TextField from '@mui/material/TextField';
 
 import { apiCall } from '../App';
-import { CoPresent } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 
 const SellPage = () => {
@@ -153,7 +152,7 @@ const SellPage = () => {
         const postData = () => {
             // api call to post new trade
             const options = {
-                method: 'POST',
+                method: "POST",
                 route: "/trade/post",
             };
           
