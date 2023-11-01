@@ -17,6 +17,7 @@ import SignedInNav from './components/SignedInNav';
 import SignedOutNav from './components/SignedOutNav';
 import Campaign from './pages/campaign';
 import ResultsPage from './pages/ResultPage';
+import SellPage from './pages/SellPage';
 
 import { Navigate } from "react-router-dom";
 import { useState } from 'react';
@@ -102,7 +103,7 @@ function App() {
            ?  <BrowserRouter>
               <SignedOutNav />
               <Routes>
-                <Route path="/" element={<LandingPage/>} />
+                <Route path="/" element={<CollectiblePage/>} />
                 <Route path="/login" element={<SignIn setLogin={setLoggedIn}/>} />
                 <Route path="/register" element={<Register setLogin={setLoggedIn}/>} />
               </Routes>
