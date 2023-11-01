@@ -12,16 +12,13 @@ import HomePage from './pages/homePage';
 import CollectiblePage from './pages/CollectiblePage';
 
 import OffersList from './pages/OffersList';
-import HomePage from './pages/homePage';
 import SellPage from './pages/SellPage';
-
 import LandingPage from './pages/landingPage';
 import SignedInNav from './components/SignedInNav';
 import SignedOutNav from './components/SignedOutNav';
 import ExchangeHistory from './pages/ExchangeHistory';
 import Campaign from './pages/campaign';
 import ResultsPage from './pages/ResultPage';
-import SellPage from './pages/SellPage';
 
 import { Navigate } from "react-router-dom";
 import { useState } from 'react';
