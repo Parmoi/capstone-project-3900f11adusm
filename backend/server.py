@@ -205,7 +205,7 @@ def get_collectors():
     return db_collectors.get_all_collectors()
 
 
-@APP.route("/search", methods=["GET"])
+@APP.route("/search/:query", methods=["GET"])
 def first_search():
     search_query = request.json.get("query", None)
     # return db_collectibles.search_collectibles(search_query)
