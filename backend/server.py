@@ -333,7 +333,7 @@ def wantlist():
     |           Exchange Routes          |
     |------------------------------------| """
 
-@APP.route("/exchange/history", method=["GET"])
+@APP.route("/exchange/history", methods=["GET"])
 @jwt_required(fresh=False)
 def exchange_history():
     user_id = get_jwt_identity()
@@ -363,7 +363,7 @@ def exchange_history():
 
     return jsonify(stub_return), OK
 
-@APP.route("/exchange/available", method=["GET"])
+@APP.route("/exchange/available", methods=["GET"])
 @jwt_required(fresh=False)
 def available_exchanges():
     user_id = get_jwt_identity()
@@ -388,7 +388,7 @@ def available_exchanges():
     return jsonify(stub_return), OK
 
 
-@APP.route("/exchange/makeoffer", method=["POST"])
+@APP.route("/exchange/makeoffer", methods=["POST"])
 @jwt_required(fresh=False)
 def make_offer():
     """
