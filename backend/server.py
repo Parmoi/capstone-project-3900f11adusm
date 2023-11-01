@@ -619,9 +619,10 @@ def make_offer():
 @APP.route("/collectible/get", methods=["GET"])
 @jwt_required(fresh=False)
 def get_collectible_info():
+    '''
+    Takes in collectible_id as request argument
+    '''
     # user_id = get_jwt_identity()
-
-    # collectible_id = request.json.get("collectible_id", None)
 
     stub_return = { 
         "collectible_name": "Homer",
