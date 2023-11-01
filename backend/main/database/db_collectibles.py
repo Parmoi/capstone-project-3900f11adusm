@@ -2,6 +2,7 @@ import sqlalchemy as db
 from flask import jsonify
 import db_manager as dbm
 import db_campaigns
+import db_helpers
 from main.error import OK, InputError, AccessError
 
 """ |------------------------------------|
@@ -10,7 +11,7 @@ from main.error import OK, InputError, AccessError
 
 
 # TODO: Error checking
-def register_collectible(campaign_id, collectible_name, description, image, collectible_fields):
+def register_collectible(campaign_id, collectible_name, description, image):
     """register_collectible.
 
     Register a collectible in a campaign.
@@ -28,12 +29,10 @@ def register_collectible(campaign_id, collectible_name, description, image, coll
         "description": description,
         "image": image,
         "campaign_id": campaign_id,
-    } | collectible_fields
-
-    coll_table_name = db_campaigns.get_campaign_coll_table(campaign_id)
+    }
 
     engine, conn, metadata = dbm.db_connect()
-    collectibles = db.Table(coll_table_name, metadata, autoload_with=engine)
+    collectibles = db.Table("collectibles", metadata, autoload_with=engine)
     insert_stmt = db.insert(collectibles).values(collectible_dict)
     conn.execute(insert_stmt)
     conn.close()
@@ -41,9 +40,11 @@ def register_collectible(campaign_id, collectible_name, description, image, coll
     return (
         jsonify(
             {
-                "msg": "Collectible succesfully registered!",
+                "msg": "Collectible {} succesfully registered!".format(
+                    collectible_name
+                ),
                 "campaign_id": campaign_id,
-                "collectible_id": find_collectible_id(campaign_id, collectible_name),
+                "collectible_id": find_collectible_id(collectible_name),
             }
         ),
         OK,
@@ -90,10 +91,102 @@ def get_collectible(campaign_id, collectible_id):
 
     return result.fetchone()._asdict()
 
+def find_collectible_id(collectible_name):
+    """Finds the id of the collectible with name collectible_name
+
+    Args:
+        collectible_name (string): name of collectible
+
+    Returns:
+        int: the id of the collectible
+    """
+    
+    engine, conn, metadata = dbm.db_connect()
+
+    # Loads in the collectibles table
+    coll = db.Table("collectibles", metadata, autoload_with=engine)
+
+    # Finds and returns the id associated with the collectible_name
+    select_stmt = db.select(coll).where(coll.c.name == collectible_name)
+    execute = conn.execute(select_stmt)
+
+    return execute.fetchone()._asdict().get("id")
+
+def search_collectibles(collectible_name):
+    """Find a list of collectibles that match the collectible_name
+
+    Args:
+        collectible_name (string): name of collectible we want to find
+    
+    Returns:
+        JSON, int: JSON holds list of collectibles found, int is the error code
+    
+    Example Output:
+    {
+        "collectibles": [
+            {
+                "campaign_name": "random",
+                "collectible_description": "hahahahahah!",
+                "collectible_image": "",
+                "collectible_name": "new_collectible!",
+                "date_released": "30/12/2020"
+            }
+        ]
+    }
+    """
+
+    engine, conn, metadata = dbm.db_connect()
+
+    # Loads in the collectible and campaign tables into our metadata
+    coll = db.Table("collectibles", metadata, autoload_with=engine)
+    camp = db.Table("campaigns", metadata, autoload_with=engine)
+
+    join = db.join(coll, camp, (coll.c.campaign_id == camp.c.id) &
+                               (coll.c.name.ilike(f"%{collectible_name}%")))
+
+    search_stmt = (
+        db.select(
+            coll.c.name.label("collectible_name"),
+            coll.c.image.label("collectible_image"),
+            coll.c.description.label("collectible_description"),
+            camp.c.name.label("campaign_name"),
+            camp.c.start_date.label("date_released"),
+        )
+        .select_from(join)
+    )
+
+    coll_list = db_helpers.rows_to_list(conn.execute(search_stmt).fetchall())
+
+    return jsonify({"collectibles": coll_list}), OK
+
+
+""" |------------------------------------|
+    |  Helper functions for collectibles |
+    |------------------------------------| """
+
+
+def get_collectible(collectible_id):
+    """get_collectible.
+
+    Args:
+        collectible_id:
+    """
+    engine, conn, metadata = dbm.db_connect()
+
+    collectibles = db.Table("collectibles", metadata, autoload_with=engine)
+    select_stmt = db.select(collectibles).where(collectibles.c.id == collectible_id)
+    result = conn.execute(select_stmt)
+    conn.close()
+
+    if result is None:
+        return {}
+
+    return result.fetchone()._asdict()
+
 
 # Function to convert collectible name to collectible id
 # Returns collection id as int
-def find_collectible_id(campaign_id, collectible_name):
+def find_collectible_id(collectible_name):
     """find_collectible_id.
 
     Function to convert collectible name to collectible id
@@ -105,9 +198,8 @@ def find_collectible_id(campaign_id, collectible_name):
     """
     engine, conn, metadata = dbm.db_connect()
 
-    collectible_table_name = db_campaigns.get_campaign_coll_table(campaign_id)
     # Loads in the campaign table into our metadata
-    collectibles = db.Table(collectible_table_name, metadata, autoload_with=engine)
+    collectibles = db.Table("collectibles", metadata, autoload_with=engine)
 
     select_stmt = db.select(collectibles.c.id).where(
         collectibles.c.name == collectible_name
@@ -121,58 +213,3 @@ def find_collectible_id(campaign_id, collectible_name):
     collectible_id = result.fetchone()._asdict().get("id")
 
     return collectible_id
-
-
-def search_collectibles(collectible_name):
-    """
-    Function to return collectibles whose name matches the collectible_name
-
-    Example Output:
-    [
-        {
-            "campaign_name": "random campaign",
-            "collectible_name": "collectible 1",
-            "collectible_image": "https://ilarge.lisimg.com/image/8825948/980full-homer-simpson.jpg",
-            "date_released": "Fri, 01 Jan 2021 00:00:00 GMT"
-        },
-        {
-            "campaign_name": "random campaign",
-            "collectible_name": "collectible 2",
-            "collectible_image": "https://ilarge.lisimg.com/image/8825948/980full-homer-simpson.jpg",
-            "date_released": "Fri, 01 Jan 2021 00:00:00 GMT"
-        }
-    ]
-
-    """
-
-    engine, conn, metadata = dbm.db_connect()
-
-    # Loads in the collectible and campaign tables into our metadata
-    collectibles = db.Table("collectibles", metadata, autoload_with=engine)
-    campaigns = db.Table("campaigns", metadata, autoload_with=engine)
-    coll = collectibles.alias("coll")
-    camp = campaigns.alias("camp")
-
-    joined_tbl = db.join(coll, camp, coll.c.campaign_id == camp.c.id)
-
-    search_stmt = (
-        db.select(
-            camp.c.name.label("campaign_name"),
-            coll.c.name.label("collectible_name"),
-            camp.c.start_date.label("date_released"),
-            coll.c.image.label("collectible_image"),
-        )
-        .select_from(joined_tbl)
-        .where(coll.c.name == collectible_name)
-    )
-
-    execute = conn.execute(search_stmt)
-    conn.close()
-
-    result_list = []
-    results = execute.fetchall()
-
-    for row in results:
-        result_list.append(row._asdict())
-
-    return result_list

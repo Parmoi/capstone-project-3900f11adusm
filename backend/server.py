@@ -21,6 +21,7 @@ from main.database import (
     db_wantlist,
     db_collectibles,
     db_collections,
+    db_trade
 )
 from main import auth
 from main.error import InputError, AccessError, OK
@@ -114,21 +115,6 @@ def refresh_token():
     return auth.refresh(user_id)
 
 
-# @APP.route("/add")
-# def add_random():
-#     db_campaigns.register_campaign("campaign 1", "random desc", "1999-01-01", "2000-01-01", [])
-#     db_campaigns.register_campaign("campaign 2", "random desc", "1999-01-01", "2001-01-01", [])
-#     db_campaigns.register_campaign("campaign 3", "random desc", "1999-01-01", "2025-01-01", [])
-#     db_campaigns.register_campaign("campaign 4", "random desc", "1999-01-01", "2030-01-01", [])
-#     db_campaigns.register_campaign("campaign 5", "random desc", "1999-01-01", "2023-10-19", [])
-#     db_campaigns.register_campaign("campaign 6", "random desc", "2024-10-19", "2030-10-19", [])
-#     db_campaigns.register_campaign("campaign 7", "random desc", "1999-01-01", "2023-10-20", [])
-#     return "add successful"
-
-# @APP.route("/search1")
-# def first_search():
-#     return db_campaigns.find
-
 # Uncomment to have access token refreshed automatically after evert request is made
 # If it is going to expire within a certain amount of time (optional)
 # @APP.after_request
@@ -157,13 +143,41 @@ def refresh_token():
 @APP.route("/profile", methods=["GET"])
 @jwt_required(fresh=False)
 def profile():
+    """
+    returns:
+        {
+        profile_picture: "string",
+        Username: "string",
+        first_name: "string",
+        last_name: "string",
+        email: "email_string",
+        phone: "string" (numbers),
+        address: "string"
+        }
+    """
     user_id = get_jwt_identity()
-    return db_collectors.get_collector(user_id)
+    return db_collectors.get_collector(user_id=user_id)
 
 
 @APP.route("/profile/update", methods=["POST"])
 @jwt_required(fresh=False)
 def profile_update():
+    """
+    Updates the profile details of the user. Returns detailed
+    error messages if the user provides invalid data.
+
+    Example: "username already taken"
+
+    Args:
+        profile_picture: string
+        username: string
+        email: valid email format.
+        first_name: string
+        last_name: string
+        phone: string (numbers)
+        address: string
+    """
+
     user_id = get_jwt_identity()
 
     email = request.json.get("email", None)
@@ -191,6 +205,13 @@ def get_collectors():
     return db_collectors.get_all_collectors()
 
 
+@APP.route("/search", methods=["GET"])
+def first_search():
+    search_query = request.json.get("query", None)
+    # return db_collectibles.search_collectibles(search_query)
+    return db_campaigns.get_campaign_collectibles(1)
+
+
 """ |------------------------------------|
     |           Campaign Routes          |
     |------------------------------------| """
@@ -205,11 +226,8 @@ def register_campaign():
     description = request.json.get("desc", None)
     start_date = request.json.get("start", None)
     end_date = request.json.get("end", None)
-    collectible_fields = request.json.get("fields", None)
 
-    return db_campaigns.register_campaign(
-        name, description, start_date, end_date, collectible_fields
-    )
+    return db_campaigns.register_campaign(name, description, start_date, end_date)
 
 
 @APP.route("/campaign/get_campaign", methods=["GET"])
@@ -240,10 +258,9 @@ def register_collectible():
     collectible_name = request.json.get("name", None)
     description = request.json.get("description", None)
     image = request.json.get("image", None)
-    collectible_fields = request.json.get("collectible_fields", None)
 
     return db_collectibles.register_collectible(
-        campaign_id, collectible_name, description, image, collectible_fields
+        campaign_id, collectible_name, description, image
     )
 
 
@@ -255,17 +272,6 @@ def get_campaign_collectibles():
     campaign_id = request.json.get("campaign_id", None)
 
     return db_campaigns.get_campaign_collectibles(campaign_id)
-
-
-@APP.route("/campaign/collectible_opt_fields", methods=["GET"])
-# @jwt_required(fresh=False)
-def get_campaign_opt_col_names():
-    """Returns the optional columns for campain collectibles"""
-    # verify_jwt_in_request()
-
-    campaign_id = request.json.get("campaign_id", None)
-
-    return db_campaigns.get_campaign_collectible_fields(campaign_id)
 
 
 """ |------------------------------------|
@@ -283,22 +289,11 @@ def insert_collectible():
     Args:
         user_id: UUID
         collectible_id: int
-
-    Returns:
-    {
-        'collection_id': int
-    }
     '''
+    user_id = get_jwt_identity()
+    collectible_id = request.json.get("collectible_id", None)
 
-    return jsonify({
-        'collection_id': 1
-    }, 200)
-
-    # user_id = get_jwt_identity()
-    # campaign_id = request.json.get("campaign_id", None)
-    # collectible_id = request.json.get("collectible_id", None)
-
-    # return db_collections.insert_collectible(user_id, campaign_id, collectible_id)
+    return db_collections.insert_collectible(user_id, collectible_id)
 
 
 @APP.route("/collection/get", methods=["GET"])
@@ -325,41 +320,8 @@ def get_collection():
         ...
     ]
     '''
-
-    return jsonify([
-        {
-            'id': 1,
-            'name': 'Homer',
-            'campaign_name': 'Simpsons',
-            'campaign_id': 1,
-            'collectible_id': 1,
-            'image': 'https://ilarge.lisimg.com/image/8825948/980full-homer-simpson.jpg',
-            'date_added': '23/05/2014',
-            'date_released': '03/03/2014',
-        },
-        {
-            "id": 2,
-            "image": 'https://tse4.mm.bing.net/th?id=OIP.e4tAXeZ6G0YL4OE5M8KTwAHaMq&pid=Api',
-            "name": 'Marge',
-            'campaign_id': 12,
-            'collectible_id': 12,
-            "campaign_name": 'Winter 2022',
-            'date_added': '03/02/2014',
-            'date_released': '03/01/2014',
-        },
-        {
-            "id": 3,
-            "image": 'https://tse2.mm.bing.net/th?id=OIP.j7EknM6CUuEct_kx7o-dNQHaMN&pid=Api',
-            "name": 'Bart',
-            'campaign_id': 1,
-            'collectible_id': 2,
-            "campaign_name": 'Simpsons',
-            'date_added': '03/08/2014',
-            'date_released': '03/01/2014',
-        },
-    ]), 200
-    # user_id = get_jwt_identity()
-    # return db_collections.get_collection(user_id)
+    user_id = get_jwt_identity()
+    return db_collections.get_collection(user_id)
 
 
 @APP.route("/collection/delete", methods=["DELETE"])
@@ -377,11 +339,11 @@ def remove_collectible():
     }
     '''
 
-    return jsonify({'collection_id': 1}), 200
-    # user_id = get_jwt_identity()
-    # collection_id = request.json.get("id", None)
+    # return jsonify({'collection_id': 1}), 200
+    user_id = get_jwt_identity()
+    collection_id = request.json.get("id", None)
 
-    # return db_collections.remove_collectible(user_id, collection_id)
+    return db_collections.remove_collectible(user_id, collection_id)
 
 
 @APP.route("/collection/check", methods=["GET"])
@@ -389,9 +351,8 @@ def remove_collectible():
 def user_has_collectible():
     user_id = get_jwt_identity()
     collectible_id = request.json.get("collectible_id", None)
-    campaign_id = request.json.get("campaign_id", None)
 
-    return db_collections.user_has_collectible(user_id, campaign_id, collectible_id)
+    return db_collections.user_has_collectible(user_id, collectible_id)
 
 
 """ |------------------------------------|
@@ -399,14 +360,10 @@ def user_has_collectible():
     |------------------------------------| """
 
 
-# TODO: Implement the wantlist function. Not sure how to select a users wantlist
-#       Is the relational database set up so that each time a user is created, a wantlist
-#       is instantiated. Or wantlist can be searched for and its contents retruned by
-#       user id?
 @APP.route("/wantlist/get", methods=["GET"])
 @jwt_required(fresh=False)
 def wantlist():
-    '''
+    """
     Returns list of collectibles in user's want list along with details about collectible to be displayed
 
     Args:
@@ -415,58 +372,27 @@ def wantlist():
     Returns:
     [
         {
-            id: int, (collection id)
+            id: int, (wantlist_id)
             campaign_id: int,
             collectible_id: int,
-            name: "string", (name of collectible)
-            campaign_name: "string",
-            image: "url",
-            date_added: "DD/MM/YYYY", (date collectible was added to collection list)
+            name: str, (name of collectible)
+            image: str, (collectible image url)
+            campaign_name: str,
             date_released: "DD/MM/YYYY", (date collection/campaign was released)
+            date_added: "DD/MM/YYYY", (date collectible was added to wantlist)
         },
         ...
     ]
-    '''
+    """
+    user_id = get_jwt_identity()
 
-    return jsonify([
-        {
-            'id': 1,
-            'name': 'Homer',
-            'campaign_name': 'Simpsons',
-            'campaign_id': 1,
-            'collectible_id': 1,
-            'image': 'https://ilarge.lisimg.com/image/8825948/980full-homer-simpson.jpg',
-            'date_added': '23/05/2014',
-            'date_released': '03/03/2014',
-        },
-        {
-            "id": 2,
-            "image": 'https://tse4.mm.bing.net/th?id=OIP.e4tAXeZ6G0YL4OE5M8KTwAHaMq&pid=Api',
-            "name": 'Marge',
-            'campaign_id': 12,
-            'collectible_id': 12,
-            "campaign_name": 'Winter 2022',
-            'date_added': '03/02/2014',
-            'date_released': '03/01/2014',
-        },
-        {
-            "id": 3,
-            "image": 'https://tse2.mm.bing.net/th?id=OIP.j7EknM6CUuEct_kx7o-dNQHaMN&pid=Api',
-            "name": 'Bart',
-            'campaign_id': 1,
-            'collectible_id': 2,
-            "campaign_name": 'Simpsons',
-            'date_added': '03/08/2014',
-            'date_released': '03/01/2014',
-        },
-    ]), 200
-    # user_id = get_jwt_identity()
-    # return jsonify(db_waintlist.get_wantlist(user_id)), OK
+    return db_wantlist.get_wantlist(user_id)
+
 
 @APP.route("/wantlist/add", methods=["POST"])
 @jwt_required(fresh=False)
 def insert_wantlist():
-    '''
+    """
     Inserts collectible into wantlist
     Returns wantlist id created
 
@@ -478,16 +404,17 @@ def insert_wantlist():
     {
         'wantlist_id': int
     }
-    '''
+    """
+    user_id = get_jwt_identity()
+    collectible_id = request.json.get("collectible_id", None)
 
-    return jsonify({
-        'wantlist_id': 1
-    }), 200
+    return db_wantlist.insert_wantlist(user_id, collectible_id)
+
 
 @APP.route("/wantlist/delete", methods=["DELETE"])
 @jwt_required(fresh=False)
 def remove_wantlist():
-    '''
+    """
     Deletes collectible from user's wantlist
 
     Args:
@@ -497,26 +424,151 @@ def remove_wantlist():
     Returns {
         wantlist_id: int
     }
-    '''
+    """
+    user_id = get_jwt_identity()
+    wantlist_id = request.json.get("wantlist_id", None)
 
-    return jsonify({'wantlist_id': 1}), 200
+    return db_wantlist.remove_from_wantlist(user_id, wantlist_id)
+
 
 @APP.route("/wantlist/move", methods=["POST"])
 @jwt_required(fresh=False)
 def move_collectible():
-    '''
+    """
     Moves collectible from user's wantlist to collection
 
     Args:
         user_id: int (collector's id)
-        wantlist: int (id of entry to be moved)
+        wantlist_id: int (id of entry to be moved)
 
     Returns {
         collection_id: int (id of new entry created in collection)
     }
-    '''
+    """
 
-    return jsonify({'collection_id': 1}), 200
+    user_id = get_jwt_identity()
+    wantlist_id = request.json.get("wantlist_id", None)
+    
+    return db_wantlist.move_to_collection(user_id, wantlist_id)
+
+
+""" |------------------------------------|
+    |           Offers Routes            |
+    |------------------------------------| """
+
+
+@APP.route("/offers/get", methods=["GET"])
+@jwt_required(fresh=False)
+def offers_get():
+    stub_data = {
+        "offers_list": [
+            {
+                "offer_id": "",
+                "collectible_id": "",
+                "collectible_name": "Homer",
+                "offer_status": "SENT",  # status can be SENT, ACCEPTED or DECLINED
+                "collectible_img": "",
+                "trader_collector_id": "",  # id of the collector offer was sent to
+                "trader_profile_img": "",  # The profile image of the other collector that offer was sent to
+                "trader_name": "person2",
+                "date_offer": "02/06/2003",
+                "date_updated": "02/06/2004",
+            }
+        ]
+    }
+
+    return jsonify(stub_data), OK
+
+
+""" |------------------------------------|
+    |           Exchange Routes          |
+    |------------------------------------| """
+
+
+@APP.route("/exchange/history", methods=["GET"])
+@jwt_required(fresh=False)
+def exchange_history():
+    user_id = get_jwt_identity()
+
+    stub_return = {  # return a json list
+        "exchange_history": [
+            {
+                "exchange_id": "",
+                "traded_collectible_id": "",
+                "traded_collectible_name": "",
+                "traded_collectible_img": "",
+                "traded_campaign_id": "",
+                "traded_campaign_name": "",
+                "traded_campaign_img": "",
+                "accepted_collectible_id": "",
+                "accepted_collectible_name": "",
+                "accepted_collectible_img": "",
+                "accepted_campaign_id": "",
+                "accepted_campaign_name": "",
+                "accepted_campaign_img": "",
+                "trader_collector_id": "",  # The id of the other collector, not the collector viewing
+                "trader_profile_img": "",  # The profile image of the other collector
+                "trader_username": "person2",
+                "offer_made_date": "2023/10/25",
+                "accepted_date": "2023/10/29",
+            }
+        ]
+    }
+
+    return jsonify(stub_return), OK
+
+
+@APP.route("/exchange/available", methods=["GET"])
+@jwt_required(fresh=False)
+def available_exchanges():
+    user_id = get_jwt_identity()
+
+    collectible_id = request.json.get("collectible_id", None)
+
+    stub_return = {  # return a json list
+        "trade_posts": [
+            {
+                "trade_id": "",  # ID of the posted trade, will be used for making offers to the trade.
+                "collector_id": "",  # The collector who posted the trade
+                "collector_username": "",
+                "collectible_id": collectible_id,
+                "collectible_name": "",
+                "item_img": "",  # collector uploaded image. irl image
+                "creation_date": "",
+                "post_title": "",
+                "suggested_worth": "",
+                "description": "",  # collector uploaded description
+            }
+        ]
+    }
+
+    return jsonify(stub_return), OK
+
+
+@APP.route("/exchange/makeoffer", methods=["POST"])
+@jwt_required(fresh=False)
+def make_offer():
+    """
+    Accepts parameters for an offer to a collectible setup for trade.
+    Should store the information as a
+    """
+    user_id = get_jwt_identity()  # collector making the offer for trade
+
+    trade_id = request.json.get(
+        "trade_id", None
+    )  # ID of the trade the collector is making an offer to.
+    offer_collectible_id = request.json.get("collectible_id", None)
+    description = request.json.get("description", None)  # description of offer.
+    offer_img = request.json.get(
+        "offer_img", None
+    )  # offer maker uploaded image of collectible they're offering for the trade.
+    offer_title = request.json.get(
+        "offer_title", None
+    )  # title of the offer being made for the trade item.
+
+    stub_return = {"msg": "Offer has been successfully sent."}
+
+    return jsonify(stub_return), OK
 
 
 """ |------------------------------------|

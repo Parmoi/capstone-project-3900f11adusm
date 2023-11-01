@@ -50,9 +50,8 @@ def database_setup():
         db.Column("name", db.String, unique=True),
         db.Column("image", db.String),
         db.Column("description", db.String),
-        db.Column("start_date", db.Date),
-        db.Column("end_date", db.Date),
-        db.Column("collectibles_table", db.String),
+        db.Column("start_date", db.DATE),
+        db.Column("end_date", db.DATE),
     )
 
     # Creates a collectible table
@@ -61,6 +60,7 @@ def database_setup():
         metadata,
         db.Column("id", db.Integer, db.Identity(), primary_key=True),
         db.Column("name", db.String),
+        db.Column("description", db.String),
         db.Column("image", db.String),
         db.Column("campaign_id", db.Integer, db.ForeignKey("campaigns.id")),
     )
@@ -72,9 +72,7 @@ def database_setup():
         db.Column("id", db.Integer, db.Identity(), primary_key=True),
         db.Column("collector_id", db.Integer, db.ForeignKey("collectors.id")),
         db.Column("campaign_id", db.Integer, db.ForeignKey("campaigns.id")),
-        db.Column("collectible_id", db.Integer) 
-        # db.Column("user_image", db.String),
-        # db.Column("condition", db.String),
+        db.Column("collectible_id", db.Integer),
     )
 
     # Creates a wantlist table
@@ -85,6 +83,30 @@ def database_setup():
         db.Column("id", db.Integer, db.Identity(), primary_key=True),
         db.Column("collector_id", db.Integer, db.ForeignKey("collectors.id")),
         db.Column("collectible_id", db.Integer, db.ForeignKey("collectibles.id")),
+        db.Column("date_added", db.DATE)
+    )
+
+    # Creates a trade_posts table that lists all current trade posts
+    trade_posts_table = db.Table(
+        "trade_posts",
+        metadata,
+        db.Column("id", db.Integer, db.Identity(), primary_key=True),
+        db.Column("collector_id", db.Integer, db.ForeignKey("collectors.id")),
+        db.Column("collection_id", db.Integer, db.ForeignKey("collections.id")),
+        db.Column("post_title", db.String),
+        db.Column("post_description", db.String),
+        db.Column("post_images", db.String)
+    )
+
+    trade_offers_table = db.Table(
+        "trade_offers",
+        metadata,
+        db.Column("id", db.Integer, db.Identity(), primary_key=True),
+        db.Column("trade_post_id", db.Integer, db.ForeignKey("trade_posts.id")),
+        db.Column("trade_sender_id", db.Integer, db.ForeignKey("collectors.id")),
+        db.Column("collection_send_id", db.Integer, db.ForeignKey("collections.id")),
+        db.Column("trade_receiver_id", db.Integer, db.ForeignKey("collectors.id")),
+        db.Column("collection_receive_id", db.Integer, db.ForeignKey("collections.id"))
     )
 
     # Creates all tables stored within metadata
