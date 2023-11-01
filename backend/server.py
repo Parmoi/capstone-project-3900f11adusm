@@ -308,9 +308,9 @@ def remove_collectible():
 @jwt_required(fresh=False)
 def user_has_collectible():
     user_id = get_jwt_identity()
-    collectible_id = request.json.get("collectible_id", None)
+    # collectible_id = request.json.get("collectible_id", None)
 
-    return db_collections.user_has_collectible(user_id, collectible_id)
+    return db_collections.user_has_collectible(user_id)
 
 
 """ |------------------------------------|
