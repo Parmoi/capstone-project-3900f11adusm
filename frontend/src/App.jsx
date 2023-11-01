@@ -118,6 +118,7 @@ function App() {
               <Route path="/offers" element={<OffersList/>} />
               <Route path='/campaign' element={<Campaign/>}></Route>
               <Route path='/results/:query' element={<ResultsPage/>}></Route>
+              <Route path="/collectible/:id" element={<CollectiblePage />} />
             </Routes>
             
           </BrowserRouter>
