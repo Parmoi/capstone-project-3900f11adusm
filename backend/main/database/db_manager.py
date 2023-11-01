@@ -50,8 +50,8 @@ def database_setup():
         db.Column("name", db.String, unique=True),
         db.Column("image", db.String),
         db.Column("description", db.String),
-        db.Column("start_date", db.DATE),
-        db.Column("end_date", db.DATE),
+        db.Column("start_date", db.Date),
+        db.Column("end_date", db.Date),
     )
 
     # Creates a collectible table
