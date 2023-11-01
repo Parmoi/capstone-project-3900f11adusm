@@ -8,11 +8,16 @@ import Register from './pages/Register';
 import Profile from './pages/Profile';
 import WantList from './pages/WantList';
 import CollectionList from './pages/CollectionList';
-import HomePage from './pages/homePage';
+import OffersList from './pages/OffersList';
+import LandingPage from './pages/landingPage';
 import SignedInNav from './components/SignedInNav';
 import SignedOutNav from './components/SignedOutNav';
 import ExchangeHistory from './pages/ExchangeHistory';
+import HomePage from './pages/homePage'
+import Campaign from './pages/campaign';
+import ResultsPage from './pages/ResultPage';
 
+import { Navigate } from "react-router-dom";
 import { useState } from 'react';
 
 import {
@@ -57,6 +62,9 @@ const theme = createTheme({
     support: {
       main: "#B4CDED",
     },
+    error : {
+      main: "#F46786",
+    }
   }
 });
 
@@ -75,6 +83,13 @@ function App() {
     , options);
   }
 
+  const containerStyle ={
+    width: '650px',
+    height: '425px',
+    margin: "0 auto",
+    color: "#216869",
+    marginTop: '15ch'
+  }
 
   return (
     <Fragment>
@@ -86,7 +101,7 @@ function App() {
            ?  <BrowserRouter>
               <SignedOutNav />
               <Routes>
-                <Route path="/" element={<HomePage/>} />
+                <Route path="/" element={<LandingPage/>} />
                 <Route path="/login" element={<SignIn setLogin={setLoggedIn}/>} />
                 <Route path="/register" element={<Register setLogin={setLoggedIn}/>} />
               </Routes>
@@ -94,12 +109,21 @@ function App() {
           : <BrowserRouter>
             <SignedInNav logout={logout}/>
             <Routes>
+              <Route path="/" element={<HomePage/>} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/wantlist" element={<WantList />} />
               <Route path="/collection" element={<CollectionList />} />
+<<<<<<< HEAD
               <Route path="/exchange-history" element={<ExchangeHistory />}/>
               <Route path="/dashboard" element={<span>Dashboard</span>} />
+=======
+              <Route path="/dashboard" element={<HomePage/>} />
+              <Route path="/offers" element={<OffersList/>} />
+              <Route path='/campaign' element={<Campaign/>}></Route>
+              <Route path='/results/:query' element={<ResultsPage/>}></Route>
+>>>>>>> 1fc15a49447c64dbb9b84862b1be9bfbfd5c9292
             </Routes>
+            
           </BrowserRouter>
           } 
         </Box>

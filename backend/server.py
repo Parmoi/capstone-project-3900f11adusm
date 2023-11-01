@@ -21,6 +21,7 @@ from main.database import (
     db_wantlist,
     db_collectibles,
     db_collections,
+    db_trade
 )
 from main import auth
 from main.error import InputError, AccessError, OK
@@ -72,6 +73,7 @@ def init_mock_data():
     mock_data_init.execute_sql_file("./mock_data/mock_collectibles.sql")
 
     return jsonify(msg="Mock data initialised!"), OK
+
 
 """ |------------------------------------|
     |       Authentication Routes        |
@@ -163,7 +165,7 @@ def profile_update():
     """
     Updates the profile details of the user. Returns detailed
     error messages if the user provides invalid data.
-    
+
     Example: "username already taken"
 
     Args:
@@ -172,7 +174,7 @@ def profile_update():
         email: valid email format.
         first_name: string
         last_name: string
-        phone: string (numbers) 
+        phone: string (numbers)
         address: string
     """
 
@@ -224,11 +226,8 @@ def register_campaign():
     description = request.json.get("desc", None)
     start_date = request.json.get("start", None)
     end_date = request.json.get("end", None)
-    collectible_fields = request.json.get("fields", None)
 
-    return db_campaigns.register_campaign(
-        name, description, start_date, end_date, collectible_fields
-    )
+    return db_campaigns.register_campaign(name, description, start_date, end_date)
 
 
 @APP.route("/campaign/get_campaign", methods=["GET"])
@@ -319,15 +318,125 @@ def user_has_collectible():
     |------------------------------------| """
 
 
-# TODO: Implement the wantlist function. Not sure how to select a users wantlist
-#       Is the relational database set up so that each time a user is created, a wantlist
-#       is instantiated. Or wantlist can be searched for and its contents retruned by
-#       user id?
-@APP.route("/wantlist", methods=["GET"])
+@APP.route("/wantlist/get", methods=["GET"])
 @jwt_required(fresh=False)
 def wantlist():
+    """
+    Returns list of collectibles in user's want list along with details about collectible to be displayed
+
+    Args:
+        user_id: collectors user id
+
+    Returns:
+    [
+        {
+            id: int, (wantlist_id)
+            campaign_id: int,
+            collectible_id: int,
+            name: str, (name of collectible)
+            image: str, (collectible image url)
+            campaign_name: str,
+            date_released: "DD/MM/YYYY", (date collection/campaign was released)
+            date_added: "DD/MM/YYYY", (date collectible was added to wantlist)
+        },
+        ...
+    ]
+    """
     user_id = get_jwt_identity()
-    return jsonify(db_wantlist.get_wantlist(user_id)), OK
+
+    return db_wantlist.get_wantlist(user_id)
+
+
+@APP.route("/wantlist/add", methods=["POST"])
+@jwt_required(fresh=False)
+def insert_wantlist():
+    """
+    Inserts collectible into wantlist
+    Returns wantlist id created
+
+    Args:
+        user_id: UUID
+        collectible_id: int
+
+    Returns:
+    {
+        'wantlist_id': int
+    }
+    """
+    user_id = get_jwt_identity()
+    collectible_id = request.json.get("collectible_id", None)
+
+    return db_wantlist.insert_wantlist(user_id, collectible_id)
+
+
+@APP.route("/wantlist/delete", methods=["DELETE"])
+@jwt_required(fresh=False)
+def remove_wantlist():
+    """
+    Deletes collectible from user's wantlist
+
+    Args:
+        user_id: int (collector's id)
+        wantlist: int (id of entry to be deleted)
+
+    Returns {
+        wantlist_id: int
+    }
+    """
+    user_id = get_jwt_identity()
+    wantlist_id = request.json.get("wantlist_id", None)
+
+    return db_wantlist.remove_from_wantlist(user_id, wantlist_id)
+
+
+@APP.route("/wantlist/move", methods=["POST"])
+@jwt_required(fresh=False)
+def move_collectible():
+    """
+    Moves collectible from user's wantlist to collection
+
+    Args:
+        user_id: int (collector's id)
+        wantlist_id: int (id of entry to be moved)
+
+    Returns {
+        collection_id: int (id of new entry created in collection)
+    }
+    """
+
+    user_id = get_jwt_identity()
+    wantlist_id = request.json.get("wantlist_id", None)
+    
+    return db_wantlist.move_to_collection(user_id, wantlist_id)
+
+
+""" |------------------------------------|
+    |           Offers Routes            |
+    |------------------------------------| """
+
+
+@APP.route("/offers/get", methods=["GET"])
+@jwt_required(fresh=False)
+def offers_get():
+    stub_data = {
+        "offers_list": [
+            {
+                "offer_id": "",
+                "collectible_id": "",
+                "collectible_name": "Homer",
+                "offer_status": "SENT",  # status can be SENT, ACCEPTED or DECLINED
+                "collectible_img": "",
+                "trader_collector_id": "",  # id of the collector offer was sent to
+                "trader_profile_img": "",  # The profile image of the other collector that offer was sent to
+                "trader_name": "person2",
+                "date_offer": "02/06/2003",
+                "date_updated": "02/06/2004",
+            }
+        ]
+    }
+
+    return jsonify(stub_data), OK
+
 
 """ |------------------------------------|
     |           Exchange Routes          |
@@ -390,19 +499,21 @@ def available_exchanges():
 
     collectible_id = request.json.get("collectible_id", None)
 
-    stub_return = {     # return a json list
-        "trade_posts" : [{
-            "trade_id": "",             # ID of the posted trade, will be used for making offers to the trade.
-            "collector_id": "",         # The collector who posted the trade
-            "collector_username": "",
-            "collectible_id": collectible_id,
-            "collectible_name": "",
-            "item_img": "",             # collector uploaded image. irl image
-            "creation_date": "",
-            "post_title": "",
-            "suggested_worth": "",
-            "description": ""           # collector uploaded description
-        }] 
+    stub_return = {  # return a json list
+        "trade_posts": [
+            {
+                "trade_id": "",  # ID of the posted trade, will be used for making offers to the trade.
+                "collector_id": "",  # The collector who posted the trade
+                "collector_username": "",
+                "collectible_id": collectible_id,
+                "collectible_name": "",
+                "item_img": "",  # collector uploaded image. irl image
+                "creation_date": "",
+                "post_title": "",
+                "suggested_worth": "",
+                "description": "",  # collector uploaded description
+            }
+        ]
     }
 
     return jsonify(stub_return), OK
@@ -413,23 +524,26 @@ def available_exchanges():
 def make_offer():
     """
     Accepts parameters for an offer to a collectible setup for trade.
-    Should store the information as a 
+    Should store the information as a
     """
-    user_id = get_jwt_identity()       # collector making the offer for trade
+    user_id = get_jwt_identity()  # collector making the offer for trade
 
-
-    trade_id = request.json.get("trade_id", None)               # ID of the trade the collector is making an offer to.
+    trade_id = request.json.get(
+        "trade_id", None
+    )  # ID of the trade the collector is making an offer to.
     offer_collectible_id = request.json.get("collectible_id", None)
-    description = request.json.get("description", None)         # description of offer.
-    offer_img = request.json.get("offer_img", None)             # offer maker uploaded image of collectible they're offering for the trade.
-    offer_title = request.json.get("offer_title", None)         # title of the offer being made for the trade item.
+    description = request.json.get("description", None)  # description of offer.
+    offer_img = request.json.get(
+        "offer_img", None
+    )  # offer maker uploaded image of collectible they're offering for the trade.
+    offer_title = request.json.get(
+        "offer_title", None
+    )  # title of the offer being made for the trade item.
 
-
-    stub_return = {
-        "msg": "Offer has been successfully sent."
-    }
+    stub_return = {"msg": "Offer has been successfully sent."}
 
     return jsonify(stub_return), OK
+
 
 """ |------------------------------------|
     |           Dashboard Routes         |
