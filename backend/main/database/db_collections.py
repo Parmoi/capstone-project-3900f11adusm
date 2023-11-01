@@ -199,3 +199,19 @@ def user_owns_collection(user_id, collection_id):
     conn.close()
 
     return result.fetchone()._asdict().get("collector_id") == user_id
+
+
+def get_last_collection(user_id):
+    engine, conn, metadata = dbm.db_connect()
+    collections = db.Table("collections", metadata, autoload_with=engine)
+    select_stmt = (
+        db.select(collections)
+        .where(collections.c.collector_id == user_id)
+        .order_by(collections.c.id.desc())
+    )
+    results = conn.execute(select_stmt)
+    conn.close()
+
+    collection_dict = results.fetchone()._asdict()
+    return collection_dict
+
