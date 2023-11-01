@@ -12,9 +12,13 @@ import OffersList from './pages/OffersList';
 import HomePage from './pages/homePage';
 import SellPage from './pages/SellPage';
 
+import LandingPage from './pages/landingPage';
 import SignedInNav from './components/SignedInNav';
 import SignedOutNav from './components/SignedOutNav';
+import Campaign from './pages/campaign';
+import ResultsPage from './pages/ResultPage';
 
+import { Navigate } from "react-router-dom";
 import { useState } from 'react';
 
 import {
@@ -80,6 +84,13 @@ function App() {
     , options);
   }
 
+  const containerStyle ={
+    width: '650px',
+    height: '425px',
+    margin: "0 auto",
+    color: "#216869",
+    marginTop: '15ch'
+  }
 
   return (
     <Fragment>
@@ -91,7 +102,7 @@ function App() {
            ?  <BrowserRouter>
               <SignedOutNav />
               <Routes>
-                <Route path="/" element={<HomePage/>} />
+                <Route path="/" element={<LandingPage/>} />
                 <Route path="/login" element={<SignIn setLogin={setLoggedIn}/>} />
                 <Route path="/register" element={<Register setLogin={setLoggedIn}/>} />
               </Routes>
@@ -99,13 +110,17 @@ function App() {
           : <BrowserRouter>
             <SignedInNav logout={logout}/>
             <Routes>
+              <Route path="/" element={<HomePage/>} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/wantlist" element={<WantList />} />
               <Route path="/collection" element={<CollectionList />} />
-              <Route path="/dashboard" element={<span>Dashboard</span>} />
+              <Route path="/dashboard" element={<HomePage/>} />
               <Route path="/offers" element={<OffersList/>} />
               <Route path="/trade" element={<SellPage/>} />
+              <Route path='/campaign' element={<Campaign/>}></Route>
+              <Route path='/results/:query' element={<ResultsPage/>}></Route>
             </Routes>
+            
           </BrowserRouter>
           } 
         </Box>
