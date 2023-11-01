@@ -31,7 +31,11 @@ import { apiCall } from '../App';
 // ]
 
 const CollectiblePage = () => {
-  const [data, setData] = React.useState([]);
+  const [data, setData] = React.useState(
+      {
+        "collectible_images": []
+      }
+    );
 
   const fetchData = () => {
     // call api with data

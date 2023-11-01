@@ -87,7 +87,7 @@ const SellPage = () => {
             <Box sx={{height: '100%'}}>
                 <Typography variant='h5' mb='50px'>Add a title for your post</Typography>
                 <FormControl fullWidth>
-                <TextField onBlur={handleChange} label="Title" variant="standard" />
+                <TextField label="Title" onBlur={handleChange} variant="standard"/>
                 </FormControl>
             </Box>
         );
