@@ -111,7 +111,6 @@ def remove_collectible(user_id, collection_id):
     )
 
 
-# TODO: Error checking for invalid user id
 def get_collection(user_id):
     """get_collection.
 

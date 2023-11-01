@@ -8,8 +8,10 @@ import {
     Container,
     Paper,
 } from '@mui/material'
+import { useParams } from 'react-router-dom';
 import { useTheme, ThemeProvider } from '@mui/material/styles';
 import { apiCall } from '../App';
+import { CoPresent } from '@mui/icons-material';
 
 // stub images
 // const images = [
@@ -35,13 +37,18 @@ const CollectiblePage = () => {
       {
         "collectible_images": []
       }
-    );
+  );
+  
+  const params = useParams();
+  const c_id = params.id;
+  console.log(c_id);
+  
 
   const fetchData = () => {
     // call api with data
     const options = {
       method: 'GET',
-      route: "/collectible/get",
+      route: `/collectible/get?collectible_id=${c_id}`,
     };
 
     apiCall((d) => {
@@ -59,6 +66,50 @@ const CollectiblePage = () => {
   React.useEffect(() => {
     fetchData();
   }, []);
+
+  const handleBuy = () => {
+    // navigate to buy page, passing c_id in params
+  }
+
+  const handleAddWantlist = () => {
+    const options = {
+      method: 'POST',
+      route: "/wantlist/add",
+      body: JSON.stringify({
+        collectible_id: c_id,
+      })
+    };
+
+    apiCall((d) => {
+      console.log(d);
+    }, options)
+      .then((res) => {
+        if (res) {
+          // set error msg if api call returns error
+
+        }
+      });
+  }
+
+  const handleAddCollection = () => {
+    const options = {
+      method: 'POST',
+      route: "/collection/add",
+      body: JSON.stringify({
+        collectible_id: c_id,
+      })
+    };
+
+    apiCall((d) => {
+      console.log(d);
+    }, options)
+      .then((res) => {
+        if (res) {
+          // set error msg if api call returns error
+
+        }
+      });
+  }
 
   return (
     <ThemeProvider theme={useTheme()}>
@@ -78,9 +129,9 @@ const CollectiblePage = () => {
             justifyContent: 'center', 
             alignItems: 'center' 
             }}>
-            <Button variant="contained">Buy item</Button>
-            <Button variant="contained">Add to wantlist</Button>
-            <Button variant="contained">Add to collection</Button>
+            <Button variant="contained" onClick={handleBuy}>Buy item</Button>
+            <Button variant="contained" onClick={handleAddWantlist}>Add to wantlist</Button>
+            <Button variant="contained" onClick={handleAddCollection}>Add to collection</Button>
           </Paper>
         </Grid>
         <Grid item xs={1}></Grid>
