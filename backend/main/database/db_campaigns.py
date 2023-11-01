@@ -19,12 +19,12 @@ def register_campaign(name, description, start_date, end_date):
     Args:
         name: name of collectible campaign
         description: description of collectible campaign
-        start_date: start_date of campaign ("DD-MM-YYY")
-        end_date: end date of campaign ("DD-MM-YYY")
+        start_date: start_date of campaign ("DD/MM/YYYY")
+        end_date: end date of campaign ("DD/MM/YYYY")
         collectible_fields: list of fields/columns for collectibles in this campaign
     """
-    start_date_obj = datetime.strptime(start_date, "%d-%m-%Y").date()
-    end_date_obj = datetime.strptime(end_date, "%d-%m-%Y").date()
+    start_date_obj = datetime.strptime(start_date, "%d/%m/%Y").date()
+    end_date_obj = datetime.strptime(end_date, "%d/%m/%Y").date()
 
     engine, conn, metadata = dbm.db_connect()
 

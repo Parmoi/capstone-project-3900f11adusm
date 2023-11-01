@@ -26,11 +26,12 @@ import {
     Link,
     useNavigate,
   } from 'react-router-dom';
-
+import HomePage from '../pages/homePage'
 const linkStyle = {
     textDecoration: 'none',
     color: '#F0F4EF'
 }
+
 
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -83,11 +84,24 @@ const SignedInNav = ({ logout }) => {
     const handleClose = () => {
       setAnchorEl(null);
     };
+
+    const [searchInput, setSearchInput] = React.useState(''); // New state for managing the search input
+
+    const handleSearchChange = (event) => {
+      setSearchInput(event.target.value); // Update the searchInput state whenever the input changes
+    };
+
+    const handleSearchKeyPress = (event) => {
+      if(event.key === 'Enter') {
+        navigate(`/results/${searchInput}`); // Navigate to /search/:query when Enter is pressed
+      }
+    };
+
     return (
       <Box sx={{ flexGrow: 1 }}>
         <AppBar position="fixed" sx={{ height: "10ch", display: 'flex', justifyContent: 'center', backgroundColor: 'primary.main' }}>
           <Toolbar sx={{ justifyContent: 'space-between' }}>
-            <Link to="/dashboard" style={linkStyle}>
+            <Link to="/" style={linkStyle}>
               <Typography variant="h6" component="div" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly', color: 'secondary.main' }}>
                 <SmartToyIcon />&nbsp;CollectiblesCorner
               </Typography>
@@ -99,6 +113,9 @@ const SignedInNav = ({ logout }) => {
               <StyledInputBase
                 placeholder="Search…"
                 inputProps={{ 'aria-label': 'search' }}
+                value={searchInput} // Bind the input value to state
+                onChange={handleSearchChange} // Listen for changes
+                onKeyPress={handleSearchKeyPress} // Listen for the Enter key press
               />
             </Search>
             <Box>

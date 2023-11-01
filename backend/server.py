@@ -21,6 +21,7 @@ from main.database import (
     db_wantlist,
     db_collectibles,
     db_collections,
+    db_trade
 )
 from main import auth
 from main.error import InputError, AccessError, OK
