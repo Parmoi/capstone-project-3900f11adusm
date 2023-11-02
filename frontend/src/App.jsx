@@ -75,7 +75,6 @@ function App() {
   const [loggedIn, setLoggedIn] = React.useState(false);
   const [OfferOpen, setOfferOpen] = React.useState(false);
   const handleOfferClose = () => setOfferOpen(false);
-  const [offerData, setOfferData] = React.useState({});
 
   function logout () {
     const options = {
@@ -101,7 +100,7 @@ function App() {
     <Fragment>
       <ThemeProvider theme={theme}>
         <Helmet bodyAttributes={{ style: 'background-color : #cccccc' }} />
-        <OfferModal offerData={offerData} open={OfferOpen} handleClose={handleOfferClose}/>
+        <OfferModal open={OfferOpen} handleClose={handleOfferClose}/>
         <Box sx={{ display: 'flex', flexDirection: 'column', rowGap: '10ch', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
           { !loggedIn
            ?  <BrowserRouter>
