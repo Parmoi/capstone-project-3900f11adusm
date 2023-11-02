@@ -62,15 +62,11 @@ def db_init():
 
 @APP.route("/init_mock_data", methods=["GET"])
 def init_mock_data():
-    mock_data_init.execute_sql_file("./mock_data/mock_collectors.sql")
-    db_campaigns.register_campaign(
-        "mock",
-        "Mock collectibles campaign!",
-        "2023-10-23",
-        "2023-10-23",
-        ["rarity", "condition", "color"],
-    )
-    mock_data_init.execute_sql_file("./mock_data/mock_collectibles.sql")
+    mock_data_init.execute_sql_file("./mock_data/collectors.sql")
+    mock_data_init.execute_sql_file("./mock_data/campaigns.sql")
+    mock_data_init.execute_sql_file("./mock_data/collectibles.sql")
+    mock_data_init.execute_sql_file("./mock_data/collections.sql")
+    mock_data_init.execute_sql_file("./mock_data/wantlist.sql")
 
     return jsonify(msg="Mock data initialised!"), OK
 
@@ -103,6 +99,7 @@ def register():
         username,
         password,
     )
+
 
 
 @APP.route("/refresh", methods=["POST"])
@@ -225,10 +222,11 @@ def register_campaign():
 
     name = request.json.get("name", None)
     description = request.json.get("desc", None)
+    image = request.json.get("image", None)
     start_date = request.json.get("start", None)
     end_date = request.json.get("end", None)
 
-    return db_campaigns.register_campaign(name, description, start_date, end_date)
+    return db_campaigns.register_campaign(name, description, image, start_date, end_date)
 
 
 @APP.route("/campaign/get_campaign", methods=["GET"])
