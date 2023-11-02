@@ -20,6 +20,11 @@ import ExchangeHistory from './pages/ExchangeHistory';
 import Campaign from './pages/campaign';
 import ResultsPage from './pages/ResultPage';
 
+import ManagerHomePage from './pages/ManagerHomePage';
+import ManagerAnalytics from './pages/ManagerAnalytics';
+import ManagerFeedback from './pages/ManagerFeedback';
+import ManagerPost from './pages/ManagerPost';
+
 import { Navigate } from "react-router-dom";
 import { useState } from 'react';
 
@@ -112,7 +117,7 @@ function App() {
           : <BrowserRouter>
             <SignedInNav logout={logout}/>
             <Routes>
-              <Route path="/" element={<HomePage/>} />
+              <Route path="/" element={<ManagerHomePage/>} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/wantlist" element={<WantList />} />
               <Route path="/collection" element={<CollectionList />} />
@@ -124,6 +129,10 @@ function App() {
               <Route path='/campaign' element={<Campaign/>}></Route>
               <Route path='/search/:query' element={<ResultsPage/>}></Route>
               <Route path="/collectible/:id" element={<CollectiblePage />} />
+
+              <Route path="/manager/feedback" element={<ManagerFeedback />} />
+              <Route path="/manager/post" element={<ManagerPost />} />
+              <Route path="/manager/analytics" element={<ManagerAnalytics />} />
 
             </Routes>
             
