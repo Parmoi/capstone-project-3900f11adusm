@@ -6,32 +6,22 @@ import { useNavigate } from "react-router-dom";
 
 const  Campaigns = {
     past: [
-        { link: "https://i.postimg.cc/SxMqVKRw/IMG-2375.jpg", campaign_name: "campaign1", start_date: "Fri, 01 Jan 1999 00:00:00 GMT", end_date: "Fri, 24 Nov 2023 00:00:00 GMT", des: "babababbabab"},
-        { link: "https://i.postimg.cc/HL0mDPQz/IMG-2369.jpg", campaign_name: "campaign2", start_date: "Fri, 01 Jan 1999 00:00:00 GMT", end_date: "Fri, 24 Nov 2023 00:00:00 GMT", des: "babababbabab"}
+        { link: "https://i.postimg.cc/sX59yLfP/IMG-2438.jpg", campaign_name: "campaign1", start_date: "Fri, 01 Jan 1999 00:00:00 GMT", end_date: "Fri, 24 Mar 2023 00:00:00 GMT", des: "babababbabab"},
+        { link: "https://i.postimg.cc/wT4JKzc8/IMG-2304.jpg", campaign_name: "campaign2", start_date: "Fri, 01 Jan 1999 00:00:00 GMT", end_date: "Fri, 23 Mar 2023 00:00:00 GMT", des: "babababbabab"}
       
     ],
     future: [
-        { link: "https://i.postimg.cc/HL0mDPQz/IMG-2369.jpg", campaign_name: "campaign2", start_date: "Fri, 01 Jan 1999 00:00:00 GMT", end_date: "Fri, 24 Nov 2023 00:00:00 GMT", des: "babababbabab"},
-        { link: "https://i.postimg.cc/HL0mDPQz/IMG-2369.jpg", campaign_name: "campaign3", start_date: "Fri, 01 Jan 1999 00:00:00 GMT", end_date: "Fri, 24 Nov 2023 00:00:00 GMT", des: "babababbabab"}
+        { link: "https://i.postimg.cc/NfnyJ4BQ/IMG-2441.jpg", campaign_name: "campaign6", start_date: "Fri, 24 Nov 2023 00:00:00 GMT", end_date: "Fri, 27 Nov 2023 00:00:00 GMT", des: "babababbabab"},
+        { link: "https://i.postimg.cc/2jc3ywqn/IMG-2436.jpg", campaign_name: "campaign7", start_date: "Fri, 24 Nov 2023 00:00:00 GMT", end_date: "Fri, 27 Nov 2023 00:00:00 GMT", des: "babababbabab"}
     ],
     current: [
-        { link: "https://i.postimg.cc/HL0mDPQz/IMG-2375.jpg", campaign_name: "campaign2", start_date: "Fri, 01 Jan 1999 00:00:00 GMT", end_date: "Fri, 24 Nov 2023 00:00:00 GMT", des: "babababbabab"},
-        { link: "https://i.postimg.cc/HL0mDPQz/IMG-2369.jpg", campaign_name: "campaign4", start_date: "Fri, 01 Jan 1999 00:00:00 GMT", end_date: "Fri, 24 Nov 2023 00:00:00 GMT", des: "babababbabab"},
-        { link: "https://i.postimg.cc/xC020y52/IMG-2442.jpg", campaign_name: "campaign3", start_date: "Fri, 01 Jan 1999 00:00:00 GMT", end_date: "Fri, 24 Nov 2023 00:00:00 GMT", des: "babababbabab"},
+        { link: "https://i.postimg.cc/SxMqVKRw/IMG-2375.jpg", campaign_name: "campaign3", start_date: "Fri, 01 Jan 1999 00:00:00 GMT", end_date: "Fri, 24 Nov 2023 00:00:00 GMT", des: "babababbabab"},
+        { link: "https://i.postimg.cc/HL0mDPQz/IMG-2369.jpg", campaign_name: "campaign4", start_date: "Fri, 01 Jan 1999 00:00:00 GMT", end_date: "Fri, 25 Nov 2023 00:00:00 GMT", des: "babababbabab"},
+        { link: "https://i.postimg.cc/xC020y52/IMG-2442.jpg", campaign_name: "campaign5", start_date: "Fri, 01 Jan 1999 00:00:00 GMT", end_date: "Fri, 26 Nov 2023 00:00:00 GMT", des: "babababbabab"},
     ]
   };
 
-  const ItemDisplay = ({ link, start_date, end_date, des, campaign_name}) => (
-    <div style={{ display: 'flex', alignItems: 'center', borderBottom: '1px solid #ccc', padding: '10px 0' }}>
-      <img src={link} alt="Item" style={{ width: '300px', height: '200px', marginRight: '20px' }} />
-      <div>
-        <p style={{ fontSize: '30px' }}> <strong>{campaign_name}</strong></p>
-        <p><strong>From </strong>{start_date.slice(0,16)} <strong>To</strong> {end_date.slice(0,16)}</p>
-        <p>{des}</p>
-      </div>
-      
-    </div>
-  );
+  
 
 
 const HomePage = () => {
@@ -101,7 +91,21 @@ const HomePage = () => {
             campaign_name: Campaigns.current[currentIndex].campaign_name, 
             start_date:Campaigns.current[currentIndex].start_date, 
             end_date: Campaigns.current[currentIndex].end_date}});
+            
     }
+
+    const ItemDisplay = ({ link, start_date, end_date, des, campaign_name}) => (
+      <div style={{ display: 'flex', alignItems: 'center', borderBottom: '1px solid #ccc', padding: '10px 0' }}>
+        <img src={link} alt="Item" style={{ width: '300px', height: '200px', marginRight: '20px' } } />
+        <div>
+          <p style={{ fontSize: '30px' }}> <strong>{campaign_name}</strong></p>
+          <p><strong>From </strong>{start_date.slice(0,16)} <strong>To</strong> {end_date.slice(0,16)}</p>
+          <p>{des}</p>
+        </div>
+        
+      </div>
+    );
+    
     // 
     useEffect(() => {
         // This function will switch to the next image every 2 seconds
@@ -145,7 +149,7 @@ const HomePage = () => {
 
         <div>
           {Campaigns[selection].map((item) => (
-            <ItemDisplay key={item.id} campaign_name={item.campaign_name} link={item.link} des={item.des} start_date={item.start_date} end_date={item.end_date}/>
+            <ItemDisplay key={item.id} campaign_name={item.campaign_name} link={item.link} des={item.des} start_date={item.start_date} end_date={item.end_date} />
           ))}
         </div>
       </div>
