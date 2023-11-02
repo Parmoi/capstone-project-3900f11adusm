@@ -25,42 +25,45 @@ function ResultsPage() {
     const { query } = useParams();
     const [results, setResults] = useState([]);
 
-    // const fetchData = () => {
-    //   const options = {
-    //     method: 'GET',
-    //     route: '/search/:query'
-    //   };
-    //   apiCall((d) => {
-    //     setResults(d["collectibles"]);
-    //   }, options)
-    //   ;
-    // }
-      const storedData =  [
-        {
-            campaign_name: "random",
-            collectible_description: "hahahahahah!",
-            collectible_image: "https://tse1.mm.bing.net/th?id=OIP.qVV8kcLdcLysZ5OOCzhKLAHaF7&pid=Api",
-            collectible_name: "new_collectible!",
-            date_released: "30/12/2020"
-        },
-        {
-          campaign_name: "random",
-          collectible_description: "hahahahahah!",
-          collectible_image: "https://tse3.mm.bing.net/th?id=OIP.JqWjPHsW5aJIZDnPYMGovQHaJQ&pid=Api",
-          collectible_name: "banana",
-          date_released: "30/12/2020"
-        },
-        {
-          campaign_name: "random",
-          collectible_description: "hahahahahah!",
-          collectible_image: "https://tse3.mm.bing.net/th?id=OIP.6761X25CX3UUjklkDCnjSwHaHa&pid=Api",
-          collectible_name: "apple",
-          date_released: "30/12/2020"
-        },
-      ]
+    const fetchData = () => {
+      const options = {
+        method: 'GET',
+        route: '/search/:query'
+      };
+      apiCall((d) => {
+        setResults(d["collectibles"]);
+      }, options)
+      ;
+    }
+      // const storedData =  [
+      //   {
+      //       campaign_name: "random",
+      //       collectible_description: "hahahahahah!",
+      //       collectible_image: "https://tse1.mm.bing.net/th?id=OIP.qVV8kcLdcLysZ5OOCzhKLAHaF7&pid=Api",
+      //       collectible_name: "new_collectible!",
+      //       date_released: "30/12/2020"
+      //   },
+      //   {
+      //     campaign_name: "random",
+      //     collectible_description: "hahahahahah!",
+      //     collectible_image: "https://tse3.mm.bing.net/th?id=OIP.JqWjPHsW5aJIZDnPYMGovQHaJQ&pid=Api",
+      //     collectible_name: "banana",
+      //     date_released: "30/12/2020"
+      //   },
+      //   {
+      //     campaign_name: "random",
+      //     collectible_description: "hahahahahah!",
+      //     collectible_image: "https://tse3.mm.bing.net/th?id=OIP.6761X25CX3UUjklkDCnjSwHaHa&pid=Api",
+      //     collectible_name: "apple",
+      //     date_released: "30/12/2020"
+      //   },
+      // ]
     
+      const storedData = []
     
     useEffect(() => {
+      fetchData();
+      storedData = results
       const searchKey = storedData.map(item => item.collectible_name)
       const searchResults = searchKey.filter((str) =>
         str.toLowerCase().includes(query.toLowerCase())
