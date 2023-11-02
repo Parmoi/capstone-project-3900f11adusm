@@ -65,62 +65,15 @@ def update_collectible(campaign_id, name, description, image, collectible_fields
     """
 
 
-""" |------------------------------------|
-    |  Helper functions for collectibles |
-    |------------------------------------| """
-
-
-def get_collectible(campaign_id, collectible_id):
-    """get_collectible.
-
-    Args:
-        campaign_id:
-        collectible_id:
-    """
-
-    collectible_table_name = db_campaigns.get_campaign_coll_table(campaign_id)
-
-    engine, conn, metadata = dbm.db_connect()
-    collectibles = db.Table(collectible_table_name, metadata, autoload_with=engine)
-    select_stmt = db.select(collectibles).where(collectibles.c.id == collectible_id)
-    result = conn.execute(select_stmt)
-    conn.close()
-
-    if result is None:
-        return {}
-
-    return result.fetchone()._asdict()
-
-def find_collectible_id(collectible_name):
-    """Finds the id of the collectible with name collectible_name
-
-    Args:
-        collectible_name (string): name of collectible
-
-    Returns:
-        int: the id of the collectible
-    """
-    
-    engine, conn, metadata = dbm.db_connect()
-
-    # Loads in the collectibles table
-    coll = db.Table("collectibles", metadata, autoload_with=engine)
-
-    # Finds and returns the id associated with the collectible_name
-    select_stmt = db.select(coll).where(coll.c.name == collectible_name)
-    execute = conn.execute(select_stmt)
-
-    return execute.fetchone()._asdict().get("id")
-
 def search_collectibles(collectible_name):
     """Find a list of collectibles that match the collectible_name
 
     Args:
         collectible_name (string): name of collectible we want to find
-    
+
     Returns:
         JSON, int: JSON holds list of collectibles found, int is the error code
-    
+
     Example Output:
     {
         "collectibles": [
@@ -141,21 +94,47 @@ def search_collectibles(collectible_name):
     coll = db.Table("collectibles", metadata, autoload_with=engine)
     camp = db.Table("campaigns", metadata, autoload_with=engine)
 
-    join = db.join(coll, camp, (coll.c.campaign_id == camp.c.id) &
-                               (coll.c.name.ilike(f"%{collectible_name}%")))
-
-    search_stmt = (
-        db.select(
-            coll.c.name.label("collectible_name"),
-            coll.c.image.label("collectible_image"),
-            coll.c.description.label("collectible_description"),
-            camp.c.name.label("campaign_name"),
-            camp.c.start_date.label("date_released"),
-        )
-        .select_from(join)
+    join = db.join(
+        coll,
+        camp,
+        (coll.c.campaign_id == camp.c.id)
+        & (coll.c.name.ilike(f"%{collectible_name}%")),
     )
 
+    search_stmt = db.select(
+        coll.c.name.label("collectible_name"),
+        coll.c.image.label("collectible_image"),
+        coll.c.description.label("collectible_description"),
+        camp.c.name.label("campaign_name"),
+        camp.c.start_date.label("date_released"),
+    ).select_from(join)
+
     coll_list = db_helpers.rows_to_list(conn.execute(search_stmt).fetchall())
+
+    return jsonify({"collectibles": coll_list}), OK
+
+
+def get_all_collectibles():
+    engine, conn, metadata = dbm.db_connect()
+    collectibles = db.Table("collectibles", metadata, autoload_with=engine)
+    campaigns = db.Table("campaigns", metadata, autoload_with=engine)
+
+    join = db.join(
+        collectibles, campaigns, (collectibles.c.campaign_id == campaigns.c.id)
+    )
+
+    select_stmt = db.select(
+        collectibles.c.id.label("id"),
+        collectibles.c.name.label("collectible_name"),
+        collectibles.c.image.label("collectible_image"),
+        collectibles.c.description.label("collectible_description"),
+        campaigns.c.name.label("campaign_name"),
+        campaigns.c.start_date.label("date_released"),
+    ).select_from(join)
+
+    coll_list = db_helpers.rows_to_list(conn.execute(select_stmt).fetchall())
+
+    print(coll_list)
 
     return jsonify({"collectibles": coll_list}), OK
 
@@ -184,32 +163,76 @@ def get_collectible(collectible_id):
     return result.fetchone()._asdict()
 
 
-# Function to convert collectible name to collectible id
-# Returns collection id as int
-def find_collectible_id(collectible_name):
-    """find_collectible_id.
+# def get_collectible(campaign_id, collectible_id):
+#     """get_collectible.
 
-    Function to convert collectible name to collectible id
-    Returns collection id as int
+#     Args:
+#         campaign_id:
+#         collectible_id:
+#     """
+
+#     collectible_table_name = db_campaigns.get_campaign_coll_table(campaign_id)
+
+#     engine, conn, metadata = dbm.db_connect()
+#     collectibles = db.Table(collectible_table_name, metadata, autoload_with=engine)
+#     select_stmt = db.select(collectibles).where(collectibles.c.id == collectible_id)
+#     result = conn.execute(select_stmt)
+#     conn.close()
+
+#     if result is None:
+#         return {}
+
+#     return result.fetchone()._asdict()
+
+
+def find_collectible_id(collectible_name):
+    """Finds the id of the collectible with name collectible_name
 
     Args:
-        campaign_id:
-        collectible_name:
+        collectible_name (string): name of collectible
+
+    Returns:
+        int: the id of the collectible
     """
+
     engine, conn, metadata = dbm.db_connect()
 
-    # Loads in the campaign table into our metadata
-    collectibles = db.Table("collectibles", metadata, autoload_with=engine)
+    # Loads in the collectibles table
+    coll = db.Table("collectibles", metadata, autoload_with=engine)
 
-    select_stmt = db.select(collectibles.c.id).where(
-        collectibles.c.name == collectible_name
-    )
+    # Finds and returns the id associated with the collectible_name
+    select_stmt = db.select(coll).where(coll.c.name == collectible_name)
+    execute = conn.execute(select_stmt)
 
-    result = conn.execute(select_stmt)
-    conn.close()
-    if result is None:
-        return None
+    return execute.fetchone()._asdict().get("id")
 
-    collectible_id = result.fetchone()._asdict().get("id")
 
-    return collectible_id
+# Function to convert collectible name to collectible id
+# Returns collection id as int
+# def find_collectible_id(collectible_name):
+#     """find_collectible_id.
+
+#     Function to convert collectible name to collectible id
+#     Returns collection id as int
+
+#     Args:
+#         campaign_id:
+#         collectible_name:
+#     """
+#     engine, conn, metadata = dbm.db_connect()
+
+#     # Loads in the campaign table into our metadata
+#     collectibles = db.Table("collectibles", metadata, autoload_with=engine)
+
+#     select_stmt = db.select(collectibles.c.id).where(
+#         collectibles.c.name == collectible_name
+#     )
+
+#     result = conn.execute(select_stmt)
+#     conn.close()
+#     if result is None:
+#         return None
+
+#     collectible_id = result.fetchone()._asdict().get("id")
+
+#     return collectible_id
