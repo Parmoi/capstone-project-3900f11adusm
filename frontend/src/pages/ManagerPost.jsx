@@ -1,18 +1,14 @@
 import * as React from 'react';
-import SellStepper from "../components/Stepper";
+import CampaignStepper from "../components/CampaignStepper";
 import Typography from '@mui/material/Typography';
 import { Box, Button } from '@mui/material';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
 import TextField from '@mui/material/TextField';
 
 import { apiCall } from '../App';
 import { useNavigate } from 'react-router-dom';
 
-const SellPage = () => {
-    const [collectibleID, setCollectibleID] = React.useState('');
+const ManagerPost = () => {
     const [collectibleName, setCollectibleName] = React.useState('');
     const [title, setTitle] = React.useState('');
     const [description, setDescription] = React.useState('');
@@ -42,43 +38,6 @@ const SellPage = () => {
         fetchData();
     }, []);
 
-    const SelectCollectible = () => {
-    
-        const renderMenuItems = (collectibles) => {
-            return collectibles.map((collectible) => { 
-                <MenuItem 
-                    value={collectible['id']}
-                    onClick={() => handleChange(collectible['id'], collectible['name'])}
-                >
-                    {collectible["name"]}
-                </MenuItem>
-            }
-            );
-        }
-    
-        const handleChange = (id, name) => {
-            setCollectibleID(id);
-            setCollectibleName(name);
-            console.log(id, name);
-        }
-    
-        return (
-            <Box sx={{height: '100%'}}>
-                <Typography variant='h5' mb='50px'>Select collectible you would like to trade/sell</Typography>
-                <FormControl fullWidth>
-                <InputLabel>Collectible</InputLabel>
-                <Select
-                    id='tradeCollectible'
-                    value={collectibleID}
-                    label="Collectible"
-                >
-                    {renderMenuItems(collectibles)}
-                </Select>
-                </FormControl>
-            </Box>
-        );
-    }
-
     const AddTitle = () => {
         const handleChange = (e) => {
             setTitle(e.target.value);
@@ -86,7 +45,7 @@ const SellPage = () => {
 
         return (
             <Box sx={{height: '100%'}}>
-                <Typography variant='h5' mb='50px'>Add a title for your post</Typography>
+                <Typography variant='h5' mb='50px'>Give a name for your campaign</Typography>
                 <FormControl fullWidth>
                 <TextField label="Title" onBlur={handleChange} variant="standard"/>
                 </FormControl>
@@ -100,7 +59,7 @@ const SellPage = () => {
         }
         return(
             <Box sx={{height: '100%'}}>
-                <Typography variant='h5' mb='50px'>Add a description of your collectible</Typography>
+                <Typography variant='h5' mb='50px'>Add a description of your campaign</Typography>
                 <FormControl fullWidth>
                     <TextField
                     id="outlined-multiline-static"
@@ -191,7 +150,6 @@ const SellPage = () => {
     }
 
     const stepperContent = [
-        <SelectCollectible />,
         <AddTitle/>,
         <CollectibleDescription/>,
         <AddImages/>,
@@ -199,8 +157,9 @@ const SellPage = () => {
     ]
 
     return (
-        <SellStepper stepperContent={stepperContent} />
+        <CampaignStepper stepperContent={stepperContent} />
     );
 }
 
-export default SellPage;
+
+export default ManagerPost;
