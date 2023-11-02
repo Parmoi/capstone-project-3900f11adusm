@@ -282,6 +282,14 @@ def get_campaign_collectibles():
 @APP.route("/collection/add", methods=["POST"])
 @jwt_required(fresh=False)
 def insert_collectible():
+    '''
+    Inserts collectible into collection list
+    Returns collection id created
+
+    Args:
+        user_id: UUID
+        collectible_id: int
+    '''
     user_id = get_jwt_identity()
     collectible_id = request.json.get("collectible_id", None)
 
@@ -330,6 +338,19 @@ def get_collection():
 @APP.route("/collection/delete", methods=["DELETE"])
 @jwt_required(fresh=False)
 def remove_collectible():
+    '''
+    Deletes collectible from user's collection
+
+    Args:
+        user_id: int (collector's id)
+        collection_id: int (id of entry to be deleted)
+
+    Returns {
+        collection_id: int
+    }
+    '''
+
+    # return jsonify({'collection_id': 1}), 200
     user_id = get_jwt_identity()
     collection_id = request.json.get("id", None)
 
@@ -462,6 +483,38 @@ def post_trade():
     """
 
     stub_data = {"trade_post_id": 1}
+
+    return jsonify(stub_data), OK
+
+@APP.route("/trade/get", methods=["GET"])
+@jwt_required(fresh=False)
+def get_tradepost():
+    '''
+    Returns trade post information
+    Takes trade post id as param
+
+    '''
+
+    stub_data = {
+        "post_title": "Title",
+        "post_created": "04/04/2004",
+        "post_trader": "Trader1",
+        "post_images": [
+            {
+                "name": "1",
+                "caption": "Bart with skateboard.",
+                "image": "https://tse1.mm.bing.net/th?id=OIP.S9zFPgPbF0zJ4OXQkU675AHaHC&pid=Api"
+            },
+            {
+                "name": "2",
+                "caption": "Stuffed bart.",
+                "image": "https://tse1.mm.bing.net/th?id=OIP.AIizpaWw4l8TtY5fWj66RgHaGr&pid=Api"
+            },
+        ],
+        "post_description": "Description",
+        "trader_location": "Somewhere, AUS",
+        "trader_avatar": "https://tse1.mm.bing.net/th?id=OIP.ho7hCKNowRHh7u5wu1aMWQHaF9&pid=Api",
+    }
 
     return jsonify(stub_data), OK
 
@@ -632,6 +685,25 @@ def get_collectible_info():
         "collectible_description": "Description",
         "collectible_added_date": "08/04/2003",
     }
+
+    return jsonify(stub_return), OK
+
+@APP.route("/collectible/buy", methods=["GET"])
+@jwt_required(fresh=False)
+def get_buylist():
+    '''
+    Takes in collectible_id as request argument
+    '''
+
+    stub_return = [
+        {
+            "collection_id": 1,
+            "image": 'https://tse2.mm.bing.net/th?id=OIP.j7EknM6CUuEct_kx7o-dNQHaMN&pid=Api',
+            "collectible_name": 'Bart',
+            "trader_name": 'Not bart',
+            "location": 'Somewhere',
+        }
+    ]
 
     return jsonify(stub_return), OK
 

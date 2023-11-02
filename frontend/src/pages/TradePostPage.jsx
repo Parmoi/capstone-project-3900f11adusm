@@ -8,27 +8,29 @@ import {
     Container,
     Paper,
 } from '@mui/material'
+import Divider from '@mui/material/Divider';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTheme, ThemeProvider } from '@mui/material/styles';
 import { apiCall } from '../App';
+import Avatar from '@mui/material/Avatar';
 
 
 const CollectiblePage = () => {
   const [data, setData] = React.useState(
       {
-        "collectible_images": []
+        "post_images": []
       }
   );
   const navigate = useNavigate();
   const params = useParams();
-  const c_id = params.id;
+  const tradepost_id = params.id;
   
 
   const fetchData = () => {
     // call api with data
     const options = {
       method: 'GET',
-      route: `/collectible/get?collectible_id=${c_id}`,
+      route: `/trade/get?collectible_id=${tradepost_id}`,
     };
 
     apiCall((d) => {
@@ -47,49 +49,8 @@ const CollectiblePage = () => {
     fetchData();
   }, []);
 
-  const handleBuy = () => {
-    // navigates to buy list, with collectible id as param
-    navigate(`/collectible/buy/${c_id}`);
-  }
-
-  const handleAddWantlist = () => {
-    const options = {
-      method: 'POST',
-      route: "/wantlist/add",
-      body: JSON.stringify({
-        collectible_id: c_id,
-      })
-    };
-
-    apiCall((d) => {
-      console.log(d);
-    }, options)
-      .then((res) => {
-        if (res) {
-          // set error msg if api call returns error
-
-        }
-      });
-  }
-
-  const handleAddCollection = () => {
-    const options = {
-      method: 'POST',
-      route: "/collection/add",
-      body: JSON.stringify({
-        collectible_id: c_id,
-      })
-    };
-
-    apiCall((d) => {
-      console.log(d);
-    }, options)
-      .then((res) => {
-        if (res) {
-          // set error msg if api call returns error
-
-        }
-      });
+  const handleOffer = () => {
+    // insert offer page
   }
 
   return (
@@ -99,7 +60,7 @@ const CollectiblePage = () => {
       <Grid container spacing={12}>
         <Grid item xs={1}></Grid>
         <Grid item xs={7}>
-          <ImageCarousel items={data.collectible_images}/>
+          <ImageCarousel items={data.post_images}/>
         </Grid>
         <Grid item xs={3}>
           <Paper elevation={3} sx={{ 
@@ -110,9 +71,18 @@ const CollectiblePage = () => {
             justifyContent: 'center', 
             alignItems: 'center' 
             }}>
-            <Button variant="contained" onClick={handleBuy}>Buy item</Button>
-            <Button variant="contained" onClick={handleAddWantlist}>Add to wantlist</Button>
-            <Button variant="contained" onClick={handleAddCollection}>Add to collection</Button>
+            <Typography variant='h5'>{data.post_trader}</Typography>
+            <Typography variant='h6' color='grey'>{data.trader_location}</Typography>
+            <Box component="span">
+                <Avatar 
+                variant="outlined"
+                alt="Trader avatar"
+                src={data.trader_avatar ? data.trader_avatar : ''}
+                display="flex"
+                sx={{ width: 150, height: 150, marginTop: "16px", fontSize: "60px"}}
+                />
+            </Box>
+            <Button variant="contained" onClick={handleOffer}>Make offer</Button>
           </Paper>
         </Grid>
         <Grid item xs={1}></Grid>
@@ -126,9 +96,9 @@ const CollectiblePage = () => {
             alignItems: 'center' 
             }}>
               <Container sx={{ padding: '10px' }}>
-                <Typography variant='h5'>{data.collectible_name}</Typography>
-                <Typography variant='h8'>Added on: {data.collectible_added_date}</Typography>
-                <Typography>{data.collectible_description}</Typography>
+                <Typography variant='h5'>{data.post_title}</Typography>
+                <Typography>Added on: {data.post_created}</Typography>
+                <Typography>{data.post_description}</Typography>
                 </Container>
           </Paper>
         </Grid>

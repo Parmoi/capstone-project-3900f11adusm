@@ -37,6 +37,7 @@ function ResultsPage() {
     // }
       const storedData =  [
         {
+            id: 1,
             campaign_name: "random",
             collectible_description: "hahahahahah!",
             collectible_image: "https://tse1.mm.bing.net/th?id=OIP.qVV8kcLdcLysZ5OOCzhKLAHaF7&pid=Api",
@@ -44,6 +45,7 @@ function ResultsPage() {
             date_released: "30/12/2020"
         },
         {
+          id: 2,
           campaign_name: "random",
           collectible_description: "hahahahahah!",
           collectible_image: "https://tse3.mm.bing.net/th?id=OIP.JqWjPHsW5aJIZDnPYMGovQHaJQ&pid=Api",
@@ -51,6 +53,7 @@ function ResultsPage() {
           date_released: "30/12/2020"
         },
         {
+          id: 3,
           campaign_name: "random",
           collectible_description: "hahahahahah!",
           collectible_image: "https://tse3.mm.bing.net/th?id=OIP.6761X25CX3UUjklkDCnjSwHaHa&pid=Api",
@@ -76,6 +79,10 @@ function ResultsPage() {
     const columns = useMemo(
         //column definitions...
         () => [
+          {
+            accessorKey: 'id',
+            header: 'collectible id',
+          },
           {
             accessorKey: 'collectible_image',
             header: 'Image Placeholder',
@@ -133,10 +140,11 @@ function ResultsPage() {
     positionToolbarAlertBanner="bottom" //show selected rows count on bottom toolbar
     muiTableBodyRowProps={({ row }) => ({
       onClick: () => {
-        navigate(`/collectible/${row.id}`)
+        navigate(`/collectible/${row.original.id}`)
       },
       sx: { cursor: 'pointer' },
     })}
+    initialState={{ columnVisibility: { id: false } }}
 
     //add custom action buttons to top-left of top toolbar
 
