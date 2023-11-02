@@ -28,7 +28,7 @@ const SellPage = () => {
     
         apiCall((d) => {
             console.log(d);
-            setCollectibles(d);
+            setCollectibles(d.collection);
         }, options)
         .then((res) => {
             if (res) {
@@ -45,13 +45,14 @@ const SellPage = () => {
     const SelectCollectible = () => {
     
         const renderMenuItems = (collectibles) => {
-            return collectibles.map(collectible => 
-            <MenuItem 
-                value={collectible['id']}
-                onClick={() => handleChange(collectible['id'], collectible['name'])}
-            >
-                {collectible["name"]}
-            </MenuItem>
+            return collectibles.map((collectible) => { 
+                <MenuItem 
+                    value={collectible['id']}
+                    onClick={() => handleChange(collectible['id'], collectible['name'])}
+                >
+                    {collectible["name"]}
+                </MenuItem>
+            }
             );
         }
     
@@ -157,7 +158,7 @@ const SellPage = () => {
             };
           
             apiCall(() => {
-                navigate('/dashboard');
+                navigate('/');
             }, options)
             .then((res) => {
                 if (res) {

@@ -19,6 +19,8 @@ import SignedOutNav from './components/SignedOutNav';
 import ExchangeHistory from './pages/ExchangeHistory';
 import Campaign from './pages/campaign';
 import ResultsPage from './pages/ResultPage';
+import BuyList from './pages/BuyList';
+import TradePostPage from './pages/TradePostPage';
 
 import ManagerHomePage from './pages/ManagerHomePage';
 import ManagerAnalytics from './pages/ManagerAnalytics';
@@ -109,7 +111,7 @@ function App() {
            ?  <BrowserRouter>
               <SignedOutNav />
               <Routes>
-                <Route path="/" element={<CollectiblePage/>} />
+                <Route path="/" element={<LandingPage/>} />
                 <Route path="/login" element={<SignIn setLogin={setLoggedIn}/>} />
                 <Route path="/register" element={<Register setLogin={setLoggedIn}/>} />
               </Routes>
@@ -129,6 +131,8 @@ function App() {
               <Route path='/campaign' element={<Campaign/>}></Route>
               <Route path='/search/:query' element={<ResultsPage/>}></Route>
               <Route path="/collectible/:id" element={<CollectiblePage />} />
+              <Route path="/collectible/buy/:id" element={<BuyList />} />
+              <Route path="/trade/view/:id" element={<TradePostPage />} />
 
               <Route path="/manager/feedback" element={<ManagerFeedback />} />
               <Route path="/manager/post" element={<ManagerPost />} />
