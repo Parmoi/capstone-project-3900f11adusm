@@ -202,7 +202,7 @@ def get_collectors():
     return db_collectors.get_all_collectors()
 
 
-@APP.route("/search/:query", methods=["GET"])
+@APP.route("/search", methods=["GET"])
 def first_search():
     # search_query = request.json.get("query", None)
     # return db_collectibles.search_collectibles(search_query)
@@ -290,40 +290,40 @@ def insert_collectible():
 @APP.route("/collection/get", methods=["GET"])
 @jwt_required(fresh=False)
 def get_collection():
-    # user_id = get_jwt_identity()
-    # return db_collections.get_collection(user_id)
-    return jsonify([
-        {
-            'id': 1,
-            'name': 'Homer',
-            'campaign_name': 'Simpsons',
-            'campaign_id': 1,
-            'collectible_id': 1,
-            'image': 'https://ilarge.lisimg.com/image/8825948/980full-homer-simpson.jpg',
-            'date_added': '23/05/2014',
-            'date_released': '03/03/2014',
-        },
-        {
-            "id": 2,
-            "image": 'https://tse4.mm.bing.net/th?id=OIP.e4tAXeZ6G0YL4OE5M8KTwAHaMq&pid=Api',
-            "name": 'Marge',
-            'campaign_id': 12,
-            'collectible_id': 12,
-            "campaign_name": 'Winter 2022',
-            'date_added': '03/02/2014',
-            'date_released': '03/01/2014',
-        },
-        {
-            "id": 3,
-            "image": 'https://tse2.mm.bing.net/th?id=OIP.j7EknM6CUuEct_kx7o-dNQHaMN&pid=Api',
-            "name": 'Bart',
-            'campaign_id': 1,
-            'collectible_id': 2,
-            "campaign_name": 'Simpsons',
-            'date_added': '03/08/2014',
-            'date_released': '03/01/2014',
-        },
-    ]), 200
+    user_id = get_jwt_identity()
+    return db_collections.get_collection(user_id)
+    # return jsonify([
+    #     {
+    #         'id': 1,
+    #         'name': 'Homer',
+    #         'campaign_name': 'Simpsons',
+    #         'campaign_id': 1,
+    #         'collectible_id': 1,
+    #         'image': 'https://ilarge.lisimg.com/image/8825948/980full-homer-simpson.jpg',
+    #         'date_added': '23/05/2014',
+    #         'date_released': '03/03/2014',
+    #     },
+    #     {
+    #         "id": 2,
+    #         "image": 'https://tse4.mm.bing.net/th?id=OIP.e4tAXeZ6G0YL4OE5M8KTwAHaMq&pid=Api',
+    #         "name": 'Marge',
+    #         'campaign_id': 12,
+    #         'collectible_id': 12,
+    #         "campaign_name": 'Winter 2022',
+    #         'date_added': '03/02/2014',
+    #         'date_released': '03/01/2014',
+    #     },
+    #     {
+    #         "id": 3,
+    #         "image": 'https://tse2.mm.bing.net/th?id=OIP.j7EknM6CUuEct_kx7o-dNQHaMN&pid=Api',
+    #         "name": 'Bart',
+    #         'campaign_id': 1,
+    #         'collectible_id': 2,
+    #         "campaign_name": 'Simpsons',
+    #         'date_added': '03/08/2014',
+    #         'date_released': '03/01/2014',
+    #     },
+    # ]), 200
 
 @APP.route("/collection/delete", methods=["DELETE"])
 @jwt_required(fresh=False)
