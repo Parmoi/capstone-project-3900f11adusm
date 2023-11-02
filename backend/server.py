@@ -101,7 +101,6 @@ def register():
     )
 
 
-
 @APP.route("/refresh", methods=["POST"])
 @jwt_required(fresh=True)
 def refresh_token():
@@ -226,7 +225,9 @@ def register_campaign():
     start_date = request.json.get("start", None)
     end_date = request.json.get("end", None)
 
-    return db_campaigns.register_campaign(name, description, image, start_date, end_date)
+    return db_campaigns.register_campaign(
+        name, description, image, start_date, end_date
+    )
 
 
 @APP.route("/campaign/get_campaign", methods=["GET"])
@@ -324,6 +325,7 @@ def get_collection():
     #         'date_released': '03/01/2014',
     #     },
     # ]), 200
+
 
 @APP.route("/collection/delete", methods=["DELETE"])
 @jwt_required(fresh=False)
@@ -438,30 +440,28 @@ def move_collectible():
     wantlist_id = request.json.get("wantlist_id", None)
 
     return db_wantlist.move_to_collection(user_id, wantlist_id)
-    
 
 
 """ |------------------------------------|
     |           Trade Routes             |
     |------------------------------------| """
 
+
 @APP.route("/trade/post", methods=["POST"])
 @jwt_required(fresh=False)
 def post_trade():
-    '''
+    """
     Creates trade post, returns post_id
 
-    Args: 
+    Args:
         collection_id
         post_title
         post_description
         post_images: [] (list of post image urls)
 
-    '''
+    """
 
-    stub_data = {
-        "trade_post_id": 1
-    }
+    stub_data = {"trade_post_id": 1}
 
     return jsonify(stub_data), OK
 
@@ -498,55 +498,59 @@ def offers_get():
     |           Exchange Routes          |
     |------------------------------------| """
 
+
 @APP.route("/exchange/history", methods=["GET"])
 @jwt_required(fresh=False)
 def exchange_history():
     user_id = get_jwt_identity()
 
-    stub_return = {     # return a json list
-        "exchange_history" : [ {
-            "exchange_id": "2",
-            "traded_collectible_id": "1",
-            "traded_collectible_name": "Homer",
-            "traded_collectible_img": 'https://ilarge.lisimg.com/image/8825948/980full-homer-simpson.jpg',
-            "traded_campaign_id": "1",
-            "traded_campaign_name": "Simpsons",
-            "traded_campaign_img": "",
-            "accepted_collectible_id": "2",
-            "accepted_collectible_name": "Marge",
-            "accepted_collectible_img": 'https://tse4.mm.bing.net/th?id=OIP.e4tAXeZ6G0YL4OE5M8KTwAHaMq&pid=Api',
-            "accepted_campaign_id": 1,
-            "accepted_campaign_name": "Simpsons",
-            "accepted_campaign_img": "",
-            "trader_collector_id": "2",
-            "trader_profile_img": "default",
-            "trader_username": "person2",
-            "offer_made_date": "2023/10/25",
-            "accepted_date": "2023/10/29",        
-        },
-        {
-            "exchange_id": "3",
-            "traded_collectible_id": "1",
-            "traded_collectible_name": "Bart",
-            "traded_collectible_img": 'https://tse2.mm.bing.net/th?id=OIP.j7EknM6CUuEct_kx7o-dNQHaMN&pid=Api',
-            "traded_campaign_id": "1",
-            "traded_campaign_name": "Simpsons",
-            "traded_campaign_img": "",
-            "accepted_collectible_id": "2",
-            "accepted_collectible_name": "Dog",
-            "accepted_collectible_img": 'https://tse3.mm.bing.net/th?id=OIP.6761X25CX3UUjklkDCnjSwHaHa&pid=Api',
-            "accepted_campaign_id": 1,
-            "accepted_campaign_name": "Simpsons",
-            "accepted_campaign_img": "",
-            "trader_collector_id": "2",
-            "trader_profile_img": "default",
-            "trader_username": "person2",
-            "offer_made_date": "2023/10/25",
-            "accepted_date": "2023/10/29",      
-        }, ]
+    stub_return = {  # return a json list
+        "exchange_history": [
+            {
+                "exchange_id": "2",
+                "traded_collectible_id": "1",
+                "traded_collectible_name": "Homer",
+                "traded_collectible_img": "https://ilarge.lisimg.com/image/8825948/980full-homer-simpson.jpg",
+                "traded_campaign_id": "1",
+                "traded_campaign_name": "Simpsons",
+                "traded_campaign_img": "",
+                "accepted_collectible_id": "2",
+                "accepted_collectible_name": "Marge",
+                "accepted_collectible_img": "https://tse4.mm.bing.net/th?id=OIP.e4tAXeZ6G0YL4OE5M8KTwAHaMq&pid=Api",
+                "accepted_campaign_id": 1,
+                "accepted_campaign_name": "Simpsons",
+                "accepted_campaign_img": "",
+                "trader_collector_id": "2",
+                "trader_profile_img": "default",
+                "trader_username": "person2",
+                "offer_made_date": "2023/10/25",
+                "accepted_date": "2023/10/29",
+            },
+            {
+                "exchange_id": "3",
+                "traded_collectible_id": "1",
+                "traded_collectible_name": "Bart",
+                "traded_collectible_img": "https://tse2.mm.bing.net/th?id=OIP.j7EknM6CUuEct_kx7o-dNQHaMN&pid=Api",
+                "traded_campaign_id": "1",
+                "traded_campaign_name": "Simpsons",
+                "traded_campaign_img": "",
+                "accepted_collectible_id": "2",
+                "accepted_collectible_name": "Dog",
+                "accepted_collectible_img": "https://tse3.mm.bing.net/th?id=OIP.6761X25CX3UUjklkDCnjSwHaHa&pid=Api",
+                "accepted_campaign_id": 1,
+                "accepted_campaign_name": "Simpsons",
+                "accepted_campaign_img": "",
+                "trader_collector_id": "2",
+                "trader_profile_img": "default",
+                "trader_username": "person2",
+                "offer_made_date": "2023/10/25",
+                "accepted_date": "2023/10/29",
+            },
+        ]
     }
 
     return jsonify(stub_return), OK
+
 
 @APP.route("/exchange/available", methods=["GET"])
 @jwt_required(fresh=False)
@@ -600,19 +604,21 @@ def make_offer():
 
     return jsonify(stub_return), OK
 
+
 """ |------------------------------------|
     |          Collectible Routes        |
     |------------------------------------| """
 
+
 @APP.route("/collectible/get", methods=["GET"])
 @jwt_required(fresh=False)
 def get_collectible_info():
-    '''
+    """
     Takes in collectible_id as request argument
-    '''
+    """
     # user_id = get_jwt_identity()
 
-    stub_return = { 
+    stub_return = {
         "collectible_name": "Homer",
         "campaign_id": 1,
         "campaign_name": "Simpsons",
@@ -620,7 +626,7 @@ def get_collectible_info():
             {
                 "name": "Lego",
                 "caption": "Random lego.",
-                "image": "https://tse3.mm.bing.net/th?id=OIP.SwCSPpmwihkM2SUqh7wKXwHaFG&pid=Api"
+                "image": "https://tse3.mm.bing.net/th?id=OIP.SwCSPpmwihkM2SUqh7wKXwHaFG&pid=Api",
             },
         ],
         "collectible_description": "Description",
