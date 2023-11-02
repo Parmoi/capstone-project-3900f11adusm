@@ -13,6 +13,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useTheme, ThemeProvider } from '@mui/material/styles';
 import { apiCall } from '../App';
 import Avatar from '@mui/material/Avatar';
+import OfferModal from '../components/OfferModal'
 
 
 const CollectiblePage = () => {
@@ -21,6 +22,10 @@ const CollectiblePage = () => {
         "post_images": []
       }
   );
+  const [offerOpen, setOfferOpen] = React.useState(false);
+  const handleOfferClose = () => setOfferOpen(false);
+    
+
   const navigate = useNavigate();
   const params = useParams();
   const tradepost_id = params.id;
@@ -50,12 +55,13 @@ const CollectiblePage = () => {
   }, []);
 
   const handleOffer = () => {
-    // insert offer page
+    setOfferOpen(true);
   }
 
   return (
     <ThemeProvider theme={useTheme()}>
       <Box sx={{ width: '100%', height: '100%', flexGrow: 1, alignContent: 'center', bgcolor: '#f4f4f4' }}>
+      <OfferModal tradeId={tradepost_id} open={offerOpen} handleClose={handleOfferClose}/>
       <Grid item xs={12} sx={{ height: '100px' }}></Grid>
       <Grid container spacing={12}>
         <Grid item xs={1}></Grid>
