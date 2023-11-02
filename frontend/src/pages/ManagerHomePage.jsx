@@ -2,9 +2,7 @@ import * as React from 'react';
 import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
@@ -14,8 +12,7 @@ import ForumOutlinedIcon from '@mui/icons-material/ForumOutlined';
 import UploadOutlinedIcon from '@mui/icons-material/UploadOutlined';
 
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { useNavigate, Link } from "react-router-dom";
-import { useState, useEffect } from 'react';
+import {Link } from "react-router-dom";
 
 
 const theme = createTheme();
@@ -38,8 +35,6 @@ const style = {
 };
 
 function ManagerHomePage() {
-  const navigate = useNavigate();
-
   return (
     <ThemeProvider theme={theme}>
       <Container component="main" sx={{ py: 6, }} maxWidth="lg">
