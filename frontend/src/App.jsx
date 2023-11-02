@@ -21,6 +21,7 @@ import Campaign from './pages/campaign';
 import ResultsPage from './pages/ResultPage';
 import BuyList from './pages/BuyList';
 import TradePostPage from './pages/TradePostPage';
+import TradeList from './pages/TradeList';
 
 import ManagerHomePage from './pages/ManagerHomePage';
 import ManagerAnalytics from './pages/ManagerAnalytics';
@@ -135,8 +136,9 @@ function App() {
               <Route path="/dashboard" element={<HomePage/>} />
               <Route path="/offers" element={<OffersList/>} />
               <Route path="/trade" element={<SellPage/>} />
-              <Route path='/campaign' element={<Campaign/>}></Route>
-              <Route path='/search/:query' element={<ResultsPage/>}></Route>
+              <Route path="/tradelist" element={<TradeList/>} />
+              <Route path='/campaign' element={<Campaign/>} />
+              <Route path='/search/:query' element={<ResultsPage/>} />
               <Route path="/collectible/:id" element={<CollectiblePage />} />
               <Route path="/collectible/buy/:id" element={<BuyList />} />
               <Route path="/trade/view/:id" element={<TradePostPage />} />
