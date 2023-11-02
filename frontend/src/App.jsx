@@ -8,10 +8,11 @@ import Register from './pages/Register';
 import Profile from './pages/Profile';
 import WantList from './pages/WantList';
 import CollectionList from './pages/CollectionList';
-import OffersList from './pages/OffersList';
 import HomePage from './pages/homePage';
-import SellPage from './pages/SellPage';
+import CollectiblePage from './pages/CollectiblePage';
 
+import OffersList from './pages/OffersList';
+import SellPage from './pages/SellPage';
 import LandingPage from './pages/landingPage';
 import SignedInNav from './components/SignedInNav';
 import SignedOutNav from './components/SignedOutNav';
@@ -103,7 +104,7 @@ function App() {
            ?  <BrowserRouter>
               <SignedOutNav />
               <Routes>
-                <Route path="/" element={<LandingPage/>} />
+                <Route path="/" element={<CollectiblePage/>} />
                 <Route path="/login" element={<SignIn setLogin={setLoggedIn}/>} />
                 <Route path="/register" element={<Register setLogin={setLoggedIn}/>} />
               </Routes>
@@ -122,6 +123,8 @@ function App() {
               <Route path="/trade" element={<SellPage/>} />
               <Route path='/campaign' element={<Campaign/>}></Route>
               <Route path='/search/:query' element={<ResultsPage/>}></Route>
+              <Route path="/collectible/:id" element={<CollectiblePage />} />
+
             </Routes>
             
           </BrowserRouter>

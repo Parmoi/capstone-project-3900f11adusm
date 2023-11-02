@@ -439,6 +439,7 @@ def move_collectible():
     wantlist_id = request.json.get("wantlist_id", None)
     
     return db_wantlist.move_to_collection(user_id, wantlist_id)
+    
 
 
 """ |------------------------------------|
@@ -597,6 +598,35 @@ def make_offer():
     )  # title of the offer being made for the trade item.
 
     stub_return = {"msg": "Offer has been successfully sent."}
+
+    return jsonify(stub_return), OK
+
+""" |------------------------------------|
+    |          Collectible Routes        |
+    |------------------------------------| """
+
+@APP.route("/collectible/get", methods=["GET"])
+@jwt_required(fresh=False)
+def get_collectible_info():
+    '''
+    Takes in collectible_id as request argument
+    '''
+    # user_id = get_jwt_identity()
+
+    stub_return = { 
+        "collectible_name": "Homer",
+        "campaign_id": 1,
+        "campaign_name": "Simpsons",
+        "collectible_images": [
+            {
+                "name": "Lego",
+                "caption": "Random lego.",
+                "image": "https://tse3.mm.bing.net/th?id=OIP.SwCSPpmwihkM2SUqh7wKXwHaFG&pid=Api"
+            },
+        ],
+        "collectible_description": "Description",
+        "collectible_added_date": "08/04/2003",
+    }
 
     return jsonify(stub_return), OK
 

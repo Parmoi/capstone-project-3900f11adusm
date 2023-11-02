@@ -5,7 +5,7 @@ import {
   Routes,
   Link,
   useNavigate,
-  useParams
+  useParams,
 } from "react-router-dom";
 
 import {
@@ -71,6 +71,8 @@ function ResultsPage() {
     const filteredData = storedData.filter(item => results.includes(item.collectible_name));
 
 
+    const navigate = useNavigate();
+
     const columns = useMemo(
         //column definitions...
         () => [
@@ -129,6 +131,12 @@ function ResultsPage() {
     data={filteredData}
     enableRowSelection
     positionToolbarAlertBanner="bottom" //show selected rows count on bottom toolbar
+    muiTableBodyRowProps={({ row }) => ({
+      onClick: () => {
+        navigate(`/collectible/${row.id}`)
+      },
+      sx: { cursor: 'pointer' },
+    })}
 
     //add custom action buttons to top-left of top toolbar
 
