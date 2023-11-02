@@ -171,7 +171,7 @@ const WantList = () => {
               method: 'DELETE',
               route: "/wantlist/delete",
               body: {
-                'id': row.getValue('id'),
+                'wantlist_id': row.getValue('id'),
               }
             };
             console.log(row.getValue('id'));
@@ -192,7 +192,7 @@ const WantList = () => {
               method: 'POST',
               route: "/wantlist/move",
               body: {
-                'id': row.getValue('id'),
+                'wantlist_id': row.getValue('id'),
               }
             };
             console.log(row.getValue('id'));
