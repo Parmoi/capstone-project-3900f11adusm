@@ -207,9 +207,10 @@ def get_collectors():
 
 @APP.route("/search", methods=["GET"])
 def first_search():
-    search_query = request.json.get("query", None)
+    # search_query = request.json.get("query", None)
     # return db_collectibles.search_collectibles(search_query)
-    return db_campaigns.get_campaign_collectibles(1)
+    # return db_campaigns.get_campaign_collectibles(1)
+    return db_collectibles.get_all_collectibles()
 
 
 """ |------------------------------------|

@@ -64,15 +64,16 @@ def update_collectible(campaign_id, name, description, image, collectible_fields
         collectible_fields: dictionary of optional fields
     """
 
+
 def search_collectibles(collectible_name):
     """Find a list of collectibles that match the collectible_name
 
     Args:
         collectible_name (string): name of collectible we want to find
-    
+
     Returns:
         JSON, int: JSON holds list of collectibles found, int is the error code
-    
+
     Example Output:
     {
         "collectibles": [
@@ -93,27 +94,55 @@ def search_collectibles(collectible_name):
     coll = db.Table("collectibles", metadata, autoload_with=engine)
     camp = db.Table("campaigns", metadata, autoload_with=engine)
 
-    join = db.join(coll, camp, (coll.c.campaign_id == camp.c.id) &
-                               (coll.c.name.ilike(f"%{collectible_name}%")))
-
-    search_stmt = (
-        db.select(
-            coll.c.name.label("collectible_name"),
-            coll.c.image.label("collectible_image"),
-            coll.c.description.label("collectible_description"),
-            camp.c.name.label("campaign_name"),
-            camp.c.start_date.label("date_released"),
-        )
-        .select_from(join)
+    join = db.join(
+        coll,
+        camp,
+        (coll.c.campaign_id == camp.c.id)
+        & (coll.c.name.ilike(f"%{collectible_name}%")),
     )
+
+    search_stmt = db.select(
+        coll.c.name.label("collectible_name"),
+        coll.c.image.label("collectible_image"),
+        coll.c.description.label("collectible_description"),
+        camp.c.name.label("campaign_name"),
+        camp.c.start_date.label("date_released"),
+    ).select_from(join)
 
     coll_list = db_helpers.rows_to_list(conn.execute(search_stmt).fetchall())
 
     return jsonify({"collectibles": coll_list}), OK
 
+
+def get_all_collectibles():
+    engine, conn, metadata = dbm.db_connect()
+    collectibles = db.Table("collectibles", metadata, autoload_with=engine)
+    campaigns = db.Table("campaigns", metadata, autoload_with=engine)
+
+    join = db.join(
+        collectibles, campaigns, (collectibles.c.campaign_id == campaigns.c.id)
+    )
+
+    select_stmt = db.select(
+        collectibles.c.id.label("id"),
+        collectibles.c.name.label("collectible_name"),
+        collectibles.c.image.label("collectible_image"),
+        collectibles.c.description.label("collectible_description"),
+        campaigns.c.name.label("campaign_name"),
+        campaigns.c.start_date.label("date_released"),
+    ).select_from(join)
+
+    coll_list = db_helpers.rows_to_list(conn.execute(select_stmt).fetchall())
+
+    print(coll_list)
+
+    return jsonify({"collectibles": coll_list}), OK
+
+
 """ |------------------------------------|
     |  Helper functions for collectibles |
     |------------------------------------| """
+
 
 def get_collectible(collectible_id):
     """get_collectible.
@@ -132,6 +161,7 @@ def get_collectible(collectible_id):
         return {}
 
     return result.fetchone()._asdict()
+
 
 # def get_collectible(campaign_id, collectible_id):
 #     """get_collectible.
@@ -155,9 +185,6 @@ def get_collectible(collectible_id):
 #     return result.fetchone()._asdict()
 
 
-
-
-
 def find_collectible_id(collectible_name):
     """Finds the id of the collectible with name collectible_name
 
@@ -167,7 +194,7 @@ def find_collectible_id(collectible_name):
     Returns:
         int: the id of the collectible
     """
-    
+
     engine, conn, metadata = dbm.db_connect()
 
     # Loads in the collectibles table
@@ -178,7 +205,6 @@ def find_collectible_id(collectible_name):
     execute = conn.execute(select_stmt)
 
     return execute.fetchone()._asdict().get("id")
-
 
 
 # Function to convert collectible name to collectible id
