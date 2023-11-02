@@ -7,10 +7,6 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 import { useState, useEffect } from 'react';
 
-import { ProfileBox, ProfileDetailsDisplay, ProfileDetailsEdit, SocialMediaDisplay, SocialMediaEdit } from '../components/ProfileDetails'
-import CollectionCompletion from '../components/CollectionCompletion';
-
-import { apiCall } from '../App';
 
 const theme = createTheme();
 
@@ -29,7 +25,7 @@ function ManagerHomePage() {
       <CssBaseline/>
         <Grid container spacing={2}>
           <Grid item xs={4}>
-            
+
           </Grid>
 
           <Grid item xs={4}>
