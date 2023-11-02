@@ -63,6 +63,14 @@ def db_init():
 
 @APP.route("/init_mock_data", methods=["GET"])
 def init_mock_data():
+    
+    db_collectors.insert_collector("manager@gmail.com", None, "manager", privelage=MANAGER)
+    db_collectors.insert_collector("test1@gmail.com", None, "test1")
+    db_collectors.insert_collector("test2@gmail.com", None, "test1")
+    db_collectors.insert_collector("test3@gmail.com", None, "test1")
+    db_collectors.insert_collector("test4@gmail.com", None, "test1")
+    db_collectors.insert_collector("test5@gmail.com", None, "test1")
+
     mock_data_init.execute_sql_file("./mock_data/collectors.sql")
     mock_data_init.execute_sql_file("./mock_data/campaigns.sql")
     mock_data_init.execute_sql_file("./mock_data/collectibles.sql")
@@ -70,6 +78,29 @@ def init_mock_data():
     mock_data_init.execute_sql_file("./mock_data/wantlist.sql")
 
     return jsonify(msg="Mock data initialised!"), OK
+
+
+@APP.route("/init_mock_data/demo", methods=["GET"])
+def init_mock_data_demo():
+    db_collectors.insert_collector(
+        "manager@gmail.com", None, "manager", privelage=MANAGER
+    )
+    db_collectors.insert_collector("test1@gmail.com", None, "test1")
+    db_collectors.insert_collector("test2@gmail.com", None, "test2")
+    db_collectors.insert_collector("test3@gmail.com", None, "test3")
+
+    mock_data_init.execute_sql_file("./mock_data/collectors.sql")
+    mock_data_init.execute_sql_file("./mock_data/campaigns.sql")
+    mock_data_init.execute_sql_file("./mock_data/collectibles.sql")
+    mock_data_init.execute_sql_file("./mock_data/collections.sql")
+    mock_data_init.execute_sql_file("./mock_data/wantlist.sql")
+
+    return (
+        jsonify(
+            msg=""" manager account and 3 test accounts added. id's: 1, 2, 3, 4 Mock data initialised! """
+        ),
+        OK,
+    )
 
 
 """ |------------------------------------|
@@ -357,9 +388,9 @@ def remove_collectible():
 @jwt_required(fresh=False)
 def user_has_collectible():
     user_id = get_jwt_identity()
-    # collectible_id = request.json.get("collectible_id", None)
+    collectible_id = request.json.get("collectible_id", None)
 
-    return db_collections.user_has_collectible(user_id)
+    return db_collections.user_has_collectible(user_id, collectible_id)
 
 
 """ |------------------------------------|

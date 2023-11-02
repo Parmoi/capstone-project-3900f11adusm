@@ -176,11 +176,12 @@ def get_collection(collector_id):
     return jsonify({"collection": collection}), OK
 
 
-def user_has_collectible(user_id):
+def user_has_collectible(user_id, collectible_id):
     engine, conn, metadata = dbm.db_connect()
     collections = db.Table("collections", metadata, autoload_with=engine)
     exists_criteria = db.select(collections).where(
         (collections.c.collector_id == user_id)
+        & (collections.c.collectible_id == collectible_id)
     )
     stmt = db.exists(exists_criteria).select()
     result = conn.execute(stmt)
