@@ -47,6 +47,50 @@ const CollectiblePage = () => {
     fetchData();
   }, []);
 
+  const handleBuy = () => {
+    // navigate to buy page, passing c_id in params
+  }
+
+  const handleAddWantlist = () => {
+    const options = {
+      method: 'POST',
+      route: "/wantlist/add",
+      body: JSON.stringify({
+        collectible_id: c_id,
+      })
+    };
+
+    apiCall((d) => {
+      console.log(d);
+    }, options)
+      .then((res) => {
+        if (res) {
+          // set error msg if api call returns error
+
+        }
+      });
+  }
+
+  const handleAddCollection = () => {
+    const options = {
+      method: 'POST',
+      route: "/collection/add",
+      body: JSON.stringify({
+        collectible_id: c_id,
+      })
+    };
+
+    apiCall((d) => {
+      console.log(d);
+    }, options)
+      .then((res) => {
+        if (res) {
+          // set error msg if api call returns error
+
+        }
+      });
+  }
+
   return (
     <ThemeProvider theme={useTheme()}>
       <Box sx={{ width: '100%', height: '100%', flexGrow: 1, alignContent: 'center', bgcolor: '#f4f4f4' }}>
@@ -65,9 +109,9 @@ const CollectiblePage = () => {
             justifyContent: 'center', 
             alignItems: 'center' 
             }}>
-            <Button variant="contained">Buy item</Button>
-            <Button variant="contained">Add to wantlist</Button>
-            <Button variant="contained">Add to collection</Button>
+            <Button variant="contained" onClick={handleBuy}>Buy item</Button>
+            <Button variant="contained" onClick={handleAddWantlist}>Add to wantlist</Button>
+            <Button variant="contained" onClick={handleAddCollection}>Add to collection</Button>
           </Paper>
         </Grid>
         <Grid item xs={1}></Grid>
