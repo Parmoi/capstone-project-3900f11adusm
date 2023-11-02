@@ -25,6 +25,7 @@ from main.database import (
 )
 from main import auth
 from main.error import InputError, AccessError, OK
+from main.privelage import MANAGER
 from mock_data import mock_data_init
 
 APP = Flask(__name__)
@@ -111,6 +112,21 @@ def refresh_token():
     return auth.refresh(user_id)
 
 
+@APP.route("/privelage/get", methods=["GET"])
+@jwt_required(fresh=True)
+def get_privelage():
+    user_id = get_jwt_identity()
+    return auth.get_privelage(user_id)
+
+
+@APP.route("/privelage/update", methods=["POST"])
+@jwt_required(fresh=True)
+def update_privelage():
+    user_id = get_jwt_identity()
+    privelage = request.json.get("privelage", None)
+    return auth.update_privelage(user_id, privelage)
+
+
 # Uncomment to have access token refreshed automatically after evert request is made
 # If it is going to expire within a certain amount of time (optional)
 # @APP.after_request
@@ -152,6 +168,7 @@ def profile():
         }
     """
     user_id = get_jwt_identity()
+
     return db_collectors.get_collector(user_id=user_id)
 
 
