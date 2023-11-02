@@ -8,29 +8,10 @@ import {
     Container,
     Paper,
 } from '@mui/material'
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useTheme, ThemeProvider } from '@mui/material/styles';
 import { apiCall } from '../App';
-import { CoPresent } from '@mui/icons-material';
 
-// stub images
-// const images = [
-//   {
-//       name: "Lego",
-//       caption: "Random lego.",
-//       image: "https://tse3.mm.bing.net/th?id=OIP.SwCSPpmwihkM2SUqh7wKXwHaFG&pid=Api"
-//   },
-//   {
-//     name: "More legos",
-//     caption: "More lego.",
-//     image: "https://content.api.news/v3/images/bin/f82665f51acc50360bbc70901f3563a1"
-//   },
-//   {
-//     name: "Collectibles",
-//     caption: "Random collectibles.",
-//     image: "https://tse1.mm.bing.net/th?id=OIP.Cs29HRbrYZhSfWdUdgRgMAHaEK&pid=Api"
-//   },
-// ]
 
 const CollectiblePage = () => {
   const [data, setData] = React.useState(
@@ -38,10 +19,9 @@ const CollectiblePage = () => {
         "collectible_images": []
       }
   );
-  
+  const navigate = useNavigate();
   const params = useParams();
   const c_id = params.id;
-  console.log(c_id);
   
 
   const fetchData = () => {

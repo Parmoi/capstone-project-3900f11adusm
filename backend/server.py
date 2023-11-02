@@ -630,6 +630,24 @@ def get_collectible_info():
 
     return jsonify(stub_return), OK
 
+@APP.route("/collectible/buy", methods=["GET"])
+@jwt_required(fresh=False)
+def get_buylist():
+    '''
+    Takes in collectible_id as request argument
+    '''
+
+    stub_return = [
+        {
+            "image": 'https://tse2.mm.bing.net/th?id=OIP.j7EknM6CUuEct_kx7o-dNQHaMN&pid=Api',
+            "collectible_name": 'Bart',
+            "trader_name": 'Not bart',
+            "location": 'Somewhere',
+        }
+    ],
+
+    return jsonify(stub_return), OK
+
 
 """ |------------------------------------|
     |           Dashboard Routes         |
