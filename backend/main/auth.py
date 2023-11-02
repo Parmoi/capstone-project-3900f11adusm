@@ -1,3 +1,4 @@
+import sqlalchemy as db
 from database import db_collectors
 import bcrypt
 
@@ -10,8 +11,12 @@ from flask_jwt_extended import (
     set_refresh_cookies,
 )
 
+
 from main.database import db_manager as dbm
+from main.database import db_collectors
 from error import InputError, AccessError, OK
+# from privelage import COLLECTOR
+import privelage
 
 """ |------------------------------------|
     |     Functions for Authorization    |
@@ -144,4 +149,22 @@ def hash_password(password):
     pw_bytes = password.encode("utf-8")
     hashed_pw = bcrypt.hashpw(pw_bytes, bcrypt.gensalt())
     return hashed_pw.decode("utf-8")
+
+def check_privelage(user_id, required_privelage):
+    engine, conn, metadata = dbm.db_connect()
+    collectors = db.Table("collectors", metadata, autoload_with=engine)
+    privelages = db.Table("privelages", metadata, autoload_with=engine)
+    select_stmt = db.select(privelages.c.privelage).where(privelages.c.collector_id == user_id)
+    res = conn.execute(select_stmt)
+    conn.close()
+
+    user_privelage = res.fetchone()._asdict().get("privelage")
+
+    return user_privelage >= required_privelage
+
+
+
+
+    
+
 
