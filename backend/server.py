@@ -21,10 +21,11 @@ from main.database import (
     db_wantlist,
     db_collectibles,
     db_collections,
-    db_trade
+    db_trade,
 )
 from main import auth
 from main.error import InputError, AccessError, OK
+from main.privelage import MANAGER
 from mock_data import mock_data_init
 
 APP = Flask(__name__)
@@ -62,17 +63,14 @@ def db_init():
 
 @APP.route("/init_mock_data", methods=["GET"])
 def init_mock_data():
-    mock_data_init.execute_sql_file("./mock_data/mock_collectors.sql")
-    db_campaigns.register_campaign(
-        "mock",
-        "Mock collectibles campaign!",
-        "2023-10-23",
-        "2023-10-23",
-        ["rarity", "condition", "color"],
-    )
-    mock_data_init.execute_sql_file("./mock_data/mock_collectibles.sql")
+    mock_data_init.execute_sql_file("./mock_data/collectors.sql")
+    mock_data_init.execute_sql_file("./mock_data/campaigns.sql")
+    mock_data_init.execute_sql_file("./mock_data/collectibles.sql")
+    mock_data_init.execute_sql_file("./mock_data/collections.sql")
+    mock_data_init.execute_sql_file("./mock_data/wantlist.sql")
 
     return jsonify(msg="Mock data initialised!"), OK
+
 
 """ |------------------------------------|
     |       Authentication Routes        |
@@ -112,6 +110,21 @@ def refresh_token():
     """
     user_id = get_jwt_identity()
     return auth.refresh(user_id)
+
+
+@APP.route("/privelage/get", methods=["GET"])
+@jwt_required(fresh=True)
+def get_privelage():
+    user_id = get_jwt_identity()
+    return auth.get_privelage(user_id)
+
+
+@APP.route("/privelage/update", methods=["POST"])
+@jwt_required(fresh=True)
+def update_privelage():
+    user_id = get_jwt_identity()
+    privelage = request.json.get("privelage", None)
+    return auth.update_privelage(user_id, privelage)
 
 
 # Uncomment to have access token refreshed automatically after evert request is made
@@ -155,6 +168,7 @@ def profile():
         }
     """
     user_id = get_jwt_identity()
+
     return db_collectors.get_collector(user_id=user_id)
 
 
@@ -164,7 +178,7 @@ def profile_update():
     """
     Updates the profile details of the user. Returns detailed
     error messages if the user provides invalid data.
-    
+
     Example: "username already taken"
 
     Args:
@@ -173,7 +187,7 @@ def profile_update():
         email: valid email format.
         first_name: string
         last_name: string
-        phone: string (numbers) 
+        phone: string (numbers)
         address: string
     """
 
@@ -206,9 +220,10 @@ def get_collectors():
 
 @APP.route("/search", methods=["GET"])
 def first_search():
-    search_query = request.json.get("query", None)
+    # search_query = request.json.get("query", None)
     # return db_collectibles.search_collectibles(search_query)
-    return db_campaigns.get_campaign_collectibles(1)
+    # return db_campaigns.get_campaign_collectibles(1)
+    return db_collectibles.get_all_collectibles()
 
 
 """ |------------------------------------|
@@ -223,12 +238,12 @@ def register_campaign():
 
     name = request.json.get("name", None)
     description = request.json.get("desc", None)
+    image = request.json.get("image", None)
     start_date = request.json.get("start", None)
     end_date = request.json.get("end", None)
-    collectible_fields = request.json.get("fields", None)
 
     return db_campaigns.register_campaign(
-        name, description, start_date, end_date, collectible_fields
+        name, description, image, start_date, end_date
     )
 
 
@@ -284,6 +299,14 @@ def get_campaign_collectibles():
 @APP.route("/collection/add", methods=["POST"])
 @jwt_required(fresh=False)
 def insert_collectible():
+    '''
+    Inserts collectible into collection list
+    Returns collection id created
+
+    Args:
+        user_id: UUID
+        collectible_id: int
+    '''
     user_id = get_jwt_identity()
     collectible_id = request.json.get("collectible_id", None)
 
@@ -295,11 +318,56 @@ def insert_collectible():
 def get_collection():
     user_id = get_jwt_identity()
     return db_collections.get_collection(user_id)
+    # return jsonify([
+    #     {
+    #         'id': 1,
+    #         'name': 'Homer',
+    #         'campaign_name': 'Simpsons',
+    #         'campaign_id': 1,
+    #         'collectible_id': 1,
+    #         'image': 'https://ilarge.lisimg.com/image/8825948/980full-homer-simpson.jpg',
+    #         'date_added': '23/05/2014',
+    #         'date_released': '03/03/2014',
+    #     },
+    #     {
+    #         "id": 2,
+    #         "image": 'https://tse4.mm.bing.net/th?id=OIP.e4tAXeZ6G0YL4OE5M8KTwAHaMq&pid=Api',
+    #         "name": 'Marge',
+    #         'campaign_id': 12,
+    #         'collectible_id': 12,
+    #         "campaign_name": 'Winter 2022',
+    #         'date_added': '03/02/2014',
+    #         'date_released': '03/01/2014',
+    #     },
+    #     {
+    #         "id": 3,
+    #         "image": 'https://tse2.mm.bing.net/th?id=OIP.j7EknM6CUuEct_kx7o-dNQHaMN&pid=Api',
+    #         "name": 'Bart',
+    #         'campaign_id': 1,
+    #         'collectible_id': 2,
+    #         "campaign_name": 'Simpsons',
+    #         'date_added': '03/08/2014',
+    #         'date_released': '03/01/2014',
+    #     },
+    # ]), 200
 
 
 @APP.route("/collection/delete", methods=["DELETE"])
 @jwt_required(fresh=False)
 def remove_collectible():
+    '''
+    Deletes collectible from user's collection
+
+    Args:
+        user_id: int (collector's id)
+        collection_id: int (id of entry to be deleted)
+
+    Returns {
+        collection_id: int
+    }
+    '''
+
+    # return jsonify({'collection_id': 1}), 200
     user_id = get_jwt_identity()
     collection_id = request.json.get("id", None)
 
@@ -310,9 +378,9 @@ def remove_collectible():
 @jwt_required(fresh=False)
 def user_has_collectible():
     user_id = get_jwt_identity()
-    collectible_id = request.json.get("collectible_id", None)
+    # collectible_id = request.json.get("collectible_id", None)
 
-    return db_collections.user_has_collectible(user_id, collectible_id)
+    return db_collections.user_has_collectible(user_id)
 
 
 """ |------------------------------------|
@@ -320,49 +388,239 @@ def user_has_collectible():
     |------------------------------------| """
 
 
-# TODO: Implement the wantlist function. Not sure how to select a users wantlist
-#       Is the relational database set up so that each time a user is created, a wantlist
-#       is instantiated. Or wantlist can be searched for and its contents retruned by
-#       user id?
-@APP.route("/wantlist", methods=["GET"])
+@APP.route("/wantlist/get", methods=["GET"])
 @jwt_required(fresh=False)
 def wantlist():
+    """
+    Returns list of collectibles in user's want list along with details about collectible to be displayed
+
+    Args:
+        user_id: collectors user id
+
+    Returns:
+    [
+        {
+            id: int, (wantlist_id)
+            campaign_id: int,
+            collectible_id: int,
+            name: str, (name of collectible)
+            image: str, (collectible image url)
+            campaign_name: str,
+            date_released: "DD/MM/YYYY", (date collection/campaign was released)
+            date_added: "DD/MM/YYYY", (date collectible was added to wantlist)
+        },
+        ...
+    ]
+    """
     user_id = get_jwt_identity()
-    return jsonify(db_wantlist.get_wantlist(user_id)), OK
+
+    return db_wantlist.get_wantlist(user_id)
+
+
+@APP.route("/wantlist/add", methods=["POST"])
+@jwt_required(fresh=False)
+def insert_wantlist():
+    """
+    Inserts collectible into wantlist
+    Returns wantlist id created
+
+    Args:
+        user_id: UUID
+        collectible_id: int
+
+    Returns:
+    {
+        'wantlist_id': int
+    }
+    """
+    user_id = get_jwt_identity()
+    collectible_id = request.json.get("collectible_id", None)
+
+    return db_wantlist.insert_wantlist(user_id, collectible_id)
+
+
+@APP.route("/wantlist/delete", methods=["DELETE"])
+@jwt_required(fresh=False)
+def remove_wantlist():
+    """
+    Deletes collectible from user's wantlist
+
+    Args:
+        user_id: int (collector's id)
+        wantlist: int (id of entry to be deleted)
+
+    Returns {
+        wantlist_id: int
+    }
+    """
+    user_id = get_jwt_identity()
+    wantlist_id = request.json.get("wantlist_id", None)
+
+    return db_wantlist.remove_from_wantlist(user_id, wantlist_id)
+
+
+@APP.route("/wantlist/move", methods=["POST"])
+@jwt_required(fresh=False)
+def move_collectible():
+    """
+    Moves collectible from user's wantlist to collection
+
+    Args:
+        user_id: int (collector's id)
+        wantlist_id: int (id of entry to be moved)
+
+    Returns {
+        collection_id: int (id of new entry created in collection)
+    }
+    """
+
+    user_id = get_jwt_identity()
+    wantlist_id = request.json.get("wantlist_id", None)
+
+    return db_wantlist.move_to_collection(user_id, wantlist_id)
+
+
+""" |------------------------------------|
+    |           Trade Routes             |
+    |------------------------------------| """
+
+
+@APP.route("/trade/post", methods=["POST"])
+@jwt_required(fresh=False)
+def post_trade():
+    """
+    Creates trade post, returns post_id
+
+    Args:
+        collection_id
+        post_title
+        post_description
+        post_images: [] (list of post image urls)
+
+    """
+
+    stub_data = {"trade_post_id": 1}
+
+    return jsonify(stub_data), OK
+
+@APP.route("/trade/get", methods=["GET"])
+@jwt_required(fresh=False)
+def get_tradepost():
+    '''
+    Returns trade post information
+    Takes trade post id as param
+
+    '''
+
+    stub_data = {
+        "post_title": "Title",
+        "post_created": "04/04/2004",
+        "post_trader": "Trader1",
+        "post_images": [
+            {
+                "name": "1",
+                "caption": "Bart with skateboard.",
+                "image": "https://tse1.mm.bing.net/th?id=OIP.S9zFPgPbF0zJ4OXQkU675AHaHC&pid=Api"
+            },
+            {
+                "name": "2",
+                "caption": "Stuffed bart.",
+                "image": "https://tse1.mm.bing.net/th?id=OIP.AIizpaWw4l8TtY5fWj66RgHaGr&pid=Api"
+            },
+        ],
+        "post_description": "Description",
+        "trader_location": "Somewhere, AUS",
+        "trader_avatar": "https://tse1.mm.bing.net/th?id=OIP.ho7hCKNowRHh7u5wu1aMWQHaF9&pid=Api",
+    }
+
+    return jsonify(stub_data), OK
+
+
+""" |------------------------------------|
+    |           Offers Routes            |
+    |------------------------------------| """
+
+
+@APP.route("/offers/get", methods=["GET"])
+@jwt_required(fresh=False)
+def offers_get():
+    stub_data = {
+        "offers_list": [
+            {
+                "offer_id": "",
+                "collectible_id": "",
+                "collectible_name": "Homer",
+                "offer_status": "SENT",  # status can be SENT, ACCEPTED or DECLINED
+                "collectible_img": "",
+                "trader_collector_id": "",  # id of the collector offer was sent to
+                "trader_profile_img": "",  # The profile image of the other collector that offer was sent to
+                "trader_name": "person2",
+                "date_offer": "02/06/2003",
+                "date_updated": "02/06/2004",
+            }
+        ]
+    }
+
+    return jsonify(stub_data), OK
+
 
 """ |------------------------------------|
     |           Exchange Routes          |
     |------------------------------------| """
+
 
 @APP.route("/exchange/history", methods=["GET"])
 @jwt_required(fresh=False)
 def exchange_history():
     user_id = get_jwt_identity()
 
-    stub_return = {     # return a json list
-        "exchange_history" : [{
-            "exchange_id": "",
-            "traded_collectible_id": "",
-            "traded_collectible_name": "",
-            "traded_collectible_img": "",
-            "traded_campaign_id": "",
-            "traded_campaign_name": "",
-            "traded_campaign_img": "",
-            "accepted_collectible_id": "",
-            "accepted_collectible_name": "",
-            "accepted_collectible_img": "",
-            "accepted_campaign_id": "",
-            "accepted_campaign_name": "",
-            "accepted_campaign_img": "",
-            "trader_collector_id": "",      # The id of the other collector, not the collector viewing
-            "trader_profile_img": "",       # The profile image of the other collector
-            "trader_username": "person2",
-            "offer_made_date": "2023/10/25",
-            "accepted_date": "2023/10/29",        
-        }] 
+    stub_return = {  # return a json list
+        "exchange_history": [
+            {
+                "exchange_id": "2",
+                "traded_collectible_id": "1",
+                "traded_collectible_name": "Homer",
+                "traded_collectible_img": "https://ilarge.lisimg.com/image/8825948/980full-homer-simpson.jpg",
+                "traded_campaign_id": "1",
+                "traded_campaign_name": "Simpsons",
+                "traded_campaign_img": "",
+                "accepted_collectible_id": "2",
+                "accepted_collectible_name": "Marge",
+                "accepted_collectible_img": "https://tse4.mm.bing.net/th?id=OIP.e4tAXeZ6G0YL4OE5M8KTwAHaMq&pid=Api",
+                "accepted_campaign_id": 1,
+                "accepted_campaign_name": "Simpsons",
+                "accepted_campaign_img": "",
+                "trader_collector_id": "2",
+                "trader_profile_img": "default",
+                "trader_username": "person2",
+                "offer_made_date": "2023/10/25",
+                "accepted_date": "2023/10/29",
+            },
+            {
+                "exchange_id": "3",
+                "traded_collectible_id": "1",
+                "traded_collectible_name": "Bart",
+                "traded_collectible_img": "https://tse2.mm.bing.net/th?id=OIP.j7EknM6CUuEct_kx7o-dNQHaMN&pid=Api",
+                "traded_campaign_id": "1",
+                "traded_campaign_name": "Simpsons",
+                "traded_campaign_img": "",
+                "accepted_collectible_id": "2",
+                "accepted_collectible_name": "Dog",
+                "accepted_collectible_img": "https://tse3.mm.bing.net/th?id=OIP.6761X25CX3UUjklkDCnjSwHaHa&pid=Api",
+                "accepted_campaign_id": 1,
+                "accepted_campaign_name": "Simpsons",
+                "accepted_campaign_img": "",
+                "trader_collector_id": "2",
+                "trader_profile_img": "default",
+                "trader_username": "person2",
+                "offer_made_date": "2023/10/25",
+                "accepted_date": "2023/10/29",
+            },
+        ]
     }
 
     return jsonify(stub_return), OK
+
 
 @APP.route("/exchange/available", methods=["GET"])
 @jwt_required(fresh=False)
@@ -371,19 +629,21 @@ def available_exchanges():
 
     collectible_id = request.json.get("collectible_id", None)
 
-    stub_return = {     # return a json list
-        "trade_posts" : [{
-            "trade_id": "",             # ID of the posted trade, will be used for making offers to the trade.
-            "collector_id": "",         # The collector who posted the trade
-            "collector_username": "",
-            "collectible_id": collectible_id,
-            "collectible_name": "",
-            "item_img": "",             # collector uploaded image. irl image
-            "creation_date": "",
-            "post_title": "",
-            "suggested_worth": "",
-            "description": ""           # collector uploaded description
-        }] 
+    stub_return = {  # return a json list
+        "trade_posts": [
+            {
+                "trade_id": "",  # ID of the posted trade, will be used for making offers to the trade.
+                "collector_id": "",  # The collector who posted the trade
+                "collector_username": "",
+                "collectible_id": collectible_id,
+                "collectible_name": "",
+                "item_img": "",  # collector uploaded image. irl image
+                "creation_date": "",
+                "post_title": "",
+                "suggested_worth": "",
+                "description": "",  # collector uploaded description
+            }
+        ]
     }
 
     return jsonify(stub_return), OK
@@ -394,23 +654,106 @@ def available_exchanges():
 def make_offer():
     """
     Accepts parameters for an offer to a collectible setup for trade.
-    Should store the information as a 
+    Should store the information as a
     """
-    user_id = get_jwt_identity()       # collector making the offer for trade
+    user_id = get_jwt_identity()  # collector making the offer for trade
 
-
-    trade_id = request.json.get("trade_id", None)               # ID of the trade the collector is making an offer to.
+    trade_id = request.json.get(
+        "trade_id", None
+    )  # ID of the trade the collector is making an offer to.
     offer_collectible_id = request.json.get("collectible_id", None)
-    description = request.json.get("description", None)         # description of offer.
-    offer_img = request.json.get("offer_img", None)             # offer maker uploaded image of collectible they're offering for the trade.
-    offer_title = request.json.get("offer_title", None)         # title of the offer being made for the trade item.
+    description = request.json.get("description", None)  # description of offer.
+    offer_img = request.json.get(
+        "offer_img", None
+    )  # offer maker uploaded image of collectible they're offering for the trade.
+    offer_title = request.json.get(
+        "offer_title", None
+    )  # title of the offer being made for the trade item.
 
+    stub_return = {"msg": "Offer has been successfully sent."}
+
+    return jsonify(stub_return), OK
+
+
+""" |------------------------------------|
+    |          Collectible Routes        |
+    |------------------------------------| """
+
+
+@APP.route("/collectible/get", methods=["GET"])
+@jwt_required(fresh=False)
+def get_collectible_info():
+    """
+    Takes in collectible_id as request argument
+    """
+    # user_id = get_jwt_identity()
 
     stub_return = {
-        "msg": "Offer has been successfully sent."
+        "collectible_name": "Homer",
+        "campaign_id": 1,
+        "campaign_name": "Simpsons",
+        "collectible_images": [
+            {
+                "name": "Lego",
+                "caption": "Random lego.",
+                "image": "https://tse3.mm.bing.net/th?id=OIP.SwCSPpmwihkM2SUqh7wKXwHaFG&pid=Api",
+            },
+        ],
+        "collectible_description": "Description",
+        "collectible_added_date": "08/04/2003",
     }
 
     return jsonify(stub_return), OK
+
+@APP.route("/collectible/buy", methods=["GET"])
+@jwt_required(fresh=False)
+def get_buylist():
+    '''
+    Takes in collectible_id as request argument
+    '''
+
+    stub_return = [
+        {
+            "collection_id": 1,
+            "image": 'https://tse2.mm.bing.net/th?id=OIP.j7EknM6CUuEct_kx7o-dNQHaMN&pid=Api',
+            "collectible_name": 'Bart',
+            "trader_name": 'Not bart',
+            "location": 'Somewhere',
+        }
+    ]
+
+    return jsonify(stub_return), OK
+
+""" |------------------------------------|
+    |            Manager Routes          |
+    |------------------------------------| """
+
+@APP.route("/manager/feedback", methods=["GET"])
+@jwt_required(fresh=False)
+def get_feedback():
+    '''
+    Returns the feedback to the campaign manager for a campaign.
+    '''
+
+    stub_return = {'feedback': [
+        {
+            "collector_id": 21,
+            "collector_username": 'Barry',
+            "collector_profile_img": 'https://tse3.mm.bing.net/th?id=OIP.SwCSPpmwihkM2SUqh7wKXwHaFG&pid=Api',
+            "feedback": "I would have prefered if you didn't do another Simpsons campaign. Maybe try something with trees, trees are nice.",
+            "feedback_date": '2023/11/01',
+        },
+        {
+            "collector_id": 11,
+            "collector_username": 'Bart',
+            "collector_profile_img": 'https://tse2.mm.bing.net/th?id=OIP.j7EknM6CUuEct_kx7o-dNQHaMN&pid=Api',
+            "feedback": 'This is a good campaign, keep up the good work.',
+            "feedback_date": '2023/10/31',
+        }
+    ]}
+
+    return jsonify(stub_return), OK
+
 
 """ |------------------------------------|
     |           Dashboard Routes         |

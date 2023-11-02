@@ -71,7 +71,6 @@ def database_setup():
         metadata,
         db.Column("id", db.Integer, db.Identity(), primary_key=True),
         db.Column("collector_id", db.Integer, db.ForeignKey("collectors.id")),
-        db.Column("campaign_id", db.Integer, db.ForeignKey("campaigns.id")),
         db.Column("collectible_id", db.Integer),
     )
 
@@ -109,6 +108,15 @@ def database_setup():
         db.Column("collection_receive_id", db.Integer, db.ForeignKey("collections.id"))
     )
 
+    pivelage_table = db.Table(
+        "privelages",
+        metadata,
+        # db.Column("id", db.Integer, db.Identity(), primary_key=True),
+        db.Column("collector_id", db.Integer, db.ForeignKey("collectors.id"), primary_key=True, unique=True),
+        db.Column("privelage", db.Integer)
+    )
+
+    
     # Creates all tables stored within metadata
     metadata.create_all(engine)
     conn.close()

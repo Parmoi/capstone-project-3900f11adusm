@@ -31,7 +31,7 @@ const ProfileBox = ({style, data}) => {
           sx={{ width: 150, height: 150, marginTop: "16px", fontSize: "60px"}}
         />
       </Box>
-      <Typography variant="h5">Bob</Typography>
+      <Typography variant="h5">{data.username ? data.username : 'Username Unknown'}</Typography>
       <Typography variant="p1">Collector</Typography>
       <Box component="span">
         <Button variant="contained" sx={{marginLeft: "8px", marginBottom: "16px"}}>Change Icon</Button>
@@ -43,7 +43,7 @@ const ProfileBox = ({style, data}) => {
 const SocialMediaDisplay = ({displaySocials, style}) => {
   return (
     <List sx={style}>
-      <ListItem secondaryAction={ <ListItemText primary="@Bob"/> }>
+      <ListItem secondaryAction={ <ListItemText primary="@Test"/> }>
         <Button 
           variant="link"
           target="_blank"
@@ -55,7 +55,7 @@ const SocialMediaDisplay = ({displaySocials, style}) => {
         </Button>
       </ListItem>
       <Divider variant="middle"/>
-      <ListItem secondaryAction={ <ListItemText primary="Bob"/> }>
+      <ListItem secondaryAction={ <ListItemText primary="Test"/> }>
         <Button 
           variant="link"
           target="_blank"
@@ -67,7 +67,7 @@ const SocialMediaDisplay = ({displaySocials, style}) => {
         </Button>
       </ListItem>
       <Divider variant="middle"/>
-      <ListItem secondaryAction={ <ListItemText primary="Bob"/> }>
+      <ListItem secondaryAction={ <ListItemText primary="Test"/> }>
         <Button 
           variant="link"
           target="_blank"

@@ -1,3 +1,5 @@
+Uguudei Amarbayasgalan - z5364679
+
 Week 1
 
 Our group was formed, and we named ourselves DUSM. I was selected 
@@ -61,3 +63,17 @@ the profile information. Throughout the week, we held multiple stand-ups
 to establish that we were following the tasks outlined in 'To Try' list.
 I was responsible for checking everything was going as intended, who worked on
 what and how they're going along in their work.
+
+
+Week 7
+
+This week, I finished off the profile page and started work on the exchange
+history page. Me and Stella also discussed how we were to implement the 
+trading functionality within our system. I also adjusted the method of 
+implementation and communication between our frontend and backend where
+the frontend develeoper would write a stub data of what the backend API 
+should return. This way, we were able to test the frontend code without 
+waiting for the backend and the backend had a clear definitive method 
+of knowing what the structure of the return should be. Other than the above
+I've spent the week looking over and reviewing PRs of other members in the 
+team.

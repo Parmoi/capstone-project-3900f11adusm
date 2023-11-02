@@ -33,4 +33,11 @@ Finished error checking for sign in/register and implementing dates including fi
 
 Week 7:
 Had meeting on Wednesday, discussing doing error checking for later sprints, writing stub APIs to return results from backend to frontend and having clearer
-documentation for what api routes return. Started work on sell/trade page and implementing stepper to guide user through progress.
+documentation for what api routes return. Started work on sell/trade page and implementing stepper to guide user through progress. Finished working on sell/trade page
+not including uploading image functionality.
+
+Week 8:
+Had meeting on Monday, discussed offers and trading and how the functionality translates to frontend and backend. Started work on offerlist and stub api and finished.
+Added new routes in line for offerlist and trade posting. Finished creating a buy/trade list for when a user clicks on buy button on the collectible page. Also 
+started work on trade post page and finished, which is the page a user is taken to when they click on a result from the buy/trade list. Tying in functionality from
+backend to the frontend for demo.

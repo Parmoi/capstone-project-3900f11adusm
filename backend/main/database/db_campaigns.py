@@ -10,7 +10,7 @@ from main.error import OK, InputError, AccessError
     |------------------------------------| """
 
 
-def register_campaign(name, description, start_date, end_date):
+def register_campaign(name, description, image, start_date, end_date):
     """insert_campaign.
 
     Function to insert new campaign.
@@ -23,6 +23,11 @@ def register_campaign(name, description, start_date, end_date):
         end_date: end date of campaign ("DD/MM/YYYY")
         collectible_fields: list of fields/columns for collectibles in this campaign
     """
+
+
+    
+    
+
     start_date_obj = datetime.strptime(start_date, "%d/%m/%Y").date()
     end_date_obj = datetime.strptime(end_date, "%d/%m/%Y").date()
 
@@ -35,6 +40,7 @@ def register_campaign(name, description, start_date, end_date):
         {
             "name": name,
             "description": description,
+            "image": image,
             "start_date": start_date_obj,
             "end_date": end_date_obj,
         }
