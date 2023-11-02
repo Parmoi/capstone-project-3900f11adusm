@@ -19,6 +19,8 @@ import SignedOutNav from './components/SignedOutNav';
 import ExchangeHistory from './pages/ExchangeHistory';
 import Campaign from './pages/campaign';
 import ResultsPage from './pages/ResultPage';
+import BuyList from './pages/BuyList';
+import TradePostPage from './pages/TradePostPage';
 
 import { Navigate } from "react-router-dom";
 import { useState } from 'react';
@@ -124,6 +126,8 @@ function App() {
               <Route path='/campaign' element={<Campaign/>}></Route>
               <Route path='/search/:query' element={<ResultsPage/>}></Route>
               <Route path="/collectible/:id" element={<CollectiblePage />} />
+              <Route path="/collectible/buy/:id" element={<BuyList />} />
+              <Route path="/trade/view/:id" element={<TradePostPage />} />
 
             </Routes>
             

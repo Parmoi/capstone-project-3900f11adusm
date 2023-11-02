@@ -12,12 +12,13 @@ import {
 
 import { Box, Button, IconButton } from '@mui/material';
 import { apiCall } from '../App';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 // sourced from https://github.com/KevinVandy/material-react-table/blob/v1/apps/material-react-table-docs/examples/custom-top-toolbar/sandbox/src/JS.js
 function BuyList() {
-  const [data, setData] = React.useState(stubData);
+  const [data, setData] = React.useState([]);
 
+  const navigate = useNavigate();
   const params = useParams();
   const c_id = params.id;
 
@@ -47,6 +48,10 @@ function BuyList() {
   const columns = useMemo(
     //column definitions...
     () => [
+      {
+        accessorKey: 'collection_id',
+        header: 'Collection id',
+      },
       {
         accessorKey: 'image',
         header: 'Image',
@@ -92,8 +97,14 @@ function BuyList() {
       title="BuyList"
       columns={columns}
       data={data}
-      enableRowSelection
       positionToolbarAlertBanner="bottom" //show selected rows count on bottom toolbar
+      muiTableBodyRowProps={({ row }) => ({
+        onClick: () => {
+          navigate(`/trade/view/${row.original.collection_id}`)
+        },
+        sx: { cursor: 'pointer' },
+      })}
+      initialState={{ columnVisibility: { collection_id: false } }}
 
       //customize built-in buttons in the top-right of top toolbar
 

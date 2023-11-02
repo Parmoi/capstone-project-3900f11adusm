@@ -477,6 +477,38 @@ def post_trade():
 
     return jsonify(stub_data), OK
 
+@APP.route("/trade/get", methods=["GET"])
+@jwt_required(fresh=False)
+def get_tradepost():
+    '''
+    Returns trade post information
+    Takes trade post id as param
+
+    '''
+
+    stub_data = {
+        "post_title": "Title",
+        "post_created": "04/04/2004",
+        "post_trader": "Trader1",
+        "post_images": [
+            {
+                "name": "1",
+                "caption": "Bart with skateboard.",
+                "image": "https://tse1.mm.bing.net/th?id=OIP.S9zFPgPbF0zJ4OXQkU675AHaHC&pid=Api"
+            },
+            {
+                "name": "2",
+                "caption": "Stuffed bart.",
+                "image": "https://tse1.mm.bing.net/th?id=OIP.AIizpaWw4l8TtY5fWj66RgHaGr&pid=Api"
+            },
+        ],
+        "post_description": "Description",
+        "trader_location": "Somewhere, AUS",
+        "trader_avatar": "https://tse1.mm.bing.net/th?id=OIP.ho7hCKNowRHh7u5wu1aMWQHaF9&pid=Api",
+    }
+
+    return jsonify(stub_data), OK
+
 
 """ |------------------------------------|
     |           Offers Routes            |
@@ -650,12 +682,13 @@ def get_buylist():
 
     stub_return = [
         {
+            "collection_id": 1,
             "image": 'https://tse2.mm.bing.net/th?id=OIP.j7EknM6CUuEct_kx7o-dNQHaMN&pid=Api',
             "collectible_name": 'Bart',
             "trader_name": 'Not bart',
             "location": 'Somewhere',
         }
-    ],
+    ]
 
     return jsonify(stub_return), OK
 
