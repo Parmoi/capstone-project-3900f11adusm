@@ -3,13 +3,14 @@ from flask import jsonify
 import db_manager as dbm
 import auth
 from main.error import OK, InputError, AccessError
+from main.privelage import COLLECTOR
 
 """ |------------------------------------|
     |     Functions for collectors       |
     |------------------------------------| """
 
 
-def insert_collector(email, username, password):
+def insert_collector(email, username, password, privelage=COLLECTOR):
     """insert_collector.
 
     Insert a new collector into the database.
@@ -25,6 +26,7 @@ def insert_collector(email, username, password):
 
     # Loads in the collector table into our metadata
     collectors = db.Table("collectors", metadata, autoload_with=engine)
+    privelages = db.Table("privelages", metadata, autoload_with=engine)
 
     # Inserts a collector into the collector table
     insert_stmt = db.insert(collectors).values(
@@ -35,6 +37,12 @@ def insert_collector(email, username, password):
     select_stmt = db.select(collectors.c.id).where(collectors.c.email == email)
     cursor = conn.execute(select_stmt)
     collector_id = cursor.fetchone()._asdict().get("id")
+
+    insert_stmt = db.insert(privelages).values(
+        {"collector_id": collector_id, "privelage": privelage}
+    )
+    cursor = conn.execute(insert_stmt)
+
 
     conn.close()
 

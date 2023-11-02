@@ -12,11 +12,10 @@ from flask_jwt_extended import (
 )
 
 
+from privelage import COLLECTOR, MANAGER, ADMIN
 from main.database import db_manager as dbm
 from main.database import db_collectors
 from error import InputError, AccessError, OK
-# from privelage import COLLECTOR
-import privelage
 
 """ |------------------------------------|
     |     Functions for Authorization    |
@@ -51,7 +50,9 @@ def login(password, email=None, username=None):
         return jsonify({"msg": "Invalid password!"}), InputError
 
     user_id = db_collectors.get_collector_id(email=email, username=username)
-    response = jsonify({"msg": "login successful"})
+    response = jsonify(
+        {"msg": "login successful", "privelage": get_user_privelage(user_id)}
+    )
     access_token = create_access_token(identity=user_id, fresh=True)
     refresh_token = create_refresh_token(identity=user_id)
     set_access_cookies(response, access_token)
@@ -118,6 +119,47 @@ def refresh(user_id):
     return response, OK
 
 
+def get_privelage(user_id):
+    user_privelage = get_user_privelage(user_id)
+    return jsonify({"privelage": user_privelage}), OK
+
+
+def update_privelage(user_id, privelage):
+    engine, conn, metadata = dbm.db_connect()
+
+    privelages = db.Table("privelages", metadata, autoload_with=engine)
+
+    update_stmt = (
+        db.update(privelages)
+        .where(privelages.c.collector_id == user_id)
+        .values({"privelage": privelage})
+    )
+    conn.execute(update_stmt)
+    conn.close()
+
+    user_privelage = get_user_privelage(user_id)
+
+    return jsonify({"privelage": user_privelage}), OK
+
+
+def check_privelage(user_id, required_privelage):
+    user_privelage = get_user_privelage(user_id)
+    has_privelage = user_privelage >= required_privelage
+
+    if not has_privelage:
+        return jsonify(
+            {
+                "msg": "user {} has privelage level {}, requires at least privelage level {}!".format(
+                    user_id, user_privelage, required_privelage
+                ),
+                "privelage": user_privelage,
+            },
+            AccessError,
+        )
+    else:
+        return jsonify({"privelage": user_privelage})
+
+
 """ |------------------------------------|
     | Helper functions for Authorization |
     |------------------------------------| """
@@ -150,21 +192,20 @@ def hash_password(password):
     hashed_pw = bcrypt.hashpw(pw_bytes, bcrypt.gensalt())
     return hashed_pw.decode("utf-8")
 
-def check_privelage(user_id, required_privelage):
+
+def get_user_privelage(user_id):
     engine, conn, metadata = dbm.db_connect()
-    collectors = db.Table("collectors", metadata, autoload_with=engine)
     privelages = db.Table("privelages", metadata, autoload_with=engine)
-    select_stmt = db.select(privelages.c.privelage).where(privelages.c.collector_id == user_id)
+    select_stmt = db.select(privelages.c.privelage).where(
+        privelages.c.collector_id == user_id
+    )
     res = conn.execute(select_stmt)
     conn.close()
 
     user_privelage = res.fetchone()._asdict().get("privelage")
+    return user_privelage
 
+
+def check_user_privelage(user_id, required_privelage):
+    user_privelage = get_user_privelage(user_id)
     return user_privelage >= required_privelage
-
-
-
-
-    
-
-
