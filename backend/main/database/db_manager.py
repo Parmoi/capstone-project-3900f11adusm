@@ -71,7 +71,7 @@ def database_setup():
         metadata,
         db.Column("id", db.Integer, db.Identity(), primary_key=True),
         db.Column("collector_id", db.Integer, db.ForeignKey("collectors.id")),
-        db.Column("campaign_id", db.Integer, db.ForeignKey("campaigns.id")),
+        # db.Column("campaign_id", db.Integer, db.ForeignKey("campaigns.id")),
         db.Column("collectible_id", db.Integer),
     )
 

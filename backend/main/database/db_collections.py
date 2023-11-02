@@ -2,6 +2,7 @@ import sqlalchemy as db
 from flask import jsonify
 import db_manager as dbm
 import db_campaigns
+import db_helpers
 import db_collectibles
 from main.error import OK, InputError, AccessError
 
@@ -39,7 +40,6 @@ def insert_collectible(user_id, collectible_id):
     insert_stmt = db.insert(collections).values(
         {
             "collector_id": user_id,
-            "campaign_id": collectible.get("campaign_id"),
             "collectible_id": collectible_id,
         }
     )
@@ -111,7 +111,8 @@ def remove_collectible(user_id, collection_id):
     )
 
 
-def get_collection(user_id):
+# TODO: Error checking for invalid user id
+def get_collection(collector_id):
     """get_collection.
 
     Return list conataining all collectibles and their details in users collection.
@@ -136,7 +137,25 @@ def get_collection(user_id):
 
     engine, conn, metadata = dbm.db_connect()
     collections = db.Table("collections", metadata, autoload_with=engine)
-    select_stmt = db.select(collections).where(collections.c.collector_id == user_id)
+    collectibles = db.Table("collectibles", metadata, autoload_with=engine)
+    # campains = db.Table("campaigns", metadata, autoload_with=engine)
+
+    join = db.join(
+        collections,
+        collectibles,
+        (collections.c.collectible_id == collectibles.c.id)
+        & (collections.c.collector_id == collector_id),
+    )
+
+    select_stmt = db.select(
+        collections.c.id.label("id"),
+        collections.c.collectible_id.label("collectible_id"),
+        collectibles.c.campaign_id.label("campaign_id"),
+        collectibles.c.name.label("name"),
+        collectibles.c.description.label("description"),
+        collectibles.c.image.label("image"),
+    ).select_from(join)
+
     results = conn.execute(select_stmt)
     conn.close()
 
@@ -144,33 +163,24 @@ def get_collection(user_id):
         return (
             jsonify(
                 {
-                    "msg": "User {}'s collection is empty!".format(user_id),
+                    "msg": "User {}'s collection is empty!".format(collector_id),
                 }
             ),
             InputError,
         )
 
     rows = results.fetchall()
-    collection_rows = [row._asdict() for row in rows]
 
-    collection = []
-    for collection_row in collection_rows:
-        collectible = db_collectibles.get_collectible(
-            collection_row.get("collectible_id")
-        )
-        collectible["collectible_id"] = collectible.pop("id")
-        collectible.update(id=collection_row.get("id"))
-        collection.append(collectible)
+    collection = db_helpers.rows_to_list(rows)
 
     return jsonify({"collection": collection}), OK
 
 
-def user_has_collectible(user_id, collectible_id):
+def user_has_collectible(user_id):
     engine, conn, metadata = dbm.db_connect()
     collections = db.Table("collections", metadata, autoload_with=engine)
     exists_criteria = db.select(collections).where(
         (collections.c.collector_id == user_id)
-        & (collections.c.collectible_id == collectible_id)
     )
     stmt = db.exists(exists_criteria).select()
     result = conn.execute(stmt)
@@ -213,4 +223,3 @@ def get_last_collection(user_id):
 
     collection_dict = results.fetchone()._asdict()
     return collection_dict
-
