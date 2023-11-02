@@ -202,7 +202,7 @@ def get_collectors():
     return db_collectors.get_all_collectors()
 
 
-@APP.route("/search", methods=["GET"])
+@APP.route("/search/:query", methods=["GET"])
 def first_search():
     # search_query = request.json.get("query", None)
     # return db_collectibles.search_collectibles(search_query)
@@ -290,9 +290,40 @@ def insert_collectible():
 @APP.route("/collection/get", methods=["GET"])
 @jwt_required(fresh=False)
 def get_collection():
-    user_id = get_jwt_identity()
-    return db_collections.get_collection(user_id)
-
+    # user_id = get_jwt_identity()
+    # return db_collections.get_collection(user_id)
+    return jsonify([
+        {
+            'id': 1,
+            'name': 'Homer',
+            'campaign_name': 'Simpsons',
+            'campaign_id': 1,
+            'collectible_id': 1,
+            'image': 'https://ilarge.lisimg.com/image/8825948/980full-homer-simpson.jpg',
+            'date_added': '23/05/2014',
+            'date_released': '03/03/2014',
+        },
+        {
+            "id": 2,
+            "image": 'https://tse4.mm.bing.net/th?id=OIP.e4tAXeZ6G0YL4OE5M8KTwAHaMq&pid=Api',
+            "name": 'Marge',
+            'campaign_id': 12,
+            'collectible_id': 12,
+            "campaign_name": 'Winter 2022',
+            'date_added': '03/02/2014',
+            'date_released': '03/01/2014',
+        },
+        {
+            "id": 3,
+            "image": 'https://tse2.mm.bing.net/th?id=OIP.j7EknM6CUuEct_kx7o-dNQHaMN&pid=Api',
+            "name": 'Bart',
+            'campaign_id': 1,
+            'collectible_id': 2,
+            "campaign_name": 'Simpsons',
+            'date_added': '03/08/2014',
+            'date_released': '03/01/2014',
+        },
+    ]), 200
 
 @APP.route("/collection/delete", methods=["DELETE"])
 @jwt_required(fresh=False)
@@ -407,6 +438,32 @@ def move_collectible():
     wantlist_id = request.json.get("wantlist_id", None)
 
     return db_wantlist.move_to_collection(user_id, wantlist_id)
+    
+
+
+""" |------------------------------------|
+    |           Trade Routes             |
+    |------------------------------------| """
+
+@APP.route("/trade/post", methods=["POST"])
+@jwt_required(fresh=False)
+def post_trade():
+    '''
+    Creates trade post, returns post_id
+
+    Args: 
+        collection_id
+        post_title
+        post_description
+        post_images: [] (list of post image urls)
+
+    '''
+
+    stub_data = {
+        "trade_post_id": 1
+    }
+
+    return jsonify(stub_data), OK
 
 
 """ |------------------------------------|
@@ -540,6 +597,35 @@ def make_offer():
     )  # title of the offer being made for the trade item.
 
     stub_return = {"msg": "Offer has been successfully sent."}
+
+    return jsonify(stub_return), OK
+
+""" |------------------------------------|
+    |          Collectible Routes        |
+    |------------------------------------| """
+
+@APP.route("/collectible/get", methods=["GET"])
+@jwt_required(fresh=False)
+def get_collectible_info():
+    '''
+    Takes in collectible_id as request argument
+    '''
+    # user_id = get_jwt_identity()
+
+    stub_return = { 
+        "collectible_name": "Homer",
+        "campaign_id": 1,
+        "campaign_name": "Simpsons",
+        "collectible_images": [
+            {
+                "name": "Lego",
+                "caption": "Random lego.",
+                "image": "https://tse3.mm.bing.net/th?id=OIP.SwCSPpmwihkM2SUqh7wKXwHaFG&pid=Api"
+            },
+        ],
+        "collectible_description": "Description",
+        "collectible_added_date": "08/04/2003",
+    }
 
     return jsonify(stub_return), OK
 

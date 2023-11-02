@@ -5,7 +5,7 @@ import {
   Routes,
   Link,
   useNavigate,
-  useParams
+  useParams,
 } from "react-router-dom";
 
 import {
@@ -24,69 +24,60 @@ import { apiCall } from "../App";
 function ResultsPage() {
     const { query } = useParams();
     const [results, setResults] = useState([]);
-  
-    // Dummy data for demonstration
-    const storedData = [
-        {
-          image: 'https://ilarge.lisimg.com/image/8825948/980full-homer-simpson.jpg',
-          name: 'Homer',
-          collectionName: 'Winter 2022',
-          yearReleased: 1999,
-          dateAdded: 1800,
-        },
-        {
-          image: 'https://tse4.mm.bing.net/th?id=OIP.e4tAXeZ6G0YL4OE5M8KTwAHaMq&pid=Api',
-          name: 'Marge',
-          collectionName: 'Winter 2022',
-          yearReleased: 1899,
-          dateAdded: 1800,
-        },
-        {
-          image: 'https://tse2.mm.bing.net/th?id=OIP.j7EknM6CUuEct_kx7o-dNQHaMN&pid=Api',
-          name: 'Bart',
-          collectionName: 'Winter 2022',
-          yearReleased: 1499,
-          dateAdded: 1800,
-        },
-        {
-          image: 'https://tse3.mm.bing.net/th?id=OIP.6761X25CX3UUjklkDCnjSwHaHa&pid=Api',
-          name: 'Dog',
-          collectionName: 'Winter 2022',
-          yearReleased: 1989,
-          dateAdded: 1800,
-        },
-        {
-          image: 'https://tse3.mm.bing.net/th?id=OIP.JqWjPHsW5aJIZDnPYMGovQHaJQ&pid=Api',
-          name: 'Lisa',
-          collectionName: 'Winter 2022',
-          yearReleased: 1709,
-          dateAdded: 1800,
-        },
-        {
-          image: 'https://tse1.mm.bing.net/th?id=OIP.qVV8kcLdcLysZ5OOCzhKLAHaF7&pid=Api',
-          name: 'Rando',
-          collectionName: 'Winter 2022',
-          yearReleased: 1909,
-          dateAdded: 1801,
-        },
-      ];
 
-    const searchKey = storedData.map(item => item.name)
-
+    // const fetchData = () => {
+    //   const options = {
+    //     method: 'GET',
+    //     route: '/search/:query'
+    //   };
+    //   apiCall((d) => {
+    //     setResults(d["collectibles"]);
+    //   }, options)
+    //   ;
+    // }
+      const storedData =  [
+        {
+            campaign_name: "random",
+            collectible_description: "hahahahahah!",
+            collectible_image: "https://tse1.mm.bing.net/th?id=OIP.qVV8kcLdcLysZ5OOCzhKLAHaF7&pid=Api",
+            collectible_name: "new_collectible!",
+            date_released: "30/12/2020"
+        },
+        {
+          campaign_name: "random",
+          collectible_description: "hahahahahah!",
+          collectible_image: "https://tse3.mm.bing.net/th?id=OIP.JqWjPHsW5aJIZDnPYMGovQHaJQ&pid=Api",
+          collectible_name: "banana",
+          date_released: "30/12/2020"
+        },
+        {
+          campaign_name: "random",
+          collectible_description: "hahahahahah!",
+          collectible_image: "https://tse3.mm.bing.net/th?id=OIP.6761X25CX3UUjklkDCnjSwHaHa&pid=Api",
+          collectible_name: "apple",
+          date_released: "30/12/2020"
+        },
+      ]
+    
+    
     useEffect(() => {
+      const searchKey = storedData.map(item => item.collectible_name)
       const searchResults = searchKey.filter((str) =>
         str.toLowerCase().includes(query.toLowerCase())
       );
       setResults(searchResults);
     }, [query]);
 
-    const filteredData = storedData.filter(item => results.includes(item.name));
+    const filteredData = storedData.filter(item => results.includes(item.collectible_name));
+
+
+    const navigate = useNavigate();
 
     const columns = useMemo(
         //column definitions...
         () => [
           {
-            accessorKey: 'image',
+            accessorKey: 'collectible_image',
             header: 'Image Placeholder',
             Cell: ({ row }) => (
               <Box
@@ -100,7 +91,7 @@ function ResultsPage() {
                 <img
                   alt="collectible image"
                   height={50}
-                  src={row.original.image}
+                  src={row.original.collectible_image}
                   loading="lazy"
                 />
               </Box>
@@ -110,20 +101,20 @@ function ResultsPage() {
             enableColumnFilter: false,
           },
           {
-            accessorKey: 'name',
+            accessorKey: 'collectible_name',
             header: 'Name',
           },
           {
-            accessorKey: 'collectionName',
-            header: 'Collection Name',
+            accessorKey: 'campaign_name',
+            header: 'Campaign Name',
           },
           {
-            accessorKey: 'yearReleased',
-            header: 'Year',
-          },
-          {
-            accessorKey: 'dateAdded',
+            accessorKey: 'date_released',
             header: 'Date Added',
+          },
+          {
+            accessorKey: 'collectible_description',
+            header: 'Description',
           },
         ],
         [],
@@ -140,37 +131,19 @@ function ResultsPage() {
     data={filteredData}
     enableRowSelection
     positionToolbarAlertBanner="bottom" //show selected rows count on bottom toolbar
+    muiTableBodyRowProps={({ row }) => ({
+      onClick: () => {
+        navigate(`/collectible/${row.id}`)
+      },
+      sx: { cursor: 'pointer' },
+    })}
 
     //add custom action buttons to top-left of top toolbar
 
     renderBottomToolbarCustomActions={({ table }) => (
 
       <Box sx={{ display: 'flex', gap: '1rem', p: '4px' }}>
-        <Button
-          color="secondary"
-          disabled={!table.getIsSomeRowsSelected()}
-          onClick={() => {
-            // api call to backend
-            // setData to new data
-            alert('Move to collections');
-          }}
-          variant="contained"
-        >
-          Move to collections
-        </Button>
-
-        <Button
-          color="error"
-          disabled={!table.getIsSomeRowsSelected()}
-          onClick={() => {
-            // api call to backend
-            // setData to new data
-            alert('Delete selected collectibles');
-          }}
-          variant="contained"
-        >
-          Delete selected
-        </Button>
+        
       </Box>
 
     )}

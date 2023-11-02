@@ -22,6 +22,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import SellIcon from '@mui/icons-material/Sell';
 import PriceCheckIcon from '@mui/icons-material/PriceCheck';
 import CreditScoreIcon from '@mui/icons-material/CreditScore';
+import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
 import {
     Link,
     useNavigate,
@@ -93,7 +94,7 @@ const SignedInNav = ({ logout }) => {
 
     const handleSearchKeyPress = (event) => {
       if(event.key === 'Enter') {
-        navigate(`/results/${searchInput}`); // Navigate to /search/:query when Enter is pressed
+        navigate(`/search/${searchInput}`); // Navigate to /search/:query when Enter is pressed
       }
     };
 
@@ -183,6 +184,12 @@ const SignedInNav = ({ logout }) => {
                 <Link to="/wantlist" style={{ textDecoration: 'none', color: 'inherit' }}>Wantlist</Link>
               </MenuItem>
               <Divider />
+              <MenuItem onClick={handleClose}>
+                <ListItemIcon>
+                  <CurrencyExchangeIcon />
+                </ListItemIcon>
+                <Link to="/trade" style={{ textDecoration: 'none', color: 'inherit' }}>Trade item</Link>
+              </MenuItem>
               <MenuItem onClick={handleClose}>
                 <ListItemIcon>
                   <SellIcon />
