@@ -80,6 +80,7 @@ const theme = createTheme({
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
+  const [privelage, setPrivelage] = useState(1);
 
   function logout () {
     const options = {
@@ -112,14 +113,20 @@ function App() {
               <SignedOutNav />
               <Routes>
                 <Route path="/" element={<LandingPage/>} />
-                <Route path="/login" element={<SignIn setLogin={setLoggedIn}/>} />
+                <Route path="/login" element={<SignIn setLogin={setLoggedIn} setPrivelage={setPrivelage}/>} />
                 <Route path="/register" element={<Register setLogin={setLoggedIn}/>} />
               </Routes>
               </BrowserRouter>
           : <BrowserRouter>
             <SignedInNav logout={logout}/>
             <Routes>
-              <Route path="/" element={<ManagerHomePage/>} />
+              { privelage === 1
+                ? <Route path="/" element={<HomePage/>} />
+                : <Route path="/" element={<ManagerHomePage/>} />
+              }
+
+              {/* <Route path="/" element={<ManagerHomePage/>} /> */}
+
               <Route path="/profile" element={<Profile />} />
               <Route path="/wantlist" element={<WantList />} />
               <Route path="/collection" element={<CollectionList />} />
