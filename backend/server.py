@@ -535,6 +535,37 @@ def get_tradepost():
 
     return jsonify(stub_data), OK
 
+@APP.route("/trade/list", methods=["GET"])
+@jwt_required(fresh=False)
+def tradelist():
+    '''
+    Displays all the trades listed from the collector 
+    that have received an offer of exchange from another collector.
+
+    '''
+
+    stub_data = {
+        "trades_list": [
+            {
+                "trader_collectible_id": 1,
+                "trader_collectible_name": "Bart with skateboard", # collectible you're givin away
+                "trader_collectible_img": "https://tse1.mm.bing.net/th?id=OIP.S9zFPgPbF0zJ4OXQkU675AHaHC&pid=Api",       # image of the collectible you're giving away.
+                "offer_id": 1,
+                "offer_collectible_id": 2,
+                "offer_collectible_name": "Stuffed bart",
+                "offer_collectible_img": "https://tse1.mm.bing.net/th?id=OIP.AIizpaWw4l8TtY5fWj66RgHaGr&pid=Api",
+                "offer_collector_id": 3,  # id of the collector sending the offer
+                "offer_profile_img": "https://tse1.mm.bing.net/th?id=OIP.ho7hCKNowRHh7u5wu1aMWQHaF9&pid=Api",  # The profile image of the collector sending the offer
+                "offer_name": "person2",
+                "offer_made_date": "02/06/2003",
+            }
+        ]
+    }
+
+    return jsonify(stub_data), OK
+
+
+
 
 """ |------------------------------------|
     |           Offers Routes            |
@@ -674,6 +705,37 @@ def make_offer():
 
     return jsonify(stub_return), OK
 
+@APP.route("/exchange/decline", methods=["POST"])
+@jwt_required(fresh=False)
+def exchange_decline():
+    '''
+    Declines the exchange offer for the trade item.
+    '''
+
+    user_id = get_jwt_identity()
+    offer_id = request.json.get("offer_id", None)
+
+    stub_data = {
+        "msg": "offer successfully declined"
+    }
+
+    return jsonify(stub_data), OK
+
+@APP.route("/exchange/accept", methods=["POST"])
+@jwt_required(fresh=False)
+def exchange_accept():
+    '''
+    Accepts the exchange offer for the trade item.
+    '''
+
+    user_id = get_jwt_identity()
+    offer_id = request.json.get("offer_id", None)
+
+    stub_data = {
+        "msg": "offer successfully accepted"
+    }
+
+    return jsonify(stub_data), OK
 
 """ |------------------------------------|
     |          Collectible Routes        |
