@@ -43,7 +43,7 @@ const ProfileBox = ({style, data}) => {
 const SocialMediaDisplay = ({displaySocials, style}) => {
   return (
     <List sx={style}>
-      <ListItem secondaryAction={ <ListItemText primary="@Bob"/> }>
+      <ListItem secondaryAction={ <ListItemText primary="@Test"/> }>
         <Button 
           variant="link"
           target="_blank"
@@ -55,7 +55,7 @@ const SocialMediaDisplay = ({displaySocials, style}) => {
         </Button>
       </ListItem>
       <Divider variant="middle"/>
-      <ListItem secondaryAction={ <ListItemText primary="Bob"/> }>
+      <ListItem secondaryAction={ <ListItemText primary="Test"/> }>
         <Button 
           variant="link"
           target="_blank"
@@ -67,7 +67,7 @@ const SocialMediaDisplay = ({displaySocials, style}) => {
         </Button>
       </ListItem>
       <Divider variant="middle"/>
-      <ListItem secondaryAction={ <ListItemText primary="Bob"/> }>
+      <ListItem secondaryAction={ <ListItemText primary="Test"/> }>
         <Button 
           variant="link"
           target="_blank"
