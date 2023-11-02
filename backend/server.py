@@ -724,6 +724,36 @@ def get_buylist():
 
     return jsonify(stub_return), OK
 
+""" |------------------------------------|
+    |            Manager Routes          |
+    |------------------------------------| """
+
+@APP.route("/manager/feedback", methods=["GET"])
+@jwt_required(fresh=False)
+def get_feedback():
+    '''
+    Returns the feedback to the campaign manager for a campaign.
+    '''
+
+    stub_return = {'feedback': [
+        {
+            "collector_id": 21,
+            "collector_username": 'Barry',
+            "collector_profile_img": 'https://tse3.mm.bing.net/th?id=OIP.SwCSPpmwihkM2SUqh7wKXwHaFG&pid=Api',
+            "feedback": "I would have prefered if you didn't do another Simpsons campaign. Maybe try something with trees, trees are nice.",
+            "feedback_date": '2023/11/01',
+        },
+        {
+            "collector_id": 11,
+            "collector_username": 'Bart',
+            "collector_profile_img": 'https://tse2.mm.bing.net/th?id=OIP.j7EknM6CUuEct_kx7o-dNQHaMN&pid=Api',
+            "feedback": 'This is a good campaign, keep up the good work.',
+            "feedback_date": '2023/10/31',
+        }
+    ]}
+
+    return jsonify(stub_return), OK
+
 
 """ |------------------------------------|
     |           Dashboard Routes         |
