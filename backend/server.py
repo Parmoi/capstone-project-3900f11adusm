@@ -25,7 +25,7 @@ from main.database import (
 )
 from main import auth
 from main.error import InputError, AccessError, OK
-from main.privelage import MANAGER
+from main.privelage import ADMIN, MANAGER
 from mock_data import mock_data_init
 
 APP = Flask(__name__)
@@ -64,12 +64,6 @@ def db_init():
 @APP.route("/init_mock_data", methods=["GET"])
 def init_mock_data():
     
-    db_collectors.insert_collector("manager@gmail.com", None, "manager", privelage=MANAGER)
-    db_collectors.insert_collector("test1@gmail.com", None, "test1")
-    db_collectors.insert_collector("test2@gmail.com", None, "test1")
-    db_collectors.insert_collector("test3@gmail.com", None, "test1")
-    db_collectors.insert_collector("test4@gmail.com", None, "test1")
-    db_collectors.insert_collector("test5@gmail.com", None, "test1")
 
     mock_data_init.execute_sql_file("./mock_data/collectors.sql")
     mock_data_init.execute_sql_file("./mock_data/campaigns.sql")
@@ -82,12 +76,13 @@ def init_mock_data():
 
 @APP.route("/init_mock_data/demo", methods=["GET"])
 def init_mock_data_demo():
-    db_collectors.insert_collector(
-        "manager@gmail.com", None, "manager", privelage=MANAGER
-    )
-    db_collectors.insert_collector("test1@gmail.com", None, "test1")
-    db_collectors.insert_collector("test2@gmail.com", None, "test2")
-    db_collectors.insert_collector("test3@gmail.com", None, "test3")
+    auth.register_collector("test1@gmail.com", None, "test1")
+    auth.register_collector("test2@gmail.com", None, "test2")
+    auth.register_collector("test3@gmail.com", None, "test3")
+    auth.register_collector("test4@gmail.com", None, "test4")
+    auth.register_collector("test5@gmail.com", None, "test5")
+    auth.register_collector("manager@gmail.com", None, "manager", privelage=MANAGER)
+    auth.register_collector("admin@gmail.com", None, "manager", privelage=ADMIN)
 
     mock_data_init.execute_sql_file("./mock_data/collectors.sql")
     mock_data_init.execute_sql_file("./mock_data/campaigns.sql")
