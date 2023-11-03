@@ -27,8 +27,6 @@ def execute_sql_file(filename):
     # cursor = conn.execute(commands)
     # cursor.close()
 
-def create_test_users(n=10):
-    
+def create_test_users(n=5):
 
-
-
+    pass
