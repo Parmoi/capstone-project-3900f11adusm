@@ -19,6 +19,14 @@ import SignedOutNav from './components/SignedOutNav';
 import ExchangeHistory from './pages/ExchangeHistory';
 import Campaign from './pages/campaign';
 import ResultsPage from './pages/ResultPage';
+import BuyList from './pages/BuyList';
+import TradePostPage from './pages/TradePostPage';
+import TradeList from './pages/TradeList';
+
+import ManagerHomePage from './pages/ManagerHomePage';
+import ManagerAnalytics from './pages/ManagerAnalytics';
+import ManagerFeedback from './pages/ManagerFeedback';
+import ManagerPost from './pages/ManagerPost';
 
 import { Navigate } from "react-router-dom";
 import { useState } from 'react';
@@ -72,7 +80,8 @@ const theme = createTheme({
 });
 
 function App() {
-  const [loggedIn, setLoggedIn] = useState(false);
+  const [loggedIn, setLoggedIn] = React.useState(false);
+  const [privelage, setPrivelage] = useState(1);
 
   function logout () {
     const options = {
@@ -98,21 +107,26 @@ function App() {
     <Fragment>
       <ThemeProvider theme={theme}>
         <Helmet bodyAttributes={{ style: 'background-color : #cccccc' }} />
-        {/* <ErrModal errMsg={errMsg} open={errOpen} handleClose={handleErrClose}/> */}
         <Box sx={{ display: 'flex', flexDirection: 'column', rowGap: '10ch', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
           { !loggedIn
            ?  <BrowserRouter>
               <SignedOutNav />
               <Routes>
-                <Route path="/" element={<CollectiblePage/>} />
-                <Route path="/login" element={<SignIn setLogin={setLoggedIn}/>} />
+                <Route path="/" element={<LandingPage/>} />
+                <Route path="/login" element={<SignIn setLogin={setLoggedIn} setPrivelage={setPrivelage}/>} />
                 <Route path="/register" element={<Register setLogin={setLoggedIn}/>} />
               </Routes>
               </BrowserRouter>
           : <BrowserRouter>
             <SignedInNav logout={logout}/>
             <Routes>
-              <Route path="/" element={<HomePage/>} />
+              { privelage === 1
+                ? <Route path="/" element={<HomePage/>} />
+                : <Route path="/" element={<ManagerHomePage/>} />
+              }
+
+              {/* <Route path="/" element={<ManagerHomePage/>} /> */}
+
               <Route path="/profile" element={<Profile />} />
               <Route path="/wantlist" element={<WantList />} />
               <Route path="/collection" element={<CollectionList />} />
@@ -121,9 +135,16 @@ function App() {
               <Route path="/dashboard" element={<HomePage/>} />
               <Route path="/offers" element={<OffersList/>} />
               <Route path="/trade" element={<SellPage/>} />
-              <Route path='/campaign' element={<Campaign/>}></Route>
-              <Route path='/search/:query' element={<ResultsPage/>}></Route>
+              <Route path="/tradelist" element={<TradeList/>} />
+              <Route path='/campaign' element={<Campaign/>} />
+              <Route path='/search/:query' element={<ResultsPage/>} />
               <Route path="/collectible/:id" element={<CollectiblePage />} />
+              <Route path="/collectible/buy/:id" element={<BuyList />} />
+              <Route path="/trade/view/:id" element={<TradePostPage />} />
+
+              <Route path="/manager/feedback" element={<ManagerFeedback />} />
+              <Route path="/manager/post" element={<ManagerPost />} />
+              <Route path="/manager/analytics" element={<ManagerAnalytics />} />
 
             </Routes>
             
