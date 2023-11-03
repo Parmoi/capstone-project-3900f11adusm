@@ -94,7 +94,8 @@ def database_setup():
         db.Column("collection_id", db.Integer, db.ForeignKey("collections.id")),
         db.Column("post_title", db.String),
         db.Column("post_description", db.String),
-        db.Column("post_images", db.String)
+        db.Column("post_images", db.String),
+        db.Column("post_date", db.DATE)
     )
 
     trade_offers_table = db.Table(
@@ -105,7 +106,8 @@ def database_setup():
         db.Column("trade_sender_id", db.Integer, db.ForeignKey("collectors.id")),
         db.Column("collection_send_id", db.Integer, db.ForeignKey("collections.id")),
         db.Column("trade_receiver_id", db.Integer, db.ForeignKey("collectors.id")),
-        db.Column("collection_receive_id", db.Integer, db.ForeignKey("collections.id"))
+        db.Column("collection_receive_id", db.Integer, db.ForeignKey("collections.id")),
+        db.Column("date_offered", db.DATE)
     )
 
     pivelage_table = db.Table(

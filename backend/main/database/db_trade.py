@@ -58,7 +58,7 @@ def get_trade_posts(collectible_name):
     """
     engine, conn, metadata = dbm.db_connect()
 
-    # Loads in the trade_listings, collections, collectibles and collectors table
+    # Loads in the trade_posts, collections, collectibles and collectors table
     tp = db.Table("trade_posts", metadata, autoload_with=engine)
     ctn = db.Table("collections", metadata, autoload_with=engine)
     cbl = db.Table("collectibles", metadata, autoload_with=engine)
@@ -108,7 +108,7 @@ def insert_trade_post(collector_id, collection_id, post_title, post_desc, post_i
 
     engine, conn, metadata = dbm.db_connect()
 
-    # Loads in the trade_listings table
+    # Loads in the trade_posts table
     tp = db.Table("trade_posts", metadata, autoload_with=engine)
 
     # Since SQL can't store lists, we must convert img list to delimited string
@@ -149,13 +149,13 @@ def remove_trade_post(collector_id, collection_id):
 
     engine, conn, metadata = dbm.db_connect()
 
-    # Loads in the trade_listings table
+    # Loads in the trade_posts table
     tp = db.Table("trade_posts", metadata, autoload_with=engine)
 
     # Find id associated with trade listing we want to remove
     trade_post_id = find_trade_post(collector_id, collection_id)
 
-    # Delete the matching trade_listing row
+    # Delete the matching trade_post row
     delete_stmt = db.delete(tp).where(
         (tp.c.collector_id == collector_id) &
         (tp.c.collection_id == collection_id))
@@ -179,7 +179,7 @@ def find_trade_post(collector_id, collection_id):
 
     engine, conn, metadata = dbm.db_connect()
 
-    # Loads in the trade_listings table
+    # Loads in the trade_posts table
     tp = db.Table("trade_posts", metadata, autoload_with=engine)
     
     select_stmt = db.select(tp).where(
@@ -245,9 +245,12 @@ def find_incoming_offers(user_id):
     """
     engine, conn, metadata = dbm.db_connect()
 
-    # Loads in the trade_offers table
+    # Loads in the trade_offers, collections and collectibles table
     to = db.Table("trade_offers", metadata, autoload_with=engine)
+    ctn = db.Table("collections", metadata, autoload_with=engine)
+    cbl = db.Table("collectibles", metadata, autoload_with=engine)
 
+    
     
 
     return
