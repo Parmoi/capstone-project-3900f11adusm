@@ -18,19 +18,19 @@ import { apiCall } from '../App';
 
 
 // sourced from https://github.com/KevinVandy/material-react-table/blob/v1/apps/material-react-table-docs/examples/custom-top-toolbar/sandbox/src/JS.js
-const WantList = () => {
+const TradeList = () => {
   const [data, setData] = React.useState([]);
 
   const fetchData = () => {
     // call api with data
     const options = {
       method: 'GET',
-      route: "/wantlist/get",
+      route: "/trade/list",
     };
 
     apiCall((d) => {
       console.log(d);
-      setData(d);
+      setData(d["trades_list"]);
     }, options)
       .then((res) => {
         if (res) {
@@ -48,12 +48,12 @@ const WantList = () => {
     //column definitions...
     () => [
       {
-        accessorKey: 'id',
-        header: 'id',
+        accessorKey: 'trader_collectible_name',
+        header: 'Collectible on Trade',
       },
       {
-        accessorKey: 'image',
-        header: 'Image',
+        accessorKey: 'trader_collectible_img',
+        header: 'Trade Item Image',
         Cell: ({ row }) => (
           <Box
             sx={{
@@ -62,9 +62,9 @@ const WantList = () => {
             }}
           >
             <img
-              alt="collectible image"
+              alt="trading collectible image"
               height={60}
-              src={row.original.image}
+              src={row.original.trader_collectible_img}
               loading="lazy"
             />
           </Box>
@@ -75,79 +75,65 @@ const WantList = () => {
         enableSorting: false,
       },
       {
-        accessorKey: 'name',
-        header: 'Name',
+        accessorKey: 'offer_collectible_name',
+        header: 'Offer Collectible',
       },
       {
-        accessorKey: 'campaign_name',
-        header: 'Campaign Name',
+        accessorKey: 'offer_collectible_img',
+        header: 'Offer Item Image',
+        Cell: ({ row }) => (
+          <Box
+            sx={{
+              display: 'flex',
+              gap: '1rem',
+            }}
+          >
+            <img
+              alt="offer collectible image"
+              height={60}
+              src={row.original.offer_collectible_img}
+              loading="lazy"
+            />
+          </Box>
+
+        ),
+        enableColumnActions: false,
+        enableColumnFilter: false,
+        enableSorting: false,
       },
       {
-        accessorKey: 'dateReleased',
-        accessorFn: (row) => moment(row.date_released, "DD/MM/YYYY"), //convert to Date for sorting and filtering
-            id: 'dateReleased',
-            header: 'Date Released',
-            filterFn: 'lessThanOrEqualTo',
-            sortingFn: 'datetime',
-
-            Cell: ({ cell }) => cell.getValue()?.format('DD/MM/YY'), //render Date as a string
-            Header: ({ column }) => <em>{column.columnDef.header}</em>, //custom header markup
-
-            //Custom Date Picker Filter from @mui/x-date-pickers
-            Filter: ({ column }) => (
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker
-                  onChange={(newValue) => {
-                    column.setFilterValue(newValue);
-                  }}
-
-                  slotProps={{
-                    textField: {
-                      helperText: 'Filter Mode: Less Than',
-                      sx: { minWidth: '120px' },
-                      variant: 'standard',
-                    },
-                  }}
-
-                  value={column.getFilterValue()}
-                  format="DD-MM-YYYY"
-                />
-              </LocalizationProvider>
-            )
+        accessorKey: 'offer_name',
+        header: 'Collector Name'
       },
       {
-        accessorKey: 'dateAdded',
-        accessorFn: (row) => moment(row.date_added, "DD/MM/YYYY"), //convert to Date for sorting and filtering
-            id: 'dateAdded',
-            header: 'Date Added',
-            filterFn: 'lessThanOrEqualTo',
-            sortingFn: 'datetime',
+        accessorKey: 'offer_profile_img',
+        header: 'Collector Profile',
+        Cell: ({ row }) => (
+          <Box
+            sx={{
+              display: 'flex',
+              gap: '1rem',
+            }}
+          >
+            <img
+              alt="collector profile"
+              height={60}
+              src={row.original.offer_profile_img}
+              loading="lazy"
+            />
+          </Box>
 
-            Cell: ({ cell }) => cell.getValue()?.format('DD/MM/YY'), //render Date as a string
-            Header: ({ column }) => <em>{column.columnDef.header}</em>, //custom header markup
-
-            //Custom Date Picker Filter from @mui/x-date-pickers
-            Filter: ({ column }) => (
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker
-                  onChange={(newValue) => {
-                    column.setFilterValue(newValue);
-                  }}
-
-                  slotProps={{
-                    textField: {
-                      helperText: 'Filter Mode: Less Than',
-                      sx: { minWidth: '120px' },
-                      variant: 'standard',
-                    },
-                  }}
-
-                  value={column.getFilterValue()}
-                  format="DD-MM-YYYY"
-                />
-              </LocalizationProvider>
-            )
+        ),
+        enableColumnActions: false,
+        enableColumnFilter: false,
+        enableSorting: false,
       },
+      {
+        accessorKey: 'offer_made_date',
+        header: 'Offer Received'
+      }
+
+
     ],
     [],
     //end
@@ -165,16 +151,16 @@ const WantList = () => {
       //add custom action buttons to top-left of top toolbar
 
       renderBottomToolbarCustomActions={({ table }) => {
-        const handleDelete= () => {
+        const handleDecline= () => {
           table.getSelectedRowModel().flatRows.map((row) => {
             const options = {
               method: 'DELETE',
-              route: "/wantlist/delete",
+              route: "/exchange/decline",
               body: {
-                'wantlist_id': row.getValue('id'),
+                'offer_id': row.getValue('offer_id'),
               }
             };
-            console.log(row.getValue('id'));
+            console.log(row.getValue('offer_id'));
 
             apiCall(() => { }, options)
               .then((res) => {
@@ -186,13 +172,13 @@ const WantList = () => {
           });
         };
 
-        const handleMove= () => {
+        const handleAccept= () => {
           table.getSelectedRowModel().flatRows.map((row) => {
             const options = {
               method: 'POST',
-              route: "/wantlist/move",
+              route: "/exchange/accept",
               body: {
-                'wantlist_id': row.getValue('id'),
+                'offer_id': row.getValue('offer_id'),
               }
             };
             console.log(row.getValue('id'));
@@ -214,19 +200,19 @@ const WantList = () => {
             // For some reason, button is disabled when all rows selected
             // TODO: find fix
             disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()}
-            onClick={handleMove}
+            onClick={handleAccept}
             variant="contained"
           >
-            Move to collections
+            Accept Offer
           </Button>
 
           <Button
             color="error"
             disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()}
-            onClick={handleDelete}
+            onClick={handleDecline}
             variant="contained"
           >
-            Delete selected
+            Decline Offer
           </Button>
         </Box>
         );
@@ -247,4 +233,4 @@ const WantList = () => {
 };
 
 
-export default WantList;
+export default TradeList;
