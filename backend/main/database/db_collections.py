@@ -42,7 +42,7 @@ def insert_collectible(user_id, collectible_id):
         {
             "collector_id": user_id,
             "collectible_id": collectible_id,
-            "date_added": date.today()
+            "date_added": date.today(),
         }
     )
     result = conn.execute(insert_stmt)
@@ -140,22 +140,25 @@ def get_collection(collector_id):
     engine, conn, metadata = dbm.db_connect()
     collections = db.Table("collections", metadata, autoload_with=engine)
     collectibles = db.Table("collectibles", metadata, autoload_with=engine)
-    # campains = db.Table("campaigns", metadata, autoload_with=engine)
+    campaigns = db.Table("campaigns", metadata, autoload_with=engine)
 
     join = db.join(
         collections,
         collectibles,
         (collections.c.collectible_id == collectibles.c.id)
         & (collections.c.collector_id == collector_id),
-    )
+    ).join(campaigns, collectibles.c.campaign_id == campaigns.c.id)
 
     select_stmt = db.select(
         collections.c.id.label("id"),
         collections.c.collectible_id.label("collectible_id"),
+        collections.c.date_added.label("date_added"),
         collectibles.c.campaign_id.label("campaign_id"),
         collectibles.c.name.label("name"),
         collectibles.c.description.label("description"),
         collectibles.c.image.label("image"),
+        campaigns.c.name.label("campaign_name"),
+        campaigns.c.start_date.label("date_released")
     ).select_from(join)
 
     results = conn.execute(select_stmt)

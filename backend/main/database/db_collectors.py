@@ -60,6 +60,7 @@ def update_collector(
     phone=None,
     password=None,
     address=None,
+    profile_picture=None,
 ):
     """update_collector.
 
