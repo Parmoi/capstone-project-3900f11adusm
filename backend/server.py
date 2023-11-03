@@ -68,7 +68,6 @@ def init_mock_data():
 
 @APP.route("/init_mock_data/demo", methods=["GET"])
 def init_mock_data_demo():
-    dbm.database_setup()
     mock_data_init.generate_demo()
 
     return jsonify(msg="Mock data initialised!"), OK
