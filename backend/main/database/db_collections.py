@@ -5,6 +5,7 @@ import db_campaigns
 import db_helpers
 import db_collectibles
 from main.error import OK, InputError, AccessError
+from datetime import date, datetime
 
 
 """ |------------------------------------|
@@ -41,6 +42,7 @@ def insert_collectible(user_id, collectible_id):
         {
             "collector_id": user_id,
             "collectible_id": collectible_id,
+            "date_added": date.today()
         }
     )
     result = conn.execute(insert_stmt)
