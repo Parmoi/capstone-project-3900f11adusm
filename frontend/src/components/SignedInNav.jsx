@@ -194,7 +194,7 @@ const SignedInNav = ({ logout }) => {
                 <ListItemIcon>
                   <SellIcon />
                 </ListItemIcon>
-                Tradelist
+                <Link to="/tradelist" style={{ textDecoration: 'none', color: 'inherit' }}>Tradelist</Link>
               </MenuItem>
               <MenuItem onClick={handleClose}>
                 <ListItemIcon>

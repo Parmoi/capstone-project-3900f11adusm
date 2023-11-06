@@ -67,7 +67,7 @@ def logout():
     return response, OK
 
 
-def register_collector(email, username, password):
+def register_collector(email, username, password, privelage=COLLECTOR):
     """register_collector.
 
     Checks if email or usernames exists, returns <error_code> if they do.
@@ -91,6 +91,7 @@ def register_collector(email, username, password):
         email,
         username,
         password,
+        privelage
     )
 
     if status != OK:

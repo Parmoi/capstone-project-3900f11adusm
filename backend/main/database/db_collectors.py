@@ -43,7 +43,6 @@ def insert_collector(email, username, password, privelage=COLLECTOR):
     )
     cursor = conn.execute(insert_stmt)
 
-
     conn.close()
 
     return (
@@ -61,6 +60,7 @@ def update_collector(
     phone=None,
     password=None,
     address=None,
+    profile_picture=None,
 ):
     """update_collector.
 

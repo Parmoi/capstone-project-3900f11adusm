@@ -72,6 +72,7 @@ def database_setup():
         db.Column("id", db.Integer, db.Identity(), primary_key=True),
         db.Column("collector_id", db.Integer, db.ForeignKey("collectors.id")),
         db.Column("collectible_id", db.Integer),
+        db.Column("date_added", db.DATE),
     )
 
     # Creates a wantlist table
