@@ -1,3 +1,4 @@
+import sqlalchemy as db
 from database import db_collectors
 import bcrypt
 
@@ -10,7 +11,10 @@ from flask_jwt_extended import (
     set_refresh_cookies,
 )
 
+
+from privelage import COLLECTOR, MANAGER, ADMIN
 from main.database import db_manager as dbm
+from main.database import db_collectors
 from error import InputError, AccessError, OK
 
 """ |------------------------------------|
@@ -46,7 +50,9 @@ def login(password, email=None, username=None):
         return jsonify({"msg": "Invalid password!"}), InputError
 
     user_id = db_collectors.get_collector_id(email=email, username=username)
-    response = jsonify({"msg": "login successful"})
+    response = jsonify(
+        {"msg": "login successful", "privelage": get_user_privelage(user_id)}
+    )
     access_token = create_access_token(identity=user_id, fresh=True)
     refresh_token = create_refresh_token(identity=user_id)
     set_access_cookies(response, access_token)
@@ -61,7 +67,7 @@ def logout():
     return response, OK
 
 
-def register_collector(email, username, password):
+def register_collector(email, username, password, privelage=COLLECTOR):
     """register_collector.
 
     Checks if email or usernames exists, returns <error_code> if they do.
@@ -75,19 +81,9 @@ def register_collector(email, username, password):
         password:
     """
 
-    # if email:
-    #     collector_id = db_collectors.get_collector_id(email=email)
-    #     if collector_id is not None:
-    #         return jsonify({"msg": "Email address already registered!"}), InputError
-    # elif username:
-    #     collector_id = db_collectors.get_collector_id(username=username)
-    #     if collector_id is not None:
-    #         return jsonify({"msg": "User name already registered!"}), InputError
-
     collector_id = db_collectors.get_collector_id(email=email, username=username)
     if collector_id is not None:
         return jsonify({"msg": "Email or user name already registered!"}), InputError
-
 
     password = hash_password(password)
 
@@ -95,11 +91,11 @@ def register_collector(email, username, password):
         email,
         username,
         password,
+        privelage
     )
 
     if status != OK:
         return jsonify({"msg": "Account unsuccessfully registered!"}), status
-
 
     collector_id = db_collectors.get_collector_id(email=email, username=username)
 
@@ -124,11 +120,53 @@ def refresh(user_id):
     return response, OK
 
 
+def get_privelage(user_id):
+    user_privelage = get_user_privelage(user_id)
+    return jsonify({"privelage": user_privelage}), OK
+
+
+def update_privelage(user_id, privelage):
+    engine, conn, metadata = dbm.db_connect()
+
+    privelages = db.Table("privelages", metadata, autoload_with=engine)
+
+    update_stmt = (
+        db.update(privelages)
+        .where(privelages.c.collector_id == user_id)
+        .values({"privelage": privelage})
+    )
+    conn.execute(update_stmt)
+    conn.close()
+
+    user_privelage = get_user_privelage(user_id)
+
+    return jsonify({"privelage": user_privelage}), OK
+
+
+def check_privelage(user_id, required_privelage):
+    user_privelage = get_user_privelage(user_id)
+    has_privelage = user_privelage >= required_privelage
+
+    if not has_privelage:
+        return jsonify(
+            {
+                "msg": "user {} has privelage level {}, requires at least privelage level {}!".format(
+                    user_id, user_privelage, required_privelage
+                ),
+                "privelage": user_privelage,
+            },
+            AccessError,
+        )
+    else:
+        return jsonify({"privelage": user_privelage})
+
+
 """ |------------------------------------|
     | Helper functions for Authorization |
     |------------------------------------| """
 
 
+# TODO: Return proper error on user does not exist
 def validate_password(email, password):
     """validate_password.
 
@@ -140,9 +178,14 @@ def validate_password(email, password):
         password: user password to be validated
     """
 
-    user_hashed_pw_bytes = db_collectors.get_collector_pw(email=email).encode("utf-8")
-    input_pw_bytes = password.encode("utf-8")
-    return bcrypt.checkpw(input_pw_bytes, user_hashed_pw_bytes)
+    user_hashed_pw = db_collectors.get_collector_pw(email=email)
+    # collector = db_collectors.get_collector(email=email)
+    if user_hashed_pw is not None:
+        user_hashed_pw_bytes = user_hashed_pw.encode("utf-8")
+        input_pw_bytes = password.encode("utf-8")
+        return bcrypt.checkpw(input_pw_bytes, user_hashed_pw_bytes)
+    else:
+        return
 
 
 def hash_password(password):
@@ -150,8 +193,20 @@ def hash_password(password):
     hashed_pw = bcrypt.hashpw(pw_bytes, bcrypt.gensalt())
     return hashed_pw.decode("utf-8")
 
-# TODO: This is not finished
-def update_password(password):
+
+def get_user_privelage(user_id):
     engine, conn, metadata = dbm.db_connect()
-    hashed_pw = hash_password(password)
-    return
+    privelages = db.Table("privelages", metadata, autoload_with=engine)
+    select_stmt = db.select(privelages.c.privelage).where(
+        privelages.c.collector_id == user_id
+    )
+    res = conn.execute(select_stmt)
+    conn.close()
+
+    user_privelage = res.fetchone()._asdict().get("privelage")
+    return user_privelage
+
+
+def check_user_privelage(user_id, required_privelage):
+    user_privelage = get_user_privelage(user_id)
+    return user_privelage >= required_privelage

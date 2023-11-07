@@ -16,21 +16,24 @@ import moment from 'moment';
 
 import { apiCall } from '../App';
 
+const getBackgroundColor = (status) => {
+  return 'SENT' ? 'secondary.main' : 'ACCEPTED' ? 'primary.light' : 'error.main';
+}
 
 // sourced from https://github.com/KevinVandy/material-react-table/blob/v1/apps/material-react-table-docs/examples/custom-top-toolbar/sandbox/src/JS.js
-const WantList = () => {
+const OffersList = () => {
   const [data, setData] = React.useState([]);
 
   const fetchData = () => {
     // call api with data
     const options = {
       method: 'GET',
-      route: "/wantlist/get",
+      route: "/offers/get",
     };
 
     apiCall((d) => {
       console.log(d);
-      setData(d);
+      setData(d.offers_list);
     }, options)
       .then((res) => {
         if (res) {
@@ -48,45 +51,36 @@ const WantList = () => {
     //column definitions...
     () => [
       {
-        accessorKey: 'id',
+        accessorKey: 'offer_id',
         header: 'id',
       },
       {
-        accessorKey: 'image',
-        header: 'Image',
-        Cell: ({ row }) => (
-          <Box
-            sx={{
-              display: 'flex',
-              gap: '1rem',
-            }}
-          >
-            <img
-              alt="collectible image"
-              height={60}
-              src={row.original.image}
-              loading="lazy"
-            />
-          </Box>
-
+        accessorKey: 'collectible_name',
+        header: 'Collectible Name',
+      },
+      {
+        accessorKey: 'offer_status',
+        header: 'Offer Status',
+        Cell: ({ cell }) => (
+        <Button
+          sx={{ 
+            bgcolor: `${getBackgroundColor(cell.getValue())}`,
+            borderRadius: 28
+          }}
+        >
+          {cell.getValue()}
+        </Button>
         ),
-        enableColumnActions: false,
-        enableColumnFilter: false,
-        enableSorting: false,
       },
       {
-        accessorKey: 'name',
-        header: 'Name',
+        accessorKey: 'trader_name',
+        header: 'Traded By',
       },
       {
-        accessorKey: 'campaign_name',
-        header: 'Campaign Name',
-      },
-      {
-        accessorKey: 'dateReleased',
-        accessorFn: (row) => moment(row.date_released, "DD/MM/YYYY"), //convert to Date for sorting and filtering
-            id: 'dateReleased',
-            header: 'Date Released',
+        accessorKey: 'date_offer_sent',
+        accessorFn: (row) => moment(row.date_offer, "DD/MM/YYYY"), //convert to Date for sorting and filtering
+            id: 'dateOffer',
+            header: 'Date Offer Sent',
             filterFn: 'lessThanOrEqualTo',
             sortingFn: 'datetime',
 
@@ -116,10 +110,10 @@ const WantList = () => {
             )
       },
       {
-        accessorKey: 'dateAdded',
-        accessorFn: (row) => moment(row.date_added, "DD/MM/YYYY"), //convert to Date for sorting and filtering
-            id: 'dateAdded',
-            header: 'Date Added',
+        accessorKey: 'dateUpdated',
+        accessorFn: (row) => moment(row.date_updated, "DD/MM/YYYY"), //convert to Date for sorting and filtering
+            id: 'dateUpdated',
+            header: 'Date Updated',
             filterFn: 'lessThanOrEqualTo',
             sortingFn: 'datetime',
 
@@ -155,83 +149,82 @@ const WantList = () => {
 
   return (
     <MaterialReactTable
-      title="Wantlist"
+      title="Offerlist"
       columns={columns}
       data={data}
-      enableRowSelection
       positionToolbarAlertBanner="bottom" //show selected rows count on bottom toolbar
-      initialState={{ columnVisibility: { id: false } }}
+      initialState={{ columnVisibility: { offer_id: false } }}
 
       //add custom action buttons to top-left of top toolbar
 
-      renderBottomToolbarCustomActions={({ table }) => {
-        const handleDelete= () => {
-          table.getSelectedRowModel().flatRows.map((row) => {
-            const options = {
-              method: 'DELETE',
-              route: "/wantlist/delete",
-              body: {
-                'wantlist_id': row.getValue('id'),
-              }
-            };
-            console.log(row.getValue('id'));
+      // renderBottomToolbarCustomActions={({ table }) => {
+      //   const handleDelete= () => {
+      //     table.getSelectedRowModel().flatRows.map((row) => {
+      //       const options = {
+      //         method: 'DELETE',
+      //         route: "/wantlist/delete",
+      //         body: {
+      //           'id': row.getValue('id'),
+      //         }
+      //       };
+      //       console.log(row.getValue('id'));
 
-            apiCall(() => { }, options)
-              .then((res) => {
-                if (res) {
-                  // set error msg if api call returns error
+      //       apiCall(() => { }, options)
+      //         .then((res) => {
+      //           if (res) {
+      //             // set error msg if api call returns error
 
-                }
-              });
-          });
-        };
+      //           }
+      //         });
+      //     });
+      //   };
 
-        const handleMove= () => {
-          table.getSelectedRowModel().flatRows.map((row) => {
-            const options = {
-              method: 'POST',
-              route: "/wantlist/move",
-              body: {
-                'wantlist_id': row.getValue('id'),
-              }
-            };
-            console.log(row.getValue('id'));
+      //   const handleMove= () => {
+      //     table.getSelectedRowModel().flatRows.map((row) => {
+      //       const options = {
+      //         method: 'POST',
+      //         route: "/wantlist/move",
+      //         body: {
+      //           'id': row.getValue('id'),
+      //         }
+      //       };
+      //       console.log(row.getValue('id'));
 
-            apiCall(() => { }, options)
-              .then((res) => {
-                if (res) {
-                  // set error msg if api call returns error
+      //       apiCall(() => { }, options)
+      //         .then((res) => {
+      //           if (res) {
+      //             // set error msg if api call returns error
 
-                }
-              });
-          });
-        };
+      //           }
+      //         });
+      //     });
+      //   };
 
-        return (
-        <Box sx={{ display: 'flex', gap: '1rem', p: '4px' }}>
-          <Button
-            color="secondary"
-            // For some reason, button is disabled when all rows selected
-            // TODO: find fix
-            disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()}
-            onClick={handleMove}
-            variant="contained"
-          >
-            Move to collections
-          </Button>
+      //   return (
+      //   <Box sx={{ display: 'flex', gap: '1rem', p: '4px' }}>
+      //     <Button
+      //       color="secondary"
+      //       // For some reason, button is disabled when all rows selected
+      //       // TODO: find fix
+      //       disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()}
+      //       onClick={handleMove}
+      //       variant="contained"
+      //     >
+      //       Move to collections
+      //     </Button>
 
-          <Button
-            color="error"
-            disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()}
-            onClick={handleDelete}
-            variant="contained"
-          >
-            Delete selected
-          </Button>
-        </Box>
-        );
+      //     <Button
+      //       color="error"
+      //       disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()}
+      //       onClick={handleDelete}
+      //       variant="contained"
+      //     >
+      //       Delete selected
+      //     </Button>
+      //   </Box>
+      //   );
 
-      }}
+      // }}
 
       //customize built-in buttons in the top-right of top toolbar
       renderToolbarInternalActions={({ table }) => (
@@ -247,4 +240,4 @@ const WantList = () => {
 };
 
 
-export default WantList;
+export default OffersList;

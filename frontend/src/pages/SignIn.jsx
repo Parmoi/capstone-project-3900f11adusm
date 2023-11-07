@@ -11,7 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { apiCall } from '../App';
 import Alert from '@mui/material/Alert';
 
-function SignIn({ setLogin }) {
+function SignIn({ setLogin, setPrivelage }) {
   const [error, setError] = React.useState(false);
   const [errContent, setErrContent] = React.useState('');
   const navigate = useNavigate();
@@ -30,8 +30,9 @@ function SignIn({ setLogin }) {
       })
     };
 
-    apiCall(() => {
+    apiCall((d) => {
       setLogin(true);
+      setPrivelage(parseInt(d.privelage));
     }, options)
       .then((res) => {
         if (res) {
@@ -40,7 +41,7 @@ function SignIn({ setLogin }) {
           setError(true);
         }
         else {
-          navigate('/dashboard');
+          navigate('/');
         }
       });
   }
