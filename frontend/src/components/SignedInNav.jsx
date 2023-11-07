@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -27,7 +27,7 @@ import {
     Link,
     useNavigate,
   } from 'react-router-dom';
-import HomePage from '../pages/homePage'
+
 const linkStyle = {
     textDecoration: 'none',
     color: '#F0F4EF'
@@ -74,7 +74,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     },
 }));
 
-const SignedInNav = ({ logout }) => {
+const SignedInNav = ({ logout, username }) => {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
     const navigate = useNavigate();
@@ -119,18 +119,23 @@ const SignedInNav = ({ logout }) => {
                 onKeyPress={handleSearchKeyPress} // Listen for the Enter key press
               />
             </Search>
-            <Box>
-              <Button color="inherit">
-                <Tooltip title="Menu">
-                  <AccountBoxIcon
-                    onClick={handleClick}
-                    sx={{ color: 'secondary.main' }}
-                    aria-controls={open ? 'account-menu' : undefined}
-                    aria-haspopup="true"
-                    aria-expanded={open ? 'true' : undefined}
-                  />
-                </Tooltip>
-              </Button>
+            <Box
+              sx={{ display: 'flex', flexDirection: 'flex-end', alignItems: 'center' }}
+            >
+              <Typography variant='h6'>{username}</Typography>
+              <Box>
+                <Button color="inherit">
+                  <Tooltip title="Menu">
+                    <AccountBoxIcon
+                      onClick={handleClick}
+                      sx={{ color: 'secondary.main' }}
+                      aria-controls={open ? 'account-menu' : undefined}
+                      aria-haspopup="true"
+                      aria-expanded={open ? 'true' : undefined}
+                    />
+                  </Tooltip>
+                </Button>
+              </Box>
             </Box>
             <Menu
               anchorEl={anchorEl}
