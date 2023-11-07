@@ -183,6 +183,11 @@ const SellPage = () => {
             });
         }
 
+        function dataError () {
+            console.log(collectibleName === '')
+            return (collectibleName === '' || title === '' || description === '');
+        }
+
         return(
             <Box sx={{height: '100%'}}>
                 <Typography variant='h5' mb='50px'>Check new trade post</Typography>
@@ -194,11 +199,12 @@ const SellPage = () => {
                     label="Description"
                     multiline
                     rows={3}
-                    sx={{mb:'30px'}}
                     aria-disabled
                     value={description}
+                    sx={{ mb: '10px' }}
                     />
-                    <Button variant='contained' onClick={postData}>POST</Button>
+                    { dataError() ? <Alert severity='error' sx={{ mb: '10px' }}>Missing some fields!</Alert> : <></>}
+                    <Button variant='contained' disabled={dataError()} onClick={postData}>POST</Button>
                 </FormControl>
             </Box>
         );
