@@ -782,6 +782,7 @@ def get_buylist():
             "collectible_name": "Bart",
             "trader_name": "Not bart",
             "location": "Somewhere",
+            "trader_profile_img": '',
         }
     ]
 

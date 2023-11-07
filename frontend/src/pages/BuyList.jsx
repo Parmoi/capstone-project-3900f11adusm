@@ -10,9 +10,10 @@ import {
 
 } from 'material-react-table';
 
-import { Box, Button, IconButton } from '@mui/material';
+import { Box } from '@mui/material';
 import { apiCall } from '../App';
 import { useParams, useNavigate } from 'react-router-dom';
+import Avatar from '@mui/material/Avatar';
 
 // sourced from https://github.com/KevinVandy/material-react-table/blob/v1/apps/material-react-table-docs/examples/custom-top-toolbar/sandbox/src/JS.js
 function BuyList() {
@@ -54,7 +55,7 @@ function BuyList() {
       },
       {
         accessorKey: 'image',
-        header: 'Image',
+        header: 'Collectible Image',
         Cell: ({ row }) => (
           <Box
             sx={{
@@ -82,6 +83,24 @@ function BuyList() {
       {
         accessorKey: 'trader_name',
         header: 'Traded by',
+      },
+      {
+        accessorKey: 'trader_profile_img',
+        header: 'Trader Profile',
+        Cell: ({ row }) => (
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '1rem',
+            }}
+          >
+            <Avatar alt="Trader Profile" src={row.original.trader_profile_img} />
+          </Box>
+        ),
+        enableColumnActions: false,
+        enableColumnFilter: false,
       },
       {
         accessorKey: 'location',

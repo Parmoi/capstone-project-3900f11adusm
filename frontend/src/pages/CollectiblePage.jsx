@@ -108,9 +108,9 @@ const CollectiblePage = () => {
             flexDirection: 'column', 
             rowGap: '50px', 
             justifyContent: 'center', 
-            alignItems: 'center' 
+            alignItems: 'center',
             }}>
-            <Button variant="contained" onClick={handleBuy}>Buy item</Button>
+            <Button variant="contained" onClick={handleBuy}>See trade posts</Button>
             <Button variant="contained" onClick={handleAddWantlist}>Add to wantlist</Button>
             <Button variant="contained" onClick={handleAddCollection}>Add to collection</Button>
           </Paper>
