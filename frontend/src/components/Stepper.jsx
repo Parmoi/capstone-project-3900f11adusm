@@ -4,7 +4,8 @@ import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
+import Paper from '@mui/material/Paper';
+
 
 const steps = ['Select collectible', 'Add title', 'Enter a description', 'Add images', 'Post listing'];
 
@@ -25,7 +26,7 @@ const SellStepper = ({ stepperContent }) => {
   };
 
   return (
-    <Box sx={{ width: '100%', flex: 1 }}>
+    <Paper sx={{ width: '100%', flex: 1 }}>
       <Stepper activeStep={activeStep} sx={{mt:'5vh'}}>
         {steps.map((label, index) => {
           const stepProps = {};
@@ -38,7 +39,7 @@ const SellStepper = ({ stepperContent }) => {
         })}
       </Stepper>
         <React.Fragment>
-          <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', mt: '20vh'  }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', mt: '10vh', height: '50vh' }}>
             {stepperContent[activeStep]}
           </Box>
           <Box>
@@ -63,7 +64,7 @@ const SellStepper = ({ stepperContent }) => {
             </Box>
           </Box>
         </React.Fragment>
-    </Box>
+    </Paper>
   );
 }
 
