@@ -127,6 +127,12 @@ function ExchangeHistory() {
       title="Exchange History"
       columns={columns}
       data={data}
+      // changes sizing of default columns
+      defaultColumn={{
+        minSize: 50,
+        maxSize: 200,
+        size: 190, 
+      }}
       useMaterialReactTable={({ table }) => (
         <Box>
           <MRT_ToggleDensePaddingButton table={table} />

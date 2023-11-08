@@ -91,8 +91,6 @@ function BuyList() {
           <Box
             sx={{
               display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
               gap: '1rem',
             }}
           >
@@ -124,6 +122,12 @@ function BuyList() {
         sx: { cursor: 'pointer' },
       })}
       initialState={{ columnVisibility: { collection_id: false } }}
+      // changes sizing of default columns
+      defaultColumn={{
+        minSize: 50,
+        maxSize: 500,
+        size: 300, 
+      }}
 
       //customize built-in buttons in the top-right of top toolbar
 
