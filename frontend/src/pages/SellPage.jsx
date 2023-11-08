@@ -184,7 +184,6 @@ const SellPage = () => {
         }
 
         function dataError () {
-            console.log(collectibleName === '')
             return (collectibleName === '' || title === '' || description === '');
         }
 
