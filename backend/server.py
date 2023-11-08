@@ -506,7 +506,7 @@ def post_trade():
     return jsonify(stub_data), OK
 
 
-@APP.route("/trade/get", methods=["GET"])
+@APP.route("/trade/view", methods=["GET"])
 @jwt_required(fresh=False)
 def get_tradepost():
     """
