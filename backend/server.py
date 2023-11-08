@@ -233,9 +233,11 @@ def first_search():
 
 
 @APP.route("/campaign/register", methods=["POST"])
-# @jwt_required(fresh=False)
+@jwt_required(fresh=False)
 def register_campaign():
-    # verify_jwt_in_request()
+    verify_jwt_in_request()
+
+    user_id = get_jwt_identity()
 
     name = request.json.get("name", None)
     description = request.json.get("desc", None)
@@ -244,7 +246,7 @@ def register_campaign():
     end_date = request.json.get("end", None)
 
     return db_campaigns.register_campaign(
-        name, description, image, start_date, end_date
+        user_id, name, description, image, start_date, end_date
     )
 
 
@@ -747,25 +749,21 @@ def exchange_accept():
 def get_collectible_info():
     """
     Takes in collectible_id as request argument
-    """
-    # user_id = get_jwt_identity()
 
     stub_return = {
         "collectible_name": "Homer",
         "campaign_id": 1,
         "campaign_name": "Simpsons",
-        "collectible_images": [
-            {
-                "name": "Lego",
-                "caption": "Random lego.",
-                "image": "https://tse3.mm.bing.net/th?id=OIP.SwCSPpmwihkM2SUqh7wKXwHaFG&pid=Api",
-            },
-        ],
+        "collectible_image": image_url
         "collectible_description": "Description",
         "collectible_added_date": "08/04/2003",
     }
+    """
+    user_id = get_jwt_identity()
 
-    return jsonify(stub_return), OK
+    collectible_id = request.json.get("collectible_id", None)
+
+    return db_collectibles.get_collectible_info(user_id, collectible_id)
 
 
 @APP.route("/collectible/buy", methods=["GET"])
@@ -819,7 +817,12 @@ def get_feedback():
         ]
     }
 
-    return jsonify(stub_return), OK
+    # return jsonify(stub_return), OK
+
+    user_id = get_jwt_identity()
+    campaign_id = request.json.get("collectible_id", None)
+
+    return db_campaigns.get_campaign_feedback(user_id, campaign_id)
 
 
 """ |------------------------------------|
