@@ -820,7 +820,7 @@ def get_feedback():
     # return jsonify(stub_return), OK
 
     user_id = get_jwt_identity()
-    campaign_id = request.json.get("collectible_id", None)
+    campaign_id = request.json.get("campaign_id", None)
 
     return db_campaigns.get_campaign_feedback(user_id, campaign_id)
 
