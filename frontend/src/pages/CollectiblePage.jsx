@@ -14,11 +14,7 @@ import { apiCall } from '../App';
 
 
 const CollectiblePage = () => {
-  const [data, setData] = React.useState(
-      {
-        "collectible_images": []
-      }
-  );
+  const [data, setData] = React.useState({});
   const navigate = useNavigate();
   const params = useParams();
   const c_id = params.id;
@@ -99,7 +95,13 @@ const CollectiblePage = () => {
       <Grid container spacing={12}>
         <Grid item xs={1}></Grid>
         <Grid item xs={7}>
-          <ImageCarousel items={data.collectible_images}/>
+          <ImageCarousel items={
+              [{
+                "name": "collectible image",
+                "image": data.collectible_image,
+                "caption": '',
+              }]
+            }/>
         </Grid>
         <Grid item xs={3}>
           <Paper elevation={3} sx={{ 
