@@ -63,9 +63,9 @@ const OfferModal = ({ tradeId, open, handleClose }) => {
         body: JSON.stringify({
           trade_id: tradeId,
           offer_img: image,
-          offer_title: String(offerTitle),
+          offer_title: offerTitle,
           collectible_id: collectibleID,
-          description: String(collectibleDescription),
+          description: collectibleDescription,
         }),
       };
       console.log(options.body);

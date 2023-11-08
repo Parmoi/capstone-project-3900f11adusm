@@ -170,6 +170,12 @@ const SellPage = () => {
             const options = {
                 method: "POST",
                 route: "/trade/post",
+                body: JSON.stringify({
+                    collection_id: collectibleID,
+                    post_images: [],
+                    post_title: title,
+                    post_description: description,
+                  }),
             };
           
             apiCall(() => {
