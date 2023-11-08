@@ -81,18 +81,6 @@ const OfferModal = ({ tradeId, open, handleClose }) => {
       handleClose();
   }
 
-    const renderMenuItems = (collectibles) => {
-        return collectibles.map((collectible) => { 
-            <MenuItem 
-                value={collectible['id']}
-                onClick={() => handleIdChange(collectible['id'])}
-            >
-                {collectible["name"]}
-            </MenuItem>
-        }
-        );
-    }
-
     const handleTitleChange = (title) => {
         setOfferTitle(title);
     }
@@ -128,7 +116,17 @@ const OfferModal = ({ tradeId, open, handleClose }) => {
                 value={collectibleID}
                 label="Collectible"
             >
-                {renderMenuItems(collectibles)}
+                {/* Render menu items for each collectible name in user's collection */}
+                {collectibles.map((collectible) => { 
+                  return (
+                    <MenuItem 
+                        value={collectible.collectible_id}
+                        onClick={() => handleIdChange(collectible.collectible_id)}
+                    >
+                        {collectible.name}
+                    </MenuItem>)
+                  })
+                }
             </Select>
             <TextField label="Title" onBlur={handleTitleChange} variant="standard" sx={{mb: '30px'}}/>
             <TextField
