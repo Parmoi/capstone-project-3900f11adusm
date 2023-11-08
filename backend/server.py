@@ -536,8 +536,26 @@ def get_tradepost():
         "trader_avatar": "https://tse1.mm.bing.net/th?id=OIP.ho7hCKNowRHh7u5wu1aMWQHaF9&pid=Api",
     }
 
+    trade_post_id = request.args.get('trade_post_id')
+
+    return db_tradeposts.get_trade_post_info(trade_post_id)
     return jsonify(stub_data), OK
 
+@APP.route("/tester")
+def tester():
+    db_collections.insert_collectible(1, 2)
+    db_tradeposts.insert_trade_post(1, 501, "random post!", "random desc!", [{
+                "name": "1",
+                "caption": "Bart with skateboard.",
+                "image": "https://tse1.mm.bing.net/th?id=OIP.S9zFPgPbF0zJ4OXQkU675AHaHC&pid=Api",
+            },
+            {
+                "name": "2",
+                "caption": "Stuffed bart.",
+                "image": "https://tse1.mm.bing.net/th?id=OIP.AIizpaWw4l8TtY5fWj66RgHaGr&pid=Api",
+            }])
+    # return db_tradeposts.get_trade_posts(2)
+    return db_tradeposts.get_trade_post_info(1)
 
 @APP.route("/trade/list", methods=["GET"])
 @jwt_required(fresh=False)
@@ -778,7 +796,7 @@ def get_buylist():
 
     # I'm not too sure how to get the collectible_id from frontend, but if you 
     # call get_trade_posts with collectible_id it should work properly - Dyllan
-    collectible_id = request.json.get("collectible_id")
+    collectible_id = request.args.get('collectible_id')
     
     return db_tradeposts.get_trade_posts(collectible_id)
 

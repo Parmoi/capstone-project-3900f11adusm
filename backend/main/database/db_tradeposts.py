@@ -29,7 +29,28 @@ def get_trade_posts(collectible_id):
         JSON, int: JSON holds list of trade posts, int is the error code
     
     Example Output:
-        ...
+        {
+            [
+                {
+                    "trade_post_id": 1,
+                    "collection_id": 501,
+                    "image": "https://ilarge.lisimg.com/image/8825948/980full-homer-simpson.jpg",
+                    "collectible_name": "iguana",
+                    "trader_name": "Mr Bean",
+                    "trader_profile_img": ""https://ilarge.lisimg.com/image/8825948/980full-homer-simpson.jpg",
+                    "location": "Kensington, NSW"
+                },
+                {
+                    "trade_post_id": 2,
+                    "collection_id": 505,
+                    "image": "https://ilarge.lisimg.com/image/8825948/980full-homer-simpson.jpg",
+                    "collectible_name": "iguana",
+                    "trader_name": "Peter Pan",
+                    "trader_profile_img": ""https://ilarge.lisimg.com/image/8825948/980full-homer-simpson.jpg",
+                    "location": "Central, NSW"
+                }
+            ]
+        }, 200
     """
     engine, conn, metadata = dbm.db_connect()
 
@@ -53,90 +74,142 @@ def get_trade_posts(collectible_id):
             ctr.c.username.label("trader_name"),
             ctr.c.profile_picture.label("trader_profile_img"),
             ctr.c.address.label("location"),
+            tp.c.id.label("trade_post_id")
         ).select_from(join)
     )
-    trade_posts = db_helpers.rows_to_list(conn.execute(select_stmt))
+    trade_posts = db_helpers.rows_to_list(conn.execute(select_stmt).fetchall())
     conn.close()
 
     return jsonify(trade_posts), OK
     
+# TODO: Error checking
+def get_current_trade_posts(collector_id):
+    """Finds the trade posts that the collector has posted
+
+    Notes:
+        - What format for the current trade posts does the frontend want?
+
+    Args:
+        collector_id (int): id of the collector
+
+    Returns:
+        JSON, int: JSON of collector's trade posts, int of error code
+
+    Example Output:
+        ...
+    """
+    engine, conn, metadata = dbm.db_connect()
+
+    # Loads in the trade_posts, collections, collectibles and collectors table
+    tp = db.Table("trade_posts", metadata, autoload_with=engine)
+    ctn = db.Table("collections", metadata, autoload_with=engine)
+    cbl = db.Table("collectibles", metadata, autoload_with=engine)
+    ctr = db.Table("collectors", metadata, autoload_with=engine)
+
+    join = db.join(tp, ctn, 
+        (tp.c.collection_id == ctn.c.id) &
+        (tp.c.collector_id == collector_id)).join(cbl, 
+        (ctn.c.collectible_id == cbl.c.id)).join(ctr,
+        (tp.c.collector_id == ctr.c.id))
+
+    select_stmt = (
+        db.select(
+            ctn.c.id.label("collection_id"),
+            cbl.c.image.label("image"),
+            cbl.c.name.label("collectible_name"),
+            ctr.c.username.label("trader_name"),
+            ctr.c.profile_picture.label("trader_profile_img"),
+            ctr.c.address.label("location"),
+        ).select_from(join)
+    )
+    trade_posts = db_helpers.rows_to_list(conn.execute(select_stmt).fetchall())
+    conn.close()
+
+    return jsonify(trade_posts), OK
 
 # TODO: Error checking
-# Note - would it better if we get trade_posts through collectible id?
-# def get_trade_posts(collectible_id):
-#     """Return all trade posts for a certain collectible
+def get_trade_post_info(trade_post_id):
+    """Gets the information for a trade post
 
-#     Args:
-#         collectible_id (id): id of collectible we want to find trade posts for
+    Args:
+        trade_post_id (int): id of the trade post we want information for
 
-#     Returns:
-#         JSON, int: JSON holds the list of trade posts, int is the error code
-    
-#     Example Output:
-#         {
-#             [
-#                 {
-#                     "trade_post_id":1,
-#                     "post_title":"cool post!",
-#                     "post_description":"i made this randomly",
-#                     "post_images":["https://ilarge.lisimg.com/image/8825948/980full-homer-simpson.jpg", "https://google.com"],
-#                     "collector_id":1,
-#                     "username":"potato",
-#                     "profile_picture":"https://ilarge.lisimg.com/image/8825948/980full-homer-simpson.jpg",
-#                     "address":"20 Cooper Street"
-#                 },
-#                 {
-#                     "trade_post_id":2,
-#                     "post_title":"another post!",
-#                     "post_description":"hhahahahahahahahhaha",
-#                     "post_images":["https://ilarge.lisimg.com/image/8825948/980full-homer-simpson.jpg", "https://google.com"],
-#                     "collector_id":2,
-#                     "username":"saitama",
-#                     "profile_picture":"https://ilarge.lisimg.com/image/8825948/980full-homer-simpson.jpg",
-#                     "address":"74 Micro Avenue"
-#                 }
-#             ]
-#         }, 200
-#     """
-#     engine, conn, metadata = dbm.db_connect()
+    Returns:
+        JSON, int: JSON holds trade post information, int of error code
 
-#     # Loads in the trade_posts, collections, collectibles and collectors table
-#     tp = db.Table("trade_posts", metadata, autoload_with=engine)
-#     ctn = db.Table("collections", metadata, autoload_with=engine)
-#     cbl = db.Table("collectibles", metadata, autoload_with=engine)
-#     ctr = db.Table("collectors", metadata, autoload_with=engine)
+    Expected Output:
+        {
+            "post_title":"random post!",
+            "post_description":"random desc!",
+            "post_created":"08/11/2023",
+            "post_images":[
+                {
+                    "caption":"Bart with skateboard.",
+                    "image":"https://tse1.mm.bing.net/th?id=OIP.S9zFPgPbF0zJ4OXQkU675AHaHC&pid=Api",
+                    "name":"1"
+                },
+                {
+                    "caption":"Stuffed bart.",
+                    "image":"https://tse1.mm.bing.net/th?id=OIP.AIizpaWw4l8TtY5fWj66RgHaGr&pid=Api",
+                    "name":"2"
+                }],
+            "post_trader":"uso",
+            "trader_avatar":"https://robohash.org/utomniseos.png?size=50x50&set=set1",
+            "trader_location":"696 Londonderry Avenue"
+        }, 200
+    """
+    engine, conn, metadata = dbm.db_connect()
 
-#     join = db.join(
-#         tp, ctn, tp.c.collection_id == ctn.c.id).join(cbl, 
-#             (ctn.c.collectible_id == cbl.c.id) &
-#             (cbl.c.id == collectible_id)).join(ctr,
-#             (tp.c.collector_id == ctr.c.id))
+    # Loads in the trade_posts, collections, collectibles and collectors table
+    tp = db.Table("trade_posts", metadata, autoload_with=engine)
+    ctn = db.Table("collections", metadata, autoload_with=engine)
+    cbl = db.Table("collectibles", metadata, autoload_with=engine)
+    ctr = db.Table("collectors", metadata, autoload_with=engine)
 
-#     select_stmt = (
-#         db.select(
-#             tp.c.id.label("trade_post_id"),
-#             ctr.c.id.label("collector_id"),
-#             ctr.c.username.label("username"),
-#             ctr.c.profile_picture.label("profile_picture"),
-#             ctr.c.address.label("address"),
-#             tp.c.post_title.label("post_title"),
-#             tp.c.post_description.label("post_description"),
-#             tp.c.post_images.label("post_images")
-#         ).select_from(join)
-#     )
+    # Load in the trade_post_images table
+    tp_imgs = db.Table("trade_post_images", metadata, autoload_with=engine)
 
-#     trade_posts = db_helpers.rows_to_list(conn.execute(select_stmt).fetchall())
-#     conn.close()
+    join = db.join(tp, ctn,
+        (tp.c.collection_id == ctn.c.id) &
+        (tp.c.id == trade_post_id)).join(cbl,
+        (ctn.c.collectible_id == cbl.c.id)).join(ctr,
+        (tp.c.collector_id == ctr.c.id))
 
-#     return jsonify(trade_posts), OK
+    select_stmt = (
+        db.select(
+            tp.c.post_title.label("post_title"),
+            tp.c.post_date.label("post_created"),
+            tp.c.post_description.label("post_description"),
+            ctr.c.username.label("post_trader"),
+            ctr.c.profile_picture.label("trader_avatar"),
+            ctr.c.address.label("trader_location")
+        ).select_from(join)
+    )
+
+    # TODO: TEST
+    post_info = db_helpers.rows_to_list(conn.execute(select_stmt).fetchall())[0]
+
+    img_select_stmt = (
+        db.select(
+            tp_imgs.c.name.label("name"),
+            tp_imgs.c.caption.label("caption"),
+            tp_imgs.c.image_url.label("image")
+        ).where(tp_imgs.c.trade_post_id == trade_post_id)
+    )
+    # Finds image list and adds it to the dictionary
+    image_list = db_helpers.rows_to_list(conn.execute(img_select_stmt).fetchall())
+    post_info["post_images"] = image_list
+    conn.close()
+
+    return jsonify(post_info), OK
+
 
 # TODO: Error checking (valid collection_id, valid collector_id, valid title/desc/imgs)
 def insert_trade_post(collector_id, collection_id, post_title, post_desc, post_imgs):
     """Takes a collectible we have in our collection, and puts it up for trade
 
     Notes:
-        SQL can't store lists, so the post_images returns as a string where the
-        elements of the list are separated by a comma
+        post_imgs are stored in their own table
 
     Args:
         collector_id (int): id of collector that wants to list something for trade
@@ -186,6 +259,7 @@ def insert_trade_post(collector_id, collection_id, post_title, post_desc, post_i
     conn.close()
 
     return jsonify({"trade_post_id": trade_post_id}), OK
+
 
 # TODO: Error checking
 def remove_trade_post(collector_id, collection_id):
@@ -253,15 +327,3 @@ def find_trade_post(collector_id, collection_id):
 
     return tp_id
 
-
-"""
-TODO:
-    - Create a random ass environment where I make a collectible
-    - add collectible to collection
-    - work out the trade post functions
-    - profit
-    - At the moment, banana has a collectible id of 2
-    - lets add collectible 2 to user 1's collection
-    - then have user 1 put collectible 2 up for trade
-    - see if we can see it in the buy list
-"""
