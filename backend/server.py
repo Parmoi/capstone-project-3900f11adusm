@@ -21,7 +21,8 @@ from main.database import (
     db_wantlist,
     db_collectibles,
     db_collections,
-    db_trade,
+    db_tradeposts,
+    db_tradeoffers
 )
 from main import auth
 from main.error import InputError, AccessError, OK
@@ -496,7 +497,7 @@ def post_trade():
         collection_id
         post_title
         post_description
-        post_images: [] (list of post image urls)
+        post_images: [] (list of post image urls dictionaries: {name, caption, image})
 
     """
 
@@ -775,17 +776,11 @@ def get_buylist():
     Takes in collectible_id as request argument
     """
 
-    stub_return = [
-        {
-            "collection_id": 1,
-            "image": "https://tse2.mm.bing.net/th?id=OIP.j7EknM6CUuEct_kx7o-dNQHaMN&pid=Api",
-            "collectible_name": "Bart",
-            "trader_name": "Not bart",
-            "location": "Somewhere",
-        }
-    ]
-
-    return jsonify(stub_return), OK
+    # I'm not too sure how to get the collectible_id from frontend, but if you 
+    # call get_trade_posts with collectible_id it should work properly - Dyllan
+    collectible_id = request.json.get("collectible_id")
+    
+    return db_tradeposts.get_trade_posts(collectible_id)
 
 
 """ |------------------------------------|
