@@ -18,7 +18,7 @@ const getUsername = (setUsername) => {
   };
 
   apiCall((d) => {
-    setUsername(d.Username);
+    setUsername(d.username);
   }, options)
     .then((res) => {
       if (res) {
