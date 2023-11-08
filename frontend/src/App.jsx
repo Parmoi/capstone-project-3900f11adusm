@@ -82,6 +82,7 @@ const theme = createTheme({
 function App() {
   const [loggedIn, setLoggedIn] = React.useState(false);
   const [privelage, setPrivelage] = useState(1);
+  const [username, setUsername] = useState('');
 
   function logout () {
     const options = {
@@ -95,14 +96,6 @@ function App() {
     , options);
   }
 
-  const containerStyle ={
-    width: '650px',
-    height: '425px',
-    margin: "0 auto",
-    color: "#216869",
-    marginTop: '15ch'
-  }
-
   return (
     <Fragment>
       <ThemeProvider theme={theme}>
@@ -113,12 +106,12 @@ function App() {
               <SignedOutNav />
               <Routes>
                 <Route path="/" element={<LandingPage/>} />
-                <Route path="/login" element={<SignIn setLogin={setLoggedIn} setPrivelage={setPrivelage}/>} />
-                <Route path="/register" element={<Register setLogin={setLoggedIn}/>} />
+                <Route path="/login" element={<SignIn setLogin={setLoggedIn} setPrivelage={setPrivelage} setUsername={setUsername}/>} />
+                <Route path="/register" element={<Register setLogin={setLoggedIn} setUsername={setUsername}/>} />
               </Routes>
               </BrowserRouter>
           : <BrowserRouter>
-            <SignedInNav logout={logout}/>
+            <SignedInNav logout={logout} username={username}/>
             <Routes>
               { privelage === 1
                 ? <Route path="/" element={<HomePage/>} />

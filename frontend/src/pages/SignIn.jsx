@@ -5,17 +5,35 @@ import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
 import { useTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import { apiCall } from '../App';
 import Alert from '@mui/material/Alert';
+import Paper from '@mui/material/Paper';
 
-function SignIn({ setLogin, setPrivelage }) {
+const getUsername = (setUsername) => {
+  const options = {
+    method: 'GET',
+    route: '/profile',
+  };
+
+  apiCall((d) => {
+    setUsername(d.username);
+  }, options)
+    .then((res) => {
+      if (res) {
+
+      }
+      else {
+      }
+    });
+}
+
+function SignIn({ setLogin, setPrivelage, setUsername }) {
   const [error, setError] = React.useState(false);
   const [errContent, setErrContent] = React.useState('');
   const navigate = useNavigate();
-  
+
   const login = (e) => {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
@@ -33,6 +51,7 @@ function SignIn({ setLogin, setPrivelage }) {
     apiCall((d) => {
       setLogin(true);
       setPrivelage(parseInt(d.privelage));
+      getUsername(setUsername);
     }, options)
       .then((res) => {
         if (res) {
@@ -48,7 +67,31 @@ function SignIn({ setLogin, setPrivelage }) {
 
   return (
     <ThemeProvider theme={useTheme()}>
-      <Container component="main" maxWidth="xs">
+      <Box 
+        sx={{ 
+          width: '100%', 
+          height: '90.8vh', 
+          display: "flex", 
+          flexDirection: "column", 
+          backgroundImage: `url("https://wallpaper-mania.com/wp-content/uploads/2018/09/High_resolution_wallpaper_background_ID_77700441077.jpg")`, 
+          backgroundRepeat: "no-repeat", 
+          backgroundSize: "cover", 
+          alignItems: 'center', 
+          justifyContent: 'center'
+          }}
+      >
+      <Paper 
+        component="main" 
+        maxWidth="xs" 
+        sx={{
+          // mt: '15vh',
+          borderRadius: 2,
+          maxWidth: '700px',
+          width: '50vw',
+          paddingBottom: '50px',
+          // height: '50vh',
+        }}
+      >
         <CssBaseline />
         <Box
           sx={{
@@ -58,7 +101,7 @@ function SignIn({ setLogin, setPrivelage }) {
             alignItems: 'center',
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: 'support.main' }}>
+          <Avatar sx={{ m: 2, bgcolor: 'support.main' }}>
           </Avatar>
           <Typography component="h1" variant="h5" color='primary.text'>
             Sign in
@@ -99,7 +142,8 @@ function SignIn({ setLogin, setPrivelage }) {
             
           </Box>
         </Box>
-      </Container>
+      </Paper>
+      </Box>
     </ThemeProvider>
   );
 }
