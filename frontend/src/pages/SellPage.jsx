@@ -67,8 +67,8 @@ const SellPage = () => {
                     {collectibles.map((collectible) => { 
                         return (
                             <MenuItem 
-                                value={collectible.collectible_id}
-                                onClick={() => handleChange(collectible.collectible_id, collectible.name)}
+                                value={collectible.id}
+                                onClick={() => handleChange(collectible.id, collectible.name)}
                             >
                                 {collectible.name}
                             </MenuItem>)
