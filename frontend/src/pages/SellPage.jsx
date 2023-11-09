@@ -7,6 +7,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import TextField from '@mui/material/TextField';
+import Alert from '@mui/material/Alert';
 
 import { apiCall } from '../App';
 import { useNavigate } from 'react-router-dom';
@@ -17,6 +18,8 @@ const SellPage = () => {
     const [title, setTitle] = React.useState('');
     const [description, setDescription] = React.useState('');
     const [collectibles, setCollectibles] = React.useState([]);
+    const [isTitleAdded, setIsTitleAdded] = React.useState(false);
+    const [isDescAdded, setIsDescAdded] = React.useState(false);
     const navigate = useNavigate();
 
     const fetchData = () => {
@@ -27,8 +30,8 @@ const SellPage = () => {
         };
     
         apiCall((d) => {
-            console.log(d);
             setCollectibles(d.collection);
+            console.log(collectibles);
         }, options)
         .then((res) => {
             if (res) {
@@ -43,18 +46,6 @@ const SellPage = () => {
     }, []);
 
     const SelectCollectible = () => {
-    
-        const renderMenuItems = (collectibles) => {
-            return collectibles.map((collectible) => { 
-                <MenuItem 
-                    value={collectible['id']}
-                    onClick={() => handleChange(collectible['id'], collectible['name'])}
-                >
-                    {collectible["name"]}
-                </MenuItem>
-            }
-            );
-        }
     
         const handleChange = (id, name) => {
             setCollectibleID(id);
@@ -72,7 +63,17 @@ const SellPage = () => {
                     value={collectibleID}
                     label="Collectible"
                 >
-                    {renderMenuItems(collectibles)}
+                    {/* Render menu items for each collectible name in user's collection */}
+                    {collectibles.map((collectible) => { 
+                        return (
+                            <MenuItem 
+                                value={collectible.collectible_id}
+                                onClick={() => handleChange(collectible.collectible_id, collectible.name)}
+                            >
+                                {collectible.name}
+                            </MenuItem>)
+                        })
+                    }
                 </Select>
                 </FormControl>
             </Box>
@@ -80,37 +81,51 @@ const SellPage = () => {
     }
 
     const AddTitle = () => {
-        const handleChange = (e) => {
-            setTitle(e.target.value);
+        const postTitle = (e) => {
+            e.preventDefault();
+            const data = new FormData(e.currentTarget);
+            setIsTitleAdded(true);
+            setTitle(data.get('title'));
         }
 
         return (
-            <Box sx={{height: '100%'}}>
+            <Box component="form" onSubmit={postTitle} sx={{height: '100%'}}>
                 <Typography variant='h5' mb='50px'>Add a title for your post</Typography>
-                <FormControl fullWidth>
-                <TextField label="Title" onBlur={handleChange} variant="standard"/>
-                </FormControl>
+                <TextField id='title' name='title' label="Title" variant="standard" onChange={() => setIsTitleAdded(false)}/>
+                <Button type="submit" variant='contained' sx={{ m: 1, ml: '10px' }}>ADD</Button>
+                { isTitleAdded ? <Alert severity='success'>Added title!</Alert> : ''}
             </Box>
         );
     }
 
     const CollectibleDescription = () => {
-        const handleChange = (e) => {
-            setDescription(e.target.value);
+        const postDescription = (e) => {
+            e.preventDefault();
+            const data = new FormData(e.currentTarget);
+            setIsDescAdded(true);
+            setDescription(data.get('description'));
         }
+
         return(
-            <Box sx={{height: '100%'}}>
+            <Box component="form" onSubmit={postDescription} sx={{height: '100%', display: 'flex', flexDirection: 'column' }}>
                 <Typography variant='h5' mb='50px'>Add a description of your collectible</Typography>
-                <FormControl fullWidth>
-                    <TextField
+                <TextField
+                    name="description"
                     id="outlined-multiline-static"
                     label="Description"
                     multiline
                     placeholder='Add description here...'
                     rows={3}
-                    onBlur={handleChange}
-                    />
-                </FormControl>
+                    onChange={() => setIsDescAdded(false)}
+                />
+                { isDescAdded ? <Alert severity='success'>Added description!</Alert> : <></>}
+                <Button 
+                variant='contained' 
+                type="submit" 
+                sx={{ mt: '10px'}}
+                >
+                    ADD
+                </Button>
             </Box>
         );
     }
@@ -155,6 +170,12 @@ const SellPage = () => {
             const options = {
                 method: "POST",
                 route: "/trade/post",
+                body: JSON.stringify({
+                    collection_id: collectibleID,
+                    post_images: [],
+                    post_title: title,
+                    post_description: description,
+                  }),
             };
           
             apiCall(() => {
@@ -168,6 +189,10 @@ const SellPage = () => {
             });
         }
 
+        function dataError () {
+            return (collectibleName === '' || title === '' || description === '');
+        }
+
         return(
             <Box sx={{height: '100%'}}>
                 <Typography variant='h5' mb='50px'>Check new trade post</Typography>
@@ -178,13 +203,13 @@ const SellPage = () => {
                     id="outlined-multiline-static"
                     label="Description"
                     multiline
-                    placeholder='Add description here...'
                     rows={3}
-                    sx={{mb:'30px'}}
                     aria-disabled
                     value={description}
+                    sx={{ mb: '10px' }}
                     />
-                    <Button variant='contained' onClick={postData}>POST</Button>
+                    { dataError() ? <Alert severity='error' sx={{ mb: '10px' }}>Missing some fields!</Alert> : <></>}
+                    <Button variant='contained' disabled={dataError()} onClick={postData}>POST</Button>
                 </FormControl>
             </Box>
         );

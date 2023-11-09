@@ -17,7 +17,7 @@ import TextField from '@mui/material/TextField';
 const OfferModal = ({ tradeId, open, handleClose }) => {
     const [offerTitle, setOfferTitle] = React.useState('');
     const [collectibleID, setCollectibleID] = React.useState(0);
-    const [description, setDescription] = React.useState('');
+    const [collectibleDescription, setDescription] = React.useState('');
     const [image, setImage] = React.useState('');
     const [collectibles, setCollectibles] = React.useState([]);
 
@@ -57,56 +57,43 @@ const OfferModal = ({ tradeId, open, handleClose }) => {
 
     const handleMakeOffer = () => {
       // call api with data
-      // const options = {
-      //   method: 'POST',
-      //   route: "/exchange/makeoffer",
-      //   body: JSON.stringify({
-      //     "trade_id": tradeId,
-      //     "offer_img": image,
-      //     "offer_title": offerTitle,
-      //     "collectible_id": collectibleID,
-      //     "description": description,
-      //   })
-      // };
+      const options = {
+        method: 'POST',
+        route: "/exchange/makeoffer",
+        body: JSON.stringify({
+          trade_id: tradeId,
+          offer_img: image,
+          offer_title: offerTitle,
+          collectible_id: collectibleID,
+          description: collectibleDescription,
+        }),
+      };
+      console.log(options.body);
 
-      // console.log(options.body);
+      apiCall((d) => {}, options)
+      .then((res) => {
+          if (res) {
+          // set error msg if api call returns error
 
-      // apiCall((d) => {}, options)
-      // .then((res) => {
-      //     if (res) {
-      //     // set error msg if api call returns error
-
-      //     }
-      // });
+          }
+      });
       handleClose();
   }
 
-    const renderMenuItems = (collectibles) => {
-        return collectibles.map((collectible) => { 
-            <MenuItem 
-                value={collectible['id']}
-                onClick={() => handleIdChange(collectible['id'])}
-            >
-                {collectible["name"]}
-            </MenuItem>
-        }
-        );
-    }
-
-    const handleTitleChange = (title) => {
-        setOfferTitle(title);
+    const handleTitleChange = (e) => {
+        setOfferTitle(e.target.value);
     }
 
     const handleIdChange = (id) => {
       setCollectibleID(id);
     }
 
-    const handleDescChange = (desc) => {
-      setDescription(desc);
+    const handleDescChange = (e) => {
+      setDescription(e.target.value);
     }
 
-    const handleImageChange = (image) => {
-      setImage(image);
+    const handleImageChange = (e) => {
+    //   setImage(image);
     }
   
     return (
@@ -128,16 +115,26 @@ const OfferModal = ({ tradeId, open, handleClose }) => {
                 value={collectibleID}
                 label="Collectible"
             >
-                {renderMenuItems(collectibles)}
+                {/* Render menu items for each collectible name in user's collection */}
+                {collectibles.map((collectible) => { 
+                  return (
+                    <MenuItem 
+                        value={collectible.collectible_id}
+                        onClick={() => handleIdChange(collectible.collectible_id)}
+                    >
+                        {collectible.name}
+                    </MenuItem>)
+                  })
+                }
             </Select>
-            <TextField label="Title" onBlur={handleTitleChange} variant="standard" sx={{mb: '30px'}}/>
+            <TextField label="Title" onChange={handleTitleChange} variant="standard" sx={{mb: '30px'}}/>
             <TextField
               id="outlined-multiline-static"
               label="Description"
               multiline
               placeholder='Add description here...'
               rows={3}
-              onBlur={handleDescChange}
+              onChange={handleDescChange}
               sx={{mb: '30px'}}
               />
             <Box sx={{}}>

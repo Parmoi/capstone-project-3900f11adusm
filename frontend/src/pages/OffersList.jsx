@@ -154,77 +154,12 @@ const OffersList = () => {
       data={data}
       positionToolbarAlertBanner="bottom" //show selected rows count on bottom toolbar
       initialState={{ columnVisibility: { offer_id: false } }}
-
-      //add custom action buttons to top-left of top toolbar
-
-      // renderBottomToolbarCustomActions={({ table }) => {
-      //   const handleDelete= () => {
-      //     table.getSelectedRowModel().flatRows.map((row) => {
-      //       const options = {
-      //         method: 'DELETE',
-      //         route: "/wantlist/delete",
-      //         body: {
-      //           'id': row.getValue('id'),
-      //         }
-      //       };
-      //       console.log(row.getValue('id'));
-
-      //       apiCall(() => { }, options)
-      //         .then((res) => {
-      //           if (res) {
-      //             // set error msg if api call returns error
-
-      //           }
-      //         });
-      //     });
-      //   };
-
-      //   const handleMove= () => {
-      //     table.getSelectedRowModel().flatRows.map((row) => {
-      //       const options = {
-      //         method: 'POST',
-      //         route: "/wantlist/move",
-      //         body: {
-      //           'id': row.getValue('id'),
-      //         }
-      //       };
-      //       console.log(row.getValue('id'));
-
-      //       apiCall(() => { }, options)
-      //         .then((res) => {
-      //           if (res) {
-      //             // set error msg if api call returns error
-
-      //           }
-      //         });
-      //     });
-      //   };
-
-      //   return (
-      //   <Box sx={{ display: 'flex', gap: '1rem', p: '4px' }}>
-      //     <Button
-      //       color="secondary"
-      //       // For some reason, button is disabled when all rows selected
-      //       // TODO: find fix
-      //       disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()}
-      //       onClick={handleMove}
-      //       variant="contained"
-      //     >
-      //       Move to collections
-      //     </Button>
-
-      //     <Button
-      //       color="error"
-      //       disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()}
-      //       onClick={handleDelete}
-      //       variant="contained"
-      //     >
-      //       Delete selected
-      //     </Button>
-      //   </Box>
-      //   );
-
-      // }}
+      // changes sizing of default columns
+      defaultColumn={{
+        minSize: 50,
+        maxSize: 500,
+        size: 300, 
+      }}
 
       //customize built-in buttons in the top-right of top toolbar
       renderToolbarInternalActions={({ table }) => (

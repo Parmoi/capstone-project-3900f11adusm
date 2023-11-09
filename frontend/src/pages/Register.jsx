@@ -5,7 +5,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
+import Paper from '@mui/material/Paper';
 import { createTheme, useTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import validator from 'validator';
@@ -14,7 +14,7 @@ import Alert from '@mui/material/Alert';
 
 const theme = createTheme();
 
-function Register({ setLogin }) {
+function Register({ setLogin, setUsername }) {
   const navigate = useNavigate();
   const [emailError, setEmailError] = React.useState(false);
   const [nameError, setNameError] = React.useState(false);
@@ -61,6 +61,7 @@ function Register({ setLogin }) {
 
     apiCall(() => {
       setLogin(true);
+      setUsername(data.get('name'));
     }, options)
       .then((res) => {
         if (res) {
@@ -76,7 +77,32 @@ function Register({ setLogin }) {
 
   return (
     <ThemeProvider theme={useTheme()}>
-      <Container component="main" maxWidth="xs">
+      <Box 
+        sx={{ 
+          width: '100%', 
+          height: '90.8vh', 
+          display: "flex", 
+          flexDirection: "column", 
+          backgroundImage: `url("https://wallpaper-mania.com/wp-content/uploads/2018/09/High_resolution_wallpaper_background_ID_77700441077.jpg")`, 
+          backgroundRepeat: "no-repeat", 
+          backgroundSize: "cover", 
+          alignItems: 'center', 
+          justifyContent: 'center'
+          }}
+      >
+      <Paper 
+        component="main" 
+        maxWidth="xs" 
+        sx={{
+          paddingLeft: '50px',
+          paddingRight: '50px',
+          borderRadius: 2,
+          maxWidth: '700px',
+          width: '50vw',
+          paddingBottom: '50px',
+          // height: '50vh',
+        }}
+      >
         <CssBaseline />
         <Box
           sx={{
@@ -94,6 +120,7 @@ function Register({ setLogin }) {
           </Typography>
           <Box component="form" onSubmit={register} noValidate sx={{ mt: 1 }}>
             <TextField
+              sx={{backgroundColor:'white'}}
               margin="normal"
               required
               fullWidth
@@ -107,6 +134,7 @@ function Register({ setLogin }) {
               helperText={nameError ? 'Name must not be empty' : ''}
             />
             <TextField
+              sx={{backgroundColor:'white'}}
               margin="normal"
               required
               fullWidth
@@ -119,6 +147,7 @@ function Register({ setLogin }) {
               helperText={emailError ? 'Email must be valid' : ''}
             />
             <TextField
+              sx={{backgroundColor:'white'}}
               margin="normal"
               required
               fullWidth
@@ -142,9 +171,10 @@ function Register({ setLogin }) {
             >
               Register
             </Button>
-          </Box>
+            </Box>
         </Box>
-      </Container>
+      </Paper>
+      </Box>
     </ThemeProvider>
   );
 }

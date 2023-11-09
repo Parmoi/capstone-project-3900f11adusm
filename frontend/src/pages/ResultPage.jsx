@@ -145,6 +145,12 @@ function ResultsPage() {
       sx: { cursor: 'pointer' },
     })}
     initialState={{ columnVisibility: { id: false } }}
+    // changes sizing of default columns
+    defaultColumn={{
+      minSize: 50,
+      maxSize: 500,
+      size: 300, 
+    }}
 
     //add custom action buttons to top-left of top toolbar
 
