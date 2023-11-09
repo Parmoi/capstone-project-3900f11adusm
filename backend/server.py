@@ -754,13 +754,7 @@ def get_collectible_info():
         "collectible_name": "Homer",
         "campaign_id": 1,
         "campaign_name": "Simpsons",
-        "collectible_images": [
-            {
-                "name": "Lego",
-                "caption": "Random lego.",
-                "image": "https://tse3.mm.bing.net/th?id=OIP.SwCSPpmwihkM2SUqh7wKXwHaFG&pid=Api",
-            },
-        ],
+        "collectible_image": "https://tse3.mm.bing.net/th?id=OIP.SwCSPpmwihkM2SUqh7wKXwHaFG&pid=Api",
         "collectible_description": "Description",
         "collectible_added_date": "08/04/2003",
     }
@@ -782,6 +776,7 @@ def get_buylist():
             "collectible_name": "Bart",
             "trader_name": "Not bart",
             "location": "Somewhere",
+            "trader_profile_img": '',
         }
     ]
 

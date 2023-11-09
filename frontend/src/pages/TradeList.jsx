@@ -147,6 +147,12 @@ const TradeList = () => {
       enableRowSelection
       positionToolbarAlertBanner="bottom" //show selected rows count on bottom toolbar
       initialState={{ columnVisibility: { id: false } }}
+      // changes sizing of default columns
+      defaultColumn={{
+        minSize: 50,
+        maxSize: 300,
+        size: 200, 
+      }}
 
       //add custom action buttons to top-left of top toolbar
 

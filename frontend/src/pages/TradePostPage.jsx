@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import ImageCarousel from '../components/ImageCarousel';
 import {
     Grid,
@@ -8,7 +8,6 @@ import {
     Container,
     Paper,
 } from '@mui/material'
-import Divider from '@mui/material/Divider';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTheme, ThemeProvider } from '@mui/material/styles';
 import { apiCall } from '../App';
