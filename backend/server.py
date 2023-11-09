@@ -538,7 +538,7 @@ def tester():
             }])
     # return db_tradeposts.get_trade_posts(2)
     # return db_tradeposts.get_trade_post_info(1)
-    return db_tradeposts.get_current_trade_posts(26)
+    return db_tradeposts.get_current_trade_posts(1)
 
 @APP.route("/trade/list", methods=["GET"])
 @jwt_required(fresh=False)

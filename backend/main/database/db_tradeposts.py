@@ -96,7 +96,24 @@ def get_current_trade_posts(collector_id):
         JSON, int: JSON of collector's trade posts, int of error code
 
     Example Output:
-        ...
+        [
+            {
+                "collectible_name": "Iguana iguana",
+                "collection_id": 501,
+                "image": "https://robohash.org/similiquenemoaut.png?size=50x50&set=set1",
+                "location": "696 Londonderry Avenue",
+                "trader_name": "uso",
+                "trader_profile_img": "https://robohash.org/utomniseos.png?size=50x50&set=set1"
+            },
+            {
+                "collectible_name": "Superman (Holo)",
+                "collection_id": 200,
+                "image": "https://robohash.org/similiquenemoaut.png?size=50x50&set=set1",
+                "location": "696 Londonderry Avenue",
+                "trader_name": "uso",
+                "trader_profile_img": "https://robohash.org/utomniseos.png?size=50x50&set=set1"
+            },
+        ]
     """
     engine, conn, metadata = dbm.db_connect()
 
