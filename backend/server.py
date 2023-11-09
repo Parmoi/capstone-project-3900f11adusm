@@ -501,9 +501,14 @@ def post_trade():
 
     """
 
-    stub_data = {"trade_post_id": 1}
+    user_id = get_jwt_identity()
+    collection_id = request.json.get("collection_id")
+    post_title = request.json.get("post_title")
+    post_desc = request.json.get("post_description")
+    post_imgs = request.json.get("post_images")
 
-    return jsonify(stub_data), OK
+    return db_tradeposts.insert_trade_post(
+        user_id, collection_id, post_title, post_desc, post_imgs)
 
 
 @APP.route("/trade/view", methods=["GET"])
@@ -514,32 +519,9 @@ def get_tradepost():
     Takes trade post id as param
 
     """
-
-    stub_data = {
-        "post_title": "Title",
-        "post_created": "04/04/2004",
-        "post_trader": "Trader1",
-        "post_images": [
-            {
-                "name": "1",
-                "caption": "Bart with skateboard.",
-                "image": "https://tse1.mm.bing.net/th?id=OIP.S9zFPgPbF0zJ4OXQkU675AHaHC&pid=Api",
-            },
-            {
-                "name": "2",
-                "caption": "Stuffed bart.",
-                "image": "https://tse1.mm.bing.net/th?id=OIP.AIizpaWw4l8TtY5fWj66RgHaGr&pid=Api",
-            },
-        ],
-        "post_description": "Description",
-        "trader_location": "Somewhere, AUS",
-        "trader_avatar": "https://tse1.mm.bing.net/th?id=OIP.ho7hCKNowRHh7u5wu1aMWQHaF9&pid=Api",
-    }
-
     trade_post_id = request.args.get('trade_post_id')
 
     return db_tradeposts.get_trade_post_info(trade_post_id)
-    return jsonify(stub_data), OK
 
 @APP.route("/tester")
 def tester():
@@ -555,7 +537,8 @@ def tester():
                 "image": "https://tse1.mm.bing.net/th?id=OIP.AIizpaWw4l8TtY5fWj66RgHaGr&pid=Api",
             }])
     # return db_tradeposts.get_trade_posts(2)
-    return db_tradeposts.get_trade_post_info(1)
+    # return db_tradeposts.get_trade_post_info(1)
+    return db_tradeposts.get_current_trade_posts(26)
 
 @APP.route("/trade/list", methods=["GET"])
 @jwt_required(fresh=False)
