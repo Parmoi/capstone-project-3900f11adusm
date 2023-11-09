@@ -9,6 +9,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import TextField from '@mui/material/TextField';
+import WidgetUpload from '../components/WidgetUpload';
 
 
 
@@ -137,10 +138,7 @@ const OfferModal = ({ tradeId, open, handleClose }) => {
               onChange={handleDescChange}
               sx={{mb: '30px'}}
               />
-            <Box sx={{}}>
-              <input type="file" multiple accept=".jpg, .jpeg, .png" onChange={handleImageChange}/>
-              <Button>Upload</Button>
-            </Box>
+            <WidgetUpload onSuccess={setImage}/>
             </FormControl>
             <Button variant="contained" sx={{ float: 'right', mt: '20px' }} onClick={handleClose}>Close</Button>
             <Button variant="contained" sx={{ float: 'left', mt: '20px' }} onClick={handleMakeOffer}>Trade</Button>

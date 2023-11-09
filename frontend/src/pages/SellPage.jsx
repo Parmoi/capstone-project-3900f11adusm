@@ -10,6 +10,7 @@ import TextField from '@mui/material/TextField';
 import Alert from '@mui/material/Alert';
 
 import { apiCall } from '../App';
+import WidgetUpload from '../components/WidgetUpload';
 import { useNavigate } from 'react-router-dom';
 
 const SellPage = () => {
@@ -18,6 +19,7 @@ const SellPage = () => {
     const [title, setTitle] = React.useState('');
     const [description, setDescription] = React.useState('');
     const [collectibles, setCollectibles] = React.useState([]);
+    const [images, setImages] = React.useState([]);
     const [isTitleAdded, setIsTitleAdded] = React.useState(false);
     const [isDescAdded, setIsDescAdded] = React.useState(false);
     const navigate = useNavigate();
@@ -131,35 +133,15 @@ const SellPage = () => {
     }
 
     const AddImages = () => {
-        const [selectedFiles, setSelectedFiles] = React.useState([]);
-
-        const handleChange = () => {
-
+        const handleImageURL = (url) => {
+            const newList = images.concat(url);
+            setImages(newList);
         }
 
-        function handleFileUpload() {
-            // apicall
-        }
-
-        // const handleUpload = () => {
-        //     const files = Array.from(selectedFiles);
-        
-        // }
-
-        // const selectFiles = (event) => {
-        //     let images = [];
-        
-        //     for (let i = 0; i < event.target.files.length; i++) {
-        //       images.push(URL.createObjectURL(event.target.files[i]));
-        //     }
-        
-        //     setSelectedFiles(event.target.files);
-        //   };
         return (
             <Box sx={{height: '100%'}}>
-                <Typography variant='h5' mb='50px'>Add images of your collectible</Typography>
-                <input type="file" multiple accept=".jpg, .jpeg, .png" onChange={handleChange}/>
-                <Button>Upload</Button>
+                <Typography variant='h5' mb='50px'>Add images of your collectible:</Typography>
+                <WidgetUpload onSuccess={handleImageURL}/>
             </Box>
         );
     }
