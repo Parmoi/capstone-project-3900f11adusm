@@ -294,6 +294,17 @@ def get_campaign_collectibles():
     return db_campaigns.get_campaign_collectibles(campaign_id)
 
 
+@APP.route("/campaign/feedback", methods=["POST"])
+@jwt_required(fresh=False)
+def give_campaign_feedback():
+    verify_jwt_in_request()
+
+    user_id = get_jwt_identity()
+    campaign_id = request.json.get("campaign_id", None)
+    feedback = request.json.get("feedback", None)
+
+    return db_campaigns.add_campaign_feedback(user_id, campaign_id, feedback)
+
 """ |------------------------------------|
     |         Collection Routes          |
     |------------------------------------| """

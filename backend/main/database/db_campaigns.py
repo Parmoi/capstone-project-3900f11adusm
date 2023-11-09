@@ -180,14 +180,14 @@ def get_campaigns_in_period(time_period):
 
 
 def add_campaign_feedback(user_id, campaign_id, feedback):
-    cur_date = date.today()
-
     engine, conn, metadata = dbm.db_connect()
 
     # Loads in the campaign table into our metadata
-    feedback = db.Table("campaign_feedback", metadata, autoload_with=engine)
+    feedback_table = db.Table("campaign_feedback", metadata, autoload_with=engine)
 
-    insert_stmt = db.insert(feedback).values(
+    cur_date = date.today()
+
+    insert_stmt = db.insert(feedback_table).values(
         {
             "campaign_id": campaign_id,
             "collector_id": user_id,
@@ -216,14 +216,19 @@ def get_campaign_feedback(user_id, campaign_id):
 
     join = db.join(collectors, feedback, (collectors.c.id == feedback.c.collector_id))
 
-    select_stmt = db.select(
-        feedback.c.campaign_id == campaign_id,
-        collectors.c.id.label("collector_id"),
-        collectors.c.username.label("collector_username"),
-        collectors.c.image.label("collectible_image"),
-        feedback.c.feedback,
-        feedback.c.feedback_date,
-    ).select_from(join)
+    select_stmt = (
+        db.select(
+            collectors.c.id.label("collector_id"),
+            collectors.c.username.label("collector_username"),
+            collectors.c.profile_picture.label("collector_profile_img"),
+            feedback.c.feedback,
+            feedback.c.feedback_date,
+        )
+        .select_from(join)
+        .where(
+            feedback.c.campaign_id == campaign_id,
+        )
+    )
 
     res = conn.execute(select_stmt)
     if res is None:
