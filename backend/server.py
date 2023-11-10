@@ -497,7 +497,7 @@ def post_trade():
         collection_id
         post_title
         post_description
-        post_images: [] (list of post image urls dictionaries: {name, caption, image})
+        post_images: [] (list of post image urls dictionaries: {caption, image})
 
     """
 

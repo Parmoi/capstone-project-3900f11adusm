@@ -16,7 +16,7 @@ import CaptionModal from '../components/CaptionModal';
 import ImageList from '../components/ImageCaptionList';
 
 const SellPage = () => {
-    const [collectibleID, setCollectibleID] = React.useState('');
+    const [collectionID, setCollectibleID] = React.useState('');
     const [collectibleName, setCollectibleName] = React.useState('');
     const [title, setTitle] = React.useState('');
     const [description, setDescription] = React.useState('');
@@ -74,15 +74,15 @@ const SellPage = () => {
                     <InputLabel>Collectible</InputLabel>
                     <Select
                         id='tradeCollectible'
-                        value={collectibleID}
+                        value={collectionID}
                         label="Collectible"
                     >
                         {/* Render menu items for each collectible name in user's collection */}
                         {collectibles.map((collectible) => {
                             return (
                                 <MenuItem
-                                    value={collectible.collectible_id}
-                                    onClick={() => handleChange(collectible.collectible_id, collectible.name)}
+                                    value={collectible.id}
+                                    onClick={() => handleChange(collectible.id, collectible.name)}
                                 >
                                     {collectible.name}
                                 </MenuItem>)
@@ -172,8 +172,8 @@ const SellPage = () => {
                 method: "POST",
                 route: "/trade/post",
                 body: JSON.stringify({
-                    collection_id: collectibleID,
-                    post_images: [],
+                    collection_id: collectionID,
+                    post_images: images,
                     post_title: title,
                     post_description: description,
                 }),
