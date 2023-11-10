@@ -12,10 +12,6 @@ import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import AddTaskIcon from '@mui/icons-material/AddTask';
 import GroupIcon from '@mui/icons-material/Group';
 
-import AssessmentIcon from '@mui/icons-material/Assessment';
-import ForumOutlinedIcon from '@mui/icons-material/ForumOutlined';
-import UploadOutlinedIcon from '@mui/icons-material/UploadOutlined';
-
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import {Link } from "react-router-dom";
 
@@ -27,7 +23,6 @@ const linkStyle = {
   color: 'Black',
   display: 'span',
   justifyContent: 'center',
-  backgroundColor: 'Green'
 }
 
 const style = {
@@ -46,8 +41,8 @@ function AdminHomePage() {
       <Container component="main" maxWidth="lg" direction="column" justifyContent="center" alignItems="center">
       <CssBaseline/>
       <Box height="85vh">
-        <Grid container spacing={4} height="100vh" direction="row" justifyContent="center" alignItems="center" sx={{ height: '100%', backgroundColor: "yellow", flexGrow: 1}}>
-          <Grid item xs={4} sx={{backgroundColor: 'Blue'}}>
+        <Grid container spacing={4} height="100vh" direction="row" justifyContent="center" alignItems="center" sx={{ height: '100%',}}>
+          <Grid item xs={4} sx={{margin: 'auto'}}>
             <Button aria-label="Manage Managers" style={linkStyle} component={Link} to='/'>
               <Stack direction="column" justifyContent='center' spacing={2} sx={style} >
                 <Box component="span">
@@ -58,7 +53,7 @@ function AdminHomePage() {
             </Button>
           </Grid>
 
-          <Grid item xs={4} sx={{backgroundColor: 'orange'}}>
+          <Grid item xs={4} sx={{margin: 'auto'}}>
             <Button aria-label="Campaign Approval" style={linkStyle} component={Link} to='/'>
               <Stack direction="column" justifyContent='center' spacing={2} sx={style} >
                 <Box component="span">
@@ -69,7 +64,7 @@ function AdminHomePage() {
             </Button>
           </Grid>
 
-          <Grid item xs={4} sx={{backgroundColor: 'red'}}>
+          <Grid item xs={4} sx={{margin: 'auto'}}>
             <Button aria-label="Manage Collectors" style={linkStyle} component={Link} to='/'>
               <Stack direction="column" justifyContent='center' spacing={2} sx={style} backgrounColor='blue'>
                 <Box component="span">
