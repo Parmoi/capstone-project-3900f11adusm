@@ -153,11 +153,11 @@ const TradeOffersList = () => {
                 const handleDecline = () => {
                     table.getSelectedRowModel().flatRows.map((row) => {
                         const options = {
-                            method: 'DELETE',
+                            method: 'POST',
                             route: "/exchange/decline",
-                            body: {
-                                'offer_id': row.original.offer_id,
-                            }
+                            body: JSON.stringify({
+                                offer_id: row.original.offer_id,
+                            })
                         };
                         console.log(options)
 
@@ -176,9 +176,9 @@ const TradeOffersList = () => {
                         const options = {
                             method: 'POST',
                             route: "/exchange/accept",
-                            body: {
-                                'offer_id': row.original.offer_id,
-                            }
+                            body: JSON.stringify({
+                                offer_id: row.original.offer_id,
+                            })
                         };
 
                         apiCall(() => { }, options)
