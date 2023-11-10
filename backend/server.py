@@ -549,11 +549,35 @@ def tradelist():
     stub_data = {
         "trades_list": [
             {
+                "trade_post_id": 1,
                 "trader_collectible_id": 1,
                 "trader_collectible_name": "Bart with skateboard",  # collectible you're givin away
                 "trader_collectible_img": "https://tse1.mm.bing.net/th?id=OIP.S9zFPgPbF0zJ4OXQkU675AHaHC&pid=Api",  # image of the collectible you're giving away.
                 "trade_post_date": "02/06/2003",
                 "offers_received": 10,
+            }
+        ]
+    }
+
+    return jsonify(stub_data), OK
+
+@APP.route("/trade/list/offers", methods=["GET"])
+@jwt_required(fresh=False)
+def trade_offers_list():
+    """
+    Displays all the trades listed from the collector and number of offers made
+    Takes in trade post id
+
+    """
+
+    stub_data = {
+        "offers_list": [
+            {
+                "offer_id": 1,
+                "offer_collectible_name": "Bart with skateboard",  # collectible you're givin away
+                "offer_collectible_img": "https://tse1.mm.bing.net/th?id=OIP.S9zFPgPbF0zJ4OXQkU675AHaHC&pid=Api",  # image of the collectible you're giving away.
+                "offer_made_date": "02/06/2003",
+                "trader_profile_img": "",
             }
         ]
     }
