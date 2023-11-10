@@ -21,7 +21,8 @@ from main.database import (
     db_wantlist,
     db_collectibles,
     db_collections,
-    db_trade,
+    db_tradeposts,
+    db_tradeoffers
 )
 from main import auth
 from main.error import InputError, AccessError, OK
@@ -496,16 +497,21 @@ def post_trade():
         collection_id
         post_title
         post_description
-        post_images: [] (list of post image urls)
+        post_images: [] (list of post image urls dictionaries: {name, caption, image})
 
     """
 
-    stub_data = {"trade_post_id": 1}
+    user_id = get_jwt_identity()
+    collection_id = request.json.get("collection_id")
+    post_title = request.json.get("post_title")
+    post_desc = request.json.get("post_description")
+    post_imgs = request.json.get("post_images")
 
-    return jsonify(stub_data), OK
+    return db_tradeposts.insert_trade_post(
+        user_id, collection_id, post_title, post_desc, post_imgs)
 
 
-@APP.route("/trade/get", methods=["GET"])
+@APP.route("/trade/view", methods=["GET"])
 @jwt_required(fresh=False)
 def get_tradepost():
     """
@@ -513,13 +519,14 @@ def get_tradepost():
     Takes trade post id as param
 
     """
+    trade_post_id = request.args.get('trade_post_id')
 
-    stub_data = {
-        "post_title": "Title",
-        "post_created": "04/04/2004",
-        "post_trader": "Trader1",
-        "post_images": [
-            {
+    return db_tradeposts.get_trade_post_info(trade_post_id)
+
+@APP.route("/tester")
+def tester():
+    db_collections.insert_collectible(1, 2)
+    db_tradeposts.insert_trade_post(1, 501, "random post!", "random desc!", [{
                 "name": "1",
                 "caption": "Bart with skateboard.",
                 "image": "https://tse1.mm.bing.net/th?id=OIP.S9zFPgPbF0zJ4OXQkU675AHaHC&pid=Api",
@@ -528,15 +535,10 @@ def get_tradepost():
                 "name": "2",
                 "caption": "Stuffed bart.",
                 "image": "https://tse1.mm.bing.net/th?id=OIP.AIizpaWw4l8TtY5fWj66RgHaGr&pid=Api",
-            },
-        ],
-        "post_description": "Description",
-        "trader_location": "Somewhere, AUS",
-        "trader_avatar": "https://tse1.mm.bing.net/th?id=OIP.ho7hCKNowRHh7u5wu1aMWQHaF9&pid=Api",
-    }
-
-    return jsonify(stub_data), OK
-
+            }])
+    # return db_tradeposts.get_trade_posts(2)
+    # return db_tradeposts.get_trade_post_info(1)
+    return db_tradeposts.get_current_trade_posts(1)
 
 @APP.route("/trade/list", methods=["GET"])
 @jwt_required(fresh=False)
@@ -769,18 +771,11 @@ def get_buylist():
     Takes in collectible_id as request argument
     """
 
-    stub_return = [
-        {
-            "collection_id": 1,
-            "image": "https://tse2.mm.bing.net/th?id=OIP.j7EknM6CUuEct_kx7o-dNQHaMN&pid=Api",
-            "collectible_name": "Bart",
-            "trader_name": "Not bart",
-            "location": "Somewhere",
-            "trader_profile_img": '',
-        }
-    ]
-
-    return jsonify(stub_return), OK
+    # I'm not too sure how to get the collectible_id from frontend, but if you 
+    # call get_trade_posts with collectible_id it should work properly - Dyllan
+    collectible_id = request.args.get('collectible_id')
+    
+    return db_tradeposts.get_trade_posts(collectible_id)
 
 
 """ |------------------------------------|
