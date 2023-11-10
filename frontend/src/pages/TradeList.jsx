@@ -141,7 +141,7 @@ const TradeList = () => {
 
   return (
     <MaterialReactTable
-      title="Wantlist"
+      title="Tradelist"
       columns={columns}
       data={data}
       enableRowSelection
@@ -151,13 +151,13 @@ const TradeList = () => {
       defaultColumn={{
         minSize: 50,
         maxSize: 300,
-        size: 200, 
+        size: 100,
       }}
 
       //add custom action buttons to top-left of top toolbar
 
       renderBottomToolbarCustomActions={({ table }) => {
-        const handleDecline= () => {
+        const handleDecline = () => {
           table.getSelectedRowModel().flatRows.map((row) => {
             const options = {
               method: 'DELETE',
@@ -178,7 +178,7 @@ const TradeList = () => {
           });
         };
 
-        const handleAccept= () => {
+        const handleAccept = () => {
           table.getSelectedRowModel().flatRows.map((row) => {
             const options = {
               method: 'POST',
@@ -200,27 +200,27 @@ const TradeList = () => {
         };
 
         return (
-        <Box sx={{ display: 'flex', gap: '1rem', p: '4px' }}>
-          <Button
-            color="secondary"
-            // For some reason, button is disabled when all rows selected
-            // TODO: find fix
-            disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()}
-            onClick={handleAccept}
-            variant="contained"
-          >
-            Accept Offer
-          </Button>
+          <Box sx={{ display: 'flex', gap: '1rem', p: '4px' }}>
+            <Button
+              color="secondary"
+              // For some reason, button is disabled when all rows selected
+              // TODO: find fix
+              disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()}
+              onClick={handleAccept}
+              variant="contained"
+            >
+              Accept Offer
+            </Button>
 
-          <Button
-            color="error"
-            disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()}
-            onClick={handleDecline}
-            variant="contained"
-          >
-            Decline Offer
-          </Button>
-        </Box>
+            <Button
+              color="error"
+              disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()}
+              onClick={handleDecline}
+              variant="contained"
+            >
+              Decline Offer
+            </Button>
+          </Box>
         );
 
       }}

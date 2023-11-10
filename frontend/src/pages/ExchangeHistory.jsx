@@ -7,7 +7,7 @@ import { MaterialReactTable, MRT_ToggleDensePaddingButton, MRT_FullScreenToggleB
 import { useState, useEffect } from 'react';
 
 import { apiCall } from '../App';
- 
+
 function ExchangeHistory() {
   const [data, setData] = useState([]);
 
@@ -20,11 +20,11 @@ function ExchangeHistory() {
     apiCall((d) => {
       setData(d["exchange_history"]);
     }, options)
-    .then((res) => {
-      if (res) {
-        // set error msg if api call returns error
-      }
-    });
+      .then((res) => {
+        if (res) {
+          // set error msg if api call returns error
+        }
+      });
   }
 
   useEffect(() => {
@@ -131,7 +131,7 @@ function ExchangeHistory() {
       defaultColumn={{
         minSize: 50,
         maxSize: 200,
-        size: 190, 
+        size: 100,
       }}
       useMaterialReactTable={({ table }) => (
         <Box>

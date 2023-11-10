@@ -22,6 +22,7 @@ const SellPage = () => {
     const [images, setImages] = React.useState([]);
     const [isTitleAdded, setIsTitleAdded] = React.useState(false);
     const [isDescAdded, setIsDescAdded] = React.useState(false);
+    const [emptyCollection, setEmptyCollection] = React.useState(false);
     const navigate = useNavigate();
 
     const fetchData = () => {
@@ -30,53 +31,55 @@ const SellPage = () => {
             method: 'GET',
             route: "/collection/get",
         };
-    
+
         apiCall((d) => {
             setCollectibles(d.collection);
             console.log(collectibles);
+            setEmptyCollection(d.collection.length === 0);
         }, options)
-        .then((res) => {
-            if (res) {
-            // set error msg if api call returns error
-    
-            }
-        });
-      }
-    
+            .then((res) => {
+                if (res) {
+                    // set error msg if api call returns error
+
+                }
+            });
+    }
+
     React.useEffect(() => {
         fetchData();
     }, []);
 
     const SelectCollectible = () => {
-    
+
         const handleChange = (id, name) => {
             setCollectibleID(id);
             setCollectibleName(name);
             console.log(id, name);
         }
-    
+
         return (
-            <Box sx={{height: '100%'}}>
+            <Box sx={{ height: '100%' }}>
                 <Typography variant='h5' mb='50px'>Select collectible you would like to trade/sell</Typography>
                 <FormControl fullWidth>
-                <InputLabel>Collectible</InputLabel>
-                <Select
-                    id='tradeCollectible'
-                    value={collectibleID}
-                    label="Collectible"
-                >
-                    {/* Render menu items for each collectible name in user's collection */}
-                    {collectibles.map((collectible) => { 
-                        return (
-                            <MenuItem 
-                                value={collectible.collectible_id}
-                                onClick={() => handleChange(collectible.collectible_id, collectible.name)}
-                            >
-                                {collectible.name}
-                            </MenuItem>)
+                    <InputLabel>Collectible</InputLabel>
+                    <Select
+                        id='tradeCollectible'
+                        value={collectibleID}
+                        label="Collectible"
+                    >
+                        {/* Render menu items for each collectible name in user's collection */}
+                        {collectibles.map((collectible) => {
+                            return (
+                                <MenuItem
+                                    value={collectible.collectible_id}
+                                    onClick={() => handleChange(collectible.collectible_id, collectible.name)}
+                                >
+                                    {collectible.name}
+                                </MenuItem>)
                         })
-                    }
-                </Select>
+                        }
+                        {emptyCollection ? <Alert severity='error'>No collectibles in collection!</Alert> : <></>}
+                    </Select>
                 </FormControl>
             </Box>
         );
@@ -91,11 +94,11 @@ const SellPage = () => {
         }
 
         return (
-            <Box component="form" onSubmit={postTitle} sx={{height: '100%'}}>
+            <Box component="form" onSubmit={postTitle} sx={{ height: '100%' }}>
                 <Typography variant='h5' mb='50px'>Add a title for your post</Typography>
-                <TextField id='title' name='title' label="Title" variant="standard" onChange={() => setIsTitleAdded(false)}/>
+                <TextField id='title' name='title' label="Title" variant="standard" onChange={() => setIsTitleAdded(false)} />
                 <Button type="submit" variant='contained' sx={{ m: 1, ml: '10px' }}>ADD</Button>
-                { isTitleAdded ? <Alert severity='success'>Added title!</Alert> : ''}
+                {isTitleAdded ? <Alert severity='success'>Added title!</Alert> : ''}
             </Box>
         );
     }
@@ -108,8 +111,8 @@ const SellPage = () => {
             setDescription(data.get('description'));
         }
 
-        return(
-            <Box component="form" onSubmit={postDescription} sx={{height: '100%', display: 'flex', flexDirection: 'column' }}>
+        return (
+            <Box component="form" onSubmit={postDescription} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
                 <Typography variant='h5' mb='50px'>Add a description of your collectible</Typography>
                 <TextField
                     name="description"
@@ -120,11 +123,11 @@ const SellPage = () => {
                     rows={3}
                     onChange={() => setIsDescAdded(false)}
                 />
-                { isDescAdded ? <Alert severity='success'>Added description!</Alert> : <></>}
-                <Button 
-                variant='contained' 
-                type="submit" 
-                sx={{ mt: '10px'}}
+                {isDescAdded ? <Alert severity='success'>Added description!</Alert> : <></>}
+                <Button
+                    variant='contained'
+                    type="submit"
+                    sx={{ mt: '10px' }}
                 >
                     ADD
                 </Button>
@@ -139,9 +142,9 @@ const SellPage = () => {
         }
 
         return (
-            <Box sx={{height: '100%'}}>
+            <Box sx={{ height: '100%' }}>
                 <Typography variant='h5' mb='50px'>Add images of your collectible:</Typography>
-                <WidgetUpload onSuccess={handleImageURL}/>
+                <WidgetUpload onSuccess={handleImageURL} />
             </Box>
         );
     }
@@ -157,40 +160,40 @@ const SellPage = () => {
                     post_images: [],
                     post_title: title,
                     post_description: description,
-                  }),
+                }),
             };
-          
+
             apiCall(() => {
                 navigate('/');
             }, options)
-            .then((res) => {
-                if (res) {
-                // set error msg if api call returns error
-        
-                }
-            });
+                .then((res) => {
+                    if (res) {
+                        // set error msg if api call returns error
+
+                    }
+                });
         }
 
-        function dataError () {
+        function dataError() {
             return (collectibleName === '' || title === '' || description === '');
         }
 
-        return(
-            <Box sx={{height: '100%'}}>
+        return (
+            <Box sx={{ height: '100%' }}>
                 <Typography variant='h5' mb='50px'>Check new trade post</Typography>
                 <FormControl fullWidth>
-                    <TextField label="Collectible Name" variant="standard" aria-disabled value={collectibleName} sx={{mb:'30px'}}/>
-                    <TextField label="Title" variant="standard" aria-disabled value={title} sx={{mb:'30px'}}/>
+                    <TextField label="Collectible Name" variant="standard" aria-disabled value={collectibleName} sx={{ mb: '30px' }} />
+                    <TextField label="Title" variant="standard" aria-disabled value={title} sx={{ mb: '30px' }} />
                     <TextField
-                    id="outlined-multiline-static"
-                    label="Description"
-                    multiline
-                    rows={3}
-                    aria-disabled
-                    value={description}
-                    sx={{ mb: '10px' }}
+                        id="outlined-multiline-static"
+                        label="Description"
+                        multiline
+                        rows={3}
+                        aria-disabled
+                        value={description}
+                        sx={{ mb: '10px' }}
                     />
-                    { dataError() ? <Alert severity='error' sx={{ mb: '10px' }}>Missing some fields!</Alert> : <></>}
+                    {dataError() ? <Alert severity='error' sx={{ mb: '10px' }}>Missing some fields!</Alert> : <></>}
                     <Button variant='contained' disabled={dataError()} onClick={postData}>POST</Button>
                 </FormControl>
             </Box>
@@ -199,10 +202,10 @@ const SellPage = () => {
 
     const stepperContent = [
         <SelectCollectible />,
-        <AddTitle/>,
-        <CollectibleDescription/>,
-        <AddImages/>,
-        <PostListing/>,
+        <AddTitle />,
+        <CollectibleDescription />,
+        <AddImages />,
+        <PostListing />,
     ]
 
     return (
