@@ -85,68 +85,68 @@ const WantList = () => {
       {
         accessorKey: 'dateReleased',
         accessorFn: (row) => moment(row.date_released, "DD/MM/YYYY"), //convert to Date for sorting and filtering
-            id: 'dateReleased',
-            header: 'Date Released',
-            filterFn: 'lessThanOrEqualTo',
-            sortingFn: 'datetime',
+        id: 'dateReleased',
+        header: 'Date Released',
+        filterFn: 'lessThanOrEqualTo',
+        sortingFn: 'datetime',
 
-            Cell: ({ cell }) => cell.getValue()?.format('DD/MM/YY'), //render Date as a string
-            Header: ({ column }) => <em>{column.columnDef.header}</em>, //custom header markup
+        Cell: ({ cell }) => cell.getValue()?.format('DD/MM/YY'), //render Date as a string
+        Header: ({ column }) => <em>{column.columnDef.header}</em>, //custom header markup
 
-            //Custom Date Picker Filter from @mui/x-date-pickers
-            Filter: ({ column }) => (
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker
-                  onChange={(newValue) => {
-                    column.setFilterValue(newValue);
-                  }}
+        //Custom Date Picker Filter from @mui/x-date-pickers
+        Filter: ({ column }) => (
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DatePicker
+              onChange={(newValue) => {
+                column.setFilterValue(newValue);
+              }}
 
-                  slotProps={{
-                    textField: {
-                      helperText: 'Filter Mode: Less Than',
-                      sx: { minWidth: '120px' },
-                      variant: 'standard',
-                    },
-                  }}
+              slotProps={{
+                textField: {
+                  helperText: 'Filter Mode: Less Than',
+                  sx: { minWidth: '120px' },
+                  variant: 'standard',
+                },
+              }}
 
-                  value={column.getFilterValue()}
-                  format="DD-MM-YYYY"
-                />
-              </LocalizationProvider>
-            )
+              value={column.getFilterValue()}
+              format="DD-MM-YYYY"
+            />
+          </LocalizationProvider>
+        )
       },
       {
         accessorKey: 'dateAdded',
         accessorFn: (row) => moment(row.date_added, "DD/MM/YYYY"), //convert to Date for sorting and filtering
-            id: 'dateAdded',
-            header: 'Date Added',
-            filterFn: 'lessThanOrEqualTo',
-            sortingFn: 'datetime',
+        id: 'dateAdded',
+        header: 'Date Added',
+        filterFn: 'lessThanOrEqualTo',
+        sortingFn: 'datetime',
 
-            Cell: ({ cell }) => cell.getValue()?.format('DD/MM/YY'), //render Date as a string
-            Header: ({ column }) => <em>{column.columnDef.header}</em>, //custom header markup
+        Cell: ({ cell }) => cell.getValue()?.format('DD/MM/YY'), //render Date as a string
+        Header: ({ column }) => <em>{column.columnDef.header}</em>, //custom header markup
 
-            //Custom Date Picker Filter from @mui/x-date-pickers
-            Filter: ({ column }) => (
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker
-                  onChange={(newValue) => {
-                    column.setFilterValue(newValue);
-                  }}
+        //Custom Date Picker Filter from @mui/x-date-pickers
+        Filter: ({ column }) => (
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DatePicker
+              onChange={(newValue) => {
+                column.setFilterValue(newValue);
+              }}
 
-                  slotProps={{
-                    textField: {
-                      helperText: 'Filter Mode: Less Than',
-                      sx: { minWidth: '120px' },
-                      variant: 'standard',
-                    },
-                  }}
+              slotProps={{
+                textField: {
+                  helperText: 'Filter Mode: Less Than',
+                  sx: { minWidth: '120px' },
+                  variant: 'standard',
+                },
+              }}
 
-                  value={column.getFilterValue()}
-                  format="DD-MM-YYYY"
-                />
-              </LocalizationProvider>
-            )
+              value={column.getFilterValue()}
+              format="DD-MM-YYYY"
+            />
+          </LocalizationProvider>
+        )
       },
     ],
     [],
@@ -165,13 +165,13 @@ const WantList = () => {
       defaultColumn={{
         minSize: 50,
         maxSize: 500,
-        size: 300, 
+        size: 200,
       }}
 
       //add custom action buttons to top-left of top toolbar
 
       renderBottomToolbarCustomActions={({ table }) => {
-        const handleDelete= () => {
+        const handleDelete = () => {
           table.getSelectedRowModel().flatRows.map((row) => {
             const options = {
               method: 'DELETE',
@@ -192,7 +192,7 @@ const WantList = () => {
           });
         };
 
-        const handleMove= () => {
+        const handleMove = () => {
           table.getSelectedRowModel().flatRows.map((row) => {
             const options = {
               method: 'POST',
@@ -214,27 +214,27 @@ const WantList = () => {
         };
 
         return (
-        <Box sx={{ display: 'flex', gap: '1rem', p: '4px' }}>
-          <Button
-            color="secondary"
-            // For some reason, button is disabled when all rows selected
-            // TODO: find fix
-            disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()}
-            onClick={handleMove}
-            variant="contained"
-          >
-            Move to collections
-          </Button>
+          <Box sx={{ display: 'flex', gap: '1rem', p: '4px' }}>
+            <Button
+              color="secondary"
+              // For some reason, button is disabled when all rows selected
+              // TODO: find fix
+              disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()}
+              onClick={handleMove}
+              variant="contained"
+            >
+              Move to collections
+            </Button>
 
-          <Button
-            color="error"
-            disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()}
-            onClick={handleDelete}
-            variant="contained"
-          >
-            Delete selected
-          </Button>
-        </Box>
+            <Button
+              color="error"
+              disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()}
+              onClick={handleDelete}
+              variant="contained"
+            >
+              Delete selected
+            </Button>
+          </Box>
         );
 
       }}

@@ -497,7 +497,7 @@ def post_trade():
         collection_id
         post_title
         post_description
-        post_images: [] (list of post image urls dictionaries: {name, caption, image})
+        post_images: [] (list of post image urls dictionaries: {caption, image})
 
     """
 
@@ -544,25 +544,42 @@ def tester():
 @jwt_required(fresh=False)
 def tradelist():
     """
-    Displays all the trades listed from the collector
-    that have received an offer of exchange from another collector.
+    Displays all the trades listed from the collector and number of offers made
 
     """
 
     stub_data = {
         "trades_list": [
             {
+                "trade_post_id": 1,
                 "trader_collectible_id": 1,
                 "trader_collectible_name": "Bart with skateboard",  # collectible you're givin away
                 "trader_collectible_img": "https://tse1.mm.bing.net/th?id=OIP.S9zFPgPbF0zJ4OXQkU675AHaHC&pid=Api",  # image of the collectible you're giving away.
+                "trade_post_date": "02/06/2003",
+                "offers_received": 10,
+            }
+        ]
+    }
+
+    return jsonify(stub_data), OK
+
+@APP.route("/trade/list/offers", methods=["GET"])
+@jwt_required(fresh=False)
+def trade_offers_list():
+    """
+    Displays all the trades listed from the collector and number of offers made
+    Takes in trade post id
+
+    """
+
+    stub_data = {
+        "offers_list": [
+            {
                 "offer_id": 1,
-                "offer_collectible_id": 2,
-                "offer_collectible_name": "Stuffed bart",
-                "offer_collectible_img": "https://tse1.mm.bing.net/th?id=OIP.AIizpaWw4l8TtY5fWj66RgHaGr&pid=Api",
-                "offer_collector_id": 3,  # id of the collector sending the offer
-                "offer_profile_img": "https://tse1.mm.bing.net/th?id=OIP.ho7hCKNowRHh7u5wu1aMWQHaF9&pid=Api",  # The profile image of the collector sending the offer
-                "offer_name": "person2",
+                "offer_collectible_name": "Bart with skateboard",  # collectible you're givin away
+                "offer_collectible_img": "https://tse1.mm.bing.net/th?id=OIP.S9zFPgPbF0zJ4OXQkU675AHaHC&pid=Api",  # image of the collectible you're giving away.
                 "offer_made_date": "02/06/2003",
+                "trader_profile_img": "",
             }
         ]
     }
