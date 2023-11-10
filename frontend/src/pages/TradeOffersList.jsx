@@ -29,7 +29,7 @@ const TradeOffersList = () => {
         // call api with data
         const options = {
             method: 'GET',
-            route: "/trade/list/offers?trade_id=${t_id}",
+            route: `/trade/list/offers?trade_id=${t_id}`,
         };
 
         apiCall((d) => {
@@ -137,6 +137,7 @@ const TradeOffersList = () => {
             columns={columns}
             data={data}
             enableRowSelection
+            enableMultiRowSelection={false}
             positionToolbarAlertBanner="bottom" //show selected rows count on bottom toolbar
             initialState={{ columnVisibility: { id: false } }}
             // changes sizing of default columns
@@ -155,10 +156,10 @@ const TradeOffersList = () => {
                             method: 'DELETE',
                             route: "/exchange/decline",
                             body: {
-                                'offer_id': row.getValue('offer_id'),
+                                'offer_id': row.original.offer_id,
                             }
                         };
-                        console.log(row.getValue('offer_id'));
+                        console.log(options)
 
                         apiCall(() => { }, options)
                             .then((res) => {
@@ -176,10 +177,9 @@ const TradeOffersList = () => {
                             method: 'POST',
                             route: "/exchange/accept",
                             body: {
-                                'offer_id': row.getValue('offer_id'),
+                                'offer_id': row.original.offer_id,
                             }
                         };
-                        console.log(row.getValue('id'));
 
                         apiCall(() => { }, options)
                             .then((res) => {
@@ -195,9 +195,7 @@ const TradeOffersList = () => {
                     <Box sx={{ display: 'flex', gap: '1rem', p: '4px' }}>
                         <Button
                             color="secondary"
-                            // For some reason, button is disabled when all rows selected
-                            // TODO: find fix
-                            disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()}
+                            disabled={(!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected())}
                             onClick={handleAccept}
                             variant="contained"
                         >

@@ -123,7 +123,6 @@ const TradeList = () => {
       columns={columns}
       data={data}
       positionToolbarAlertBanner="bottom" //show selected rows count on bottom toolbar
-      initialState={{ columnVisibility: { id: false } }}
       // changes sizing of default columns
       defaultColumn={{
         minSize: 50,
@@ -132,7 +131,7 @@ const TradeList = () => {
       }}
       muiTableBodyRowProps={({ row }) => ({
         onClick: () => {
-          navigate(`/tradelist/offers/${row.original.id}`)
+          navigate(`/tradelist/offers/${row.original.trade_post_id}`)
         },
         sx: { cursor: 'pointer' },
       })}
