@@ -34,7 +34,7 @@ const CollectiblePage = () => {
     // call api with data
     const options = {
       method: 'GET',
-      route: `/trade/get?trade_post_id=${tradepost_id}`,
+      route: `/trade/view?trade_post_id=${tradepost_id}`,
     };
 
     apiCall((d) => {

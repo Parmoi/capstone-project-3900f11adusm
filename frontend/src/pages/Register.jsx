@@ -55,7 +55,7 @@ function Register({ setLogin, setUsername }) {
       body: JSON.stringify({
         email: data.get('email'),
         password: data.get('password'),
-        name: data.get('name'),
+        username: data.get('name'),
       })
     };
 

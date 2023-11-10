@@ -9,7 +9,8 @@ const WidgetUpload = ({ onSuccess }) => {
         cloudinaryRef.current = window.cloudinary;
         widgetRef.current = cloudinaryRef.current.createUploadWidget({
             cloudName: 'ddor5nnks',
-            uploadPreset: 'wwrzhd4r'
+            uploadPreset: 'wwrzhd4r',
+            max_files: '1',
         }, function(error, result) {
             if (result.event === "success") {
                 console.log(result);

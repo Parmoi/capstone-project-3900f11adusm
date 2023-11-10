@@ -117,7 +117,7 @@ function BuyList() {
       positionToolbarAlertBanner="bottom" //show selected rows count on bottom toolbar
       muiTableBodyRowProps={({ row }) => ({
         onClick: () => {
-          navigate(`/trade/view/${row.original.collection_id}`)
+          navigate(`/trade/view/${row.original.trade_post_id}`)
         },
         sx: { cursor: 'pointer' },
       })}
