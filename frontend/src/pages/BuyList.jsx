@@ -117,7 +117,7 @@ function BuyList() {
       positionToolbarAlertBanner="bottom" //show selected rows count on bottom toolbar
       muiTableBodyRowProps={({ row }) => ({
         onClick: () => {
-          navigate(`/trade/view/${row.original.collection_id}`)
+          navigate(`/trade/view/${row.original.trade_post_id}`)
         },
         sx: { cursor: 'pointer' },
       })}
@@ -126,7 +126,7 @@ function BuyList() {
       defaultColumn={{
         minSize: 50,
         maxSize: 500,
-        size: 300, 
+        size: 200, 
       }}
 
       //customize built-in buttons in the top-right of top toolbar

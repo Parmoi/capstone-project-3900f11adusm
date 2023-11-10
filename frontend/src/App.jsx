@@ -22,6 +22,7 @@ import ResultsPage from './pages/ResultPage';
 import BuyList from './pages/BuyList';
 import TradePostPage from './pages/TradePostPage';
 import TradeList from './pages/TradeList';
+import TradeOffersList from './pages/TradeOffersList';
 
 import ManagerHomePage from './pages/Manager/ManagerHomePage';
 import ManagerAnalytics from './pages/Manager/ManagerAnalytics';
@@ -30,7 +31,6 @@ import ManagerPost from './pages/Manager/ManagerPost';
 
 import AdminHomePage from './pages/Admin/AdminHomePage';
 
-import { Navigate } from "react-router-dom";
 import { useState } from 'react';
 
 import {
@@ -79,7 +79,7 @@ const theme = createTheme({
     support: {
       main: "#B4CDED",
     },
-    error : {
+    error: {
       main: "#F46786",
     }
   }
@@ -90,16 +90,15 @@ function App() {
   const [privilege, setPrivilege] = useState(1);
   const [username, setUsername] = useState('');
 
-  function logout () {
+  function logout() {
     const options = {
       method: 'POST',
       route: '/logout',
     };
-    apiCall(() => 
-    {
+    apiCall(() => {
       setLoggedIn(false);
     }
-    , options);
+      , options);
   }
 
   return (
@@ -107,54 +106,47 @@ function App() {
       <ThemeProvider theme={theme}>
         <Helmet bodyAttributes={{ style: 'background-color : #cccccc' }} />
         <Box sx={{ display: 'flex', flexDirection: 'column', rowGap: '10ch', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
-          { !loggedIn
-           ?  <BrowserRouter>
+          {!loggedIn
+            ? <BrowserRouter>
               <SignedOutNav />
               <Routes>
-                <Route path="/" element={<LandingPage/>} />
-                <Route path="/login" element={<SignIn setLogin={setLoggedIn} setPrivilege={setPrivilege} setUsername={setUsername}/>} />
-                <Route path="/register" element={<Register setLogin={setLoggedIn} setUsername={setUsername}/>} />
+                <Route path="/" element={<LandingPage />} />
+                <Route path="/login" element={<SignIn setLogin={setLoggedIn} setPrivelage={setPrivelage} setUsername={setUsername} />} />
+                <Route path="/register" element={<Register setLogin={setLoggedIn} setUsername={setUsername} />} />
               </Routes>
-              </BrowserRouter>
-          : <BrowserRouter>
-            <SignedInNav logout={logout} username={username}/>
-            <Routes>
-              {/* { privilege === 1
-                ? <Route path="/" element={<HomePage/>} />
-                : <Route path="/" element={<ManagerHomePage/>} />
-              } */}
+            </BrowserRouter>
+            : <BrowserRouter>
+              <SignedInNav logout={logout} username={username} />
+              <Routes>
+                { privilege === COLLECTOR && <Route path="/" element={<HomePage/>} />}
+                {/* { (privilege === 2 || privilege === 3) && <Route path="/" element={<ManagerHomePage/>} />} */}
+                { privilege === MANAGER && <Route path="/" element={<ManagerHomePage/>} />}
+                { privilege === ADMIN && <Route path="/" element={<AdminHomePage/>} />}
 
-              { privilege === COLLECTOR && <Route path="/" element={<HomePage/>} />}
-              {/* { (privilege === 2 || privilege === 3) && <Route path="/" element={<ManagerHomePage/>} />} */}
-              { privilege === MANAGER && <Route path="/" element={<ManagerHomePage/>} />}
-              { privilege === ADMIN && <Route path="/" element={<AdminHomePage/>} />}
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/wantlist" element={<WantList />} />
+                <Route path="/collection" element={<CollectionList />} />
+                <Route path="/exchange-history" element={<ExchangeHistory />} />
+                <Route path="/dashboard" element={<span>Dashboard</span>} />
+                <Route path="/dashboard" element={<HomePage />} />
+                <Route path="/offers" element={<OffersList />} />
+                <Route path="/trade" element={<SellPage />} />
+                <Route path="/tradelist" element={<TradeList />} />
+                <Route path="/tradelist/offers/:id" element={<TradeOffersList />} />
+                <Route path='/campaign' element={<Campaign />} />
+                <Route path='/search/:query' element={<ResultsPage />} />
+                <Route path="/collectible/:id" element={<CollectiblePage />} />
+                <Route path="/collectible/buy/:id" element={<BuyList />} />
+                <Route path="/trade/view/:id" element={<TradePostPage />} />
 
+                <Route path="/manager/feedback" element={<ManagerFeedback />} />
+                <Route path="/manager/post" element={<ManagerPost />} />
+                <Route path="/manager/analytics" element={<ManagerAnalytics />} />
 
-              {/* <Route path="/" element={<ManagerHomePage/>} /> */}
+              </Routes>
 
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/wantlist" element={<WantList />} />
-              <Route path="/collection" element={<CollectionList />} />
-              <Route path="/exchange-history" element={<ExchangeHistory />}/>
-              <Route path="/dashboard" element={<span>Dashboard</span>} />
-              <Route path="/dashboard" element={<HomePage/>} />
-              <Route path="/offers" element={<OffersList/>} />
-              <Route path="/trade" element={<SellPage/>} />
-              <Route path="/tradelist" element={<TradeList/>} />
-              <Route path='/campaign' element={<Campaign/>} />
-              <Route path='/search/:query' element={<ResultsPage/>} />
-              <Route path="/collectible/:id" element={<CollectiblePage />} />
-              <Route path="/collectible/buy/:id" element={<BuyList />} />
-              <Route path="/trade/view/:id" element={<TradePostPage />} />
-
-              <Route path="/manager/feedback" element={<ManagerFeedback />} />
-              <Route path="/manager/post" element={<ManagerPost />} />
-              <Route path="/manager/analytics" element={<ManagerAnalytics />} />
-
-            </Routes>
-            
-          </BrowserRouter>
-          } 
+            </BrowserRouter>
+          }
         </Box>
       </ThemeProvider>
     </Fragment>

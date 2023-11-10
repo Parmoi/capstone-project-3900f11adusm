@@ -55,7 +55,7 @@ function Register({ setLogin, setUsername }) {
       body: JSON.stringify({
         email: data.get('email'),
         password: data.get('password'),
-        name: data.get('name'),
+        username: data.get('name'),
       })
     };
 
@@ -83,7 +83,7 @@ function Register({ setLogin, setUsername }) {
           height: '90.8vh', 
           display: "flex", 
           flexDirection: "column", 
-          backgroundImage: `url("https://wallpaper-mania.com/wp-content/uploads/2018/09/High_resolution_wallpaper_background_ID_77700441077.jpg")`, 
+          backgroundImage: `url("https://res.cloudinary.com/ddor5nnks/image/upload/v1699602264/gradient_background_zjdl6a.webp")`, 
           backgroundRepeat: "no-repeat", 
           backgroundSize: "cover", 
           alignItems: 'center', 
