@@ -7,6 +7,11 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 
+
+import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
+import AddTaskIcon from '@mui/icons-material/AddTask';
+import GroupIcon from '@mui/icons-material/Group';
+
 import AssessmentIcon from '@mui/icons-material/Assessment';
 import ForumOutlinedIcon from '@mui/icons-material/ForumOutlined';
 import UploadOutlinedIcon from '@mui/icons-material/UploadOutlined';
@@ -22,11 +27,12 @@ const linkStyle = {
   color: 'Black',
   display: 'span',
   justifyContent: 'center',
+  backgroundColor: 'Green'
 }
 
 const style = {
-  width: '350px',
-  height: '350px',
+  width: '20vw',
+  height: '20vw',
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center', 
@@ -37,43 +43,45 @@ const style = {
 function AdminHomePage() {
   return (
     <ThemeProvider theme={theme}>
-      <Container component="main" sx={{ py: 6, }} maxWidth="lg">
+      <Container component="main" maxWidth="lg" direction="column" justifyContent="center" alignItems="center">
       <CssBaseline/>
-        <Grid container direction="row" justifyContent="flex-end" alignItems="center" spacing={4} sx={{marginTop: '100px'}}>
-          <Grid item xs={4}>
-          <Button aria-label="Manage Managers" style={linkStyle} component={Link} to='/manager/feedback'>
-            <Stack direction="column" spacing={2} sx={style} >
-              <Box component="span">
-                <ForumOutlinedIcon variant="outlined" display="flex" sx={{ width: 150, height: 150, marginTop: "16px"}} />
-              </Box>
-              <Typography variant='h4' sx={{ margin: '20px'}}>Manage Managers</Typography>
-            </Stack>
-            </Button>
-          </Grid>
-
-          <Grid item xs={4}>
-          <Button aria-label="Campaign Approval" style={linkStyle} component={Link} to='/manager/post'>
-            <Stack direction="column" spacing={2} sx={style} >
-              <Box component="span">
-                <UploadOutlinedIcon variant="outlined" display="flex" sx={{ width: 150, height: 150, marginTop: "16px"}} />
-              </Box>
-              <Typography variant='h4' sx={{ margin: '20px'}}>Campaign Approval</Typography>
-            </Stack>
-            </Button>
-          </Grid>
-
-          <Grid item xs={4}>
-          <Button aria-label="Manage Collectors" style={linkStyle} component={Link} to='/manager/analytics'>
-            <Stack direction="column" spacing={2} sx={style} >
+      <Box height="85vh">
+        <Grid container spacing={4} height="100vh" direction="row" justifyContent="center" alignItems="center" sx={{ height: '100%', backgroundColor: "yellow", flexGrow: 1}}>
+          <Grid item xs={4} sx={{backgroundColor: 'Blue'}}>
+            <Button aria-label="Manage Managers" style={linkStyle} component={Link} to='/'>
+              <Stack direction="column" justifyContent='center' spacing={2} sx={style} >
                 <Box component="span">
-                  <AssessmentIcon variant="outlined" display="flex" sx={{ width: 150, height: 150, marginTop: "16px",}} />
+                  <ManageAccountsIcon variant="outlined" display="flex" sx={{ width: '14vw', height: '14vw', marginTop: "16px"}} />
                 </Box>
-                <Typography variant='h4' sx={{ margin: '20px'}}>Manage Collectors</Typography>
-            </Stack>
+                <Typography variant='h4' fontSize='1.6vw'>Manage Managers</Typography>
+              </Stack>
+            </Button>
+          </Grid>
+
+          <Grid item xs={4} sx={{backgroundColor: 'orange'}}>
+            <Button aria-label="Campaign Approval" style={linkStyle} component={Link} to='/'>
+              <Stack direction="column" justifyContent='center' spacing={2} sx={style} >
+                <Box component="span">
+                  <AddTaskIcon variant="outlined" display="flex" sx={{ width: '14vw', height: '14vw', marginTop: "16px"}} />
+                </Box>
+                  <Typography variant='h4' fontSize='1.6vw'>Campaign Approval</Typography>
+              </Stack>
+            </Button>
+          </Grid>
+
+          <Grid item xs={4} sx={{backgroundColor: 'red'}}>
+            <Button aria-label="Manage Collectors" style={linkStyle} component={Link} to='/'>
+              <Stack direction="column" justifyContent='center' spacing={2} sx={style} backgrounColor='blue'>
+                <Box component="span">
+                  <GroupIcon variant="outlined" display="flex" sx={{ width: '14vw', height: '14vw', marginTop: "16px",}} />
+                </Box>
+                  <Typography variant='h4' fontSize='1.6vw' >Manage Collectors</Typography>
+              </Stack>
             </Button>
           </Grid>
 
         </Grid>
+      </Box>
       </Container>
     </ThemeProvider>
   );

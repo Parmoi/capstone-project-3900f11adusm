@@ -25,8 +25,8 @@ const linkStyle = {
 }
 
 const style = {
-  width: '350px',
-  height: '350px',
+  width: '20vw',
+  height: '20vw',
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center', 
@@ -36,44 +36,87 @@ const style = {
 
 function ManagerHomePage() {
   return (
+    // <ThemeProvider theme={theme}>
+    //   <Container component="main" sx={{ py: 6, }} maxWidth="lg">
+    //   <CssBaseline/>
+    //     <Grid container direction="row" justifyContent="flex-end" alignItems="center" spacing={4} sx={{marginTop: '100px'}}>
+    //       <Grid item xs={4}>
+    //       <Button aria-label="collecter feedback" style={linkStyle} component={Link} to='/manager/feedback'>
+    //         <Stack direction="column" spacing={2} sx={style} >
+    //           <Box component="span">
+    //             <ForumOutlinedIcon variant="outlined" display="flex" sx={{ width: 150, height: 150, marginTop: "16px"}} />
+    //           </Box>
+    //           <Typography variant='h4' sx={{ margin: '20px'}}>Feedback</Typography>
+    //         </Stack>
+    //         </Button>
+    //       </Grid>
+
+    //       <Grid item xs={4}>
+    //       <Button aria-label="post campaign" style={linkStyle} component={Link} to='/manager/post'>
+    //         <Stack direction="column" spacing={2} sx={style} >
+    //           <Box component="span">
+    //             <UploadOutlinedIcon variant="outlined" display="flex" sx={{ width: 150, height: 150, marginTop: "16px"}} />
+    //           </Box>
+    //           <Typography variant='h4' sx={{ margin: '20px'}}>Post Campaign</Typography>
+    //         </Stack>
+    //         </Button>
+    //       </Grid>
+
+    //       <Grid item xs={4}>
+    //       <Button aria-label="analytics" style={linkStyle} component={Link} to='/manager/analytics'>
+    //         <Stack direction="column" spacing={2} sx={style} >
+    //             <Box component="span">
+    //               <AssessmentIcon variant="outlined" display="flex" sx={{ width: 150, height: 150, marginTop: "16px",}} />
+    //             </Box>
+    //             <Typography variant='h4' sx={{ margin: '20px'}}>Analytics</Typography>
+    //         </Stack>
+    //         </Button>
+    //       </Grid>
+
+    //     </Grid>
+    //   </Container>
+    // </ThemeProvider>
+
     <ThemeProvider theme={theme}>
-      <Container component="main" sx={{ py: 6, }} maxWidth="lg">
+      <Container component="main" maxWidth="lg" direction="column" justifyContent="center" alignItems="center">
       <CssBaseline/>
-        <Grid container direction="row" justifyContent="flex-end" alignItems="center" spacing={4} sx={{marginTop: '100px'}}>
-          <Grid item xs={4}>
-          <Button aria-label="collecter feedback" style={linkStyle} component={Link} to='/manager/feedback'>
-            <Stack direction="column" spacing={2} sx={style} >
-              <Box component="span">
-                <ForumOutlinedIcon variant="outlined" display="flex" sx={{ width: 150, height: 150, marginTop: "16px"}} />
-              </Box>
-              <Typography variant='h4' sx={{ margin: '20px'}}>Feedback</Typography>
-            </Stack>
-            </Button>
-          </Grid>
+        <Box height="90vh" mr={4}>
+          <Grid container height="100vh" direction="row" justifyContent="center" alignItems="center" spacing={12} sx={{ height: '100%'}}>
+            <Grid item xs={4}>
+              <Button aria-label="collecter feedback" style={linkStyle} component={Link} to='/'>
+                <Stack direction="column" justifyContent='center' spacing={2} sx={style} >
+                  <Box component="span">
+                    <ForumOutlinedIcon variant="outlined" display="flex" sx={{ width: '14vw', height: '14vw', marginTop: "16px"}} />
+                  </Box>
+                  <Typography variant='h4' fontSize='1.6vw' sx={{ margin: '20px'}}>Collecter Feedback</Typography>
+                </Stack>
+              </Button>
+            </Grid>
 
-          <Grid item xs={4}>
-          <Button aria-label="post campaign" style={linkStyle} component={Link} to='/manager/post'>
-            <Stack direction="column" spacing={2} sx={style} >
-              <Box component="span">
-                <UploadOutlinedIcon variant="outlined" display="flex" sx={{ width: 150, height: 150, marginTop: "16px"}} />
-              </Box>
-              <Typography variant='h4' sx={{ margin: '20px'}}>Post Campaign</Typography>
-            </Stack>
-            </Button>
-          </Grid>
+            <Grid item xs={4}>
+              <Button aria-label="Post Campaign" style={linkStyle} component={Link} to='/'>
+                <Stack direction="column" justifyContent='center' spacing={2} sx={style} >
+                  <Box component="span">
+                    <UploadOutlinedIcon variant="outlined" display="flex" sx={{ width: '14vw', height: '14vw', marginTop: "16px"}} />
+                  </Box>
+                    <Typography variant='h4' fontSize='1.6vw' sx={{ margin: '20px'}}>Post Campaign</Typography>
+                </Stack>
+              </Button>
+            </Grid>
 
-          <Grid item xs={4}>
-          <Button aria-label="analytics" style={linkStyle} component={Link} to='/manager/analytics'>
-            <Stack direction="column" spacing={2} sx={style} >
-                <Box component="span">
-                  <AssessmentIcon variant="outlined" display="flex" sx={{ width: 150, height: 150, marginTop: "16px",}} />
-                </Box>
-                <Typography variant='h4' sx={{ margin: '20px'}}>Analytics</Typography>
-            </Stack>
-            </Button>
-          </Grid>
+            <Grid item xs={4}>
+              <Button aria-label="Analytics" style={linkStyle} component={Link} to='/'>
+                <Stack direction="column" justifyContent='center' spacing={2} sx={style} backgrounColor='blue'>
+                  <Box component="span">
+                    <AssessmentIcon variant="outlined" display="flex" sx={{ width: '14vw', height: '14vw', marginTop: "16px",}} />
+                  </Box>
+                    <Typography variant='h4' fontSize='1.6vw'  sx={{ margin: '20px'}}>Analytics</Typography>
+                </Stack>
+              </Button>
+            </Grid>
 
-        </Grid>
+          </Grid>
+        </Box>
       </Container>
     </ThemeProvider>
   );
