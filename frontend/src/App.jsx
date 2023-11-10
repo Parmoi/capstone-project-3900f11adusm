@@ -23,10 +23,12 @@ import BuyList from './pages/BuyList';
 import TradePostPage from './pages/TradePostPage';
 import TradeList from './pages/TradeList';
 
-import ManagerHomePage from './pages/ManagerHomePage';
-import ManagerAnalytics from './pages/ManagerAnalytics';
-import ManagerFeedback from './pages/ManagerFeedback';
-import ManagerPost from './pages/ManagerPost';
+import ManagerHomePage from './pages/Manager/ManagerHomePage';
+import ManagerAnalytics from './pages/Manager/ManagerAnalytics';
+import ManagerFeedback from './pages/Manager/ManagerFeedback';
+import ManagerPost from './pages/Manager/ManagerPost';
+
+import AdminHomePage from './pages/Admin/AdminHomePage';
 
 import { Navigate } from "react-router-dom";
 import { useState } from 'react';
@@ -37,7 +39,6 @@ import {
   Route,
 } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
-import AdminHomePage from './pages/AdminHomePage';
 
 const PORT = 5000;
 
