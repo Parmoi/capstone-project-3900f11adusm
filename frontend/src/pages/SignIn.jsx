@@ -29,7 +29,7 @@ const getUsername = (setUsername) => {
     });
 }
 
-function SignIn({ setLogin, setPrivelage, setUsername }) {
+function SignIn({ setLogin, setPrivilege, setUsername }) {
   const [error, setError] = React.useState(false);
   const [errContent, setErrContent] = React.useState('');
   const navigate = useNavigate();
@@ -50,7 +50,7 @@ function SignIn({ setLogin, setPrivelage, setUsername }) {
 
     apiCall((d) => {
       setLogin(true);
-      setPrivelage(parseInt(d.privelage));
+      setPrivilege(parseInt(d.privelage));
       getUsername(setUsername);
     }, options)
       .then((res) => {
