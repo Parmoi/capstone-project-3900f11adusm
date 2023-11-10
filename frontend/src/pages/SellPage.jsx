@@ -1,7 +1,7 @@
 import * as React from 'react';
 import SellStepper from "../components/Stepper";
 import Typography from '@mui/material/Typography';
-import { Box, Button } from '@mui/material';
+import { Box, Button, Grid } from '@mui/material';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
@@ -12,6 +12,8 @@ import Alert from '@mui/material/Alert';
 import { apiCall } from '../App';
 import WidgetUpload from '../components/WidgetUpload';
 import { useNavigate } from 'react-router-dom';
+import CaptionModal from '../components/CaptionModal';
+import ImageList from '../components/ImageCaptionList';
 
 const SellPage = () => {
     const [collectibleID, setCollectibleID] = React.useState('');
@@ -23,7 +25,11 @@ const SellPage = () => {
     const [isTitleAdded, setIsTitleAdded] = React.useState(false);
     const [isDescAdded, setIsDescAdded] = React.useState(false);
     const [emptyCollection, setEmptyCollection] = React.useState(false);
+    const [offerOpen, setOfferOpen] = React.useState(false);
+    const handleOfferClose = () => setOfferOpen(false);
+
     const navigate = useNavigate();
+    
 
     const fetchData = () => {
         // call api with data
@@ -48,6 +54,10 @@ const SellPage = () => {
     React.useEffect(() => {
         fetchData();
     }, []);
+
+    React.useEffect(() => {
+        console.log(images);
+    }, [images]);
 
     const SelectCollectible = () => {
 
@@ -137,12 +147,18 @@ const SellPage = () => {
 
     const AddImages = () => {
         const handleImageURL = (url) => {
-            const newList = images.concat(url);
+            const newList = images.concat({'image': url, 'caption': ''});
             setImages(newList);
+            setOfferOpen(true);
         }
 
         return (
             <Box sx={{ height: '100%' }}>
+                {/* Gets last image and adds caption */}
+                <CaptionModal image={images.length === 0 ? '' : images[images.length - 1].image} setImageCaptions={(caption) => {
+                    images.at(-1).caption = caption;
+                    console.log(images.at(-1).caption);
+                }} open={offerOpen} handleClose={handleOfferClose}/>
                 <Typography variant='h5' mb='50px'>Add images of your collectible:</Typography>
                 <WidgetUpload onSuccess={handleImageURL} />
             </Box>
@@ -175,27 +191,39 @@ const SellPage = () => {
         }
 
         function dataError() {
-            return (collectibleName === '' || title === '' || description === '');
+            return (collectibleName === '' || title === '' || description === '' || images.length === 0);
         }
 
         return (
             <Box sx={{ height: '100%' }}>
-                <Typography variant='h5' mb='50px'>Check new trade post</Typography>
-                <FormControl fullWidth>
-                    <TextField label="Collectible Name" variant="standard" aria-disabled value={collectibleName} sx={{ mb: '30px' }} />
-                    <TextField label="Title" variant="standard" aria-disabled value={title} sx={{ mb: '30px' }} />
-                    <TextField
-                        id="outlined-multiline-static"
-                        label="Description"
-                        multiline
-                        rows={3}
-                        aria-disabled
-                        value={description}
-                        sx={{ mb: '10px' }}
-                    />
-                    {dataError() ? <Alert severity='error' sx={{ mb: '10px' }}>Missing some fields!</Alert> : <></>}
-                    <Button variant='contained' disabled={dataError()} onClick={postData}>POST</Button>
-                </FormControl>
+                <Grid container spacing={12} sx={{ display: 'flex', justifyContent: 'center' }}>
+                    {/* <Grid item xs={}></Grid> */}
+                    {/* <Grid item xs={12}>
+                        <Typography variant='h5' mb='50px'>Check new trade post</Typography>
+                    </Grid> */}
+                    <Grid item xs={6}>
+                        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                            <TextField label="Collectible Name" variant="standard" aria-disabled value={collectibleName} sx={{ mb: '50px' }} />
+                            <TextField label="Title" variant="standard" aria-disabled value={title} sx={{ mb: '50px' }} />
+                            <TextField
+                                id="outlined-multiline-static"
+                                label="Description"
+                                multiline
+                                rows={3}
+                                aria-disabled
+                                value={description}
+                                sx={{ mb: '10px' }}
+                            />
+                            {dataError() ? <Alert severity='error' sx={{ mb: '10px' }}>Missing some fields!</Alert> : <></>}
+                        </Box>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <ImageList itemData={images}/>
+                    </Grid>
+                    <Grid item xs={3}>
+                        <Button variant='contained' disabled={dataError()} onClick={postData}>POST</Button>
+                    </Grid>
+                </Grid>
             </Box>
         );
     }
