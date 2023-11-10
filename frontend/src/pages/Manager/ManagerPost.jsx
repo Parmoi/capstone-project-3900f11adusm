@@ -1,11 +1,11 @@
 import * as React from 'react';
-import CampaignStepper from "../components/CampaignStepper";
+import CampaignStepper from "../../components/CampaignStepper";
 import Typography from '@mui/material/Typography';
 import { Box, Button } from '@mui/material';
 import FormControl from '@mui/material/FormControl';
 import TextField from '@mui/material/TextField';
 
-import { apiCall } from '../App';
+import { apiCall } from '../../App';
 import { useNavigate } from 'react-router-dom';
 
 const ManagerPost = () => {
