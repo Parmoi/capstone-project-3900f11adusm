@@ -37,8 +37,13 @@ import {
   Route,
 } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
+import AdminHomePage from './pages/AdminHomePage';
 
 const PORT = 5000;
+
+const COLLECTOR = 1;
+const MANAGER = 2;
+const ADMIN = 3;
 
 export async function apiCall(onSuccess, options, ...optional) {
   const url = `http://localhost:${PORT}${options.route}`;
@@ -81,7 +86,7 @@ const theme = createTheme({
 
 function App() {
   const [loggedIn, setLoggedIn] = React.useState(false);
-  const [privelage, setPrivelage] = useState(1);
+  const [privilege, setPrivilege] = useState(1);
   const [username, setUsername] = useState('');
 
   function logout () {
@@ -106,17 +111,23 @@ function App() {
               <SignedOutNav />
               <Routes>
                 <Route path="/" element={<LandingPage/>} />
-                <Route path="/login" element={<SignIn setLogin={setLoggedIn} setPrivelage={setPrivelage} setUsername={setUsername}/>} />
+                <Route path="/login" element={<SignIn setLogin={setLoggedIn} setPrivilege={setPrivilege} setUsername={setUsername}/>} />
                 <Route path="/register" element={<Register setLogin={setLoggedIn} setUsername={setUsername}/>} />
               </Routes>
               </BrowserRouter>
           : <BrowserRouter>
             <SignedInNav logout={logout} username={username}/>
             <Routes>
-              { privelage === 1
+              {/* { privilege === 1
                 ? <Route path="/" element={<HomePage/>} />
                 : <Route path="/" element={<ManagerHomePage/>} />
-              }
+              } */}
+
+              { privilege === COLLECTOR && <Route path="/" element={<HomePage/>} />}
+              {/* { (privilege === 2 || privilege === 3) && <Route path="/" element={<ManagerHomePage/>} />} */}
+              { privilege === MANAGER && <Route path="/" element={<ManagerHomePage/>} />}
+              { privilege === ADMIN && <Route path="/" element={<AdminHomePage/>} />}
+
 
               {/* <Route path="/" element={<ManagerHomePage/>} /> */}
 
