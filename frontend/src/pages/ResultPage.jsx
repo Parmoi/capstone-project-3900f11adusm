@@ -25,67 +25,42 @@ function ResultsPage() {
   const { query } = useParams();
   const [results, setResults] = useState([]);
 
-  // const fetchData = () => {
-  //   const options = {
-  //     method: 'GET',
-  //     route: '/search/:query'
-  //   };
-  //   apiCall((d) => {
-  //     setResults(d["collectibles"]);
-  //   }, options)
-  //   ;
-  // }
-  const storedData = [
-    {
-      id: 1,
-      campaign_name: "random",
-      collectible_description: "hahahahahah!",
-      collectible_image: "https://tse1.mm.bing.net/th?id=OIP.qVV8kcLdcLysZ5OOCzhKLAHaF7&pid=Api",
-      collectible_name: "new_collectible!",
-      date_released: "30/12/2020"
-    },
-    {
-      id: 2,
-      campaign_name: "random",
-      collectible_description: "hahahahahah!",
-      collectible_image: "https://tse3.mm.bing.net/th?id=OIP.JqWjPHsW5aJIZDnPYMGovQHaJQ&pid=Api",
-      collectible_name: "banana",
-      date_released: "30/12/2020"
-    },
-    {
-      id: 3,
-      campaign_name: "random",
-      collectible_description: "hahahahahah!",
-      collectible_image: "https://tse3.mm.bing.net/th?id=OIP.6761X25CX3UUjklkDCnjSwHaHa&pid=Api",
-      collectible_name: "apple",
-      date_released: "30/12/2020"
-    },
-  ]
+  const fetchData = (query_str) => {
+    const options = {
+      method: "GET",
+      route: "/search"
+    };
+    apiCall((d) => {
+      if (query_str === undefined) {
+        setResults(d.collectibles);
+      }
+      else {
+        const searchKey = d.collectibles.map(item => item.collectible_name);
+        const searchResults = searchKey.filter(str =>
+          str.toLowerCase().includes(query_str.toString().toLowerCase())
+        );
+
+        const filteredData = d.collectibles.filter(item => searchResults.includes(item.collectible_name));
+
+        setResults(filteredData);
+      }
+
+    }, options)
+    ;
+  }
 
 
   useEffect(() => {
-    const searchKey = storedData.map(item => item.collectible_name)
-    const searchResults = searchKey.filter((str) =>
-      str.toLowerCase().includes(query.toLowerCase())
-    );
-    setResults(searchResults);
+    fetchData(query);
   }, [query]);
-
-  const filteredData = storedData.filter(item => results.includes(item.collectible_name));
-
 
   const navigate = useNavigate();
 
   const columns = useMemo(
-    //column definitions...
     () => [
       {
-        accessorKey: 'id',
-        header: 'collectible id',
-      },
-      {
         accessorKey: 'collectible_image',
-        header: 'Image Placeholder',
+        header: 'Collectible Image',
         Cell: ({ row }) => (
           <Box
             sx={{
@@ -109,7 +84,7 @@ function ResultsPage() {
       },
       {
         accessorKey: 'collectible_name',
-        header: 'Name',
+        header: 'Collectible Name',
       },
       {
         accessorKey: 'campaign_name',
@@ -125,17 +100,13 @@ function ResultsPage() {
       },
     ],
     [],
-    //end
   );
 
   return (
-    //   <div style={{textAlign: 'left'}}>
-    //     <h1 >Results for "{query}"</h1>
-    //   </div>
     <MaterialReactTable
       title="ResultsList"
       columns={columns}
-      data={filteredData}
+      data={results}
       positionToolbarAlertBanner="bottom" //show selected rows count on bottom toolbar
       muiTableBodyRowProps={({ row }) => ({
         onClick: () => {
@@ -156,7 +127,6 @@ function ResultsPage() {
       renderToolbarInternalActions={({ table }) => (
 
         <Box>
-          {/* add custom button to print table  */}
           <MRT_ToggleDensePaddingButton table={table} />
           <MRT_FullScreenToggleButton table={table} />
         </Box>
