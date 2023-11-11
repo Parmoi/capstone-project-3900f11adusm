@@ -21,21 +21,24 @@ import {
 import { Box, Button, IconButton } from '@mui/material';
 import { apiCall } from "../App";
 
+
 function ResultsPage() {
     const { query } = useParams();
     const [results, setResults] = useState([]);
 
-    // const fetchData = () => {
-    //   const options = {
-    //     method: 'GET',
-    //     route: '/search/:query'
-    //   };
-    //   apiCall((d) => {
-    //     setResults(d["collectibles"]);
-    //   }, options)
-    //   ;
-    // }
-      const storedData =  [
+    const fetchData = () => {
+      const options = {
+        method: 'GET',
+        route: "/search"
+      };
+      apiCall((d) => {
+        console.log(d)
+        setResults(d.collectibles);
+      }, options);
+    }
+
+
+      const storeData =  [
         {
             id: 1,
             campaign_name: "random",
@@ -61,17 +64,36 @@ function ResultsPage() {
           date_released: "30/12/2020"
         },
       ]
+      
+      
     
     
     useEffect(() => {
+      fetchData();
+      let storedData = []
+      
+      storedData = results
+      console.log(storedData)
       const searchKey = storedData.map(item => item.collectible_name)
-      const searchResults = searchKey.filter((str) =>
-        str.toLowerCase().includes(query.toLowerCase())
+      console.log(searchKey)
+      console.log(query)
+
+      const searchResults = searchKey.filter(str =>
+        str.toLowerCase().includes(query.toString().toLowerCase())
       );
-      setResults(searchResults);
+      // let searchKe = ['apple', 'banana']
+      // let quer = 'ap'
+      // let searchResults = searchKe.filter(str =>
+      //   str.toLowerCase().includes(quer.toLowerCase())
+      //   );
+      
+      console.log(searchResults)
+      
+      const filteredData = storedData.filter(item => searchResults.includes(item.collectible_name));
+      setResults(filteredData)
     }, [query]);
 
-    const filteredData = storedData.filter(item => results.includes(item.collectible_name));
+    
 
 
     const navigate = useNavigate();
@@ -135,7 +157,7 @@ function ResultsPage() {
     <MaterialReactTable
     title="Wantlist"
     columns={columns}
-    data={filteredData}
+    data={results}
     enableRowSelection
     positionToolbarAlertBanner="bottom" //show selected rows count on bottom toolbar
     muiTableBodyRowProps={({ row }) => ({
