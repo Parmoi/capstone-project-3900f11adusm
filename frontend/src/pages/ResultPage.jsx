@@ -25,21 +25,19 @@ function ResultsPage() {
   const { query } = useParams();
   const [results, setResults] = useState([]);
 
-  const fetchData = () => {
+  const fetchData = (query_str) => {
     const options = {
       method: "GET",
       route: "/search"
     };
     apiCall((d) => {
-      console.log('query')
-      console.log('query: "', query, '"');
-      if (query === undefined) {
+      if (query_str === undefined) {
         setResults(d.collectibles);
       }
       else {
         const searchKey = d.collectibles.map(item => item.collectible_name);
         const searchResults = searchKey.filter(str =>
-          str.toLowerCase().includes(query.toString().toLowerCase())
+          str.toLowerCase().includes(query_str.toString().toLowerCase())
         );
 
         const filteredData = d.collectibles.filter(item => searchResults.includes(item.collectible_name));
@@ -53,8 +51,8 @@ function ResultsPage() {
 
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    fetchData(query);
+  }, [query]);
 
   const navigate = useNavigate();
 
