@@ -1,5 +1,5 @@
 import * as React from 'react';
-import CampaignStepper from "../../components/CampaignStepper";
+import CampaignStepper from "../../components/CampaignPostStepper";
 import Typography from '@mui/material/Typography';
 import { Box, Button } from '@mui/material';
 import FormControl from '@mui/material/FormControl';
