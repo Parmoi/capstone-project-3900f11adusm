@@ -43,7 +43,7 @@ function AdminHomePage() {
       <Box height="85vh">
         <Grid container spacing={4} height="100vh" direction="row" justifyContent="center" alignItems="center" sx={{ height: '100%',}}>
           <Grid item xs={4} sx={{margin: 'auto'}}>
-            <Button aria-label="Manage Managers" style={linkStyle} component={Link} to='/'>
+            <Button aria-label="Manage Managers" style={linkStyle} component={Link} to='/manage/managers'>
               <Stack direction="column" justifyContent='center' spacing={2} sx={style} >
                 <Box component="span">
                   <ManageAccountsIcon variant="outlined" display="flex" sx={{ width: '14vw', height: '14vw', marginTop: "16px"}} />
@@ -54,7 +54,7 @@ function AdminHomePage() {
           </Grid>
 
           <Grid item xs={4} sx={{margin: 'auto'}}>
-            <Button aria-label="Campaign Approval" style={linkStyle} component={Link} to='/'>
+            <Button aria-label="Campaign Approval" style={linkStyle} component={Link} to='/campaign/approval'>
               <Stack direction="column" justifyContent='center' spacing={2} sx={style} >
                 <Box component="span">
                   <AddTaskIcon variant="outlined" display="flex" sx={{ width: '14vw', height: '14vw', marginTop: "16px"}} />
@@ -65,7 +65,7 @@ function AdminHomePage() {
           </Grid>
 
           <Grid item xs={4} sx={{margin: 'auto'}}>
-            <Button aria-label="Manage Collectors" style={linkStyle} component={Link} to='/'>
+            <Button aria-label="Manage Collectors" style={linkStyle} component={Link} to='/manage/collectors'>
               <Stack direction="column" justifyContent='center' spacing={2} sx={style} backgrounColor='blue'>
                 <Box component="span">
                   <GroupIcon variant="outlined" display="flex" sx={{ width: '14vw', height: '14vw', marginTop: "16px",}} />
