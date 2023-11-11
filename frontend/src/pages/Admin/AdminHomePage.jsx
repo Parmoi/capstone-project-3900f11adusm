@@ -66,7 +66,7 @@ function AdminHomePage() {
 
           <Grid item xs={4} sx={{margin: 'auto'}}>
             <Button aria-label="Manage Collectors" style={linkStyle} component={Link} to='/manage/collectors'>
-              <Stack direction="column" justifyContent='center' spacing={2} sx={style} backgrounColor='blue'>
+              <Stack direction="column" justifyContent='center' spacing={2} sx={style}>
                 <Box component="span">
                   <GroupIcon variant="outlined" display="flex" sx={{ width: '14vw', height: '14vw', marginTop: "16px",}} />
                 </Box>
