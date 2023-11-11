@@ -126,7 +126,7 @@ function BuyList() {
       defaultColumn={{
         minSize: 50,
         maxSize: 500,
-        size: 300, 
+        size: 200, 
       }}
 
       //customize built-in buttons in the top-right of top toolbar
