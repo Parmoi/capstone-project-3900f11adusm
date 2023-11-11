@@ -30,6 +30,9 @@ import ManagerFeedback from './pages/Manager/ManagerFeedback';
 import ManagerPost from './pages/Manager/ManagerPost';
 
 import AdminHomePage from './pages/Admin/AdminHomePage';
+import AdminManageManagers from './pages/Admin/AdminManageManagers';
+import AdminCampaignApproval from './pages/Admin/AdminCampaignApproval';
+import AdminManageCollectors from './pages/Admin/AdminManageCollectors';
 
 import { useState } from 'react';
 
@@ -142,6 +145,10 @@ function App() {
                 <Route path="/manager/feedback" element={<ManagerFeedback />} />
                 <Route path="/manager/post" element={<ManagerPost />} />
                 <Route path="/manager/analytics" element={<ManagerAnalytics />} />
+
+                <Route path='/manage/managers' element={<AdminManageManagers/>} />
+                <Route path='/campaign/approval' element={<AdminCampaignApproval/>} />
+                <Route path='/manage/collectors' element={<AdminManageCollectors/>} />
 
               </Routes>
 
