@@ -98,20 +98,20 @@ def get_current_trade_posts(collector_id):
     Example Output:
         [
             {
-                "collectible_name": "Iguana iguana",
-                "collection_id": 501,
-                "image": "https://robohash.org/similiquenemoaut.png?size=50x50&set=set1",
-                "location": "696 Londonderry Avenue",
-                "trader_name": "uso",
-                "trader_profile_img": "https://robohash.org/utomniseos.png?size=50x50&set=set1"
+                "trade_post_id": 1,
+                "trader_collection_id": 501
+                "trader_collectible_name": "Iguana iguana",
+                "trader_collectible_img": "https://robohash.org/similiquenemoaut.png?size=50x50&set=set1",
+                "trade_post_date": "10/11/2023",
+                "offers_received": 2,
             },
             {
-                "collectible_name": "Superman (Holo)",
-                "collection_id": 200,
-                "image": "https://robohash.org/similiquenemoaut.png?size=50x50&set=set1",
-                "location": "696 Londonderry Avenue",
-                "trader_name": "uso",
-                "trader_profile_img": "https://robohash.org/utomniseos.png?size=50x50&set=set1"
+                "trade_post_id": 2,
+                "trader_collection_id": 503
+                "trader_collectible_name": "Superman (Holo)",
+                "trader_collectible_img": "https://robohash.org/similiquenemoaut.png?size=50x50&set=set1",
+                "trade_post_date": "05/11/2023",
+                "offers_received": 4,
             },
         ]
     """
@@ -122,23 +122,28 @@ def get_current_trade_posts(collector_id):
     ctn = db.Table("collections", metadata, autoload_with=engine)
     cbl = db.Table("collectibles", metadata, autoload_with=engine)
     ctr = db.Table("collectors", metadata, autoload_with=engine)
+    to = db.Table("trade_offers", metadata, autoload_with=engine)
 
     join = db.join(tp, ctn, 
         (tp.c.collection_id == ctn.c.id) &
         (tp.c.collector_id == collector_id)).join(cbl, 
         (ctn.c.collectible_id == cbl.c.id)).join(ctr,
-        (tp.c.collector_id == ctr.c.id))
+        (tp.c.collector_id == ctr.c.id)).join(to,
+        (to.c.trade_post_id == tp.c.id), isouter=True)
 
     select_stmt = (
         db.select(
-            ctn.c.id.label("collection_id"),
-            cbl.c.image.label("image"),
-            cbl.c.name.label("collectible_name"),
-            ctr.c.username.label("trader_name"),
-            ctr.c.profile_picture.label("trader_profile_img"),
-            ctr.c.address.label("location"),
+            tp.c.id.label("trade_post_id"),
+            ctn.c.id.label("trader_collection_id"),
+            cbl.c.name.label("trader_collectible_name"),
+            tp.c.post_date.label("trade_post_date"),
+            cbl.c.image.label("trader_collectible_img"),
+            db.func.count(to.c.id).label("offers_received")
+        ).group_by(
+            tp.c.id, ctn.c.id, cbl.c.name, tp.c.post_date, cbl.c.image
         ).select_from(join)
     )
+
     trade_posts = db_helpers.rows_to_list(conn.execute(select_stmt).fetchall())
     conn.close()
 
@@ -154,7 +159,7 @@ def get_trade_post_info(trade_post_id):
     Returns:
         JSON, int: JSON holds trade post information, int of error code
 
-    Expected Output:
+    Example Output:
         {
             "post_title":"random post!",
             "post_description":"random desc!",

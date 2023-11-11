@@ -118,6 +118,7 @@ def database_setup():
         db.Column("collection_send_id", db.Integer, db.ForeignKey("collections.id")),
         db.Column("trade_receiver_id", db.Integer, db.ForeignKey("collectors.id")),
         db.Column("collection_receive_id", db.Integer, db.ForeignKey("collections.id")),
+        db.Column("offer_status", db.String),
         db.Column("date_offered", db.DATE)
     )
 

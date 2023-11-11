@@ -526,6 +526,8 @@ def get_tradepost():
 @APP.route("/tester")
 def tester():
     db_collections.insert_collectible(1, 2)
+    db_collections.insert_collectible(2, 3)
+    db_collections.insert_collectible(3, 5)
     db_tradeposts.insert_trade_post(1, 501, "random post!", "random desc!", [{
                 "name": "1",
                 "caption": "Bart with skateboard.",
@@ -536,9 +538,11 @@ def tester():
                 "caption": "Stuffed bart.",
                 "image": "https://tse1.mm.bing.net/th?id=OIP.AIizpaWw4l8TtY5fWj66RgHaGr&pid=Api",
             }])
-    # return db_tradeposts.get_trade_posts(2)
-    # return db_tradeposts.get_trade_post_info(1)
-    return db_tradeposts.get_current_trade_posts(1)
+    db_tradeoffers.register_trade_offer(1, 2, 502, 1, 501)
+    db_tradeoffers.register_trade_offer(1, 3, 503, 1, 501)
+    # return db_tradeposts.get_current_trade_posts(1)
+    # return db_tradeoffers.find_tradelist_offers(1) # find trade going to id 1
+    return db_tradeoffers.find_outgoing_offers(2)
 
 @APP.route("/trade/list", methods=["GET"])
 @jwt_required(fresh=False)
