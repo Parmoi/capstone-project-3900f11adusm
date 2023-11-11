@@ -77,3 +77,28 @@ waiting for the backend and the backend had a clear definitive method
 of knowing what the structure of the return should be. Other than the above
 I've spent the week looking over and reviewing PRs of other members in the 
 team.
+
+
+Week 8
+
+This week we finished off the main content for Sprint 2. I finished off the 
+exchange history page and did some implementation for trade offers and trade 
+posts. I also created the manager home page and after talking with Greg, we
+figured out how to handle account privileges for Admins and Managers. I 
+then produced the pages for posting campaigns, viewing campaign analytics and
+viewing collector feedback for campaigns.
+
+
+Week 9
+
+As scrum master, I re-adjusted our sprint 3 backlog to adapt to the changing
+requirements and other alterations that came about from the development process
+and understanding with the client. I also communicated with the team on what 
+we need to complete in the final sprint and some issues with the web application
+that needed addressing from the last 2 sprints. During the week, I started work 
+on the Admin pages and re-adjusted our method for handling user privileges and 
+connecting them to the correct admin page. I worked out on what the Admin should 
+be able to see and what functionality they required.
+
+I divided up work for the team, assigning each member set tasks. I fixed the 
+search functionality in our frontend.
