@@ -138,6 +138,7 @@ function App() {
                 <Route path="/tradelist/offers/:id" element={<TradeOffersList />} />
                 <Route path='/campaign' element={<Campaign />} />
                 <Route path='/search/:query' element={<ResultsPage />} />
+                <Route path='search/' element={<ResultsPage/>} />
                 <Route path="/collectible/:id" element={<CollectiblePage />} />
                 <Route path="/collectible/buy/:id" element={<BuyList />} />
                 <Route path="/trade/view/:id" element={<TradePostPage />} />
