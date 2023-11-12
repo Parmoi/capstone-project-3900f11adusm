@@ -34,7 +34,7 @@ const TradeOffersList = () => {
 
         apiCall((d) => {
             console.log(d);
-            setData(d.offers_list);
+            setData(d);
         }, options)
             .then((res) => {
                 if (res) {

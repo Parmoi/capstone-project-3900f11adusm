@@ -31,7 +31,7 @@ const TradeList = () => {
 
     apiCall((d) => {
       console.log(d);
-      setData(d["trades_list"]);
+      setData(d);
     }, options)
       .then((res) => {
         if (res) {

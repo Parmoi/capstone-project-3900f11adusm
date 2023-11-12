@@ -114,10 +114,10 @@ def database_setup():
         metadata,
         db.Column("id", db.Integer, db.Identity(), primary_key=True),
         db.Column("trade_post_id", db.Integer, db.ForeignKey("trade_posts.id")),
-        db.Column("trade_sender_id", db.Integer, db.ForeignKey("collectors.id")),
-        db.Column("collection_send_id", db.Integer, db.ForeignKey("collections.id")),
-        db.Column("trade_receiver_id", db.Integer, db.ForeignKey("collectors.id")),
-        db.Column("collection_receive_id", db.Integer, db.ForeignKey("collections.id")),
+        db.Column("trade_sender_id", db.Integer, db.ForeignKey("collectors.id")), # id of user sending trade offer
+        db.Column("collection_send_id", db.Integer, db.ForeignKey("collections.id")), # collection id of collectible that user is sending for trade
+        db.Column("offer_message", db.String),
+        db.Column("offer_image", db.String),
         db.Column("offer_status", db.String),
         db.Column("date_offered", db.DATE)
     )

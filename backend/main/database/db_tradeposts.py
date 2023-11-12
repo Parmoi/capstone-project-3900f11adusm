@@ -129,7 +129,8 @@ def get_current_trade_posts(collector_id):
         (tp.c.collector_id == collector_id)).join(cbl, 
         (ctn.c.collectible_id == cbl.c.id)).join(ctr,
         (tp.c.collector_id == ctr.c.id)).join(to,
-        (to.c.trade_post_id == tp.c.id), isouter=True)
+        (to.c.trade_post_id == tp.c.id) &
+        (to.c.offer_status == "SENT"), isouter=True)
 
     select_stmt = (
         db.select(

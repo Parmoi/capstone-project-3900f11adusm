@@ -517,6 +517,7 @@ def get_tradepost():
     """
     Returns trade post information
     Takes trade post id as param
+    Used when we click on a trade post
 
     """
     trade_post_id = request.args.get('trade_post_id')
@@ -538,34 +539,25 @@ def tester():
                 "caption": "Stuffed bart.",
                 "image": "https://tse1.mm.bing.net/th?id=OIP.AIizpaWw4l8TtY5fWj66RgHaGr&pid=Api",
             }])
-    db_tradeoffers.register_trade_offer(1, 2, 502, 1, 501)
-    db_tradeoffers.register_trade_offer(1, 3, 503, 1, 501)
-    # return db_tradeposts.get_current_trade_posts(1)
+    db_tradeoffers.register_trade_offer(1, 2, 502, "random msg!", "google.com")
+    db_tradeoffers.register_trade_offer(1, 3, 503, "I want this!!!", "google.com as well?")
+    db_tradeoffers.decline_trade_offer(1)
+    # return db_tradeoffers.find_outgoing_offers(2)
+    # return db_tradeoffers.find_tradelist_offers(1)
+    return db_tradeposts.get_current_trade_posts(1)
     # return db_tradeoffers.find_tradelist_offers(1) # find trade going to id 1
-    return db_tradeoffers.find_outgoing_offers(2)
+    # return db_tradeoffers.find_outgoing_offers(2)
 
 @APP.route("/trade/list", methods=["GET"])
 @jwt_required(fresh=False)
 def tradelist():
     """
     Displays all the trades listed from the collector and number of offers made
-
+    to each trade
     """
+    user_id = get_jwt_identity()
 
-    stub_data = {
-        "trades_list": [
-            {
-                "trade_post_id": 1,
-                "trader_collectible_id": 1,
-                "trader_collectible_name": "Bart with skateboard",  # collectible you're givin away
-                "trader_collectible_img": "https://tse1.mm.bing.net/th?id=OIP.S9zFPgPbF0zJ4OXQkU675AHaHC&pid=Api",  # image of the collectible you're giving away.
-                "trade_post_date": "02/06/2003",
-                "offers_received": 10,
-            }
-        ]
-    }
-
-    return jsonify(stub_data), OK
+    return db_tradeposts.get_current_trade_posts(user_id)
 
 @APP.route("/trade/list/offers", methods=["GET"])
 @jwt_required(fresh=False)
@@ -575,20 +567,8 @@ def trade_offers_list():
     Takes in trade post id
 
     """
-
-    stub_data = {
-        "offers_list": [
-            {
-                "offer_id": 1,
-                "offer_collectible_name": "Bart with skateboard",  # collectible you're givin away
-                "offer_collectible_img": "https://tse1.mm.bing.net/th?id=OIP.S9zFPgPbF0zJ4OXQkU675AHaHC&pid=Api",  # image of the collectible you're giving away.
-                "offer_made_date": "02/06/2003",
-                "trader_profile_img": "",
-            }
-        ]
-    }
-
-    return jsonify(stub_data), OK
+    trade_post_id = request.args.get("trade_id")
+    return db_tradeoffers.find_tradelist_offers(trade_post_id)
 
 
 """ |------------------------------------|
@@ -713,21 +693,14 @@ def make_offer():
     """
     user_id = get_jwt_identity()  # collector making the offer for trade
 
-    trade_id = request.json.get(
-        "trade_id", None
-    )  # ID of the trade the collector is making an offer to.
-    offer_collectible_id = request.json.get("collectible_id", None)
-    description = request.json.get("description", None)  # description of offer.
-    offer_img = request.json.get(
-        "offer_img", None
-    )  # offer maker uploaded image of collectible they're offering for the trade.
-    offer_title = request.json.get(
-        "offer_title", None
-    )  # title of the offer being made for the trade item.
+    trade_id = request.json.get("trade_id", None)
+    offer_collection_id = request.json.get("collectible_id", None)
+    offer_msg = request.json.get("description", None) # Frontend is "description", but should change to "offer_msg" later
+    offer_img = request.json.get("offer_img", None)
+    # offer_title = request.json.get("offer_title", None)
 
-    stub_return = {"msg": "Offer has been successfully sent."}
-
-    return jsonify(stub_return), OK
+    return db_tradeoffers.register_trade_offer(
+        trade_id, user_id, offer_collection_id, offer_msg, offer_img)
 
 
 @APP.route("/exchange/decline", methods=["POST"])
