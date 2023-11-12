@@ -41,6 +41,10 @@ function AdminManageCollectors() {
   const columns = useMemo(
     () => [
       {
+        accessorKey: 'user_id',
+        header: 'Collector ID',
+      },
+      {
         accessorKey: 'username',
         header: 'Collector Username',
       },
