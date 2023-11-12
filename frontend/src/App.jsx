@@ -28,6 +28,7 @@ import ManagerHomePage from './pages/Manager/ManagerHomePage';
 import ManagerAnalytics from './pages/Manager/ManagerAnalytics';
 import ManagerFeedback from './pages/Manager/ManagerFeedback';
 import ManagerPost from './pages/Manager/ManagerPost';
+import ManagerRegister from './pages/Manager/ManagerRegister';
 
 import AdminHomePage from './pages/Admin/AdminHomePage';
 import AdminManageManagers from './pages/Admin/AdminManageManagers';
@@ -116,6 +117,7 @@ function App() {
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/login" element={<SignIn setLogin={setLoggedIn} setPrivilege={setPrivilege} setUsername={setUsername} />} />
                 <Route path="/register" element={<Register setLogin={setLoggedIn} setUsername={setUsername} />} />
+                <Route path="/manager/register" element={<ManagerRegister setLogin={setLoggedIn} setUsername={setUsername} />} />
               </Routes>
             </BrowserRouter>
             : <BrowserRouter>
