@@ -173,7 +173,9 @@ const TradeOffersList = () => {
                         };
                         console.log(options)
 
-                        apiCall(() => { }, options)
+                        apiCall(() => { 
+                            fetchData();
+                        }, options)
                             .then((res) => {
                                 if (res) {
                                     // set error msg if api call returns error
@@ -193,7 +195,9 @@ const TradeOffersList = () => {
                             })
                         };
 
-                        apiCall(() => { }, options)
+                        apiCall(() => {
+                            fetchData();
+                         }, options)
                             .then((res) => {
                                 if (res) {
                                     // set error msg if api call returns error
