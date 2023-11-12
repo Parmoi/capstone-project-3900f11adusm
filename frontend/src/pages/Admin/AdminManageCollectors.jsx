@@ -109,9 +109,9 @@ function AdminManageCollectors() {
             const options = {
               method: 'POST',
               route: "/collector/ban",
-              body: {
+              body: JSON.stringify({
                 'collector_id': row.getValue('user_id'),
-              }
+              })
             };
             console.log(row.getValue('user_id'));
 
