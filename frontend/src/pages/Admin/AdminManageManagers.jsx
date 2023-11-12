@@ -24,11 +24,12 @@ function AdminManageManagers() {
   const [data, setData] = useState([]);
   const [sent, setSent] = useState(false);
 
-  const changePermission = (canPublish) => {
+  const changePermission = (manager_id, canPublish) => {
     const options = {
       method: 'POST',
       route: '/manager/publish',
       body: JSON.stringify({
+        manager_id: manager_id,
         can_publish: canPublish,
       })
     };
@@ -140,7 +141,7 @@ function AdminManageManagers() {
           >
             <Switch 
               checked={row.original.canPublish} 
-              onChange={changePermission(!row.original.canPublish)} 
+              onChange={changePermission(row.original.user_id, !row.original.canPublish)} 
               name="Can Publish" color="primary"
             />
           </Box>
