@@ -101,4 +101,9 @@ connecting them to the correct admin page. I worked out on what the Admin should
 be able to see and what functionality they required.
 
 I divided up work for the team, assigning each member set tasks. I fixed the 
-search functionality in our frontend.
+search functionality in our frontend. I also helped Simon with issues he was 
+had with his implementation of the frontend. Afterwards I continued work on 
+the Admin pages for the frontend where I got the main functionality pages for 
+Admin completed. These were the user management and Manager invite and management
+pages.
+
