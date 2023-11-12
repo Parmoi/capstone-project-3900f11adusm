@@ -862,6 +862,7 @@ def register_manager():
         - email
         - phone
         - password
+        - special_code
 
     A special registration that registers Manager accounts.
     Manager privilege should be that of not postable.
