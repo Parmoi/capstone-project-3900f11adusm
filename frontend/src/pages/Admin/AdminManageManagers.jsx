@@ -11,36 +11,69 @@ import { useNavigate } from 'react-router-dom';
 import { apiCall } from '../../App';
 import Alert from '@mui/material/Alert';
 import Paper from '@mui/material/Paper';
+import FormControlLabel from '@mui/material/FormControlLabel';
 
 import Switch from '@mui/material/Switch';
 
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
-
-import { Divider } from '@mui/material';
-
-import TwitterIcon from '@mui/icons-material/Twitter';
 
 import { MaterialReactTable, MRT_ToggleDensePaddingButton, MRT_FullScreenToggleButton } from 'material-react-table';
 
 import { useState, useEffect } from 'react';
 
-import PropTypes from 'prop-types';
-
-
-
 function AdminManageManagers() {
   const [data, setData] = useState([]);
+  const [sent, setSent] = useState(false);
+
+  const changePermission = (canPublish) => {
+    const options = {
+      method: 'POST',
+      route: '/manager/publish',
+      body: JSON.stringify({
+        can_publish: canPublish,
+      })
+    };
+
+    apiCall(() => {}, options)
+      .then((res) => {
+        if (res) {
+          // set error msg if api call returns error
+        }
+      })
+    ;
+
+  }
+
+  const sendInvite = (e) => {
+    e.preventDefault();
+    const data = new FormData(e.currentTarget);
+
+    // call api with data
+    const options = {
+      method: 'POST',
+      route: '/manager/invite',
+      body: JSON.stringify({
+        email: data.get('email'),
+      })
+    };
+
+    apiCall(() => {}, options)
+      .then((res) => {
+        if (res) {
+          // set error msg if api call returns error
+        }
+        else { setSent(true); }
+      })
+    ;
+  }
 
   const fetchInfo = () => {
     const options = {
       method: 'GET',
-      route: '/manager/feedback'
+      route: '/manager/getlist'
     };
 
     apiCall((d) => {
-      setData(d["feedback"]);
+      setData(d["managers"]);
     }, options)
     .then((res) => {
       if (res) {
@@ -56,12 +89,46 @@ function AdminManageManagers() {
   const columns = useMemo(
     () => [
       {
-        accessorKey: 'collector_username',
-        header: 'Collector Username',
+        accessorKey: 'username',
+        header: 'Manager Username',
       },
       {
-        accessorKey: 'collector_profile_img',
-        header: 'Collector Profile',
+        accessorKey: 'profile_img',
+        header: 'Manager Profile',
+        Cell: ({ row }) => (
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'flex-start',
+              gap: '1rem',
+            }}
+          >
+            <Avatar alt="Manager Profile" src={row.original.profile_img} />
+          </Box>
+        ),
+        enableColumnActions: false,
+        enableColumnFilter: false,
+      },
+      {
+        accessorKey: 'first_name',
+        header: 'First Name',
+      },
+      {
+        accessorKey: 'last_name',
+        header: 'Last Name',
+      },
+      {
+        accessorKey: 'email',
+        header: 'Email',
+      },
+      {
+        accessorKey: 'phone',
+        header: 'Phone',
+      },
+      { 
+        accessorKey: 'canPublish',
+        header: 'canPublish', 
         Cell: ({ row }) => (
           <Box
             sx={{
@@ -71,22 +138,14 @@ function AdminManageManagers() {
               gap: '1rem',
             }}
           >
-            <Avatar alt="Collector Profile" src={row.original.collector_profile_img} />
+            <Switch 
+              checked={row.original.canPublish} 
+              onChange={changePermission(!row.original.canPublish)} 
+              name="Can Publish" color="primary"
+            />
           </Box>
         ),
-        enableColumnActions: false,
-        enableColumnFilter: false,
       },
-      {
-        accessorKey: 'feedback',
-        header: 'Feedback',
-      },
-      {
-        accessorKey: 'feedback_date',
-        header: 'Feedback Date',
-      },
-      
-
     ],
     [],
   );
@@ -131,7 +190,7 @@ function AdminManageManagers() {
           <Typography component="h1" variant="h5" color='primary.text'>
             Invite New Managers
           </Typography>
-          <Box component="form"  noValidate sx={{ mt: 1 }}>
+          <Box component="form" onSubmit={sendInvite}  noValidate sx={{ mt: 1 }}>
             <TextField
               margin="normal"
               required
@@ -163,15 +222,25 @@ function AdminManageManagers() {
         sx={{
           mt: '5vh',
           borderRadius: 2,
-          maxWidth: '95vw',
-          width: '80vw',
+          maxWidth: '100vw',
+          width: '95vw',
         }}
       > 
         <MaterialReactTable 
           title="Managers List"
           columns={columns}
           data={data}
-          useMaterialReactTable={({ table }) => (
+          positionToolbarAlertBanner="bottom" //show selected rows count on bottom toolbar
+          // changes sizing of default columns
+          defaultColumn={{
+            minSize: 50,
+            maxSize: 300,
+            size: 250,
+          }}
+
+          //customize built-in buttons in the top-right of top toolbar
+          renderToolbarInternalActions={({ table }) => (
+
             <Box>
               <MRT_ToggleDensePaddingButton table={table} />
               <MRT_FullScreenToggleButton table={table} />
@@ -179,6 +248,29 @@ function AdminManageManagers() {
           )}
         />
       </Paper>
+
+      <Paper 
+        maxWidth="xs" 
+        sx={{
+          mt: '5vh',
+          borderRadius: 2,
+          maxWidth: '20vw',
+          width: '20vw',
+        }}
+      >
+        <Box>
+          {sent 
+          ? <Alert 
+              onClose={() => { setSent(false); }}
+              fullWidth
+              variant="outlined"
+            >
+              Invite Sent
+            </Alert>
+          : <></> }
+        </Box>
+      </Paper>
+
       </Box>
     </ThemeProvider>
   );
