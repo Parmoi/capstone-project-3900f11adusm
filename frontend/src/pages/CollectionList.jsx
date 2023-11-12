@@ -22,6 +22,7 @@ import { apiCall } from '../App';
 // sourced from https://github.com/KevinVandy/material-react-table/blob/v1/apps/material-react-table-docs/examples/custom-top-toolbar/sandbox/src/JS.js
 function CollectionList() {
   const [data, setData] = React.useState([]);
+  const [rowSelection, setRowSelection] = React.useState({});
 
   const fetchData = () => {
     console.log('fetching data');
@@ -168,7 +169,8 @@ function CollectionList() {
         maxSize: 500,
         size: 200,
       }}
-
+      onRowSelectionChange={setRowSelection}
+      state={{ rowSelection }}
       //add custom action buttons to top-left of top toolbar
 
       renderBottomToolbarCustomActions={({ table }) => {
@@ -177,13 +179,16 @@ function CollectionList() {
             const options = {
               method: 'DELETE',
               route: "/collection/delete",
-              body: {
+              body: JSON.stringify({
                 'id': row.getValue('id'),
-              }
+              }),
             };
             console.log(row.getValue('id'));
 
-            apiCall(() => { }, options)
+            apiCall(() => { 
+              fetchData();
+              setRowSelection({});
+             }, options)
               .then((res) => {
                 if (res) {
                   // set error msg if api call returns error
@@ -197,12 +202,8 @@ function CollectionList() {
           <Box sx={{ display: 'flex', gap: '1rem', p: '4px' }}>
             <Button
               color="error"
-              // For some reason, button is disabled when all rows selected
-              // TODO: find fix
               disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()}
               onClick={() => {
-                // api call to backend
-                // setData to new data
                 handleDelete();
               }}
               variant="contained"
@@ -215,7 +216,6 @@ function CollectionList() {
       }}
 
       //customize built-in buttons in the top-right of top toolbar
-
       renderToolbarInternalActions={({ table }) => (
 
         <Box>
