@@ -20,6 +20,7 @@ import { apiCall } from '../App';
 // sourced from https://github.com/KevinVandy/material-react-table/blob/v1/apps/material-react-table-docs/examples/custom-top-toolbar/sandbox/src/JS.js
 const WantList = () => {
   const [data, setData] = React.useState([]);
+  const [rowSelection, setRowSelection] = React.useState({});
 
   const fetchData = () => {
     // call api with data
@@ -167,6 +168,8 @@ const WantList = () => {
         maxSize: 500,
         size: 200,
       }}
+      onRowSelectionChange={setRowSelection}
+      state={{ rowSelection }}
 
       //add custom action buttons to top-left of top toolbar
 
@@ -176,13 +179,15 @@ const WantList = () => {
             const options = {
               method: 'DELETE',
               route: "/wantlist/delete",
-              body: {
+              body: JSON.stringify({
                 'wantlist_id': row.getValue('id'),
-              }
+              }),
             };
-            console.log(row.getValue('id'));
 
-            apiCall(() => { }, options)
+            apiCall(() => { 
+              fetchData();
+              setRowSelection({});
+             }, options)
               .then((res) => {
                 if (res) {
                   // set error msg if api call returns error
@@ -197,13 +202,15 @@ const WantList = () => {
             const options = {
               method: 'POST',
               route: "/wantlist/move",
-              body: {
+              body: JSON.stringify({
                 'wantlist_id': row.getValue('id'),
-              }
+              }),
             };
-            console.log(row.getValue('id'));
 
-            apiCall(() => { }, options)
+            apiCall(() => { 
+              fetchData();
+              setRowSelection({});
+             }, options)
               .then((res) => {
                 if (res) {
                   // set error msg if api call returns error

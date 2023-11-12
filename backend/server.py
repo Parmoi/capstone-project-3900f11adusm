@@ -806,6 +806,155 @@ def get_feedback():
     return jsonify(stub_return), OK
 
 
+@APP.route("/manager/invite", methods=["POST"])
+@jwt_required(fresh=False)
+def invite_manager():
+    """
+    Arguments:
+        - email
+
+    Sends the given email account an email with a registration code and
+    a link to http://localhost:3000/register/manager for registration.
+    """
+
+    stub_return = {
+        "msg": "An invite has been sent."
+    }
+
+    return jsonify(stub_return), OK
+
+# /manager/register  # Registers a new Manager with special code that can expire.
+# /manager/publisher # Changes the manager posting privileges, from posting to not posting and vice versa
+# /manager/getlist   # For the admin to see
+
+
+@APP.route("/manager/register", methods=["POST"])
+@jwt_required(fresh=False)
+def register_manager():
+    """
+    Arguments:
+        - username
+        - first_name
+        - last_name
+        - email
+        - phone
+        - password
+        - special_code
+
+    A special registration that registers Manager accounts.
+    Manager privilege should be that of not postable.
+    """
+
+    stub_return = {
+        "msg": "Registration successful"
+    }
+
+    return jsonify(stub_return), OK
+
+@APP.route("/manager/getlist", methods=["GET"])
+@jwt_required(fresh=False)
+def get_manager_list():
+    """
+    Returns a list of managers in the system.
+    """
+
+    stub_return = {
+        "managers": [
+            {
+                "user_id": "3",
+                "username": "dso",
+                "profile_img": "",
+                "first_name": "Dyllanson",
+                "last_name": "So",
+                "email": "ds@gmail.com",
+                "phone": "4444 4444",
+                "canPublish": False,  # The managers posting privilege
+            },
+            {
+                "user_id": "2",
+                "username": "szhang",
+                "profile_img": "",
+                "first_name": "Stella",
+                "last_name": "Zhang",
+                "email": "dz@gmail.com",
+                "phone": "9999 4444",
+                "canPublish": False,  # The managers posting privilege
+            },
+        ]
+    }
+
+    return jsonify(stub_return), OK
+
+@APP.route("/manager/publish", methods=["POST"])
+@jwt_required(fresh=False)
+def manager_privilege():
+    """
+    Arguments:
+        - canPublish
+
+    Changes the campaign publishing privilege of a Manager.
+    """
+
+    stub_return = {
+        "msg": "Manage privilege changed"
+    }
+
+    return jsonify(stub_return), OK
+
+""" |------------------------------------|
+    |      Admin Collector Routes        |
+    |------------------------------------| """
+
+
+@APP.route("/collector/getlist", methods=["GET"])
+@jwt_required(fresh=False)
+def get_collector_list():
+    """
+    Returns a list of collectors for the Admin to see
+    """
+
+    stub_return = {
+        "collectors": [
+            {
+                "user_id": "3",
+                "username": "gwhite",
+                "profile_img": "",
+                "first_name": "Greg",
+                "last_name": "Whitehead",
+                "email": "gw@gmail.com",
+                "phone": "4444 4444",
+            },
+            {
+                "user_id": "2",
+                "username": "meng",
+                "profile_img": "",
+                "first_name": "Meng",
+                "last_name": "Xiao",
+                "email": "mx@gmail.com",
+                "phone": "7777 4444",
+            },
+        ]
+    }
+
+    return jsonify(stub_return), OK
+
+@APP.route("/collector/ban", methods=["POST"])
+@jwt_required(fresh=False)
+def ban_collector():
+    """
+    Argument:
+        - collector_id
+
+    Bans a collector account, actionable only by an Admin
+    """
+
+    stub_return = {
+        "msg": "Collector banned."
+    }
+
+    return jsonify(stub_return), OK
+
+
 """ |------------------------------------|
     |           Dashboard Routes         |
     |------------------------------------| """
