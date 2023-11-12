@@ -909,6 +909,7 @@ def get_manager_list():
 def manager_privilege():
     """
     Arguments:
+        - manager_id
         - can_publish
 
     Changes the campaign publishing privilege of a Manager.
