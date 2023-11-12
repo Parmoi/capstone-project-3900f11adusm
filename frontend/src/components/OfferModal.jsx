@@ -15,8 +15,8 @@ import Alert from '@mui/material/Alert';
 
 // Component for offer modal
 const OfferModal = ({ tradeId, open, handleClose }) => {
-  const [offerTitle, setOfferTitle] = React.useState('');
-  const [collectibleID, setCollectibleID] = React.useState(0);
+  const [offerMessage, setOfferMessage] = React.useState('');
+  const [collectionID, setCollectionID] = React.useState(0);
   const [collectibleDescription, setDescription] = React.useState('');
   const [image, setImage] = React.useState('');
   const [collectibles, setCollectibles] = React.useState([]);
@@ -65,8 +65,8 @@ const OfferModal = ({ tradeId, open, handleClose }) => {
       body: JSON.stringify({
         trade_id: tradeId,
         offer_img: image,
-        offer_title: offerTitle,
-        collectible_id: collectibleID,
+        offer_message: offerMessage,
+        collection_id: collectionID,
         description: collectibleDescription,
       }),
     };
@@ -82,20 +82,16 @@ const OfferModal = ({ tradeId, open, handleClose }) => {
     handleClose();
   }
 
-  const handleTitleChange = (e) => {
-    setOfferTitle(e.target.value);
+  const handleMessageChange = (e) => {
+    setOfferMessage(e.target.value);
   }
 
   const handleIdChange = (id) => {
-    setCollectibleID(id);
+    setCollectionID(id);
   }
 
   const handleDescChange = (e) => {
     setDescription(e.target.value);
-  }
-
-  const handleImageChange = (e) => {
-    //   setImage(image);
   }
 
   return (
@@ -107,22 +103,22 @@ const OfferModal = ({ tradeId, open, handleClose }) => {
         aria-describedby="Modal for making an offer"
       >
         <Box sx={style}>
-          <Typography id="modal-modal-title" variant="h6" component="h2" mb='30px'>
+          <Typography id="modal-modal-Message" variant="h6" component="h2" mb='30px'>
             Make an offer:
           </Typography>
           <FormControl fullWidth>
             <InputLabel>Collectible</InputLabel>
             <Select
               id='tradeCollectible'
-              value={collectibleID}
+              value={collectionID}
               label="Collectible"
             >
               {/* Render menu items for each collectible name in user's collection */}
               {collectibles.map((collectible) => {
                 return (
                   <MenuItem
-                    value={collectible.collectible_id}
-                    onClick={() => handleIdChange(collectible.collectible_id)}
+                    value={collectible.collection_id}
+                    onClick={() => handleIdChange(collectible.collection_id)}
                   >
                     {collectible.name}
                   </MenuItem>)
@@ -130,7 +126,7 @@ const OfferModal = ({ tradeId, open, handleClose }) => {
               }
               {emptyCollection ? <Alert severity='error'>No collectibles in collection!</Alert> : <></>}
             </Select>
-            <TextField label="Title" onChange={handleTitleChange} variant="standard" sx={{ mb: '30px' }} />
+            <TextField label="Message" onChange={handleMessageChange} variant="standard" sx={{ mb: '30px' }} />
             <TextField
               id="outlined-multiline-static"
               label="Description"
