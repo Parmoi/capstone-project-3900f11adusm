@@ -65,16 +65,18 @@ def find_tradelist_offers(trade_post_id):
                     "offer_collectible_name": "Phascogale calura",
                     "offer_id": 1,
                     "offer_made_date": "10/11/2023",
+                    "offer_message": "I would like to TAKE THIS!",
                     "trader_profile_img": "https://robohash.org/cumqueaccusamusvoluptas.png?size=50x50&set=set1",
-                    "trader_username": "uamar"
+                    "trader_name": "uamar"
                 },
                 {
                     "offer_collectible_img": "https://robohash.org/estcumquedebitis.png?size=50x50&set=set1",
                     "offer_collectible_name": "Ictonyx striatus"
                     "offer_id": 2,
                     "offer_made_date": "10/11/2023",
+                    "offer_message": "I would like to trade!",
                     "trader_profile_img": "https://robohash.org/nesciuntculpaat.png?size=50x50&set=set1",
-                    "trader_username": "szhang"
+                    "trader_name": "szhang"
                 }
             ]
         }, 200
@@ -89,7 +91,8 @@ def find_tradelist_offers(trade_post_id):
 
     join = db.join(to, ctr, 
             (to.c.trade_sender_id == ctr.c.id) &
-            (to.c.trade_post_id == trade_post_id)).join(ctn,
+            (to.c.trade_post_id == trade_post_id) &
+            (to.c.offer_status != "DECLINED")).join(ctn,
             (to.c.collection_send_id == ctn.c.id)).join(cbl,
             (ctn.c.collectible_id == cbl.c.id))
 
@@ -98,7 +101,8 @@ def find_tradelist_offers(trade_post_id):
         cbl.c.name.label("offer_collectible_name"),
         cbl.c.image.label("offer_collectible_img"),
         to.c.date_offered.label("offer_made_date"),
-        ctr.c.username.label("trader_username"),
+        to.c.offer_message.label("offer_message"),
+        ctr.c.username.label("trader_name"),
         ctr.c.profile_picture.label("trader_profile_img")
     ).select_from(join))
 
@@ -118,7 +122,7 @@ def find_outgoing_offers(user_id):
         user_id (int): id of user who we want to find outgoing trade offers for
     
     Returns:
-        ...
+        JSON, int: JSON of list of offers the user has sent, int of error code
     
     Example Output:
         {
@@ -130,8 +134,8 @@ def find_outgoing_offers(user_id):
                     "collectible_r_name": "Iguana iguana",
                     "collectible_r_img": "https://robohash.org/similiquenemoaut.png?size=50x50&set=set1",
                     "offer_status": "SENT",
-                    "offer_made_date": "11/11/2023",
-                    "tp_username": "uso",
+                    "date_offer_sent": "11/11/2023",
+                    "trader_name": "uso",
                     "trade_post_id": 1
                 },
                 ...
@@ -157,7 +161,7 @@ def find_outgoing_offers(user_id):
         to.c.id.label("offer_id"),
         cbl.c.name.label("collectible_s_name"), # Collectible send name
         cbl.c.image.label("collectible_s_img"), # Collectible send image
-        to.c.date_offered.label("offer_made_date"),
+        to.c.date_offered.label("date_offer_sent"),
         to.c.offer_status.label("offer_status"),
         to.c.trade_post_id.label("trade_post_id")
     ).select_from(join))
@@ -175,13 +179,13 @@ def find_outgoing_offers(user_id):
         find_stmt = (db.select(
             cbl.c.name.label("collectible_r_name"),
             cbl.c.image.label("collectible_r_img"),
-            ctr.c.username.label("tp_username")
+            ctr.c.username.label("trader_name")
         )).select_from(new_join)
         details_dict = conn.execute(find_stmt).fetchone()._asdict()
         offer.update({
             "collectible_r_name": details_dict.get("collectible_r_name"),
             "collectible_r_img": details_dict.get("collectible_r_img"),
-            "tp_username": details_dict.get("tp_username"),
+            "trader_name": details_dict.get("trader_name"),
         })
         
     conn.close()
@@ -242,10 +246,10 @@ def accept_trade_offer(offer_id):
     collection_s_id = trade_offer_info.get("collection_s_id")
 
     # Moves the collectible from sender to receiver
-    db_collections.move_collectible(sender_id, collection_s_id)
+    db_collections.move_collectible(sender_id, receiver_id, collection_s_id)
 
     # Moves the collectible from receiver to sender
-    db_collections.move_collectible(receiver_id, collection_r_id)
+    db_collections.move_collectible(receiver_id, sender_id, collection_r_id)
     
     conn.close()
 

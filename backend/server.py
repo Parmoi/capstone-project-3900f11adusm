@@ -579,24 +579,27 @@ def trade_offers_list():
 @APP.route("/offers/get", methods=["GET"])
 @jwt_required(fresh=False)
 def offers_get():
-    stub_data = {
-        "offers_list": [
-            {
-                "offer_id": "",
-                "collectible_id": "",
-                "collectible_name": "Homer",
-                "offer_status": "SENT",  # status can be SENT, ACCEPTED or DECLINED
-                "collectible_img": "",
-                "trader_collector_id": "",  # id of the collector offer was sent to
-                "trader_profile_img": "",  # The profile image of the other collector that offer was sent to
-                "trader_name": "person2",
-                "date_offer": "02/06/2003",
-                "date_updated": "02/06/2004",
-            }
-        ]
-    }
+    # stub_data = {
+    #     "offers_list": [
+    #         {
+    #             "offer_id": "",
+    #             "collectible_id": "",
+    #             "collectible_name": "Homer",
+    #             "offer_status": "SENT",  # status can be SENT, ACCEPTED or DECLINED
+    #             "collectible_img": "",
+    #             "trader_collector_id": "",  # id of the collector offer was sent to
+    #             "trader_profile_img": "",  # The profile image of the other collector that offer was sent to
+    #             "trader_name": "person2",
+    #             "date_offer": "02/06/2003",
+    #             "date_updated": "02/06/2004",
+    #         }
+    #     ]
+    # }
 
-    return jsonify(stub_data), OK
+    # return jsonify(stub_data), OK
+
+    user_id = get_jwt_identity()
+    return db_tradeoffers.find_outgoing_offers(user_id)
 
 
 """ |------------------------------------|
@@ -694,10 +697,10 @@ def make_offer():
     user_id = get_jwt_identity()  # collector making the offer for trade
 
     trade_id = request.json.get("trade_id", None)
-    offer_collection_id = request.json.get("collectible_id", None)
-    offer_msg = request.json.get("description", None) # Frontend is "description", but should change to "offer_msg" later
+    offer_collection_id = request.json.get("collection_id", None)
+    offer_msg = request.json.get("offer_message", None) # Frontend is "description", but should change to "offer_msg" later
     offer_img = request.json.get("offer_img", None)
-    # offer_title = request.json.get("offer_title", None)
+    # There's also description, but I don't need it
 
     return db_tradeoffers.register_trade_offer(
         trade_id, user_id, offer_collection_id, offer_msg, offer_img)
@@ -709,13 +712,9 @@ def exchange_decline():
     """
     Declines the exchange offer for the trade item.
     """
-
-    user_id = get_jwt_identity()
     offer_id = request.json.get("offer_id", None)
 
-    stub_data = {"msg": "offer successfully declined"}
-
-    return jsonify(stub_data), OK
+    return db_tradeoffers.decline_trade_offer(offer_id)
 
 
 @APP.route("/exchange/accept", methods=["POST"])
@@ -724,13 +723,9 @@ def exchange_accept():
     """
     Accepts the exchange offer for the trade item.
     """
-
-    user_id = get_jwt_identity()
     offer_id = request.json.get("offer_id", None)
 
-    stub_data = {"msg": "offer successfully accepted"}
-
-    return jsonify(stub_data), OK
+    return db_tradeoffers.accept_trade_offer(offer_id)
 
 
 """ |------------------------------------|

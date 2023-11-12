@@ -102,10 +102,6 @@ const TradeOffersList = () => {
                 header: 'Offer Message',
             },
             {
-                accessorKey: 'offer_description',
-                header: 'Offer Description',
-            },
-            {
                 accessorKey: 'offer_made_date',
                 accessorFn: (row) => moment(row.offer_made_date, "DD/MM/YYYY"), //convert to Date for sorting and filtering
                 id: 'dateOffer',

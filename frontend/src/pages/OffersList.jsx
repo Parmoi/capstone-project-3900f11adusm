@@ -33,7 +33,7 @@ const OffersList = () => {
 
     apiCall((d) => {
       console.log(d);
-      setData(d.offers_list);
+      setData(d);
     }, options)
       .then((res) => {
         if (res) {
@@ -78,7 +78,7 @@ const OffersList = () => {
       },
       {
         accessorKey: 'date_offer_sent',
-        accessorFn: (row) => moment(row.date_offer, "DD/MM/YYYY"), //convert to Date for sorting and filtering
+        accessorFn: (row) => moment(row.date_offer_sent, "DD/MM/YYYY"), //convert to Date for sorting and filtering
             id: 'dateOffer',
             header: 'Date Offer Sent',
             filterFn: 'lessThanOrEqualTo',

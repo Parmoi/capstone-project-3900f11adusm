@@ -122,6 +122,18 @@ def database_setup():
         db.Column("date_offered", db.DATE)
     )
 
+    past_trade_offers_table = db.Table(
+        "past_trade_offers",
+        metadata,
+        db.Column("id", db.Integer, db.Identity(), primary_key=True),
+        db.Column("trade_sender_id", db.Integer, db.ForeignKey("collectors.id")), # id of user sending trade offer
+        db.Column("collectible_send_id", db.Integer, db.ForeignKey("collectibles.id")), # collection id of collectible that user is sending for trade
+        db.Column("trade_receiver_id", db.Integer, db.ForeignKey("collectors.id")), # id of user receiving trade offer
+        db.Column("collectible_receive_id", db.Integer, db.ForeignKey("collectibles.id")), # collection id of collectible that user is receiving for trade
+        db.Column("offer_status", db.String),
+        db.Column("date_offered", db.DATE)
+    )
+
     pivelage_table = db.Table(
         "privelages",
         metadata,
