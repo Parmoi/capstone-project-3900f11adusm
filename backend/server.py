@@ -605,7 +605,7 @@ def offers_get():
                 "collectible_id": "",
                 "collectible_name": "Homer",
                 "offer_status": "SENT",  # status can be SENT, ACCEPTED or DECLINED
-                "collectible_img": "",
+                "collectible_img": "https://tse1.mm.bing.net/th?id=OIP.S9zFPgPbF0zJ4OXQkU675AHaHC&pid=Api",
                 "trader_collector_id": "",  # id of the collector offer was sent to
                 "trader_profile_img": "",  # The profile image of the other collector that offer was sent to
                 "trader_name": "person2",

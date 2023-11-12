@@ -6,7 +6,7 @@ import {
     MRT_FullScreenToggleButton,
 } from 'material-react-table';
 
-import { Box, Button, IconButton } from '@mui/material';
+import { Box, Button } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
 
 //Date Picker Imports

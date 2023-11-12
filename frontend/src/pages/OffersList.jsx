@@ -13,11 +13,12 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import moment from 'moment';
+import Avatar from '@mui/material/Avatar';
 
 import { apiCall } from '../App';
 
 const getBackgroundColor = (status) => {
-  return 'SENT' ? 'secondary.main' : 'ACCEPTED' ? 'primary.light' : 'error.main';
+  return status ? 'secondary.main' : 'ACCEPTED' ? 'primary.light' : 'error.main';
 }
 
 // sourced from https://github.com/KevinVandy/material-react-table/blob/v1/apps/material-react-table-docs/examples/custom-top-toolbar/sandbox/src/JS.js
@@ -32,7 +33,6 @@ const OffersList = () => {
     };
 
     apiCall((d) => {
-      console.log(d);
       setData(d.offers_list);
     }, options)
       .then((res) => {
@@ -59,6 +59,28 @@ const OffersList = () => {
         header: 'Collectible Name',
       },
       {
+        accessorKey: 'collectible_img',
+        header: 'Trade Item Image',
+        Cell: ({ row }) => (
+            <Box
+                sx={{
+                    display: 'flex',
+                    gap: '1rem',
+                }}
+            >
+                <img
+                    alt="trading collectible image"
+                    height={60}
+                    src={row.original.collectible_img}
+                    loading="lazy"
+                />
+            </Box>
+        ),
+        enableColumnActions: false,
+        enableColumnFilter: false,
+        enableSorting: false,
+    },
+      {
         accessorKey: 'offer_status',
         header: 'Offer Status',
         Cell: ({ cell }) => (
@@ -75,6 +97,22 @@ const OffersList = () => {
       {
         accessorKey: 'trader_name',
         header: 'Traded By',
+      },
+      {
+        accessorKey: 'trader_profile_img',
+        header: 'Trader Profile',
+        Cell: ({ row }) => (
+            <Box
+                sx={{
+                    display: 'flex',
+                    gap: '1rem',
+                }}
+            >
+                <Avatar alt="Trader Profile" src={row.original.trader_profile_img} />
+            </Box>
+        ),
+        enableColumnActions: false,
+        enableColumnFilter: false,
       },
       {
         accessorKey: 'date_offer_sent',
@@ -158,7 +196,7 @@ const OffersList = () => {
       defaultColumn={{
         minSize: 50,
         maxSize: 500,
-        size: 300, 
+        size: 150, 
       }}
 
       //customize built-in buttons in the top-right of top toolbar
