@@ -846,10 +846,6 @@ def invite_manager():
 
     return jsonify(stub_return), OK
 
-# /manager/register  # Registers a new Manager with special code that can expire.
-# /manager/publisher # Changes the manager posting privileges, from posting to not posting and vice versa
-# /manager/getlist   # For the admin to see
-
 
 @APP.route("/manager/register", methods=["POST"])
 @jwt_required(fresh=False)
