@@ -93,7 +93,7 @@ function AdminManageCollectors() {
       data={data}
       enableRowSelection
       positionToolbarAlertBanner="bottom" //show selected rows count on bottom toolbar
-      initialState={{ columnVisibility: { id: false } }}
+      initialState={{ columnVisibility: { user_id: false } }}
       // changes sizing of default columns
       defaultColumn={{
         minSize: 50,
