@@ -169,7 +169,7 @@ def profile():
         address: "string"
         }
     """
-    user_id = get_jwt_identity()
+    user_id = request.args.get('id')
 
     return db_collectors.get_collector(user_id=user_id)
 
@@ -580,6 +580,7 @@ def trade_offers_list():
                 "offer_collectible_img": "https://tse1.mm.bing.net/th?id=OIP.S9zFPgPbF0zJ4OXQkU675AHaHC&pid=Api",  # image of the collectible you're giving away.
                 "offer_made_date": "02/06/2003",
                 "trader_profile_img": "",
+                "trader_id": 1,
                 "offer_description": "Desc",
                 "offer_message": "Message",
                 "trader_name": "Name",
@@ -601,16 +602,19 @@ def offers_get():
     stub_data = {
         "offers_list": [
             {
-                "offer_id": "",
+                "offer_id": 1,
                 "collectible_id": "",
-                "collectible_name": "Homer",
+                "collectible_s_name": "Homer",
+                "collectible_r_name": "Bart",
                 "offer_status": "SENT",  # status can be SENT, ACCEPTED or DECLINED
-                "collectible_img": "https://tse1.mm.bing.net/th?id=OIP.S9zFPgPbF0zJ4OXQkU675AHaHC&pid=Api",
-                "trader_collector_id": "",  # id of the collector offer was sent to
+                "collectible_s_img": "",
+                "collectible_r_img": "https://tse1.mm.bing.net/th?id=OIP.S9zFPgPbF0zJ4OXQkU675AHaHC&pid=Api",
+                "trader_collector_id": 1,  # id of the collector offer was sent to
                 "trader_profile_img": "",  # The profile image of the other collector that offer was sent to
                 "trader_name": "person2",
-                "date_offer": "02/06/2003",
+                "date_offer_sent": "02/06/2003",
                 "date_updated": "02/06/2004",
+                "trade_post_id": 1,
             }
         ]
     }
@@ -827,6 +831,155 @@ def get_feedback():
                 "feedback_date": "2023/10/31",
             },
         ]
+    }
+
+    return jsonify(stub_return), OK
+
+
+@APP.route("/manager/invite", methods=["POST"])
+@jwt_required(fresh=False)
+def invite_manager():
+    """
+    Arguments:
+        - email
+
+    Sends the given email account an email with a registration code and
+    a link to http://localhost:3000/register/manager for registration.
+    """
+
+    stub_return = {
+        "msg": "An invite has been sent."
+    }
+
+    return jsonify(stub_return), OK
+
+# /manager/register  # Registers a new Manager with special code that can expire.
+# /manager/publisher # Changes the manager posting privileges, from posting to not posting and vice versa
+# /manager/getlist   # For the admin to see
+
+
+@APP.route("/manager/register", methods=["POST"])
+@jwt_required(fresh=False)
+def register_manager():
+    """
+    Arguments:
+        - username
+        - first_name
+        - last_name
+        - email
+        - phone
+        - password
+        - special_code
+
+    A special registration that registers Manager accounts.
+    Manager privilege should be that of not postable.
+    """
+
+    stub_return = {
+        "msg": "Registration successful"
+    }
+
+    return jsonify(stub_return), OK
+
+@APP.route("/manager/getlist", methods=["GET"])
+@jwt_required(fresh=False)
+def get_manager_list():
+    """
+    Returns a list of managers in the system.
+    """
+
+    stub_return = {
+        "managers": [
+            {
+                "user_id": "3",
+                "username": "dso",
+                "profile_img": "",
+                "first_name": "Dyllanson",
+                "last_name": "So",
+                "email": "ds@gmail.com",
+                "phone": "4444 4444",
+                "canPublish": False,  # The managers posting privilege
+            },
+            {
+                "user_id": "2",
+                "username": "szhang",
+                "profile_img": "",
+                "first_name": "Stella",
+                "last_name": "Zhang",
+                "email": "dz@gmail.com",
+                "phone": "9999 4444",
+                "canPublish": False,  # The managers posting privilege
+            },
+        ]
+    }
+
+    return jsonify(stub_return), OK
+
+@APP.route("/manager/publish", methods=["POST"])
+@jwt_required(fresh=False)
+def manager_privilege():
+    """
+    Arguments:
+        - canPublish
+
+    Changes the campaign publishing privilege of a Manager.
+    """
+
+    stub_return = {
+        "msg": "Manage privilege changed"
+    }
+
+    return jsonify(stub_return), OK
+
+""" |------------------------------------|
+    |      Admin Collector Routes        |
+    |------------------------------------| """
+
+
+@APP.route("/collector/getlist", methods=["GET"])
+@jwt_required(fresh=False)
+def get_collector_list():
+    """
+    Returns a list of collectors for the Admin to see
+    """
+
+    stub_return = {
+        "collectors": [
+            {
+                "user_id": "3",
+                "username": "gwhite",
+                "profile_img": "",
+                "first_name": "Greg",
+                "last_name": "Whitehead",
+                "email": "gw@gmail.com",
+                "phone": "4444 4444",
+            },
+            {
+                "user_id": "2",
+                "username": "meng",
+                "profile_img": "",
+                "first_name": "Meng",
+                "last_name": "Xiao",
+                "email": "mx@gmail.com",
+                "phone": "7777 4444",
+            },
+        ]
+    }
+
+    return jsonify(stub_return), OK
+
+@APP.route("/collector/ban", methods=["POST"])
+@jwt_required(fresh=False)
+def ban_collector():
+    """
+    Argument:
+        - collector_id
+
+    Bans a collector account, actionable only by an Admin
+    """
+
+    stub_return = {
+        "msg": "Collector banned."
     }
 
     return jsonify(stub_return), OK

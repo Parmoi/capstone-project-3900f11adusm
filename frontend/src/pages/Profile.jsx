@@ -6,6 +6,7 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 import { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 
 import { ProfileBox, ProfileDetailsDisplay, ProfileDetailsEdit, SocialMediaDisplay, SocialMediaEdit } from '../components/ProfileDetails'
 import CollectionCompletion from '../components/CollectionCompletion';
@@ -19,10 +20,21 @@ function Profile() {
   const [editSocials, displaySocials] = useState(false);
   const [data, setData] = useState([]);
 
+  const params = useParams();
+  const u_id = params.id;
+  console.log(u_id)
+
   const fetchInfo = () => {
+    let url = '';
+    if (u_id == '') {
+      url='/profile';
+    } else {
+      url = `/profile?id=${u_id}`;
+    }
+  
     const options = {
       method: 'GET',
-      route: '/profile'
+      route: url,
     };
 
     apiCall((d) => {

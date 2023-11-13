@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import Box from '@mui/material/Box';
+import { Box, Typography} from '@mui/material';
 import Avatar from '@mui/material/Avatar';
 
 import { MaterialReactTable, MRT_ToggleDensePaddingButton, MRT_FullScreenToggleButton } from 'material-react-table';
@@ -7,6 +7,7 @@ import { MaterialReactTable, MRT_ToggleDensePaddingButton, MRT_FullScreenToggleB
 import { useState, useEffect } from 'react';
 
 import { apiCall } from '../App';
+import ProfileAvatar from '../components/ProfileAvatar';
 
 function ExchangeHistory() {
   const [data, setData] = useState([]);
@@ -43,8 +44,10 @@ function ExchangeHistory() {
               alignItems: 'center',
               justifyContent: 'center',
               gap: '1rem',
+              flexDirection: 'column'
             }}
           >
+            <Typography variant="h8">{row.original.traded_collectible_name}</Typography>
             <img
               alt="collectible image"
               height={50}
@@ -57,10 +60,6 @@ function ExchangeHistory() {
         enableColumnFilter: false,
       },
       {
-        accessorKey: 'traded_collectible_name',
-        header: 'Traded Collectible Name',
-      },
-      {
         accessorKey: 'accepted_collectible_img',
         header: 'Accepted Collectible',
         Cell: ({ row }) => (
@@ -70,8 +69,10 @@ function ExchangeHistory() {
               alignItems: 'center',
               justifyContent: 'center',
               gap: '1rem',
+              flexDirection: 'column'
             }}
           >
+            <Typography variant="h8">{row.original.accepted_collectible_name}</Typography>
             <img
               alt="collectible image"
               height={50}
@@ -84,23 +85,10 @@ function ExchangeHistory() {
         enableColumnFilter: false,
       },
       {
-        accessorKey: 'accepted_collectible_name',
-        header: 'Accepted Collectible Name',
-      },
-      {
         accessorKey: 'trader_profile_img',
         header: 'Trader Profile',
         Cell: ({ row }) => (
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '1rem',
-            }}
-          >
-            <Avatar alt="Trader Profile" src={row.original.trader_profile_img} />
-          </Box>
+          <ProfileAvatar userId={row.original.trader_collector_id} image={row.original.trader_profile_img}/>
         ),
         enableColumnActions: false,
         enableColumnFilter: false,
@@ -131,7 +119,7 @@ function ExchangeHistory() {
       defaultColumn={{
         minSize: 50,
         maxSize: 200,
-        size: 100,
+        size: 170,
       }}
       useMaterialReactTable={({ table }) => (
         <Box>

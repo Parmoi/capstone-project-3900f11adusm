@@ -16,6 +16,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import moment from 'moment';
 import { useParams } from 'react-router-dom';
 import { apiCall } from '../App';
+import ProfileAvatar from '../components/ProfileAvatar';
 
 
 // sourced from https://github.com/KevinVandy/material-react-table/blob/v1/apps/material-react-table-docs/examples/custom-top-toolbar/sandbox/src/JS.js
@@ -85,14 +86,7 @@ const TradeOffersList = () => {
                 accessorKey: 'trader_profile_img',
                 header: 'Trader Profile',
                 Cell: ({ row }) => (
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            gap: '1rem',
-                        }}
-                    >
-                        <Avatar alt="Trader Profile" src={row.original.trader_profile_img} />
-                    </Box>
+                    <ProfileAvatar userId={row.original.trader_id} image={row.original.trader_profile_img} />
                 ),
                 enableColumnActions: false,
                 enableColumnFilter: false,

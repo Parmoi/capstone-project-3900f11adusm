@@ -83,6 +83,7 @@ function App() {
   const [loggedIn, setLoggedIn] = React.useState(false);
   const [privelage, setPrivelage] = useState(1);
   const [username, setUsername] = useState('');
+  const [userId, setUserId] = useState('');
 
   function logout() {
     const options = {
@@ -105,12 +106,12 @@ function App() {
               <SignedOutNav />
               <Routes>
                 <Route path="/" element={<LandingPage />} />
-                <Route path="/login" element={<SignIn setLogin={setLoggedIn} setPrivelage={setPrivelage} setUsername={setUsername} />} />
-                <Route path="/register" element={<Register setLogin={setLoggedIn} setUsername={setUsername} />} />
+                <Route path="/login" element={<SignIn userId={userId} setUserId={setUserId} setLogin={setLoggedIn} setPrivelage={setPrivelage} setUsername={setUsername} />} />
+                <Route path="/register" element={<Register setUserId={setUserId} setLogin={setLoggedIn} setUsername={setUsername} />} />
               </Routes>
             </BrowserRouter>
             : <BrowserRouter>
-              <SignedInNav logout={logout} username={username} />
+              <SignedInNav userId={userId} logout={logout} username={username} />
               <Routes>
                 {privelage === 1
                   ? <Route path="/" element={<HomePage />} />
@@ -119,7 +120,7 @@ function App() {
 
                 {/* <Route path="/" element={<ManagerHomePage/>} /> */}
 
-                <Route path="/profile" element={<Profile />} />
+                <Route path="/profile/:id" element={<Profile />} />
                 <Route path="/wantlist" element={<WantList />} />
                 <Route path="/collection" element={<CollectionList />} />
                 <Route path="/exchange-history" element={<ExchangeHistory />} />

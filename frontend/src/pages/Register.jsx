@@ -14,7 +14,7 @@ import Alert from '@mui/material/Alert';
 
 const theme = createTheme();
 
-function Register({ setLogin, setUsername }) {
+function Register({ setUserId, setLogin, setUsername }) {
   const navigate = useNavigate();
   const [emailError, setEmailError] = React.useState(false);
   const [nameError, setNameError] = React.useState(false);
@@ -59,9 +59,10 @@ function Register({ setLogin, setUsername }) {
       })
     };
 
-    apiCall(() => {
+    apiCall((d) => {
       setLogin(true);
       setUsername(data.get('name'));
+      setUserId(d.userId);
     }, options)
       .then((res) => {
         if (res) {

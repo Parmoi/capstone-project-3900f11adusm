@@ -6,7 +6,7 @@ import {
   MRT_FullScreenToggleButton,
 } from 'material-react-table';
 
-import { Box, Button, IconButton } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 
 //Date Picker Imports
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -16,6 +16,7 @@ import moment from 'moment';
 import Avatar from '@mui/material/Avatar';
 
 import { apiCall } from '../App';
+import ProfileAvatar from '../components/ProfileAvatar';
 
 const getBackgroundColor = (status) => {
   return status ? 'secondary.main' : 'ACCEPTED' ? 'primary.light' : 'error.main';
@@ -55,30 +56,69 @@ const OffersList = () => {
         header: 'id',
       },
       {
-        accessorKey: 'collectible_name',
-        header: 'Collectible Name',
-      },
-      {
-        accessorKey: 'collectible_img',
-        header: 'Trade Item Image',
+        accessorKey: 'collectible_s_img',
+        header: 'Collectible Offered',
         Cell: ({ row }) => (
-            <Box
-                sx={{
-                    display: 'flex',
-                    gap: '1rem',
-                }}
-            >
-                <img
-                    alt="trading collectible image"
-                    height={60}
-                    src={row.original.collectible_img}
-                    loading="lazy"
-                />
-            </Box>
+          <Box
+            sx={{
+              display: 'flex',
+              gap: '1rem',
+              flexDirection: 'column',
+              alignItems: 'center',
+            }}
+          >
+            <Typography variant="h8">{row.original.collectible_s_name}</Typography>
+            <img
+              alt="collectible image"
+              height={60}
+              src={row.original.collectible_s_image}
+              loading="lazy"
+            />
+          </Box>
+
         ),
         enableColumnActions: false,
         enableColumnFilter: false,
         enableSorting: false,
+      },
+      {
+        accessorKey: 'collectible_r_img',
+        header: 'Collectible to be Received',
+        Cell: ({ row }) => (
+          <Box
+            sx={{
+              display: 'flex',
+              gap: '1rem',
+              flexDirection: 'column',
+              alignItems: 'center',
+            }}
+          >
+            <Typography variant="h8">{row.original.collectible_r_name}</Typography>
+            <img
+              alt="collectible image"
+              height={60}
+              src={row.original.collectible_r_img}
+              loading="lazy"
+            />
+          </Box>
+
+        ),
+        enableColumnActions: false,
+        enableColumnFilter: false,
+        enableSorting: false,
+      },
+      {
+        accessorKey: 'trader_name',
+        header: 'Traded By',
+      },
+      {
+        accessorKey: 'trader_profile_img',
+        header: 'Trader Profile',
+        Cell: ({ row }) => (
+            <ProfileAvatar userId={row.original.trader_collector_id} image={row.original.trader_profile_img}/>
+        ),
+        enableColumnActions: false,
+        enableColumnFilter: false,
     },
       {
         accessorKey: 'offer_status',
@@ -95,28 +135,8 @@ const OffersList = () => {
         ),
       },
       {
-        accessorKey: 'trader_name',
-        header: 'Traded By',
-      },
-      {
-        accessorKey: 'trader_profile_img',
-        header: 'Trader Profile',
-        Cell: ({ row }) => (
-            <Box
-                sx={{
-                    display: 'flex',
-                    gap: '1rem',
-                }}
-            >
-                <Avatar alt="Trader Profile" src={row.original.trader_profile_img} />
-            </Box>
-        ),
-        enableColumnActions: false,
-        enableColumnFilter: false,
-      },
-      {
         accessorKey: 'date_offer_sent',
-        accessorFn: (row) => moment(row.date_offer, "DD/MM/YYYY"), //convert to Date for sorting and filtering
+        accessorFn: (row) => moment(row.date_offer_sent, "DD/MM/YYYY"), //convert to Date for sorting and filtering
             id: 'dateOffer',
             header: 'Date Offer Sent',
             filterFn: 'lessThanOrEqualTo',
@@ -196,7 +216,7 @@ const OffersList = () => {
       defaultColumn={{
         minSize: 50,
         maxSize: 500,
-        size: 150, 
+        size: 100, 
       }}
 
       //customize built-in buttons in the top-right of top toolbar
