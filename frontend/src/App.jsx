@@ -116,7 +116,7 @@ function App() {
               <SignedOutNav />
               <Routes>
                 <Route path="/" element={<LandingPage />} />
-                <Route path="/login" element={<SignIn userId={userId} setUserId={setUserId} setLogin={setLoggedIn} setPrivilege={setPrivilege} setUsername={setUsername} />} />
+                <Route path="/login" element={<SignIn setUserId={setUserId} setLogin={setLoggedIn} setPrivilege={setPrivilege} setUsername={setUsername} />} />
                 <Route path="/register" element={<Register setUserId={setUserId} setLogin={setLoggedIn} setUsername={setUsername} />} />
                 <Route path="/manager/register" element={<ManagerRegister setLogin={setLoggedIn} setUsername={setUsername} />} />
               </Routes>

@@ -29,7 +29,7 @@ const getUsername = (userId, setUsername) => {
     });
 }
 
-function SignIn({ userId, setUserId, setLogin, setPrivilege, setUsername }) {
+function SignIn({ setUserId, setLogin, setPrivilege, setUsername }) {
   const [error, setError] = React.useState(false);
   const [errContent, setErrContent] = React.useState('');
   const navigate = useNavigate();
