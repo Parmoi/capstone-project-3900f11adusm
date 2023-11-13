@@ -29,7 +29,7 @@ const getUsername = (userId, setUsername) => {
     });
 }
 
-function SignIn({ userId, setUserId, setLogin, setPrivelage, setUsername }) {
+function SignIn({ userId, setUserId, setLogin, setPrivilege, setUsername }) {
   const [error, setError] = React.useState(false);
   const [errContent, setErrContent] = React.useState('');
   const navigate = useNavigate();
@@ -50,9 +50,9 @@ function SignIn({ userId, setUserId, setLogin, setPrivelage, setUsername }) {
 
     apiCall((d) => {
       setLogin(true);
-      setPrivelage(parseInt(d.privelage));
       setUserId(d.userId);
       getUsername(d.userId, setUsername);
+      setPrivilege(parseInt(d.privelage));
     }, options)
       .then((res) => {
         if (res) {

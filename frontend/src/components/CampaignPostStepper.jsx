@@ -9,7 +9,7 @@ import Typography from '@mui/material/Typography';
 const steps = ['Add title', 'Enter a description', 'Add images', 'Post listing'];
 
 // Derived from https://mui.com/material-ui/react-stepper/
-const CampaignStepper = ({ stepperContent }) => {
+const CampaignPostStepper = ({ stepperContent }) => {
   const [activeStep, setActiveStep] = React.useState(0);
 
   const handleNext = () => {
@@ -67,4 +67,4 @@ const CampaignStepper = ({ stepperContent }) => {
   );
 }
 
-export default CampaignStepper;
+export default CampaignPostStepper;
