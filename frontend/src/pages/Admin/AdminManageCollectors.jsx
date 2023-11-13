@@ -15,6 +15,7 @@ import { apiCall } from '../../App';
 
 function AdminManageCollectors() {
   const [data, setData] = React.useState([]);
+  const [rowSelection, setRowSelection] = React.useState({});
 
   const fetchData = () => {
     console.log('fetching data');
@@ -100,6 +101,8 @@ function AdminManageCollectors() {
         maxSize: 500,
         size: 200,
       }}
+      onRowSelectionChange={setRowSelection}
+      state={{ rowSelection }}
 
       //add custom action buttons to top-left of top toolbar
 
@@ -115,7 +118,10 @@ function AdminManageCollectors() {
             };
             console.log(row.getValue('user_id'));
 
-            apiCall(() => { }, options)
+            apiCall(() => { 
+              fetchData();
+              setRowSelection({});
+             }, options)
               .then((res) => {
                 if (res) {
                   // set error msg if api call returns error
