@@ -1,11 +1,11 @@
 import React from 'react';
 
-import { Box } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
 import { useNavigate } from 'react-router-dom';
 
 
-const ProfileAvatar = ({ userId, image }) => {
+const ProfileAvatar = ({ userId, image, name }) => {
     const navigate = useNavigate();
 
     function handleClick() {
@@ -14,12 +14,16 @@ const ProfileAvatar = ({ userId, image }) => {
 
     return (
         <Box
+            onClick={handleClick}
             sx={{
                 display: 'flex',
                 gap: '1rem',
+                alignItems: 'center',
+                cursor: 'pointer',
             }}
         >
-        <Avatar sx={{ cursor: 'pointer' }} onClick={handleClick} alt="Trader Profile" src={image} />
+            <Avatar alt="Trader Profile" src={image} />
+            <Typography variant="h8">{name}</Typography>
         </Box>)
     ;
 }

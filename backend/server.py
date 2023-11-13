@@ -576,6 +576,7 @@ def trade_offers_list():
         "offers_list": [
             {
                 "offer_id": 1,
+                "collectible_id": 1,
                 "offer_collectible_name": "Bart with skateboard",  # collectible you're givin away
                 "offer_collectible_img": "https://tse1.mm.bing.net/th?id=OIP.S9zFPgPbF0zJ4OXQkU675AHaHC&pid=Api",  # image of the collectible you're giving away.
                 "offer_made_date": "02/06/2003",
@@ -603,7 +604,8 @@ def offers_get():
         "offers_list": [
             {
                 "offer_id": 1,
-                "collectible_id": "",
+                "collectible_s_id": 1,
+                "collectible_r_id": 1,
                 "collectible_s_name": "Homer",
                 "collectible_r_name": "Bart",
                 "offer_status": "SENT",  # status can be SENT, ACCEPTED or DECLINED

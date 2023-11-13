@@ -17,6 +17,7 @@ import Avatar from '@mui/material/Avatar';
 
 import { apiCall } from '../App';
 import ProfileAvatar from '../components/ProfileAvatar';
+import CollectibleImage from '../components/CollectibleImage';
 
 const getBackgroundColor = (status) => {
   return status ? 'secondary.main' : 'ACCEPTED' ? 'primary.light' : 'error.main';
@@ -59,22 +60,11 @@ const OffersList = () => {
         accessorKey: 'collectible_s_img',
         header: 'Collectible Offered',
         Cell: ({ row }) => (
-          <Box
-            sx={{
-              display: 'flex',
-              gap: '1rem',
-              flexDirection: 'column',
-              alignItems: 'center',
-            }}
-          >
-            <Typography variant="h8">{row.original.collectible_s_name}</Typography>
-            <img
-              alt="collectible image"
-              height={60}
-              src={row.original.collectible_s_image}
-              loading="lazy"
-            />
-          </Box>
+          <CollectibleImage 
+            id={row.original.collectible_s_id} 
+            name={row.original.collectible_s_name}
+            image={row.original.collectible_s_img}
+          />
 
         ),
         enableColumnActions: false,
@@ -85,22 +75,11 @@ const OffersList = () => {
         accessorKey: 'collectible_r_img',
         header: 'Collectible to be Received',
         Cell: ({ row }) => (
-          <Box
-            sx={{
-              display: 'flex',
-              gap: '1rem',
-              flexDirection: 'column',
-              alignItems: 'center',
-            }}
-          >
-            <Typography variant="h8">{row.original.collectible_r_name}</Typography>
-            <img
-              alt="collectible image"
-              height={60}
-              src={row.original.collectible_r_img}
-              loading="lazy"
-            />
-          </Box>
+          <CollectibleImage 
+            id={row.original.collectible_r_id} 
+            name={row.original.collectible_r_name}
+            image={row.original.collectible_r_img}
+          />
 
         ),
         enableColumnActions: false,
@@ -108,14 +87,14 @@ const OffersList = () => {
         enableSorting: false,
       },
       {
-        accessorKey: 'trader_name',
-        header: 'Traded By',
-      },
-      {
         accessorKey: 'trader_profile_img',
         header: 'Trader Profile',
         Cell: ({ row }) => (
-            <ProfileAvatar userId={row.original.trader_collector_id} image={row.original.trader_profile_img}/>
+            <ProfileAvatar 
+              userId={row.original.trader_collector_id} 
+              image={row.original.trader_profile_img}
+              name={row.original.trader_name}
+            />
         ),
         enableColumnActions: false,
         enableColumnFilter: false,
@@ -127,7 +106,8 @@ const OffersList = () => {
         <Button
           sx={{ 
             bgcolor: `${getBackgroundColor(cell.getValue())}`,
-            borderRadius: 28
+            borderRadius: 28,
+            cursor: "default",
           }}
         >
           {cell.getValue()}
