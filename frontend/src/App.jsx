@@ -106,11 +106,24 @@ function App() {
       , options);
   }
 
+  // Changes background to gradient image
+  document.body.style.backgroundImage = `url("https://res.cloudinary.com/ddor5nnks/image/upload/v1699602264/gradient_background_zjdl6a.webp")`;
+  document.body.style.backgroundSize = 'cover';
+  document.body.style.backgroundRepeat = 'no-repeat';
+
   return (
     <Fragment>
       <ThemeProvider theme={theme}>
-        <Helmet bodyAttributes={{ style: 'background-color : #cccccc' }} />
-        <Box sx={{ display: 'flex', flexDirection: 'column', rowGap: '10ch', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+        <Box 
+          sx={{ 
+            display: 'flex', 
+            flexDirection: 'column', 
+            rowGap: '10ch', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            height: '100%',
+         }}
+        >
           {!loggedIn
             ? <BrowserRouter>
               <SignedOutNav />

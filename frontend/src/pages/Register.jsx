@@ -81,12 +81,8 @@ function Register({ setUserId, setLogin, setUsername }) {
       <Box 
         sx={{ 
           width: '100%', 
-          height: '90.8vh', 
           display: "flex", 
           flexDirection: "column", 
-          backgroundImage: `url("https://res.cloudinary.com/ddor5nnks/image/upload/v1699602264/gradient_background_zjdl6a.webp")`, 
-          backgroundRepeat: "no-repeat", 
-          backgroundSize: "cover", 
           alignItems: 'center', 
           justifyContent: 'center'
           }}
@@ -101,7 +97,7 @@ function Register({ setUserId, setLogin, setUsername }) {
           maxWidth: '700px',
           width: '50vw',
           paddingBottom: '50px',
-          // height: '50vh',
+          mt: '15vh',
         }}
       >
         <CssBaseline />
