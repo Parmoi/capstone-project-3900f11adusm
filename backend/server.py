@@ -580,6 +580,9 @@ def trade_offers_list():
                 "offer_collectible_img": "https://tse1.mm.bing.net/th?id=OIP.S9zFPgPbF0zJ4OXQkU675AHaHC&pid=Api",  # image of the collectible you're giving away.
                 "offer_made_date": "02/06/2003",
                 "trader_profile_img": "",
+                "offer_description": "Desc",
+                "offer_message": "Message",
+                "trader_name": "Name",
             }
         ]
     }
@@ -712,14 +715,14 @@ def make_offer():
     trade_id = request.json.get(
         "trade_id", None
     )  # ID of the trade the collector is making an offer to.
-    offer_collectible_id = request.json.get("collectible_id", None)
+    offer_collection_id = request.json.get("collection_id", None)
     description = request.json.get("description", None)  # description of offer.
     offer_img = request.json.get(
         "offer_img", None
     )  # offer maker uploaded image of collectible they're offering for the trade.
-    offer_title = request.json.get(
-        "offer_title", None
-    )  # title of the offer being made for the trade item.
+    offer_mesage = request.json.get(
+        "offer_message", None
+    )  # message of the offer being made for the trade item.
 
     stub_return = {"msg": "Offer has been successfully sent."}
 

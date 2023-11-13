@@ -78,6 +78,10 @@ const TradeOffersList = () => {
                 enableSorting: false,
             },
             {
+                accessorKey: 'trader_name',
+                header: 'Trader Name',
+            },
+            {
                 accessorKey: 'trader_profile_img',
                 header: 'Trader Profile',
                 Cell: ({ row }) => (
@@ -92,6 +96,14 @@ const TradeOffersList = () => {
                 ),
                 enableColumnActions: false,
                 enableColumnFilter: false,
+            },
+            {
+                accessorKey: 'offer_message',
+                header: 'Offer Message',
+            },
+            {
+                accessorKey: 'offer_description',
+                header: 'Offer Description',
             },
             {
                 accessorKey: 'offer_made_date',
@@ -144,7 +156,7 @@ const TradeOffersList = () => {
             defaultColumn={{
                 minSize: 50,
                 maxSize: 300,
-                size: 250,
+                size: 150,
             }}
 
             //add custom action buttons to top-left of top toolbar
@@ -161,7 +173,9 @@ const TradeOffersList = () => {
                         };
                         console.log(options)
 
-                        apiCall(() => { }, options)
+                        apiCall(() => { 
+                            fetchData();
+                        }, options)
                             .then((res) => {
                                 if (res) {
                                     // set error msg if api call returns error
@@ -181,7 +195,9 @@ const TradeOffersList = () => {
                             })
                         };
 
-                        apiCall(() => { }, options)
+                        apiCall(() => {
+                            fetchData();
+                         }, options)
                             .then((res) => {
                                 if (res) {
                                     // set error msg if api call returns error
