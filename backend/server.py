@@ -169,7 +169,7 @@ def profile():
         address: "string"
         }
     """
-    user_id = get_jwt_identity()
+    user_id = request.args.get('id')
 
     return db_collectors.get_collector(user_id=user_id)
 
@@ -601,16 +601,19 @@ def offers_get():
     stub_data = {
         "offers_list": [
             {
-                "offer_id": "",
+                "offer_id": 1,
                 "collectible_id": "",
-                "collectible_name": "Homer",
+                "collectible_s_name": "Homer",
+                "collectible_r_name": "Bart",
                 "offer_status": "SENT",  # status can be SENT, ACCEPTED or DECLINED
-                "collectible_img": "",
+                "collectible_s_img": "",
+                "collectible_r_img": "https://tse1.mm.bing.net/th?id=OIP.S9zFPgPbF0zJ4OXQkU675AHaHC&pid=Api",
                 "trader_collector_id": "",  # id of the collector offer was sent to
                 "trader_profile_img": "",  # The profile image of the other collector that offer was sent to
                 "trader_name": "person2",
-                "date_offer": "02/06/2003",
+                "date_offer_sent": "02/06/2003",
                 "date_updated": "02/06/2004",
+                "trade_post_id": 1,
             }
         ]
     }

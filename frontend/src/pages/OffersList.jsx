@@ -6,7 +6,8 @@ import {
   MRT_FullScreenToggleButton,
 } from 'material-react-table';
 
-import { Box, Button, IconButton } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
+import Avatar from '@mui/material/Avatar';
 
 //Date Picker Imports
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -15,9 +16,10 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import moment from 'moment';
 
 import { apiCall } from '../App';
+import ProfileAvatar from '../components/ProfileAvatar';
 
 const getBackgroundColor = (status) => {
-  return 'SENT' ? 'secondary.main' : 'ACCEPTED' ? 'primary.light' : 'error.main';
+  return status ? 'secondary.main' : 'ACCEPTED' ? 'primary.light' : 'error.main';
 }
 
 // sourced from https://github.com/KevinVandy/material-react-table/blob/v1/apps/material-react-table-docs/examples/custom-top-toolbar/sandbox/src/JS.js
@@ -55,9 +57,70 @@ const OffersList = () => {
         header: 'id',
       },
       {
-        accessorKey: 'collectible_name',
-        header: 'Collectible Name',
+        accessorKey: 'collectible_s_img',
+        header: 'Collectible Offered',
+        Cell: ({ row }) => (
+          <Box
+            sx={{
+              display: 'flex',
+              gap: '1rem',
+              flexDirection: 'column',
+              alignItems: 'center',
+            }}
+          >
+            <Typography variant="h8">{row.original.collectible_s_name}</Typography>
+            <img
+              alt="collectible image"
+              height={60}
+              src={row.original.collectible_s_image}
+              loading="lazy"
+            />
+          </Box>
+
+        ),
+        enableColumnActions: false,
+        enableColumnFilter: false,
+        enableSorting: false,
       },
+      {
+        accessorKey: 'collectible_r_img',
+        header: 'Collectible to be Received',
+        Cell: ({ row }) => (
+          <Box
+            sx={{
+              display: 'flex',
+              gap: '1rem',
+              flexDirection: 'column',
+              alignItems: 'center',
+            }}
+          >
+            <Typography variant="h8">{row.original.collectible_r_name}</Typography>
+            <img
+              alt="collectible image"
+              height={60}
+              src={row.original.collectible_r_img}
+              loading="lazy"
+            />
+          </Box>
+
+        ),
+        enableColumnActions: false,
+        enableColumnFilter: false,
+        enableSorting: false,
+      },
+      {
+        accessorKey: 'trader_name',
+        header: 'Traded By',
+      },
+      {
+        accessorKey: 'trader_profile_img',
+        header: 'Trader Profile',
+        Cell: ({ row }) => (
+            <ProfileAvatar image={row.original.trader_profile_img}/>
+        ),
+        enableColumnActions: false,
+        enableColumnFilter: false,
+    },
       {
         accessorKey: 'offer_status',
         header: 'Offer Status',
@@ -73,12 +136,8 @@ const OffersList = () => {
         ),
       },
       {
-        accessorKey: 'trader_name',
-        header: 'Traded By',
-      },
-      {
         accessorKey: 'date_offer_sent',
-        accessorFn: (row) => moment(row.date_offer, "DD/MM/YYYY"), //convert to Date for sorting and filtering
+        accessorFn: (row) => moment(row.date_offer_sent, "DD/MM/YYYY"), //convert to Date for sorting and filtering
             id: 'dateOffer',
             header: 'Date Offer Sent',
             filterFn: 'lessThanOrEqualTo',
@@ -158,7 +217,7 @@ const OffersList = () => {
       defaultColumn={{
         minSize: 50,
         maxSize: 500,
-        size: 300, 
+        size: 100, 
       }}
 
       //customize built-in buttons in the top-right of top toolbar

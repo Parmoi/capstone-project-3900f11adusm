@@ -119,7 +119,7 @@ function App() {
 
                 {/* <Route path="/" element={<ManagerHomePage/>} /> */}
 
-                <Route path="/profile" element={<Profile />} />
+                <Route path="/profile/:id" element={<Profile />} />
                 <Route path="/wantlist" element={<WantList />} />
                 <Route path="/collection" element={<CollectionList />} />
                 <Route path="/exchange-history" element={<ExchangeHistory />} />
