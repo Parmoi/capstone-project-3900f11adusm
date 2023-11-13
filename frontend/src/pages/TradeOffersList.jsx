@@ -6,7 +6,7 @@ import {
     MRT_FullScreenToggleButton,
 } from 'material-react-table';
 
-import { Box, Button, IconButton } from '@mui/material';
+import { Box, Button } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
 
 //Date Picker Imports
@@ -16,6 +16,8 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import moment from 'moment';
 import { useParams } from 'react-router-dom';
 import { apiCall } from '../App';
+import ProfileAvatar from '../components/ProfileAvatar';
+import CollectibleImage from '../components/CollectibleImage';
 
 
 // sourced from https://github.com/KevinVandy/material-react-table/blob/v1/apps/material-react-table-docs/examples/custom-top-toolbar/sandbox/src/JS.js
@@ -52,47 +54,24 @@ const TradeOffersList = () => {
         //column definitions...
         () => [
             {
-                accessorKey: 'offer_collectible_name',
-                header: 'Collectible Offered',
-            },
-            {
                 accessorKey: 'offer_collectible_img',
                 header: 'Trade Item Image',
                 Cell: ({ row }) => (
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            gap: '1rem',
-                        }}
-                    >
-                        <img
-                            alt="trading collectible image"
-                            height={60}
-                            src={row.original.offer_collectible_img}
-                            loading="lazy"
-                        />
-                    </Box>
+                    <CollectibleImage id={row.original.collectible_id} name={row.original.offer_collectible_name} image={row.original.offer_collectible_img}/>
                 ),
                 enableColumnActions: false,
                 enableColumnFilter: false,
                 enableSorting: false,
             },
             {
-                accessorKey: 'trader_name',
-                header: 'Trader Name',
-            },
-            {
                 accessorKey: 'trader_profile_img',
                 header: 'Trader Profile',
                 Cell: ({ row }) => (
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            gap: '1rem',
-                        }}
-                    >
-                        <Avatar alt="Trader Profile" src={row.original.trader_profile_img} />
-                    </Box>
+                    <ProfileAvatar 
+                        userId={row.original.trader_id} 
+                        image={row.original.trader_profile_img} 
+                        name={row.original.trader_name}
+                    />
                 ),
                 enableColumnActions: false,
                 enableColumnFilter: false,

@@ -11,10 +11,10 @@ import { apiCall } from '../App';
 import Alert from '@mui/material/Alert';
 import Paper from '@mui/material/Paper';
 
-const getUsername = (setUsername) => {
+const getUsername = (userId, setUsername) => {
   const options = {
     method: 'GET',
-    route: '/profile',
+    route: `/profile?id=${userId}`,
   };
 
   apiCall((d) => {
@@ -29,7 +29,7 @@ const getUsername = (setUsername) => {
     });
 }
 
-function SignIn({ setLogin, setPrivilege, setUsername }) {
+function SignIn({ userId, setUserId, setLogin, setPrivilege, setUsername }) {
   const [error, setError] = React.useState(false);
   const [errContent, setErrContent] = React.useState('');
   const navigate = useNavigate();
@@ -50,8 +50,9 @@ function SignIn({ setLogin, setPrivilege, setUsername }) {
 
     apiCall((d) => {
       setLogin(true);
+      setUserId(d.userId);
+      getUsername(d.userId, setUsername);
       setPrivilege(parseInt(d.privelage));
-      getUsername(setUsername);
     }, options)
       .then((res) => {
         if (res) {

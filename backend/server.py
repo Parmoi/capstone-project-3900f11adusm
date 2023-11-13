@@ -169,7 +169,7 @@ def profile():
         address: "string"
         }
     """
-    user_id = get_jwt_identity()
+    user_id = request.args.get('id')
 
     return db_collectors.get_collector(user_id=user_id)
 
@@ -576,10 +576,12 @@ def trade_offers_list():
         "offers_list": [
             {
                 "offer_id": 1,
+                "collectible_id": 1,
                 "offer_collectible_name": "Bart with skateboard",  # collectible you're givin away
                 "offer_collectible_img": "https://tse1.mm.bing.net/th?id=OIP.S9zFPgPbF0zJ4OXQkU675AHaHC&pid=Api",  # image of the collectible you're giving away.
                 "offer_made_date": "02/06/2003",
                 "trader_profile_img": "",
+                "trader_id": 1,
                 "offer_description": "Desc",
                 "offer_message": "Message",
                 "trader_name": "Name",
@@ -601,16 +603,20 @@ def offers_get():
     stub_data = {
         "offers_list": [
             {
-                "offer_id": "",
-                "collectible_id": "",
-                "collectible_name": "Homer",
+                "offer_id": 1,
+                "collectible_s_id": 1,
+                "collectible_r_id": 1,
+                "collectible_s_name": "Homer",
+                "collectible_r_name": "Bart",
                 "offer_status": "SENT",  # status can be SENT, ACCEPTED or DECLINED
-                "collectible_img": "",
-                "trader_collector_id": "",  # id of the collector offer was sent to
+                "collectible_s_img": "",
+                "collectible_r_img": "https://tse1.mm.bing.net/th?id=OIP.S9zFPgPbF0zJ4OXQkU675AHaHC&pid=Api",
+                "trader_collector_id": 1,  # id of the collector offer was sent to
                 "trader_profile_img": "",  # The profile image of the other collector that offer was sent to
                 "trader_name": "person2",
-                "date_offer": "02/06/2003",
+                "date_offer_sent": "02/06/2003",
                 "date_updated": "02/06/2004",
+                "trade_post_id": 1,
             }
         ]
     }
