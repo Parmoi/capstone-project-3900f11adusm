@@ -528,8 +528,8 @@ def get_tradepost():
 def tester():
     db_collections.insert_collectible(1, 2)
     db_collections.insert_collectible(2, 3)
-    db_collections.insert_collectible(2, 7)
-    db_collections.insert_collectible(3, 5)
+    # db_collections.insert_collectible(2, 7)
+    # db_collections.insert_collectible(3, 5)
     db_tradeposts.insert_trade_post(1, 501, "random post!", "random desc!", [{
                 "name": "1",
                 "caption": "Bart with skateboard.",
@@ -540,16 +540,22 @@ def tester():
                 "caption": "Stuffed bart.",
                 "image": "https://tse1.mm.bing.net/th?id=OIP.AIizpaWw4l8TtY5fWj66RgHaGr&pid=Api",
             }])
+    # db_tradeposts.insert_trade_post(2, 502, "Another post for test", "random WOOOO!", [{
+    #             "name": "1",
+    #             "caption": "Bart with skateboard.",
+    #             "image": "https://tse1.mm.bing.net/th?id=OIP.S9zFPgPbF0zJ4OXQkU675AHaHC&pid=Api",
+    #         },
+    #         {
+    #             "name": "2",
+    #             "caption": "Stuffed bart.",
+    #             "image": "https://tse1.mm.bing.net/th?id=OIP.AIizpaWw4l8TtY5fWj66RgHaGr&pid=Api",
+    #         }])
     db_tradeoffers.register_trade_offer(1, 2, 502, "random msg!", "google.com")
-    db_tradeoffers.register_trade_offer(1, 2, 504, "Another trade!", "BOOP BOOOPcom")
-    db_tradeoffers.register_trade_offer(1, 3, 503, "I want this!!!", "google.com as well?")
-    db_tradeoffers.decline_trade_offer(1)
-    return db_tradeoffers.find_outgoing_offers(2)
-    # return jsonify(db_tradeoffers.find_past_outgoing_offers(2))
-    # return db_tradeoffers.find_outgoing_offers(2)
-    # return db_tradeoffers.find_tradelist_offers(1)
-    # return db_tradeposts.get_current_trade_posts(1)
-    # return db_tradeoffers.find_tradelist_offers(1) # find trade going to id 1
+    # db_tradeoffers.register_trade_offer(1, 2, 504, "Another trade!", "BOOP BOOOPcom")
+    # db_tradeoffers.register_trade_offer(1, 3, 503, "I want this!!!", "google.com as well?")
+    # db_tradeoffers.register_trade_offer(2, 1, 501, "i want this!!!!", "cool beans....")
+    return db_tradeoffers.accept_trade_offer(1)
+    # db_tradeoffers.decline_trade_offer(1)
     # return db_tradeoffers.find_outgoing_offers(2)
 
 @APP.route("/trade/list", methods=["GET"])
