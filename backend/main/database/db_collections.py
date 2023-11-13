@@ -227,7 +227,7 @@ def move_collectible(sender_id, receiver_id, collection_id):
     
     select_stmt = (db.select(
         cbl.c.id.label("collectible_id")
-    ))
+    )).select_from(join)
 
     # Find the collectible id, remove the collection from sender, and add to collection of receiver
     collectible_id = conn.execute(select_stmt).fetchone()._asdict().get("collectible_id")
@@ -265,3 +265,34 @@ def get_last_collection(user_id):
 
     collection_dict = results.fetchone()._asdict()
     return collection_dict
+
+def get_collectible_id(collection_id):
+    """Find the collectible_id from the collection_id
+
+    Args:
+        collection_id (int): id of the collection we want to find a collectible_id for
+    
+    Returns:
+        int: int of the collectible_id from the collection_id
+
+    Example Output:
+        2
+    """
+    engine, conn, metadata = dbm.db_connect()
+
+    # Loads in the collection and collectible tables
+    ctn = db.Table("collections", metadata, autoload_with=engine)
+    cbl = db.Table("collectibles", metadata, autoload_with=engine)
+
+    join = db.join(ctn, cbl,
+        (ctn.c.collectible_id == cbl.c.id) & (ctn.c.id == collection_id))
+    
+    select_stmt = (db.select(
+        cbl.c.id.label("collectible_id")
+    )).select_from(join)
+
+    # Find the collectible id
+    collectible_id = conn.execute(select_stmt).fetchone()._asdict().get("collectible_id")
+    conn.close()
+
+    return collectible_id

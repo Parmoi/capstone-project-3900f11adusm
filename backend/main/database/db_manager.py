@@ -119,7 +119,8 @@ def database_setup():
         db.Column("offer_message", db.String),
         db.Column("offer_image", db.String),
         db.Column("offer_status", db.String),
-        db.Column("date_offered", db.DATE)
+        db.Column("date_offered", db.DATE),
+        # db.Column("date_reviewed", db.DATE), # The date the offer was accepted/declined
     )
 
     past_trade_offers_table = db.Table(
@@ -131,7 +132,8 @@ def database_setup():
         db.Column("trade_receiver_id", db.Integer, db.ForeignKey("collectors.id")), # id of user receiving trade offer
         db.Column("collectible_receive_id", db.Integer, db.ForeignKey("collectibles.id")), # collection id of collectible that user is receiving for trade
         db.Column("offer_status", db.String),
-        db.Column("date_offered", db.DATE)
+        db.Column("date_offered", db.DATE),
+        # db.Column("date_reviewed", db.DATE), # The date the offer was accepted/declined
     )
 
     pivelage_table = db.Table(

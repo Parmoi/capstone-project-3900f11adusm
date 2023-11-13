@@ -4,7 +4,7 @@ import db_helpers
 import db_manager as dbm
 import db_collections
 from error import OK, InputError, AccessError
-from datetime import date
+from datetime import date, datetime
 
 # TODO: Error checking
 def register_trade_offer(tp_id, send_id, ctn_s_id, offer_msg, offer_img):
@@ -116,7 +116,10 @@ def find_outgoing_offers(user_id):
     """Finds all outgoing offers the user has made
 
     Notes:
-        id == sender_id
+        - id == sender_id
+        - "SENT" offers differ slightly in their return to "DECLINED"/"ACCEPTED" offers,
+          but the important data should be the same
+
 
     Args:
         user_id (int): id of user who we want to find outgoing trade offers for
@@ -136,9 +139,22 @@ def find_outgoing_offers(user_id):
                     "offer_status": "SENT",
                     "date_offer_sent": "11/11/2023",
                     "trader_name": "uso",
+                    "trader_profile_picture": "google.com.",
                     "trade_post_id": 1
                 },
-                ...
+                {
+                    "collectible_r_img": "https://robohash.org/similiquenemoaut.png?size=50x50&set=set1",
+                    "collectible_r_name": "Iguana iguana",
+                    "collectible_receive_id": 2,
+                    "collectible_s_img": "https://robohash.org/voluptatemetipsum.png?size=50x50&set=set1",
+                    "collectible_s_name": "Phascogale calura",
+                    "date_offer_sent": "13/11/2023",
+                    "offer_status": "DECLINED",
+                    "trade_receiver_id": 1,
+                    "trader_name": "uso",
+                    "trader_profile_picture":
+                    "https://robohash.org/utomniseos.png?size=50x50&set=set1"
+                }
             ]
         }, 200
     """
@@ -179,18 +195,97 @@ def find_outgoing_offers(user_id):
         find_stmt = (db.select(
             cbl.c.name.label("collectible_r_name"),
             cbl.c.image.label("collectible_r_img"),
-            ctr.c.username.label("trader_name")
+            ctr.c.username.label("trader_name"),
+            ctr.c.profile_picture.label("trade_profile_picture")
         )).select_from(new_join)
         details_dict = conn.execute(find_stmt).fetchone()._asdict()
         offer.update({
             "collectible_r_name": details_dict.get("collectible_r_name"),
             "collectible_r_img": details_dict.get("collectible_r_img"),
             "trader_name": details_dict.get("trader_name"),
+            "trader_profile_picture": details_dict.get("trade_profile_picture")
         })
-        
-    conn.close()
+    # Finds and appends all offers that have been accepted/declined in the past
+    offer_list = offers + find_past_outgoing_offers(user_id, engine, conn, metadata)
 
-    return jsonify(offers), OK
+    conn.close()
+    return jsonify(offer_list), OK
+
+def find_past_outgoing_offers(user_id, engine, conn, metadata):
+    """Finds all past offers that the user has made (since ACCCEPTED/DECLINED
+    offers are deleted)
+
+    Notes:
+        - engine, conn, metadata included in arguments because too many
+        connections were being opened simultaneously
+        - has no offer_id, trade_post_id (mainly for the purpose of deleting and not having foreign key errors)
+
+
+    Args:
+        user_id (int): id of collector we want to find past outgoing offers for
+
+    Returns:
+        [dictionary]: list of dictionaries containing offer information
+    
+    Example Output:
+        [
+            {
+                "collectible_r_img": "https://robohash.org/similiquenemoaut.png?size=50x50&set=set1",
+                "collectible_r_name": "Iguana iguana",
+                "collectible_receive_id": 2,
+                "collectible_s_img": "https://robohash.org/voluptatemetipsum.png?size=50x50&set=set1",
+                "collectible_s_name": "Phascogale calura",
+                "date_offer_sent": "13/11/2023",
+                "offer_status": "DECLINED",
+                "trade_receiver_id": 1,
+                "trader_name": "uso",
+                "trader_profile_picture":
+                "https://robohash.org/utomniseos.png?size=50x50&set=set1"
+            },
+        ]
+    """
+
+    # Loads in the past_trade_offers, collectors and collectibles table
+    past_to = db.Table("past_trade_offers", metadata, autoload_with=engine)
+    ctr = db.Table("collectors", metadata, autoload_with=engine)
+    cbl = db.Table("collectibles", metadata, autoload_with=engine)
+
+    # First we find past posts where user has sent offers
+    join = db.join(past_to, cbl,
+        (past_to.c.trade_sender_id == user_id) & 
+        (past_to.c.collectible_send_id == cbl.c.id)).join(ctr,
+        (past_to.c.trade_receiver_id == ctr.c.id))
+
+    select_stmt = (db.select(
+        cbl.c.name.label("collectible_s_name"),
+        cbl.c.image.label("collectible_s_img"),
+        past_to.c.offer_status.label("offer_status"),
+        past_to.c.date_offered.label("date_offer_sent"),
+        past_to.c.trade_receiver_id.label("trade_receiver_id"),
+        past_to.c.collectible_receive_id.label("collectible_receive_id"),
+    ).select_from(join))
+
+    offers = db_helpers.rows_to_list(conn.execute(select_stmt).fetchall())
+    
+    for offer in offers:
+        trade_receiver_id = offer.get("trade_receiver_id")
+        collectible_receive_id = offer.get("collectible_receive_id")
+        
+        trader_select_stmt = (db.select(
+            ctr.c.username.label("trader_name"),
+            ctr.c.profile_picture.label("trader_profile_picture")
+        )).where(ctr.c.id == trade_receiver_id)
+        trader_info = conn.execute(trader_select_stmt).fetchone()._asdict()
+        offer.update(trader_info)
+
+        collectible_select_stmt = (db.select(
+            cbl.c.name.label("collectible_r_name"),
+            cbl.c.image.label("collectible_r_img")
+        )).where(cbl.c.id == collectible_receive_id)
+        collectible_info = conn.execute(collectible_select_stmt).fetchone()._asdict()
+        offer.update(collectible_info)
+    
+    return offers
 
 # TODO: Error checking
 def accept_trade_offer(offer_id):
@@ -259,6 +354,11 @@ def accept_trade_offer(offer_id):
 def decline_trade_offer(offer_id):
     """Function to decline a trade offer
 
+    Notes:
+        1. Updates trade_offer entry to "DECLINED" status
+        2. Copies the trade_offer entry to the past_trade_offers table
+        3. Deletes the original trade_offer entry
+
     Args:
         offer_id (int): id of the trade offer that we want to decline
 
@@ -272,13 +372,46 @@ def decline_trade_offer(offer_id):
 
     # Loads in the trade_offers table
     to = db.Table("trade_offers", metadata, autoload_with=engine)
+    past_to = db.Table("past_trade_offers", metadata, autoload_with=engine)
 
     # Change offer status from "SENT" to "DECLINED"
     update_stmt = db.update(to).where(to.c.id == offer_id).values(offer_status = "DECLINED")
     conn.execute(update_stmt)
+
+    # Find trade_post and trade_offer information
+    tp_to_info = to_tp_info(offer_id, engine, conn, metadata)
+
+    # Convert collection ids to collectible ids
+    collection_s_id = tp_to_info.get("collection_s_id")
+    collectible_s_id = db_collections.get_collectible_id(collection_s_id)
+    collection_r_id = tp_to_info.get("collection_r_id")
+    collectible_r_id = db_collections.get_collectible_id(collection_r_id)
+
+    # Convert date_offered from string to a Date object
+    date_obj = datetime.strptime(tp_to_info.get("date_offered"), "%d/%m/%Y").date()
+
+    # Copies the trade offer to the past_trade_offers table
+    insert_stmt = db.insert(past_to).values(
+        {
+            "trade_sender_id": tp_to_info.get("sender_id"),
+            "collectible_send_id": collectible_s_id,
+            "trade_receiver_id": tp_to_info.get("receiver_id"),
+            "collectible_receive_id": collectible_r_id,
+            "date_offered": date_obj,
+            "offer_status": tp_to_info.get("offer_status"),
+        })
+    conn.execute(insert_stmt)
+
+    # Delete the trade offer from the trade_offer table
+    delete_stmt = db.delete(to).where(to.c.id == offer_id)
+    conn.execute(delete_stmt)
     conn.close()
 
     return jsonify({"offer_id": offer_id}), OK
+
+""" |------------------------------------|
+    |  Helper Functions for tradeoffers  |
+    |------------------------------------| """
 
 # TODO: Error checking? Not sure if needed, since this is a helper and the main functions should handle errors already
 def find_trade_offer_id(trade_post_id, sender_id, ctn_s_id):
@@ -309,3 +442,50 @@ def find_trade_offer_id(trade_post_id, sender_id, ctn_s_id):
 
     return trade_offer_id
 
+def to_tp_info(offer_id, engine, conn, metadata):
+    """Returns the trade offer and the corresponding trade post information
+
+    Notes:
+        engine, conn, metadata included in arguments because too many
+        connections were being opened simultaneously
+    
+    Args:
+        offer_id (int): id of trade offer we want to find information for
+    
+    Returns:
+        dictionary: holds information of trade_offer and corresponding trade_post
+
+    Example Output:
+        {
+            "receiver_id": 1,
+            "collection_r_id": 501,
+            "sender_id": 2
+            "collection_s_id": 502,
+            "offer_message": "random msg!",
+            "offer_image": "google.com",
+            "offer_status": "SENT",
+            "date_offered": "12/11/2023",
+        }
+    """
+
+    # Loads in the trade_offers, collections, collectibles, and collectors table
+    to = db.Table("trade_offers", metadata, autoload_with=engine)
+    tp = db.Table("trade_posts", metadata, autoload_with=engine)
+
+    join = db.join(to, tp,
+        (to.c.trade_post_id == tp.c.id) & (to.c.id == offer_id))
+    
+    select_stmt = (db.select(
+        tp.c.collector_id.label("receiver_id"),
+        tp.c.collection_id.label("collection_r_id"),
+        to.c.trade_sender_id.label("sender_id"),
+        to.c.collection_send_id.label("collection_s_id"),
+        to.c.offer_message.label("offer_message"),
+        to.c.offer_image.label("offer_image"),
+        to.c.offer_status.label("offer_status"),
+        to.c.date_offered.label("date_offered")
+    )).select_from(join)
+
+    tp_to_info = db_helpers.rows_to_list(conn.execute(select_stmt).fetchall())[0]
+
+    return tp_to_info
