@@ -29,7 +29,7 @@ const getUsername = (userId, setUsername) => {
     });
 }
 
-function SignIn({ userId, setUserId, setLogin, setPrivilege, setUsername }) {
+function SignIn({ setUserId, setLogin, setPrivilege, setUsername }) {
   const [error, setError] = React.useState(false);
   const [errContent, setErrContent] = React.useState('');
   const navigate = useNavigate();
@@ -71,12 +71,8 @@ function SignIn({ userId, setUserId, setLogin, setPrivilege, setUsername }) {
       <Box 
         sx={{ 
           width: '100%', 
-          height: '90.8vh', 
           display: "flex", 
           flexDirection: "column", 
-          backgroundImage: `url("https://res.cloudinary.com/ddor5nnks/image/upload/v1699602264/gradient_background_zjdl6a.webp")`, 
-          backgroundRepeat: "no-repeat", 
-          backgroundSize: "cover", 
           alignItems: 'center', 
           justifyContent: 'center'
           }}
@@ -85,12 +81,11 @@ function SignIn({ userId, setUserId, setLogin, setPrivilege, setUsername }) {
         component="main" 
         maxWidth="xs" 
         sx={{
-          // mt: '15vh',
+          mt: '15vh',
           borderRadius: 2,
           maxWidth: '700px',
           width: '50vw',
           paddingBottom: '50px',
-          // height: '50vh',
         }}
       >
         <CssBaseline />

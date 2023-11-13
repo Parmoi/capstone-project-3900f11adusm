@@ -106,17 +106,30 @@ function App() {
       , options);
   }
 
+  // Changes background to gradient image
+  document.body.style.backgroundImage = `url("https://res.cloudinary.com/ddor5nnks/image/upload/v1699602264/gradient_background_zjdl6a.webp")`;
+  document.body.style.backgroundSize = 'cover';
+  document.body.style.backgroundRepeat = 'no-repeat';
+
   return (
     <Fragment>
       <ThemeProvider theme={theme}>
-        <Helmet bodyAttributes={{ style: 'background-color : #cccccc' }} />
-        <Box sx={{ display: 'flex', flexDirection: 'column', rowGap: '10ch', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+        <Box 
+          sx={{ 
+            display: 'flex', 
+            flexDirection: 'column', 
+            rowGap: '10ch', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            height: '100%',
+         }}
+        >
           {!loggedIn
             ? <BrowserRouter>
               <SignedOutNav />
               <Routes>
                 <Route path="/" element={<LandingPage />} />
-                <Route path="/login" element={<SignIn userId={userId} setUserId={setUserId} setLogin={setLoggedIn} setPrivilege={setPrivilege} setUsername={setUsername} />} />
+                <Route path="/login" element={<SignIn setUserId={setUserId} setLogin={setLoggedIn} setPrivilege={setPrivilege} setUsername={setUsername} />} />
                 <Route path="/register" element={<Register setUserId={setUserId} setLogin={setLoggedIn} setUsername={setUsername} />} />
                 <Route path="/manager/register" element={<ManagerRegister setLogin={setLoggedIn} setUsername={setUsername} />} />
               </Routes>
