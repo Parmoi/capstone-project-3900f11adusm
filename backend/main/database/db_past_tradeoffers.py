@@ -14,7 +14,6 @@ def find_past_outgoing_offers(user_id, engine, conn, metadata):
         connections were being opened simultaneously
         - has no offer_id, trade_post_id (mainly for the purpose of deleting and not having foreign key errors)
 
-
     Args:
         user_id (int): id of collector we want to find past outgoing offers for
 

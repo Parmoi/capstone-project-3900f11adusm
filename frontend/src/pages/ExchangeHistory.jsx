@@ -19,7 +19,7 @@ function ExchangeHistory() {
     };
 
     apiCall((d) => {
-      setData(d["exchange_history"]);
+      setData(d);
     }, options)
       .then((res) => {
         if (res) {

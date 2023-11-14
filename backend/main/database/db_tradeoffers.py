@@ -2,7 +2,7 @@ import sqlalchemy as db
 from flask import jsonify
 import db_helpers
 import db_manager as dbm
-import db_collections, db_past_tradeoffers
+import db_collections, db_past_tradeoffers, db_exchangehistory
 from error import OK, InputError, AccessError
 from datetime import date, datetime
 
@@ -226,7 +226,7 @@ def find_outgoing_offers(user_id):
 
 # TODO: Error checking
 def accept_trade_offer(offer_id):
-    """_summary_
+    """Function to accept a trade offer
 
     Notes:
         1. Updates trade_offer entry to "ACCEPTED" status                       [DONE]
@@ -242,10 +242,10 @@ def accept_trade_offer(offer_id):
         offer_id (int): id of the offer we want to accept
     
     Returns:
-        ...
+        JSON, int: JSON of offer_id, int of success/error code
     
     Example Output:
-        ...
+        {"offer_id": 2}, 200
     """
     engine, conn, metadata = dbm.db_connect()
 
@@ -295,17 +295,19 @@ def accept_trade_offer(offer_id):
     sender_id = tp_to_info.get("sender_id")
     collection_s_id = tp_to_info.get("collection_s_id")
 
+    # Adds the accepted trade offer into the exchange history table
+    db_exchangehistory.add_exhange_history(tp_to_info, engine, conn, metadata)
+    
     # Moves collectible from sender to receiver
     db_collections.move_collectible(sender_id, receiver_id, collection_s_id)
 
-    # # Moves the collectible from receiver to sender
+    # Moves the collectible from receiver to sender
     db_collections.move_collectible(receiver_id, sender_id, collection_r_id)
     
-    # TODO: ADD TO EXCHANGE HISTORY
 
     conn.close()
 
-    return jsonify({"msg": "everything is fine!"}), OK
+    return jsonify({"offer_id": offer_id}), OK
 
 
 # TODO: Error checking (empty lists?)
@@ -321,10 +323,10 @@ def decline_trade_offer(offer_id):
         offer_id (int): id of the trade offer that we want to decline
 
     Returns:
-        JSON: JSON of the id of the trade offer that was declined
+        JSON, int: JSON of id of declined offer, int of success/error code
     
     Example Output:
-        2
+        {"offer_id": 2}, 200
     """
     engine, conn, metadata = dbm.db_connect()
 
@@ -391,6 +393,7 @@ def to_tp_info(offer_id, engine, conn, metadata):
 
     Example Output:
         {
+            "trade_post_id": 20,
             "receiver_id": 1,
             "collection_r_id": 501,
             "sender_id": 2
@@ -399,6 +402,7 @@ def to_tp_info(offer_id, engine, conn, metadata):
             "offer_image": "google.com",
             "offer_status": "SENT",
             "date_offered": "12/11/2023",
+            "date_updated": "25/11/2023"
         }
     """
 

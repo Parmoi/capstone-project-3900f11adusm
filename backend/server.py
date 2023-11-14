@@ -22,7 +22,8 @@ from main.database import (
     db_collectibles,
     db_collections,
     db_tradeposts,
-    db_tradeoffers
+    db_tradeoffers,
+    db_exchangehistory
 )
 from main import auth
 from main.error import InputError, AccessError, OK
@@ -524,37 +525,6 @@ def get_tradepost():
 
     return db_tradeposts.get_trade_post_info(trade_post_id)
 
-@APP.route("/tester")
-def tester():
-    db_collections.insert_collectible(1, 2)
-    db_collections.insert_collectible(2, 3)
-    db_collections.insert_collectible(2, 4)
-    # db_collections.insert_collectible(2, 7)
-    # db_collections.insert_collectible(3, 5)
-    db_tradeposts.insert_trade_post(1, 501, "random post!", "random desc!", [{
-                "name": "1",
-                "caption": "Bart with skateboard.",
-                "image": "https://tse1.mm.bing.net/th?id=OIP.S9zFPgPbF0zJ4OXQkU675AHaHC&pid=Api",
-            },
-            {
-                "name": "2",
-                "caption": "Stuffed bart.",
-                "image": "https://tse1.mm.bing.net/th?id=OIP.AIizpaWw4l8TtY5fWj66RgHaGr&pid=Api",
-            }])
-    # db_tradeposts.insert_trade_post(2, 502, "Another post for test", "random WOOOO!", [{
-    #             "name": "1",
-    #             "caption": "Bart with skateboard.",
-    #             "image": "https://tse1.mm.bing.net/th?id=OIP.S9zFPgPbF0zJ4OXQkU675AHaHC&pid=Api",
-    #         },
-    #         {
-    #             "name": "2",
-    #             "caption": "Stuffed bart.",
-    #             "image": "https://tse1.mm.bing.net/th?id=OIP.AIizpaWw4l8TtY5fWj66RgHaGr&pid=Api",
-    #         }])
-    db_tradeoffers.register_trade_offer(1, 2, 502, "random msg!", "google.com")
-    db_tradeoffers.register_trade_offer(1, 2, 503, "ANOTHER TRADE msg!", "GGGGG.com")
-    db_tradeoffers.decline_trade_offer(1)
-    return db_tradeoffers.find_outgoing_offers(2)
 
 @APP.route("/trade/list", methods=["GET"])
 @jwt_required(fresh=False)
@@ -599,59 +569,19 @@ def offers_get():
 @APP.route("/exchange/history", methods=["GET"])
 @jwt_required(fresh=False)
 def exchange_history():
+    """
+    Find the user's exchange history
+    """
     user_id = get_jwt_identity()
-
-    stub_return = {  # return a json list
-        "exchange_history": [
-            {
-                "exchange_id": "2",
-                "traded_collectible_id": "1",
-                "traded_collectible_name": "Homer",
-                "traded_collectible_img": "https://ilarge.lisimg.com/image/8825948/980full-homer-simpson.jpg",
-                "traded_campaign_id": "1",
-                "traded_campaign_name": "Simpsons",
-                "traded_campaign_img": "",
-                "accepted_collectible_id": "2",
-                "accepted_collectible_name": "Marge",
-                "accepted_collectible_img": "https://tse4.mm.bing.net/th?id=OIP.e4tAXeZ6G0YL4OE5M8KTwAHaMq&pid=Api",
-                "accepted_campaign_id": 1,
-                "accepted_campaign_name": "Simpsons",
-                "accepted_campaign_img": "",
-                "trader_collector_id": "2",
-                "trader_profile_img": "default",
-                "trader_username": "person2",
-                "offer_made_date": "2023/10/25",
-                "accepted_date": "2023/10/29",
-            },
-            {
-                "exchange_id": "3",
-                "traded_collectible_id": "1",
-                "traded_collectible_name": "Bart",
-                "traded_collectible_img": "https://tse2.mm.bing.net/th?id=OIP.j7EknM6CUuEct_kx7o-dNQHaMN&pid=Api",
-                "traded_campaign_id": "1",
-                "traded_campaign_name": "Simpsons",
-                "traded_campaign_img": "",
-                "accepted_collectible_id": "2",
-                "accepted_collectible_name": "Dog",
-                "accepted_collectible_img": "https://tse3.mm.bing.net/th?id=OIP.6761X25CX3UUjklkDCnjSwHaHa&pid=Api",
-                "accepted_campaign_id": 1,
-                "accepted_campaign_name": "Simpsons",
-                "accepted_campaign_img": "",
-                "trader_collector_id": "2",
-                "trader_profile_img": "default",
-                "trader_username": "person2",
-                "offer_made_date": "2023/10/25",
-                "accepted_date": "2023/10/29",
-            },
-        ]
-    }
-
-    return jsonify(stub_return), OK
+    return db_exchangehistory.find_exchange_history(user_id)
 
 
 @APP.route("/exchange/available", methods=["GET"])
 @jwt_required(fresh=False)
 def available_exchanges():
+    """
+    I think this function might be unnecessary - Dyllan
+    """
     user_id = get_jwt_identity()
 
     collectible_id = request.json.get("collectible_id", None)
@@ -687,7 +617,7 @@ def make_offer():
 
     trade_id = request.json.get("trade_id", None)
     offer_collection_id = request.json.get("collection_id", None)
-    offer_msg = request.json.get("offer_message", None) # Frontend is "description", but should change to "offer_msg" later
+    offer_msg = request.json.get("offer_message", None)
     offer_img = request.json.get("offer_img", None)
     # There's also description, but I don't need it
 
