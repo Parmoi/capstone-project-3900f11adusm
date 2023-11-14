@@ -827,8 +827,11 @@ def get_manager_analytics():
             {
                 "campaign_id": 21,
                 "campaign_name": "Simpsons",
-                "exchange_dates": ['2023/10/20', '2023/10/21', '2023/10/22', '2023/10/23', '2023/10/24', '2023/10/25', '2023/10/26'],
-                "exchanges_made": [24, 13, 98, 39, 48, 38, 43]
+
+                # Essentially the X-axes labels
+                "exchange_dates": ['2023/10/20', '2023/10/21', '2023/10/22', '2023/10/23', '2023/10/24', '2023/10/25', '2023/10/26'],   
+                # Essentially the y-axes data for the X-axes labels
+                "exchanges_made": [24, 13, 98, 39, 48, 38, 43]  # These two lists need to be the same length
             },
             {
                 "campaign_id": 22,
