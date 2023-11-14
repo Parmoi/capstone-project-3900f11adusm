@@ -120,7 +120,7 @@ def database_setup():
         db.Column("offer_image", db.String),
         db.Column("offer_status", db.String),
         db.Column("date_offered", db.DATE),
-        # db.Column("date_reviewed", db.DATE), # The date the offer was accepted/declined
+        db.Column("date_updated", db.DATE), # The date the offer was sent/accepted/declined
     )
 
     past_trade_offers_table = db.Table(
@@ -133,7 +133,7 @@ def database_setup():
         db.Column("collectible_receive_id", db.Integer, db.ForeignKey("collectibles.id")), # collection id of collectible that user is receiving for trade
         db.Column("offer_status", db.String),
         db.Column("date_offered", db.DATE),
-        # db.Column("date_reviewed", db.DATE), # The date the offer was accepted/declined
+        db.Column("date_updated", db.DATE), # The date the offer was sent/accepted/declined
     )
 
     exchange_history_table = db.Table(

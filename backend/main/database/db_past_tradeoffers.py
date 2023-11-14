@@ -27,14 +27,15 @@ def find_past_outgoing_offers(user_id, engine, conn, metadata):
                 "collectible_r_img": "https://robohash.org/similiquenemoaut.png?size=50x50&set=set1",
                 "collectible_r_name": "Iguana iguana",
                 "collectible_receive_id": 2,
+                "collectible_s_id": 3
                 "collectible_s_img": "https://robohash.org/voluptatemetipsum.png?size=50x50&set=set1",
                 "collectible_s_name": "Phascogale calura",
                 "date_offer_sent": "13/11/2023",
+                "date_updated": "20/11/2023",
                 "offer_status": "DECLINED",
                 "trade_receiver_id": 1,
                 "trader_name": "uso",
-                "trader_profile_picture":
-                "https://robohash.org/utomniseos.png?size=50x50&set=set1"
+                "trader_profile_img": "https://robohash.org/utomniseos.png?size=50x50&set=set1"
             },
         ]
     """
@@ -51,10 +52,12 @@ def find_past_outgoing_offers(user_id, engine, conn, metadata):
         (past_to.c.trade_receiver_id == ctr.c.id))
 
     select_stmt = (db.select(
+        cbl.c.id.label("collectible_s_id"),
         cbl.c.name.label("collectible_s_name"),
         cbl.c.image.label("collectible_s_img"),
         past_to.c.offer_status.label("offer_status"),
         past_to.c.date_offered.label("date_offer_sent"),
+        past_to.c.date_updated.label("date_updated"),
         past_to.c.trade_receiver_id.label("trade_receiver_id"),
         past_to.c.collectible_receive_id.label("collectible_receive_id"),
     ).select_from(join))
@@ -66,13 +69,15 @@ def find_past_outgoing_offers(user_id, engine, conn, metadata):
         collectible_receive_id = offer.get("collectible_receive_id")
         
         trader_select_stmt = (db.select(
+            ctr.c.id.label("trader_collector_id"),
             ctr.c.username.label("trader_name"),
-            ctr.c.profile_picture.label("trader_profile_picture")
+            ctr.c.profile_picture.label("trader_profile_img")
         )).where(ctr.c.id == trade_receiver_id)
         trader_info = conn.execute(trader_select_stmt).fetchone()._asdict()
         offer.update(trader_info)
 
         collectible_select_stmt = (db.select(
+            cbl.c.id.label("collectible_r_id"),
             cbl.c.name.label("collectible_r_name"),
             cbl.c.image.label("collectible_r_img")
         )).where(cbl.c.id == collectible_receive_id)
@@ -108,8 +113,9 @@ def move_to_past(offer_id, engine, conn, metadata):
     collection_r_id = tp_to_info.get("collection_r_id")
     collectible_r_id = db_collections.get_collectible_id(collection_r_id)
 
-    # Convert date_offered from string to a Date object
-    date_obj = datetime.strptime(tp_to_info.get("date_offered"), "%d/%m/%Y").date()
+    # Convert date_offered and date_updated from string to a Date object
+    date_offered_obj = datetime.strptime(tp_to_info.get("date_offered"), "%d/%m/%Y").date()
+    date_updated_obj = datetime.strptime(tp_to_info.get("date_updated"), "%d/%m/%Y").date()
 
     # Copies the trade offer to the past_trade_offers table
     insert_stmt = db.insert(past_to).values(
@@ -118,7 +124,8 @@ def move_to_past(offer_id, engine, conn, metadata):
             "collectible_send_id": collectible_s_id,
             "trade_receiver_id": tp_to_info.get("receiver_id"),
             "collectible_receive_id": collectible_r_id,
-            "date_offered": date_obj,
+            "date_offered": date_offered_obj,
+            "date_updated": date_updated_obj,
             "offer_status": tp_to_info.get("offer_status"),
         })
     conn.execute(insert_stmt)

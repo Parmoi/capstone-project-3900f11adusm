@@ -86,9 +86,6 @@ def get_trade_posts(collectible_id):
 def get_current_trade_posts(collector_id):
     """Finds the trade posts that the collector has posted
 
-    Notes:
-        - What format for the current trade posts does the frontend want?
-
     Args:
         collector_id (int): id of the collector
 
@@ -99,7 +96,8 @@ def get_current_trade_posts(collector_id):
         [
             {
                 "trade_post_id": 1,
-                "trader_collection_id": 501
+                "trader_collection_id": 501,
+                "trade_collectible_id": 1,
                 "trader_collectible_name": "Iguana iguana",
                 "trader_collectible_img": "https://robohash.org/similiquenemoaut.png?size=50x50&set=set1",
                 "trade_post_date": "10/11/2023",
@@ -107,7 +105,8 @@ def get_current_trade_posts(collector_id):
             },
             {
                 "trade_post_id": 2,
-                "trader_collection_id": 503
+                "trader_collection_id": 503,
+                "trade_collectible_id": 2,
                 "trader_collectible_name": "Superman (Holo)",
                 "trader_collectible_img": "https://robohash.org/similiquenemoaut.png?size=50x50&set=set1",
                 "trade_post_date": "05/11/2023",
@@ -136,12 +135,13 @@ def get_current_trade_posts(collector_id):
         db.select(
             tp.c.id.label("trade_post_id"),
             ctn.c.id.label("trader_collection_id"),
+            cbl.c.id.label("trader_collectible_id"),
             cbl.c.name.label("trader_collectible_name"),
             tp.c.post_date.label("trade_post_date"),
             cbl.c.image.label("trader_collectible_img"),
             db.func.count(to.c.id).label("offers_received")
         ).group_by(
-            tp.c.id, ctn.c.id, cbl.c.name, tp.c.post_date, cbl.c.image
+            tp.c.id, ctn.c.id, cbl.c.id, cbl.c.name, tp.c.post_date, cbl.c.image
         ).select_from(join)
     )
 

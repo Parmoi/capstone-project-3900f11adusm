@@ -528,6 +528,7 @@ def get_tradepost():
 def tester():
     db_collections.insert_collectible(1, 2)
     db_collections.insert_collectible(2, 3)
+    db_collections.insert_collectible(2, 4)
     # db_collections.insert_collectible(2, 7)
     # db_collections.insert_collectible(3, 5)
     db_tradeposts.insert_trade_post(1, 501, "random post!", "random desc!", [{
@@ -551,12 +552,9 @@ def tester():
     #             "image": "https://tse1.mm.bing.net/th?id=OIP.AIizpaWw4l8TtY5fWj66RgHaGr&pid=Api",
     #         }])
     db_tradeoffers.register_trade_offer(1, 2, 502, "random msg!", "google.com")
-    # db_tradeoffers.register_trade_offer(1, 2, 504, "Another trade!", "BOOP BOOOPcom")
-    # db_tradeoffers.register_trade_offer(1, 3, 503, "I want this!!!", "google.com as well?")
-    # db_tradeoffers.register_trade_offer(2, 1, 501, "i want this!!!!", "cool beans....")
-    return db_tradeoffers.accept_trade_offer(1)
-    # db_tradeoffers.decline_trade_offer(1)
-    # return db_tradeoffers.find_outgoing_offers(2)
+    db_tradeoffers.register_trade_offer(1, 2, 503, "ANOTHER TRADE msg!", "GGGGG.com")
+    db_tradeoffers.decline_trade_offer(1)
+    return db_tradeoffers.find_outgoing_offers(2)
 
 @APP.route("/trade/list", methods=["GET"])
 @jwt_required(fresh=False)
@@ -589,25 +587,6 @@ def trade_offers_list():
 @APP.route("/offers/get", methods=["GET"])
 @jwt_required(fresh=False)
 def offers_get():
-    # stub_data = {
-    #     "offers_list": [
-    #         {
-    #             "offer_id": "",
-    #             "collectible_id": "",
-    #             "collectible_name": "Homer",
-    #             "offer_status": "SENT",  # status can be SENT, ACCEPTED or DECLINED
-    #             "collectible_img": "",
-    #             "trader_collector_id": "",  # id of the collector offer was sent to
-    #             "trader_profile_img": "",  # The profile image of the other collector that offer was sent to
-    #             "trader_name": "person2",
-    #             "date_offer": "02/06/2003",
-    #             "date_updated": "02/06/2004",
-    #         }
-    #     ]
-    # }
-
-    # return jsonify(stub_data), OK
-
     user_id = get_jwt_identity()
     return db_tradeoffers.find_outgoing_offers(user_id)
 

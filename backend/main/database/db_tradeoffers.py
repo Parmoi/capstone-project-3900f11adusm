@@ -34,7 +34,8 @@ def register_trade_offer(tp_id, send_id, ctn_s_id, offer_msg, offer_img):
             "offer_message": offer_msg,
             "offer_image": offer_img,
             "offer_status": "SENT",
-            "date_offered": date.today()
+            "date_offered": date.today(),
+            "date_updated": date.today()
         })
     conn.execute(insert_stmt)
     conn.close()
@@ -61,20 +62,24 @@ def find_tradelist_offers(trade_post_id):
        {
             [
                 {
+                    "collectible_id": 2,
                     "offer_collectible_img": "https://robohash.org/voluptatemetipsum.png?size=50x50&set=set1",
                     "offer_collectible_name": "Phascogale calura",
                     "offer_id": 1,
                     "offer_made_date": "10/11/2023",
                     "offer_message": "I would like to TAKE THIS!",
+                    "trader_id": 20,
                     "trader_profile_img": "https://robohash.org/cumqueaccusamusvoluptas.png?size=50x50&set=set1",
                     "trader_name": "uamar"
                 },
                 {
+                    "collectible_id": 4
                     "offer_collectible_img": "https://robohash.org/estcumquedebitis.png?size=50x50&set=set1",
                     "offer_collectible_name": "Ictonyx striatus"
                     "offer_id": 2,
                     "offer_made_date": "10/11/2023",
                     "offer_message": "I would like to trade!",
+                    "trader_id": 25,
                     "trader_profile_img": "https://robohash.org/nesciuntculpaat.png?size=50x50&set=set1",
                     "trader_name": "szhang"
                 }
@@ -98,10 +103,12 @@ def find_tradelist_offers(trade_post_id):
 
     select_stmt = (db.select(
         to.c.id.label("offer_id"),
+        cbl.c.id.label("collectible_id"),
         cbl.c.name.label("offer_collectible_name"),
         cbl.c.image.label("offer_collectible_img"),
         to.c.date_offered.label("offer_made_date"),
         to.c.offer_message.label("offer_message"),
+        ctr.c.id.label("trader_id"),
         ctr.c.username.label("trader_name"),
         ctr.c.profile_picture.label("trader_profile_img")
     ).select_from(join))
@@ -131,29 +138,32 @@ def find_outgoing_offers(user_id):
         {
             [
                 {
-                    "offer_id": 1,
-                    "collectible_s_name": "Phascogale calura",
-                    "collectible_s_img": "https://robohash.org/voluptatemetipsum.png?size=50x50&set=set1",
+                    "collectible_r_id": 5,
                     "collectible_r_name": "Iguana iguana",
                     "collectible_r_img": "https://robohash.org/similiquenemoaut.png?size=50x50&set=set1",
+                    "collectible_s_id": 2,
+                    "collectible_s_name": "Phascogale calura",
+                    "collectible_s_img": "https://robohash.org/voluptatemetipsum.png?size=50x50&set=set1",
                     "offer_status": "SENT",
                     "date_offer_sent": "11/11/2023",
+                    "date_updated": "14/11/2023",
+                    "trader_collector_id": 3,
                     "trader_name": "uso",
-                    "trader_profile_picture": "google.com.",
-                    "trade_post_id": 1
+                    "trader_profile_picture": "google.com."
                 },
                 {
-                    "collectible_r_img": "https://robohash.org/similiquenemoaut.png?size=50x50&set=set1",
+                    "collectible_r_id": 2,
                     "collectible_r_name": "Iguana iguana",
-                    "collectible_receive_id": 2,
-                    "collectible_s_img": "https://robohash.org/voluptatemetipsum.png?size=50x50&set=set1",
+                    "collectible_r_img": "https://robohash.org/similiquenemoaut.png?size=50x50&set=set1",
+                    "collectible_s_id": 3,
                     "collectible_s_name": "Phascogale calura",
-                    "date_offer_sent": "13/11/2023",
+                    "collectible_s_img": "https://robohash.org/voluptatemetipsum.png?size=50x50&set=set1",
                     "offer_status": "DECLINED",
-                    "trade_receiver_id": 1,
-                    "trader_name": "uso",
-                    "trader_profile_picture":
-                    "https://robohash.org/utomniseos.png?size=50x50&set=set1"
+                    "date_offer_sent": "13/11/2023",
+                    "date_updated": "14/11/2023",
+                    "trader_collector_id": 1,
+                    "trader_name": "bob",
+                    "trader_profile_picture": "https://robohash.org/utomniseos.png?size=50x50&set=set1"
                 }
             ]
         }, 200
@@ -175,10 +185,12 @@ def find_outgoing_offers(user_id):
     # Finds offers that the collector has made
     select_stmt = (db.select(
         to.c.id.label("offer_id"),
+        cbl.c.id.label("collectible_s_id"),
         cbl.c.name.label("collectible_s_name"), # Collectible send name
         cbl.c.image.label("collectible_s_img"), # Collectible send image
         to.c.date_offered.label("date_offer_sent"),
         to.c.offer_status.label("offer_status"),
+        to.c.date_updated.label("date_updated"),
         to.c.trade_post_id.label("trade_post_id")
     ).select_from(join))
 
@@ -193,18 +205,17 @@ def find_outgoing_offers(user_id):
                     (tp.c.collection_id == ctn.c.id)).join(cbl,
                     (ctn.c.collectible_id == cbl.c.id))
         find_stmt = (db.select(
+            cbl.c.id.label("collectible_r_id"),
             cbl.c.name.label("collectible_r_name"),
             cbl.c.image.label("collectible_r_img"),
+            ctr.c.id.label("trader_collector_id"),
             ctr.c.username.label("trader_name"),
-            ctr.c.profile_picture.label("trade_profile_picture")
+            ctr.c.profile_picture.label("trade_profile_img")
         )).select_from(new_join)
         details_dict = conn.execute(find_stmt).fetchone()._asdict()
-        offer.update({
-            "collectible_r_name": details_dict.get("collectible_r_name"),
-            "collectible_r_img": details_dict.get("collectible_r_img"),
-            "trader_name": details_dict.get("trader_name"),
-            "trader_profile_picture": details_dict.get("trade_profile_picture")
-        })
+        offer.update(details_dict)
+        offer.pop("trade_post_id")
+        offer.pop("offer_id")
     # Finds and appends all offers that have been accepted/declined in the past
     offer_list = offers + db_past_tradeoffers.find_past_outgoing_offers(
         user_id, engine, conn, metadata)
@@ -244,7 +255,12 @@ def accept_trade_offer(offer_id):
     tp_img = db.Table("trade_post_images", metadata, autoload_with=engine)
     
     # Change offer status from "SENT" to "ACCEPTED"
-    update_stmt = db.update(to).where(to.c.id == offer_id).values(offer_status = "ACCEPTED")
+    # update_stmt = db.update(to).where(to.c.id == offer_id).values(offer_status = "ACCEPTED")
+    update_stmt = db.update(to).where(to.c.id == offer_id).values({
+        "offer_status": "ACCEPTED",
+        "date_updated": date.today()
+    })
+
     conn.execute(update_stmt)
 
     # Save our trade post - trade offer information, and find the trade post id
@@ -316,7 +332,10 @@ def decline_trade_offer(offer_id):
     to = db.Table("trade_offers", metadata, autoload_with=engine)
 
     # Change offer status from "SENT" to "DECLINED"
-    update_stmt = db.update(to).where(to.c.id == offer_id).values(offer_status = "DECLINED")
+    update_stmt = db.update(to).where(to.c.id == offer_id).values({
+        "offer_status": "DECLINED",
+        "date_updated": date.today()
+    })
     conn.execute(update_stmt)
 
     # Will move our trade offer from trade_offers to past_trade_offers table
@@ -399,7 +418,8 @@ def to_tp_info(offer_id, engine, conn, metadata):
         to.c.offer_message.label("offer_message"),
         to.c.offer_image.label("offer_image"),
         to.c.offer_status.label("offer_status"),
-        to.c.date_offered.label("date_offered")
+        to.c.date_offered.label("date_offered"),
+        to.c.date_updated.label("date_updated"),
     )).select_from(join)
 
     tp_to_info = db_helpers.rows_to_list(conn.execute(select_stmt).fetchall())[0]
