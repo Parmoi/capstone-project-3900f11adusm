@@ -22,7 +22,8 @@ from main.database import (
     db_collectibles,
     db_collections,
     db_tradeposts,
-    db_tradeoffers
+    db_tradeoffers,
+    db_exchangehistory
 )
 from main import auth
 from main.error import InputError, AccessError, OK
@@ -517,51 +518,24 @@ def get_tradepost():
     """
     Returns trade post information
     Takes trade post id as param
+    Used when we click on a trade post
 
     """
     trade_post_id = request.args.get('trade_post_id')
 
     return db_tradeposts.get_trade_post_info(trade_post_id)
 
-@APP.route("/tester")
-def tester():
-    db_collections.insert_collectible(1, 2)
-    db_tradeposts.insert_trade_post(1, 501, "random post!", "random desc!", [{
-                "name": "1",
-                "caption": "Bart with skateboard.",
-                "image": "https://tse1.mm.bing.net/th?id=OIP.S9zFPgPbF0zJ4OXQkU675AHaHC&pid=Api",
-            },
-            {
-                "name": "2",
-                "caption": "Stuffed bart.",
-                "image": "https://tse1.mm.bing.net/th?id=OIP.AIizpaWw4l8TtY5fWj66RgHaGr&pid=Api",
-            }])
-    # return db_tradeposts.get_trade_posts(2)
-    # return db_tradeposts.get_trade_post_info(1)
-    return db_tradeposts.get_current_trade_posts(1)
 
 @APP.route("/trade/list", methods=["GET"])
 @jwt_required(fresh=False)
 def tradelist():
     """
     Displays all the trades listed from the collector and number of offers made
-
+    to each trade
     """
+    user_id = get_jwt_identity()
 
-    stub_data = {
-        "trades_list": [
-            {
-                "trade_post_id": 1,
-                "trader_collectible_id": 1,
-                "trader_collectible_name": "Bart with skateboard",  # collectible you're givin away
-                "trader_collectible_img": "https://tse1.mm.bing.net/th?id=OIP.S9zFPgPbF0zJ4OXQkU675AHaHC&pid=Api",  # image of the collectible you're giving away.
-                "trade_post_date": "02/06/2003",
-                "offers_received": 10,
-            }
-        ]
-    }
-
-    return jsonify(stub_data), OK
+    return db_tradeposts.get_current_trade_posts(user_id)
 
 @APP.route("/trade/list/offers", methods=["GET"])
 @jwt_required(fresh=False)
@@ -571,25 +545,8 @@ def trade_offers_list():
     Takes in trade post id
 
     """
-
-    stub_data = {
-        "offers_list": [
-            {
-                "offer_id": 1,
-                "collectible_id": 1,
-                "offer_collectible_name": "Bart with skateboard",  # collectible you're givin away
-                "offer_collectible_img": "https://tse1.mm.bing.net/th?id=OIP.S9zFPgPbF0zJ4OXQkU675AHaHC&pid=Api",  # image of the collectible you're giving away.
-                "offer_made_date": "02/06/2003",
-                "trader_profile_img": "",
-                "trader_id": 1,
-                "offer_description": "Desc",
-                "offer_message": "Message",
-                "trader_name": "Name",
-            }
-        ]
-    }
-
-    return jsonify(stub_data), OK
+    trade_post_id = request.args.get("trade_id")
+    return db_tradeoffers.find_tradelist_offers(trade_post_id)
 
 
 """ |------------------------------------|
@@ -600,28 +557,8 @@ def trade_offers_list():
 @APP.route("/offers/get", methods=["GET"])
 @jwt_required(fresh=False)
 def offers_get():
-    stub_data = {
-        "offers_list": [
-            {
-                "offer_id": 1,
-                "collectible_s_id": 1,
-                "collectible_r_id": 1,
-                "collectible_s_name": "Homer",
-                "collectible_r_name": "Bart",
-                "offer_status": "SENT",  # status can be SENT, ACCEPTED or DECLINED
-                "collectible_s_img": "",
-                "collectible_r_img": "https://tse1.mm.bing.net/th?id=OIP.S9zFPgPbF0zJ4OXQkU675AHaHC&pid=Api",
-                "trader_collector_id": 1,  # id of the collector offer was sent to
-                "trader_profile_img": "",  # The profile image of the other collector that offer was sent to
-                "trader_name": "person2",
-                "date_offer_sent": "02/06/2003",
-                "date_updated": "02/06/2004",
-                "trade_post_id": 1,
-            }
-        ]
-    }
-
-    return jsonify(stub_data), OK
+    user_id = get_jwt_identity()
+    return db_tradeoffers.find_outgoing_offers(user_id)
 
 
 """ |------------------------------------|
@@ -632,59 +569,19 @@ def offers_get():
 @APP.route("/exchange/history", methods=["GET"])
 @jwt_required(fresh=False)
 def exchange_history():
+    """
+    Find the user's exchange history
+    """
     user_id = get_jwt_identity()
-
-    stub_return = {  # return a json list
-        "exchange_history": [
-            {
-                "exchange_id": "2",
-                "traded_collectible_id": "1",
-                "traded_collectible_name": "Homer",
-                "traded_collectible_img": "https://ilarge.lisimg.com/image/8825948/980full-homer-simpson.jpg",
-                "traded_campaign_id": "1",
-                "traded_campaign_name": "Simpsons",
-                "traded_campaign_img": "",
-                "accepted_collectible_id": "2",
-                "accepted_collectible_name": "Marge",
-                "accepted_collectible_img": "https://tse4.mm.bing.net/th?id=OIP.e4tAXeZ6G0YL4OE5M8KTwAHaMq&pid=Api",
-                "accepted_campaign_id": 1,
-                "accepted_campaign_name": "Simpsons",
-                "accepted_campaign_img": "",
-                "trader_collector_id": "2",
-                "trader_profile_img": "default",
-                "trader_username": "person2",
-                "offer_made_date": "2023/10/25",
-                "accepted_date": "2023/10/29",
-            },
-            {
-                "exchange_id": "3",
-                "traded_collectible_id": "1",
-                "traded_collectible_name": "Bart",
-                "traded_collectible_img": "https://tse2.mm.bing.net/th?id=OIP.j7EknM6CUuEct_kx7o-dNQHaMN&pid=Api",
-                "traded_campaign_id": "1",
-                "traded_campaign_name": "Simpsons",
-                "traded_campaign_img": "",
-                "accepted_collectible_id": "2",
-                "accepted_collectible_name": "Dog",
-                "accepted_collectible_img": "https://tse3.mm.bing.net/th?id=OIP.6761X25CX3UUjklkDCnjSwHaHa&pid=Api",
-                "accepted_campaign_id": 1,
-                "accepted_campaign_name": "Simpsons",
-                "accepted_campaign_img": "",
-                "trader_collector_id": "2",
-                "trader_profile_img": "default",
-                "trader_username": "person2",
-                "offer_made_date": "2023/10/25",
-                "accepted_date": "2023/10/29",
-            },
-        ]
-    }
-
-    return jsonify(stub_return), OK
+    return db_exchangehistory.find_exchange_history(user_id)
 
 
 @APP.route("/exchange/available", methods=["GET"])
 @jwt_required(fresh=False)
 def available_exchanges():
+    """
+    I think this function might be unnecessary - Dyllan
+    """
     user_id = get_jwt_identity()
 
     collectible_id = request.json.get("collectible_id", None)
@@ -718,21 +615,14 @@ def make_offer():
     """
     user_id = get_jwt_identity()  # collector making the offer for trade
 
-    trade_id = request.json.get(
-        "trade_id", None
-    )  # ID of the trade the collector is making an offer to.
+    trade_id = request.json.get("trade_id", None)
     offer_collection_id = request.json.get("collection_id", None)
-    description = request.json.get("description", None)  # description of offer.
-    offer_img = request.json.get(
-        "offer_img", None
-    )  # offer maker uploaded image of collectible they're offering for the trade.
-    offer_mesage = request.json.get(
-        "offer_message", None
-    )  # message of the offer being made for the trade item.
+    offer_msg = request.json.get("offer_message", None)
+    offer_img = request.json.get("offer_img", None)
+    # There's also description, but I don't need it
 
-    stub_return = {"msg": "Offer has been successfully sent."}
-
-    return jsonify(stub_return), OK
+    return db_tradeoffers.register_trade_offer(
+        trade_id, user_id, offer_collection_id, offer_msg, offer_img)
 
 
 @APP.route("/exchange/decline", methods=["POST"])
@@ -741,13 +631,9 @@ def exchange_decline():
     """
     Declines the exchange offer for the trade item.
     """
-
-    user_id = get_jwt_identity()
     offer_id = request.json.get("offer_id", None)
 
-    stub_data = {"msg": "offer successfully declined"}
-
-    return jsonify(stub_data), OK
+    return db_tradeoffers.decline_trade_offer(offer_id)
 
 
 @APP.route("/exchange/accept", methods=["POST"])
@@ -756,13 +642,9 @@ def exchange_accept():
     """
     Accepts the exchange offer for the trade item.
     """
-
-    user_id = get_jwt_identity()
     offer_id = request.json.get("offer_id", None)
 
-    stub_data = {"msg": "offer successfully accepted"}
-
-    return jsonify(stub_data), OK
+    return db_tradeoffers.accept_trade_offer(offer_id)
 
 
 """ |------------------------------------|

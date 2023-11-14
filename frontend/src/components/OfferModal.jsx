@@ -117,8 +117,8 @@ const OfferModal = ({ tradeId, open, handleClose }) => {
               {collectibles.map((collectible) => {
                 return (
                   <MenuItem
-                    value={collectible.collection_id}
-                    onClick={() => handleIdChange(collectible.collection_id)}
+                    value={collectible.id}
+                    onClick={() => handleIdChange(collectible.id)}
                   >
                     {collectible.name}
                   </MenuItem>)
