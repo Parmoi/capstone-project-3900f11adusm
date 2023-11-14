@@ -1,6 +1,7 @@
 import * as React from 'react';
 
 import { useTheme, ThemeProvider } from '@mui/material/styles';
+import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
@@ -16,16 +17,20 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 
 import { LineChart } from '@mui/x-charts/LineChart';
 
-const pData = [24, 13, 98, 39, 48, 38, 43];
-const xLabels = [
-  '2023/10/20',
-  '2023/10/21',
-  '2023/10/22',
-  '2023/10/23',
-  '2023/10/24',
-  '2023/10/25',
-  '2023/10/26',
-];
+import { apiCall } from '../../App';
+
+import { useState, useEffect } from 'react';
+
+// const pData = [24, 13, 98, 39, 48, 38, 43];
+// const xLabels = [
+//   '2023/10/20',
+//   '2023/10/21',
+//   '2023/10/22',
+//   '2023/10/23',
+//   '2023/10/24',
+//   '2023/10/25',
+//   '2023/10/26',
+// ];
 
 const TableColor = [
   '#4e79a7',
@@ -44,6 +49,29 @@ const TableColor = [
 function ManagerAnalytics() {
   const [campaign, setCampaign] = React.useState('');
   const [color, setColor] = React.useState('#4e79a7');
+  const [analytics, setAnaltyics] = React.useState([]);
+  const [xLabels, setXLables] = React.useState([]);
+  const [yData, setYData] = React.useState([]);
+
+  const fetchInfo = () => {
+    const options = {
+      method: 'GET',
+      route: '/manager/analytics'
+    };
+
+    apiCall((d) => {
+      setAnaltyics(d["analytics"]);
+    }, options)
+    .then((res) => {
+      if (res) {
+        // set error msg if api call returns error
+      }
+    });
+  }
+
+  useEffect(() => {
+    fetchInfo();
+  }, []);
 
   const handleColorChange = (event, nextColor) => {
     setColor(nextColor);
@@ -51,6 +79,9 @@ function ManagerAnalytics() {
 
   const handleChange = (event) => {
     setCampaign(event.target.value);
+    setXLables(analytics.filter((x) => x.campaign_id == event.target.value)[0].exchange_dates);
+    setYData(analytics.filter((y) => y.campaign_id == event.target.value)[0].exchanges_made);
+
   };
 
   return (
@@ -94,9 +125,9 @@ function ManagerAnalytics() {
               label="Campaign"
               onChange={handleChange}
             >
-              <MenuItem value={10}>Ten</MenuItem>
-              <MenuItem value={20}>Twenty</MenuItem>
-              <MenuItem value={30}>Thirty</MenuItem>
+              {analytics.map((data) => (
+                <MenuItem key={data.campaign_id} value={data.campaign_id}>{data.campaign_name}</MenuItem>
+              ))}
             </Select>
           </FormControl>
               
@@ -114,46 +145,50 @@ function ManagerAnalytics() {
             MarginBottom: '200px',
           }}
         >
-          <Stack direction="column" spacing={2} alignItems="center" sx={{ width: '100%', padding: '25px' }}>
-          <LineChart
-            width={1000}
-            height={500}
-            margin={{ top: 10, bottom: 20 }}
-            backgroundColor={'Black'}
-            series={[
-              { data: pData, label: 'Exchanges', id: 'pvId', color, },
-            ]}
-            xAxis={[{ scaleType: 'point', data: xLabels }]}
-            sx={{
-              '.MuiMarkElement-root:not(.MuiMarkElement-highlighted)': {
-                fill: '#fff',
-              },
-              '& .MuiMarkElement-highlighted': {
-                stroke: 'none',
-              },
-              marginBottom: '20px',
-            }}
-          />
-          <ToggleButtonGroup
-            // orientation="vertical"
-            value={color}
-            exclusive
-            onChange={handleColorChange}
-          >
-            {TableColor.map((value) => (
-              <ToggleButton key={value} value={value} sx={{ p: 1 }}>
-                <div
-                  style={{
-                    width: 15,
-                    height: 15,
-                    backgroundColor: value,
-                    display: 'inline-block',
-                  }}
-                />
-              </ToggleButton>
-            ))}
-          </ToggleButtonGroup>
+          {
+            analytics == [] || campaign == ''
+            ? <Typography>There is no Data to Display</Typography>
+            : <Stack direction="column" spacing={2} alignItems="center" sx={{ width: '100%', padding: '25px' }}>
+            <LineChart
+              width={1000}
+              height={500}
+              margin={{ top: 10, bottom: 20 }}
+              backgroundColor={'Black'}
+              series={[
+                { data: yData, label: 'Exchanges', id: 'yData', color, },
+              ]}
+              xAxis={[{ scaleType: 'point', data: xLabels }]}
+              sx={{
+                '.MuiMarkElement-root:not(.MuiMarkElement-highlighted)': {
+                  fill: '#fff',
+                },
+                '& .MuiMarkElement-highlighted': {
+                  stroke: 'none',
+                },
+                marginBottom: '20px',
+              }}
+            />
+            <ToggleButtonGroup
+              // orientation="vertical"
+              value={color}
+              exclusive
+              onChange={handleColorChange}
+            >
+              {TableColor.map((value) => (
+                <ToggleButton key={value} value={value} sx={{ p: 1 }}>
+                  <div
+                    style={{
+                      width: 15,
+                      height: 15,
+                      backgroundColor: value,
+                      display: 'inline-block',
+                    }}
+                  />
+                </ToggleButton>
+              ))}
+            </ToggleButtonGroup>
           </Stack>
+          }
         </Paper>
       </Box>
     </ThemeProvider>
