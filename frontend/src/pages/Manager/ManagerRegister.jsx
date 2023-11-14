@@ -9,12 +9,12 @@ import Paper from '@mui/material/Paper';
 import { createTheme, useTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import validator from 'validator';
-import { apiCall } from '../App';
+import { apiCall } from '../../App';
 import Alert from '@mui/material/Alert';
 
 const theme = createTheme();
 
-function Register({ setUserId, setLogin, setUsername }) {
+function ManagerRegister({ setLogin, setUsername }) {
   const navigate = useNavigate();
   const [emailError, setEmailError] = React.useState(false);
   const [nameError, setNameError] = React.useState(false);
@@ -51,18 +51,21 @@ function Register({ setUserId, setLogin, setUsername }) {
     // call api with data
     const options = {
       method: 'POST',
-      route: '/register',
+      route: '/manager/register',
       body: JSON.stringify({
+        username: data.get('username'),
+        first_name: data.get('first_name'),
+        last_name: data.get('last_name'),
+        phone: data.get('phone'),
         email: data.get('email'),
         password: data.get('password'),
-        username: data.get('name'),
+        special_code: data.get('special_code')
       })
     };
 
-    apiCall((d) => {
+    apiCall(() => {
       setLogin(true);
       setUsername(data.get('name'));
-      setUserId(d.userId);
     }, options)
       .then((res) => {
         if (res) {
@@ -81,8 +84,12 @@ function Register({ setUserId, setLogin, setUsername }) {
       <Box 
         sx={{ 
           width: '100%', 
+          height: '90.8vh', 
           display: "flex", 
           flexDirection: "column", 
+          backgroundImage: `url("https://res.cloudinary.com/ddor5nnks/image/upload/v1699602264/gradient_background_zjdl6a.webp")`, 
+          backgroundRepeat: "no-repeat", 
+          backgroundSize: "cover", 
           alignItems: 'center', 
           justifyContent: 'center'
           }}
@@ -97,7 +104,7 @@ function Register({ setUserId, setLogin, setUsername }) {
           maxWidth: '700px',
           width: '50vw',
           paddingBottom: '50px',
-          mt: '15vh',
+          // height: '50vh',
         }}
       >
         <CssBaseline />
@@ -113,7 +120,7 @@ function Register({ setUserId, setLogin, setUsername }) {
             {/* <LockOutlinedIcon /> */}
           </Avatar>
           <Typography component="h1" variant="h5" color='primary.text'>
-            Sign up
+            Sign up as a manager
           </Typography>
           <Box component="form" onSubmit={register} noValidate sx={{ mt: 1 }}>
             <TextField
@@ -122,14 +129,61 @@ function Register({ setUserId, setLogin, setUsername }) {
               required
               fullWidth
               backgroundColor='white'
-              name="name"
-              label="Name"
-              type="name"
-              id="name"
-              autoComplete="name"
+              name="username"
+              label="Username"
+              type="username"
+              id="username"
+              autoComplete="username"
               onBlur={(e) => validateName(e)}
-              helperText={nameError ? 'Name must not be empty' : ''}
+              helperText={nameError ? 'Username must not be empty' : ''}
             />
+            
+
+            <TextField
+              sx={{backgroundColor:'white'}}
+              margin="normal"
+              required
+              fullWidth
+              backgroundColor='white'
+              name="first_name"
+              label="First Name"
+              type="first_name"
+              id="first_name"
+              autoComplete="first_name"
+              onBlur={(e) => validateName(e)}
+              helperText={nameError ? 'First name must not be empty' : ''}
+            />
+
+            <TextField
+              sx={{backgroundColor:'white'}}
+              margin="normal"
+              required
+              fullWidth
+              backgroundColor='white'
+              name="last_name"
+              label="Last Name"
+              type="last_name"
+              id="last_name"
+              autoComplete="last_name"
+              onBlur={(e) => validateName(e)}
+              helperText={nameError ? 'Last name must not be empty' : ''}
+            />
+
+            <TextField
+              sx={{backgroundColor:'white'}}
+              margin="normal"
+              required
+              fullWidth
+              backgroundColor='white'
+              name="phone"
+              label="Phone"
+              type="phone"
+              id="phone"
+              autoComplete="phone"
+              onBlur={(e) => validateName(e)}
+              helperText={nameError ? 'Phone must not be empty' : ''}
+            />
+
             <TextField
               sx={{backgroundColor:'white'}}
               margin="normal"
@@ -156,6 +210,19 @@ function Register({ setUserId, setLogin, setUsername }) {
               onBlur={(e) => validatePwd(e)}
               helperText={pwdError ? 'Password must not be empty' : ''}
             />
+            <TextField
+              sx={{backgroundColor:'white'}}
+              margin="normal"
+              required
+              fullWidth
+              name="special_code"
+              label="Registration Code"
+              type="text"
+              id="special_code"
+              autoComplete="special_code"
+              onBlur={(e) => validatePwd(e)}
+              helperText={pwdError ? 'Registration code must not be empty' : ''}
+            />
             <div>
               {error ? <Alert severity='error'>{errContent}</Alert> : <></> }
             </div>
@@ -176,4 +243,4 @@ function Register({ setUserId, setLogin, setUsername }) {
   );
 }
 
-export default Register;
+export default ManagerRegister;

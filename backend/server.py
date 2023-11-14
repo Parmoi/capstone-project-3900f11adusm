@@ -169,7 +169,7 @@ def profile():
         address: "string"
         }
     """
-    user_id = get_jwt_identity()
+    user_id = request.args.get('id')
 
     return db_collectors.get_collector(user_id=user_id)
 
@@ -828,10 +828,6 @@ def invite_manager():
 
     return jsonify(stub_return), OK
 
-# /manager/register  # Registers a new Manager with special code that can expire.
-# /manager/publisher # Changes the manager posting privileges, from posting to not posting and vice versa
-# /manager/getlist   # For the admin to see
-
 
 @APP.route("/manager/register", methods=["POST"])
 @jwt_required(fresh=False)
@@ -868,12 +864,12 @@ def get_manager_list():
             {
                 "user_id": "3",
                 "username": "dso",
-                "profile_img": "",
+                "profile_img": "https://tse3.mm.bing.net/th?id=OIP.SwCSPpmwihkM2SUqh7wKXwHaFG&pid=Api",
                 "first_name": "Dyllanson",
                 "last_name": "So",
                 "email": "ds@gmail.com",
                 "phone": "4444 4444",
-                "canPublish": False,  # The managers posting privilege
+                "canPublish": True,  # The managers posting privilege
             },
             {
                 "user_id": "2",
@@ -895,7 +891,8 @@ def get_manager_list():
 def manager_privilege():
     """
     Arguments:
-        - canPublish
+        - manager_id
+        - can_publish
 
     Changes the campaign publishing privilege of a Manager.
     """

@@ -74,7 +74,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     },
 }));
 
-const SignedInNav = ({ logout, username }) => {
+const SignedInNav = ({ logout, username, userId }) => {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
     const navigate = useNavigate();
@@ -174,7 +174,7 @@ const SignedInNav = ({ logout, username }) => {
             >
               <MenuItem onClick={handleClose}>
                 <Avatar />
-                <Link to="/profile" style={{ textDecoration: 'none', color: 'inherit' }}>Profile</Link>
+                <Link to={`/profile/${userId}`} style={{ textDecoration: 'none', color: 'inherit' }}>Profile</Link>
               </MenuItem>
               <MenuItem onClick={handleClose}>
                 <ListItemIcon>

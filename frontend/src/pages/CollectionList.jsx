@@ -18,6 +18,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import moment from 'moment';
 import { apiCall } from '../App';
+import CollectibleImage from '../components/CollectibleImage';
 
 // sourced from https://github.com/KevinVandy/material-react-table/blob/v1/apps/material-react-table-docs/examples/custom-top-toolbar/sandbox/src/JS.js
 function CollectionList() {
@@ -59,28 +60,11 @@ function CollectionList() {
         accessorKey: 'image',
         header: 'Image',
         Cell: ({ row }) => (
-          <Box
-            sx={{
-              display: 'flex',
-              gap: '1rem',
-            }}
-          >
-            <img
-              alt="collectible image"
-              height={60}
-              src={row.original.image}
-              loading="lazy"
-            />
-          </Box>
-
+          <CollectibleImage id={row.original.collectible_id} name={row.original.name} image={row.original.image} />
         ),
         enableColumnActions: false,
         enableColumnFilter: false,
         enableSorting: false,
-      },
-      {
-        accessorKey: 'name',
-        header: 'Name',
       },
       {
         accessorKey: 'campaign_name',

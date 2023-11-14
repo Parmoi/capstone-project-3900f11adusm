@@ -14,6 +14,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import moment from 'moment';
 
+import CollectibleImage from '../components/CollectibleImage';
 import { apiCall } from '../App';
 
 
@@ -56,28 +57,12 @@ const WantList = () => {
         accessorKey: 'image',
         header: 'Image',
         Cell: ({ row }) => (
-          <Box
-            sx={{
-              display: 'flex',
-              gap: '1rem',
-            }}
-          >
-            <img
-              alt="collectible image"
-              height={60}
-              src={row.original.image}
-              loading="lazy"
-            />
-          </Box>
+          <CollectibleImage id={row.original.collectible_id} name={row.original.name} image={row.original.image} />
 
         ),
         enableColumnActions: false,
         enableColumnFilter: false,
         enableSorting: false,
-      },
-      {
-        accessorKey: 'name',
-        header: 'Name',
       },
       {
         accessorKey: 'campaign_name',
@@ -166,7 +151,7 @@ const WantList = () => {
       defaultColumn={{
         minSize: 50,
         maxSize: 500,
-        size: 200,
+        size: 250,
       }}
       onRowSelectionChange={setRowSelection}
       state={{ rowSelection }}
