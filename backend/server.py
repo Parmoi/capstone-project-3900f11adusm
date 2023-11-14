@@ -814,7 +814,10 @@ def get_buylist():
 def get_manager_analytics():
     """
     Returns analytics of a campaigns posted by the
-    given manager.
+    given manager. 
+
+    If no campaigns are posted, or if no analytics 
+    are available, return an empty list.
     """
 
     manager_id = get_jwt_identity()
