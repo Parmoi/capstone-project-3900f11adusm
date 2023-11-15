@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ImageCarousel from '../../components/ImageCarousel';
 import {
     Grid,
@@ -18,43 +18,49 @@ import { useTheme, ThemeProvider } from '@mui/material/styles';
 import { apiCall } from '../../App';
 
 
-
 function AdminCampaignApproval() {
-  const [data, setData] = React.useState({});
-  const [campaign, setCampaign] = React.userState('');
-  const [approval, setApproval] = React.useState('');
+  const [data, setData] = useState([]);
+  const [campaign, setCampaign] = useState('');
+  const [campaignDetails, setCampaignDetails] = useState({});
+
+  const [approval, setApproval] = useState('');
+  const [collectibles, setCollectibles] = useState([{
+    "name": "Nothing",
+    "image": "https://th.bing.com/th/id/OIP.cwB1TLRCZXJwp3ngh94G2gAAAA?pid=ImgDet&rs=1",
+    "caption": "No Campaign has been selected"
+  }]);
 
   const navigate = useNavigate();
   // const params = useParams();
   const c_id = 1;
-  
 
-  const fetchData = () => {
-    // call api with data
+  const fetchInfo = () => {
     const options = {
       method: 'GET',
       route: '/admin/get_campaigns',
     };
 
     apiCall((d) => {
-      console.log(d);
       setData(d["campaigns"]);
     }, options)
-      .then((res) => {
-        if (res) {
-          // set error msg if api call returns error
-
-        }
-      });
+    .then((res) => {
+      if (res) {
+        // set error msg if api call returns error
+      }
+    });
   }
 
-  React.useEffect(() => {
-    fetchData();
+  useEffect(() => {
+    fetchInfo();
   }, []);
 
 
   const handleChange = (event) => {
-    setData(event.target.value);
+    setCampaign(event.target.value);
+    console.log(campaign);
+    setApproval(data.filter((x) => x.campaign_id == event.target.value)[0].approval_status);
+    setCollectibles(data.filter((x) => x.campaign_id == event.target.value)[0].collection_list);
+    setCampaignDetails(data.filter((x) => x.campaign_id == event.target.value)[0]);
   }
 
   const handleApproval = () => {
@@ -62,7 +68,7 @@ function AdminCampaignApproval() {
       method: 'POST',
       route: "/admin/campaign/approve",
       body: JSON.stringify({
-        campaign_id: c_id,
+        campaign_id: Number(campaign),
       })
     };
 
@@ -85,7 +91,7 @@ function AdminCampaignApproval() {
       method: 'POST',
       route: "/admin/campaign/decline",
       body: JSON.stringify({
-        campaign_id: c_id,
+        campaign_id: Number(campaign),
       })
     };
 
@@ -137,19 +143,17 @@ function AdminCampaignApproval() {
             }}
           >
           <FormControl fullWidth>
-            <InputLabel id="Select Campaign">Select Campaign</InputLabel>
+            <InputLabel id="Campaign">Campaign</InputLabel>
             <Select
-              labelId="Select Campaign"
-              id="select-campaign"
-              value={data}
+              labelId="Campaign"
+              id="campaign"
+              value={campaign}
               label="Campaign"
               onChange={handleChange}
             >
-              <MenuItem value={1}>One</MenuItem>
-              <MenuItem value={2}>Two</MenuItem>
-              {/* {analytics.map((data) => (
+              {data.map((data) => (
                 <MenuItem key={data.campaign_id} value={data.campaign_id}>{data.campaign_name}</MenuItem>
-              ))} */}
+              ))}
             </Select>
           </FormControl>
 
@@ -160,13 +164,7 @@ function AdminCampaignApproval() {
       <Grid container spacing={12}>
         <Grid item xs={1}></Grid>
         <Grid item xs={7}>
-          <ImageCarousel items={
-              [{
-                "name": "collectible image",
-                "image": data.collectible_image,
-                "caption": '',
-              }]
-            }/>
+          <ImageCarousel items={collectibles}/>
         </Grid>
         <Grid item xs={3}>
         {
@@ -204,12 +202,13 @@ function AdminCampaignApproval() {
             display: 'flex', 
             flexDirection: 'column', 
             justifyContent: 'center', 
-            alignItems: 'center' 
+            alignItems: 'center',
+            marginBottom: '5vh',
             }}>
-              <Container sx={{ padding: '10px' }}>
-                <Typography variant='h5'>{data.collectible_name}</Typography>
-                <Typography variant='h8'>Added on: {data.collectible_added_date}</Typography>
-                <Typography>{data.collectible_description}</Typography>
+              <Container sx={{ padding: '10px', }}>
+                <Typography variant='h5'>{campaignDetails.campaign_name}</Typography>
+                <Typography variant='h8'>Proposed Start Date: {campaignDetails.campaign_start_date}</Typography>
+                <Typography>{campaignDetails.campaign_description}</Typography>
                 </Container>
           </Paper>
         </Grid>
