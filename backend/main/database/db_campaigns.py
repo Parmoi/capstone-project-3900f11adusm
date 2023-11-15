@@ -10,7 +10,7 @@ from main.error import OK, InputError, AccessError
     |------------------------------------| """
 
 
-def register_campaign(name, description, image, start_date, end_date):
+def register_campaign(user_id, name, description, image, start_date, end_date):
     """insert_campaign.
 
     Function to insert new campaign.
@@ -23,10 +23,6 @@ def register_campaign(name, description, image, start_date, end_date):
         end_date: end date of campaign ("DD/MM/YYYY")
         collectible_fields: list of fields/columns for collectibles in this campaign
     """
-
-
-    
-    
 
     start_date_obj = datetime.strptime(start_date, "%d/%m/%Y").date()
     end_date_obj = datetime.strptime(end_date, "%d/%m/%Y").date()
@@ -41,6 +37,7 @@ def register_campaign(name, description, image, start_date, end_date):
             "name": name,
             "description": description,
             "image": image,
+            "manager_id": user_id,
             "start_date": start_date_obj,
             "end_date": end_date_obj,
         }
@@ -97,8 +94,24 @@ def get_all_campaigns():
 
 # TODO: Error checking, Docstring
 def get_campaign_collectibles(campaign_id):
+    """get_campaign_collectibles.
+
+    Args:
+        campaign_id:
+
+    Returns:
+    """
+    collectibles = {
+        "collectibles": [
+            {
+                "id": 1,
+            },
+        ]
+    }
     engine, conn, metadata = dbm.db_connect()
+
     collectibles = db.Table("collectibles", metadata, autoload_with=engine)
+
     select_stmt = db.select(collectibles).where(
         collectibles.c.campaign_id == campaign_id
     )
@@ -126,7 +139,7 @@ def get_campaigns_in_period(time_period):
                               period we want the campaigns from
 
     Return:
-        JSON, int: JSON that holds a list of campaigns (or our error message), 
+        JSON, int: JSON that holds a list of campaigns (or our error message),
                    int is the error code
 
     Expected Output:
@@ -180,6 +193,65 @@ def get_campaigns_in_period(time_period):
     conn.close()
 
     return jsonify({"campaigns": campaign_list}), OK
+
+
+def add_campaign_feedback(user_id, campaign_id, feedback):
+    engine, conn, metadata = dbm.db_connect()
+
+    # Loads in the campaign table into our metadata
+    feedback_table = db.Table("campaign_feedback", metadata, autoload_with=engine)
+
+    cur_date = date.today()
+
+    insert_stmt = db.insert(feedback_table).values(
+        {
+            "campaign_id": campaign_id,
+            "collector_id": user_id,
+            "feedback": feedback,
+            "feedback_date": cur_date,
+        }
+    )
+    conn.execute(insert_stmt)
+    conn.close()
+
+    return (
+        jsonify(
+            {
+                "msg": "Campaign feedback successfully added!",
+            }
+        ),
+        OK,
+    )
+
+
+def get_campaign_feedback(user_id, campaign_id):
+    engine, conn, metadata = dbm.db_connect()
+
+    feedback = db.Table("campaign_feedback", metadata, autoload_with=engine)
+    collectors = db.Table("collectors", metadata, autoload_with=engine)
+
+    join = db.join(collectors, feedback, (collectors.c.id == feedback.c.collector_id))
+
+    select_stmt = (
+        db.select(
+            collectors.c.id.label("collector_id"),
+            collectors.c.username.label("collector_username"),
+            collectors.c.profile_picture.label("collector_profile_img"),
+            feedback.c.feedback,
+            feedback.c.feedback_date,
+        )
+        .select_from(join)
+        .where(
+            feedback.c.campaign_id == campaign_id,
+        )
+    )
+
+    res = conn.execute(select_stmt)
+    if res is None:
+        return jsonify({"msg": "Campaign id does not exist!"}), InputError
+    else:
+        feedback_list = db_helpers.rows_to_list(res.fetchall())
+        return jsonify({"feedback": feedback_list}), OK
 
 
 """ |------------------------------------|
