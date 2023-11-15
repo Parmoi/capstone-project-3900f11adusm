@@ -20,12 +20,9 @@ def rows_to_list(rows):
         new_dict = row._asdict()
 
         # If key has "date" substring in it, convert it to string
-        # If key is "post_images", turn it into a list of strings
         for key, value in new_dict.items():
-            if "date" in key:
+            if ("date" in key) or (key == "post_created"):
                 new_dict[key] = value.strftime('%d/%m/%Y')
-            elif "post_images" in key:
-                new_dict[key] = list(value.split(","))
         
         result_list.append(new_dict)
     

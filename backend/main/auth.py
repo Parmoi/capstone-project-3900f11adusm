@@ -55,7 +55,7 @@ def login(password, email=None, username=None):
 
     user_id = db_collectors.get_collector_id(email=email, username=username)
     response = jsonify(
-        {"msg": "login successful", "privelage": get_user_privelage(user_id)}
+        {"userId": user_id, "privelage": get_user_privelage(user_id)}
     )
     access_token = create_access_token(identity=user_id, fresh=True)
     refresh_token = create_refresh_token(identity=user_id)

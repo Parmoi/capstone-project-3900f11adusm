@@ -6,7 +6,7 @@ import { MaterialReactTable, MRT_ToggleDensePaddingButton, MRT_FullScreenToggleB
 
 import { useState, useEffect } from 'react';
 
-import { apiCall } from '../App';
+import { apiCall } from '../../App';
 
 
 function ManagerFeedback() {

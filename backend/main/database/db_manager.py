@@ -107,7 +107,18 @@ def database_setup():
         db.Column("collection_id", db.Integer, db.ForeignKey("collections.id")),
         db.Column("post_title", db.String),
         db.Column("post_description", db.String),
-        db.Column("post_images", db.String),
+        db.Column("post_date", db.DATE)
+    )
+
+    # Create a trade_post_images table that stores the images of the trade posts
+    trade_post_images_table = db.Table(
+        "trade_post_images",
+        metadata,
+        db.Column("id", db.Integer, db.Identity(), primary_key=True),
+        db.Column("trade_post_id", db.Integer, db.ForeignKey("trade_posts.id")),
+        db.Column("name", db.String),
+        db.Column("caption", db.String),
+        db.Column("image_url", db.String)
     )
 
     trade_offers_table = db.Table(
@@ -115,10 +126,38 @@ def database_setup():
         metadata,
         db.Column("id", db.Integer, db.Identity(), primary_key=True),
         db.Column("trade_post_id", db.Integer, db.ForeignKey("trade_posts.id")),
-        db.Column("trade_sender_id", db.Integer, db.ForeignKey("collectors.id")),
-        db.Column("collection_send_id", db.Integer, db.ForeignKey("collections.id")),
-        db.Column("trade_receiver_id", db.Integer, db.ForeignKey("collectors.id")),
-        db.Column("collection_receive_id", db.Integer, db.ForeignKey("collections.id")),
+        db.Column("trade_sender_id", db.Integer, db.ForeignKey("collectors.id")), # id of user sending trade offer
+        db.Column("collection_send_id", db.Integer, db.ForeignKey("collections.id")), # collection id of collectible that user is sending for trade
+        db.Column("offer_message", db.String),
+        db.Column("offer_image", db.String),
+        db.Column("offer_status", db.String),
+        db.Column("date_offered", db.DATE),
+        db.Column("date_updated", db.DATE), # The date the offer was sent/accepted/declined
+    )
+
+    past_trade_offers_table = db.Table(
+        "past_trade_offers",
+        metadata,
+        db.Column("id", db.Integer, db.Identity(), primary_key=True),
+        db.Column("trade_sender_id", db.Integer, db.ForeignKey("collectors.id")), # id of user sending trade offer
+        db.Column("collectible_send_id", db.Integer, db.ForeignKey("collectibles.id")), # collection id of collectible that user is sending for trade
+        db.Column("trade_receiver_id", db.Integer, db.ForeignKey("collectors.id")), # id of user receiving trade offer
+        db.Column("collectible_receive_id", db.Integer, db.ForeignKey("collectibles.id")), # collection id of collectible that user is receiving for trade
+        db.Column("offer_status", db.String),
+        db.Column("date_offered", db.DATE),
+        db.Column("date_updated", db.DATE), # The date the offer was sent/accepted/declined
+    )
+
+    exchange_history_table = db.Table(
+        "exchange_history",
+        metadata,
+        db.Column("id", db.Integer, db.Identity(), primary_key=True),
+        db.Column("trade_sender_id", db.Integer, db.ForeignKey("collectors.id")), # id of user sending trade offer
+        db.Column("collectible_send_id", db.Integer, db.ForeignKey("collectibles.id")), # collection id of collectible that user is sending for trade
+        db.Column("trade_receiver_id", db.Integer, db.ForeignKey("collectors.id")), # id of user receiving trade offer
+        db.Column("collectible_receive_id", db.Integer, db.ForeignKey("collectibles.id")), # collection id of collectible that user is receiving for trade
+        db.Column("date_offered", db.DATE),
+        db.Column("date_accepted", db.DATE),
     )
 
     pivelage_table = db.Table(

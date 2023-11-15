@@ -10,9 +10,10 @@ import {
 
 } from 'material-react-table';
 
-import { Box, Button, IconButton } from '@mui/material';
+import { Box } from '@mui/material';
 import { apiCall } from '../App';
 import { useParams, useNavigate } from 'react-router-dom';
+import Avatar from '@mui/material/Avatar';
 
 // sourced from https://github.com/KevinVandy/material-react-table/blob/v1/apps/material-react-table-docs/examples/custom-top-toolbar/sandbox/src/JS.js
 function BuyList() {
@@ -54,7 +55,7 @@ function BuyList() {
       },
       {
         accessorKey: 'image',
-        header: 'Image',
+        header: 'Collectible Image',
         Cell: ({ row }) => (
           <Box
             sx={{
@@ -84,6 +85,22 @@ function BuyList() {
         header: 'Traded by',
       },
       {
+        accessorKey: 'trader_profile_img',
+        header: 'Trader Profile',
+        Cell: ({ row }) => (
+          <Box
+            sx={{
+              display: 'flex',
+              gap: '1rem',
+            }}
+          >
+            <Avatar alt="Trader Profile" src={row.original.trader_profile_img} />
+          </Box>
+        ),
+        enableColumnActions: false,
+        enableColumnFilter: false,
+      },
+      {
         accessorKey: 'location',
         header: 'Location',
       },
@@ -100,11 +117,17 @@ function BuyList() {
       positionToolbarAlertBanner="bottom" //show selected rows count on bottom toolbar
       muiTableBodyRowProps={({ row }) => ({
         onClick: () => {
-          navigate(`/trade/view/${row.original.collection_id}`)
+          navigate(`/trade/view/${row.original.trade_post_id}`)
         },
         sx: { cursor: 'pointer' },
       })}
       initialState={{ columnVisibility: { collection_id: false } }}
+      // changes sizing of default columns
+      defaultColumn={{
+        minSize: 50,
+        maxSize: 500,
+        size: 200, 
+      }}
 
       //customize built-in buttons in the top-right of top toolbar
 

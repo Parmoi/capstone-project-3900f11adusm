@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import ImageCarousel from '../components/ImageCarousel';
 import {
     Grid,
@@ -8,7 +8,6 @@ import {
     Container,
     Paper,
 } from '@mui/material'
-import Divider from '@mui/material/Divider';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTheme, ThemeProvider } from '@mui/material/styles';
 import { apiCall } from '../App';
@@ -35,7 +34,7 @@ const CollectiblePage = () => {
     // call api with data
     const options = {
       method: 'GET',
-      route: `/trade/get?collectible_id=${tradepost_id}`,
+      route: `/trade/view?trade_post_id=${tradepost_id}`,
     };
 
     apiCall((d) => {
