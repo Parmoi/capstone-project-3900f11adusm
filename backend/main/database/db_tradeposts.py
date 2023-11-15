@@ -178,7 +178,8 @@ def get_trade_post_info(trade_post_id):
                 }],
             "post_trader":"uso",
             "trader_avatar":"https://robohash.org/utomniseos.png?size=50x50&set=set1",
-            "trader_location":"696 Londonderry Avenue"
+            "trader_location":"696 Londonderry Avenue",
+            "trader_id":"1"
         }, 200
     """
     engine, conn, metadata = dbm.db_connect()
