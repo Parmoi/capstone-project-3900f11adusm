@@ -23,6 +23,7 @@ import BuyList from './pages/BuyList';
 import TradePostPage from './pages/TradePostPage';
 import TradeList from './pages/TradeList';
 import TradeOffersList from './pages/TradeOffersList';
+import Feedback from './pages/feedback';
 
 import ManagerHomePage from './pages/ManagerHomePage';
 import ManagerAnalytics from './pages/ManagerAnalytics';
@@ -135,7 +136,7 @@ function App() {
                 <Route path="/collectible/:id" element={<CollectiblePage />} />
                 <Route path="/collectible/buy/:id" element={<BuyList />} />
                 <Route path="/trade/view/:id" element={<TradePostPage />} />
-
+                <Route path="/feedback" element={<Feedback />}></Route>
                 <Route path="/manager/feedback" element={<ManagerFeedback />} />
                 <Route path="/manager/post" element={<ManagerPost />} />
                 <Route path="/manager/analytics" element={<ManagerAnalytics />} />
