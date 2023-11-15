@@ -21,6 +21,7 @@ import { apiCall } from '../../App';
 
 function AdminCampaignApproval() {
   const [data, setData] = React.useState({});
+  const [campaign, setCampaign] = React.userState('');
   const [approval, setApproval] = React.useState('');
 
   const navigate = useNavigate();
@@ -37,7 +38,7 @@ function AdminCampaignApproval() {
 
     apiCall((d) => {
       console.log(d);
-      setData(d);
+      setData(d["campaigns"]);
     }, options)
       .then((res) => {
         if (res) {
