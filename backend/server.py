@@ -691,6 +691,41 @@ def get_buylist():
     |------------------------------------| """
 
 
+@APP.route("/manager/analytics", methods=["GET"])
+@jwt_required(fresh=False)
+def get_manager_analytics():
+    """
+    Returns analytics of a campaigns posted by the
+    given manager. 
+
+    If no campaigns are posted, or if no analytics 
+    are available, return an empty list.
+    """
+
+    manager_id = get_jwt_identity()
+
+    stub_return = {
+        "analytics": [
+            {
+                "campaign_id": 21,
+                "campaign_name": "Simpsons",
+
+                # Essentially the X-axes labels
+                "exchange_dates": ['2023/10/20', '2023/10/21', '2023/10/22', '2023/10/23', '2023/10/24', '2023/10/25', '2023/10/26'],   
+                # Essentially the y-axes data for the X-axes labels
+                "exchanges_made": [24, 13, 98, 39, 48, 38, 43]  # These two lists need to be the same length
+            },
+            {
+                "campaign_id": 22,
+                "campaign_name": "Simpsons 2",
+                "exchange_dates": ['2023/11/20', '2023/11/21', '2023/11/22', '2023/11/23', '2023/11/24', '2023/11/25', '2023/11/26'],
+                "exchanges_made": [26, 23, 78, 19, 88, 76, 14]
+            },
+        ]
+    }
+
+    return jsonify(stub_return), OK
+
 @APP.route("/manager/feedback", methods=["GET"])
 @jwt_required(fresh=False)
 def get_feedback():
