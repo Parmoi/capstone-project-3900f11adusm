@@ -865,6 +865,84 @@ def ban_collector():
 
     return jsonify(stub_return), OK
 
+@APP.route("/admin/get_campaigns", methods=["GET"])
+@jwt_required(fresh=False)
+def get_campaigns_for_review():
+    """
+    
+
+    Provides a list of campaigns, either reviewed or not
+    for the Admin to view and review.
+    """
+
+    stub_return = {
+        "campaigns": [
+            {
+                "campaign_id": '',
+                "campaign_name": '',
+                "campaign_image": '',
+                "campaign_description": '',
+                "campaign_start_date": '',
+                "campaign_end_date": '',
+                "collection_list": [
+                    {
+                        "collectible_id": "",
+                        "collectible_name": "",
+                        "collectible_image": ""
+                    },
+                    {
+                        "collectible_id": "",
+                        "collectible_name": "",
+                        "collectible_image": ""
+                    },
+                    {
+                        "collectible_id": "",
+                        "collectible_name": "",
+                        "collectible_image": ""
+                    },
+                    {
+                        "collectible_id": "",
+                        "collectible_name": "",
+                        "collectible_image": ""
+                    },
+                ]
+
+            },
+        ]
+    }
+
+    return jsonify(stub_return), OK
+
+@APP.route("/admin/campaign/approve", methods=["POST"])
+@jwt_required(fresh=False)
+def admin_campaign_approve():
+    """
+    An Admin Approves the campaign. 
+    """
+
+    campaign_id = request.json.get("campaign_id", None)
+
+    stub_return = {
+        "msg" : "Campaign Approved" 
+    }
+
+    return jsonify(stub_return), OK
+
+@APP.route("/admin/campaign/decline", methods=["POST"])
+@jwt_required(fresh=False)
+def admin_campaign_decline():
+    """
+    An Admin Declines the campaing.
+    """
+
+    campaign_id = request.json.get("campaign_id", None)
+
+    stub_return = {
+        "msg" : "Campaign Declined" 
+    }
+
+    return jsonify(stub_return), OK
+
 
 """ |------------------------------------|
     |           Dashboard Routes         |
