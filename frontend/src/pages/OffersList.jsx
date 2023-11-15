@@ -35,7 +35,8 @@ const OffersList = () => {
     };
 
     apiCall((d) => {
-      setData(d.offers_list);
+      console.log(d);
+      setData(d);
     }, options)
       .then((res) => {
         if (res) {
