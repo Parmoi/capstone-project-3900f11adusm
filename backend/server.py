@@ -900,6 +900,125 @@ def ban_collector():
 
     return jsonify(stub_return), OK
 
+@APP.route("/admin/get_campaigns", methods=["GET"])
+@jwt_required(fresh=False)
+def get_campaigns_for_review():
+    """
+    
+
+    Provides a list of campaigns, either reviewed or not
+    for the Admin to view and review.
+    """
+
+    stub_return = {
+        "campaigns": [
+            {
+                "campaign_id": '1',
+                "campaign_name": 'The Cats',
+                "campaign_image": 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQw4xHiYs4vnhBs9jqjYk0_JY3-SiSavqovXA&usqp=CAU',
+                "campaign_description": 'The cats are new series of really cool collectibles that you can collect from us.',
+                "campaign_start_date": '29/11/2023',
+                "campaign_end_date": '12/12/2023',
+                "collection_list": [
+                    {
+                        "collectible_id": "1",
+                        "name": "Cat Cat",
+                        "image": "https://tse3.mm.bing.net/th?id=OIP.SwCSPpmwihkM2SUqh7wKXwHaFG&pid=Api",
+                        "caption": 'A super Cat',
+                    },
+                    {
+                        "collectible_id": "2",
+                        "name": "Doomed Dog",
+                        "image": "https://tse2.mm.bing.net/th?id=OIP.j7EknM6CUuEct_kx7o-dNQHaMN&pid=Api",
+                        "caption": 'A cat that is afraid',
+                    },
+                    {
+                        "collectible_id": "3",
+                        "name": "Lion Cat",
+                        "image": "https://tse3.mm.bing.net/th?id=OIP.SwCSPpmwihkM2SUqh7wKXwHaFG&pid=Api",
+                        "caption": 'Lioness Cat',
+                    },
+                    {
+                        "collectible_id": "4",
+                        "name": "Cat the Dog",
+                        "image": "'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQw4xHiYs4vnhBs9jqjYk0_JY3-SiSavqovXA&usqp=CAU'",
+                        "caption": 'A super duper cat and dog',
+                    },
+                ],
+                "approval_status": "",
+
+            },
+            {
+                "campaign_id": '2',
+                "campaign_name": 'The Dogs',
+                "campaign_image": 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQw4xHiYs4vnhBs9jqjYk0_JY3-SiSavqovXA&usqp=CAU',
+                "campaign_description": 'The dogs are new series of really cool collectibles that you can collect from us.',
+                "campaign_start_date": '29/11/2023',
+                "campaign_end_date": '12/12/2023',
+                "collection_list": [
+                    {
+                        "collectible_id": "1",
+                        "name": "Dog Cat",
+                        "image": "https://tse3.mm.bing.net/th?id=OIP.SwCSPpmwihkM2SUqh7wKXwHaFG&pid=Api",
+                        "caption": 'A super Dog',
+                    },
+                    {
+                        "collectible_id": "2",
+                        "name": "Doomed Lion",
+                        "image": "https://tse2.mm.bing.net/th?id=OIP.j7EknM6CUuEct_kx7o-dNQHaMN&pid=Api",
+                        "caption": 'A Dog that is afraid',
+                    },
+                    {
+                        "collectible_id": "3",
+                        "name": "Lion Dog",
+                        "image": "https://tse3.mm.bing.net/th?id=OIP.SwCSPpmwihkM2SUqh7wKXwHaFG&pid=Api",
+                        "caption": 'Lion Dog',
+                    },
+                    {
+                        "collectible_id": "4",
+                        "name": "Dog the Cat",
+                        "image": "'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQw4xHiYs4vnhBs9jqjYk0_JY3-SiSavqovXA&usqp=CAU'",
+                        "caption": 'A super duper dog and cat',
+                    },
+                ],
+                "approval_status": "Approved",
+
+            },
+        ]
+    }
+
+    return jsonify(stub_return), OK
+
+@APP.route("/admin/campaign/approve", methods=["POST"])
+@jwt_required(fresh=False)
+def admin_campaign_approve():
+    """
+    An Admin Approves the campaign. 
+    """
+
+    campaign_id = request.json.get("campaign_id", None)
+
+    stub_return = {
+        "msg" : "Campaign Approved" 
+    }
+
+    return jsonify(stub_return), OK
+
+@APP.route("/admin/campaign/decline", methods=["POST"])
+@jwt_required(fresh=False)
+def admin_campaign_decline():
+    """
+    An Admin Declines the campaing.
+    """
+
+    campaign_id = request.json.get("campaign_id", None)
+
+    stub_return = {
+        "msg" : "Campaign Declined" 
+    }
+
+    return jsonify(stub_return), OK
+
 
 """ |------------------------------------|
     |           Dashboard Routes         |
