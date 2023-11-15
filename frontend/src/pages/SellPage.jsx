@@ -1,5 +1,5 @@
 import * as React from 'react';
-import SellStepper from "../components/Stepper";
+import PostStepper from "../components/PostStepper";
 import Typography from '@mui/material/Typography';
 import { Box, Button, Grid } from '@mui/material';
 import InputLabel from '@mui/material/InputLabel';
@@ -14,6 +14,8 @@ import WidgetUpload from '../components/WidgetUpload';
 import { useNavigate } from 'react-router-dom';
 import CaptionModal from '../components/CaptionModal';
 import ImageList from '../components/ImageCaptionList';
+
+const steps = ['Select collectible', 'Add title', 'Enter a description', 'Add images', 'Post listing'];
 
 const SellPage = () => {
     const [collectionID, setCollectibleID] = React.useState('');
@@ -30,7 +32,6 @@ const SellPage = () => {
 
     const navigate = useNavigate();
     
-
     const fetchData = () => {
         // call api with data
         const options = {
@@ -237,7 +238,7 @@ const SellPage = () => {
     ]
 
     return (
-        <SellStepper stepperContent={stepperContent} />
+        <PostStepper steps={steps} stepperContent={stepperContent} />
     );
 }
 
