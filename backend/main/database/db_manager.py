@@ -53,6 +53,7 @@ def database_setup():
         db.Column("manager_id", db.Integer, db.ForeignKey("collectors.id")),
         db.Column("start_date", db.DATE),
         db.Column("end_date", db.DATE),
+        db.Column("approved", db.Boolean),
     )
 
     # Creates a capaign feedback table

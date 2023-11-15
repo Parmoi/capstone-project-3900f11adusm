@@ -1,6 +1,8 @@
+from main.privelage import ADMIN, MANAGER
 import sqlalchemy as db
 from flask import jsonify
 import db_manager as dbm
+from main import auth
 import db_helpers
 from datetime import date, datetime
 from main.error import OK, InputError, AccessError
@@ -10,7 +12,9 @@ from main.error import OK, InputError, AccessError
     |------------------------------------| """
 
 
-def register_campaign(user_id, name, description, image, start_date, end_date):
+def register_campaign(
+    user_id, name, description, image, start_date, end_date, approved=False
+):
     """insert_campaign.
 
     Function to insert new campaign.
@@ -23,6 +27,12 @@ def register_campaign(user_id, name, description, image, start_date, end_date):
         end_date: end date of campaign ("DD/MM/YYYY")
         collectible_fields: list of fields/columns for collectibles in this campaign
     """
+    if not auth.check_user_privelage(user_id, MANAGER):
+        return (
+            jsonify({"msg": "User does not have privelage level required!"}),
+            AccessError,
+        )
+
 
     start_date_obj = datetime.strptime(start_date, "%d/%m/%Y").date()
     end_date_obj = datetime.strptime(end_date, "%d/%m/%Y").date()
@@ -40,6 +50,7 @@ def register_campaign(user_id, name, description, image, start_date, end_date):
             "manager_id": user_id,
             "start_date": start_date_obj,
             "end_date": end_date_obj,
+            "approved": approved,
         }
     )
     conn.execute(insert_stmt)
@@ -54,6 +65,43 @@ def register_campaign(user_id, name, description, image, start_date, end_date):
         ),
         OK,
     )
+
+
+def approve_campaign(admin_id, campaign_id):
+    if not auth.check_user_privelage(admin_id, ADMIN):
+        return (
+            jsonify({"msg": "User does not have privelage level required!"}),
+            AccessError,
+        )
+
+    engine, conn, metadata = dbm.db_connect()
+    campaigns = db.Table("campaigns", metadata, autoload_with=engine)
+    update_stmt = (
+        db.update(campaigns)
+        .where(campaigns.c.id == campaign_id)
+        .values({"approved": True})
+    )
+    conn.execute(update_stmt)
+    conn.close()
+    return jsonify({"msg": "Campaign apporoved!"}), OK
+
+def decline_campaign(admin_id, campaign_id):
+    if not auth.check_user_privelage(admin_id, ADMIN):
+        return (
+            jsonify({"msg": "User does not have privelage level required!"}),
+            AccessError,
+        )
+
+    engine, conn, metadata = dbm.db_connect()
+    campaigns = db.Table("campaigns", metadata, autoload_with=engine)
+    update_stmt = (
+        db.update(campaigns)
+        .where(campaigns.c.id == campaign_id)
+        .values({"approved": False})
+    )
+    conn.execute(update_stmt)
+    conn.close()
+    return jsonify({"msg": "Campaign declined!"}), OK
 
 
 def get_campaign(name=None, id=None):
