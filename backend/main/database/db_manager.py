@@ -129,6 +129,7 @@ def database_setup():
             "collector_id", db.Integer, db.ForeignKey("collectors.id"), primary_key=True
         ),
         db.Column("privelage", db.Integer),
+        db.Column("code", db.Integer)
     )
 
     # Creates all tables stored within metadata

@@ -94,8 +94,24 @@ def get_all_campaigns():
 
 # TODO: Error checking, Docstring
 def get_campaign_collectibles(campaign_id):
+    """get_campaign_collectibles.
+
+    Args:
+        campaign_id:
+
+    Returns:
+    """
+    collectibles = {
+        "collectibles": [
+            {
+                "id": 1,
+            },
+        ]
+    }
     engine, conn, metadata = dbm.db_connect()
+
     collectibles = db.Table("collectibles", metadata, autoload_with=engine)
+
     select_stmt = db.select(collectibles).where(
         collectibles.c.campaign_id == campaign_id
     )

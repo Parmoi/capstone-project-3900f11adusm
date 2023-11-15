@@ -1,7 +1,7 @@
 import sqlalchemy as db
 from flask import jsonify
-import db_manager as dbm
 import auth
+import main.database.db_manager as dbm
 from main.error import OK, InputError, AccessError
 from main.privelage import COLLECTOR
 
@@ -142,6 +142,9 @@ def get_collector(user_id=None, email=None, username=None):
         select_stmt = db.select(collectors).where(collectors.c.id == user_id)
 
     result = conn.execute(select_stmt)
+    if result is None:
+        return jsonify({"msg": "Invalid collector id"}), InputError
+
     collector_info = result.fetchone()._asdict()
     conn.close()
 
@@ -212,3 +215,30 @@ def get_collector_pw(id=None, email=None):
     conn.close()
 
     return password
+
+def get_collector_dict(user_id=None, email=None, username=None):
+    """get_collector.
+
+    Returns dict with collectors details
+
+    Args:
+        user_id: user id of collector being returned
+    """
+
+    engine, conn, metadata = dbm.db_connect()
+
+    # Loads in the collector table into our metadata
+    collectors = db.Table("collectors", metadata, autoload_with=engine)
+    select_stmt = None
+    if email:
+        select_stmt = db.select(collectors).where(collectors.c.email == email)
+    elif username:
+        select_stmt = db.select(collectors).where(collectors.c.username == username)
+    elif user_id:
+        select_stmt = db.select(collectors).where(collectors.c.id == user_id)
+
+    result = conn.execute(select_stmt)
+    collector_info = result.fetchone()._asdict()
+    conn.close()
+    return collector_info
+

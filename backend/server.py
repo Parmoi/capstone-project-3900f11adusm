@@ -801,6 +801,22 @@ def get_buylist():
     |            Manager Routes          |
     |------------------------------------| """
 
+@APP.route("/manager/invite", methods=["GET"])
+@jwt_required(fresh=False)
+def invite_manager():
+    # TODO: check admin id is valid
+    admin_id = get_jwt_identity()
+
+    manager_id = request.json.get("manager_id", None)
+
+    return auth.send_manager_email(admin_id, manager_id)
+
+@APP.route("/manager/register", methods=["GET"])
+@jwt_required(fresh=False)
+def register_manager():
+    manager_id = get_jwt_identity()
+    code = request.json.get("manager_id", None)
+    return auth.check_manager_email_code(manager_id, code)
 
 @APP.route("/manager/feedback", methods=["GET"])
 @jwt_required(fresh=False)
