@@ -710,14 +710,25 @@ def get_buylist():
 def invite_manager():
     # TODO: check admin id is valid
     admin_id = get_jwt_identity()
-
     manager_id = request.json.get("manager_id", None)
-
     return auth.send_manager_email(admin_id, manager_id)
 
 @APP.route("/manager/register", methods=["GET"])
 @jwt_required(fresh=False)
 def register_manager():
+    """
+    Arguments:
+        - username
+        - first_name
+        - last_name
+        - email
+        - phone
+        - password
+        - special_code
+
+    A special registration that registers Manager accounts.
+    Manager privilege should be that of not postable.
+    """
     manager_id = get_jwt_identity()
     code = request.json.get("manager_id", None)
     return auth.check_manager_email_code(manager_id, code)
@@ -727,7 +738,6 @@ def register_manager():
 def get_feedback():
     """
     Returns the feedback to the campaign manager for a campaign.
-    """
 
     stub_return = {
         "feedback": [
@@ -747,8 +757,8 @@ def get_feedback():
             },
         ]
     }
+    """
 
-    # return jsonify(stub_return), OK
 
     user_id = get_jwt_identity()
     campaign_id = request.json.get("campaign_id", None)
@@ -756,53 +766,11 @@ def get_feedback():
     return db_campaigns.get_campaign_feedback(user_id, campaign_id)
 
 
-@APP.route("/manager/invite", methods=["POST"])
-@jwt_required(fresh=False)
-def invite_manager():
-    """
-    Arguments:
-        - email
-
-    Sends the given email account an email with a registration code and
-    a link to http://localhost:3000/register/manager for registration.
-    """
-
-    stub_return = {
-        "msg": "An invite has been sent."
-    }
-
-    return jsonify(stub_return), OK
-
-
-@APP.route("/manager/register", methods=["POST"])
-@jwt_required(fresh=False)
-def register_manager():
-    """
-    Arguments:
-        - username
-        - first_name
-        - last_name
-        - email
-        - phone
-        - password
-        - special_code
-
-    A special registration that registers Manager accounts.
-    Manager privilege should be that of not postable.
-    """
-
-    stub_return = {
-        "msg": "Registration successful"
-    }
-
-    return jsonify(stub_return), OK
-
 @APP.route("/manager/getlist", methods=["GET"])
 @jwt_required(fresh=False)
 def get_manager_list():
     """
     Returns a list of managers in the system.
-    """
 
     stub_return = {
         "managers": [
@@ -828,8 +796,8 @@ def get_manager_list():
             },
         ]
     }
-
-    return jsonify(stub_return), OK
+    """
+    return db_collectors.get_managers()
 
 @APP.route("/manager/publish", methods=["POST"])
 @jwt_required(fresh=False)
