@@ -730,7 +730,7 @@ def register_manager():
     Manager privilege should be that of not postable.
     """
     manager_id = get_jwt_identity()
-    code = request.json.get("manager_id", None)
+    code = request.json.get("special_code", None)
     return auth.check_manager_email_code(manager_id, code)
 
 @APP.route("/manager/feedback", methods=["GET"])
