@@ -11,10 +11,10 @@ import { apiCall } from '../App';
 import Alert from '@mui/material/Alert';
 import Paper from '@mui/material/Paper';
 
-const getUsername = (setUsername) => {
+const getUsername = (userId, setUsername) => {
   const options = {
     method: 'GET',
-    route: '/profile',
+    route: `/profile?id=${userId}`,
   };
 
   apiCall((d) => {
@@ -29,7 +29,7 @@ const getUsername = (setUsername) => {
     });
 }
 
-function SignIn({ setLogin, setPrivelage, setUsername }) {
+function SignIn({ setUserId, setLogin, setPrivilege, setUsername }) {
   const [error, setError] = React.useState(false);
   const [errContent, setErrContent] = React.useState('');
   const navigate = useNavigate();
@@ -50,8 +50,9 @@ function SignIn({ setLogin, setPrivelage, setUsername }) {
 
     apiCall((d) => {
       setLogin(true);
-      setPrivelage(parseInt(d.privelage));
-      getUsername(setUsername);
+      setUserId(d.userId);
+      getUsername(d.userId, setUsername);
+      setPrivilege(parseInt(d.privelage));
     }, options)
       .then((res) => {
         if (res) {
@@ -70,12 +71,8 @@ function SignIn({ setLogin, setPrivelage, setUsername }) {
       <Box 
         sx={{ 
           width: '100%', 
-          height: '90.8vh', 
           display: "flex", 
           flexDirection: "column", 
-          backgroundImage: `url("https://res.cloudinary.com/ddor5nnks/image/upload/v1699602264/gradient_background_zjdl6a.webp")`, 
-          backgroundRepeat: "no-repeat", 
-          backgroundSize: "cover", 
           alignItems: 'center', 
           justifyContent: 'center'
           }}
@@ -84,12 +81,11 @@ function SignIn({ setLogin, setPrivelage, setUsername }) {
         component="main" 
         maxWidth="xs" 
         sx={{
-          // mt: '15vh',
+          mt: '15vh',
           borderRadius: 2,
           maxWidth: '700px',
           width: '50vw',
           paddingBottom: '50px',
-          // height: '50vh',
         }}
       >
         <CssBaseline />

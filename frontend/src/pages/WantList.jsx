@@ -14,12 +14,14 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import moment from 'moment';
 
+import CollectibleImage from '../components/CollectibleImage';
 import { apiCall } from '../App';
 
 
 // sourced from https://github.com/KevinVandy/material-react-table/blob/v1/apps/material-react-table-docs/examples/custom-top-toolbar/sandbox/src/JS.js
 const WantList = () => {
   const [data, setData] = React.useState([]);
+  const [rowSelection, setRowSelection] = React.useState({});
 
   const fetchData = () => {
     // call api with data
@@ -55,28 +57,12 @@ const WantList = () => {
         accessorKey: 'image',
         header: 'Image',
         Cell: ({ row }) => (
-          <Box
-            sx={{
-              display: 'flex',
-              gap: '1rem',
-            }}
-          >
-            <img
-              alt="collectible image"
-              height={60}
-              src={row.original.image}
-              loading="lazy"
-            />
-          </Box>
+          <CollectibleImage id={row.original.collectible_id} name={row.original.name} image={row.original.image} />
 
         ),
         enableColumnActions: false,
         enableColumnFilter: false,
         enableSorting: false,
-      },
-      {
-        accessorKey: 'name',
-        header: 'Name',
       },
       {
         accessorKey: 'campaign_name',
@@ -165,8 +151,10 @@ const WantList = () => {
       defaultColumn={{
         minSize: 50,
         maxSize: 500,
-        size: 200,
+        size: 250,
       }}
+      onRowSelectionChange={setRowSelection}
+      state={{ rowSelection }}
 
       //add custom action buttons to top-left of top toolbar
 
@@ -176,13 +164,15 @@ const WantList = () => {
             const options = {
               method: 'DELETE',
               route: "/wantlist/delete",
-              body: {
+              body: JSON.stringify({
                 'wantlist_id': row.getValue('id'),
-              }
+              }),
             };
-            console.log(row.getValue('id'));
 
-            apiCall(() => { }, options)
+            apiCall(() => { 
+              fetchData();
+              setRowSelection({});
+             }, options)
               .then((res) => {
                 if (res) {
                   // set error msg if api call returns error
@@ -197,13 +187,15 @@ const WantList = () => {
             const options = {
               method: 'POST',
               route: "/wantlist/move",
-              body: {
+              body: JSON.stringify({
                 'wantlist_id': row.getValue('id'),
-              }
+              }),
             };
-            console.log(row.getValue('id'));
 
-            apiCall(() => { }, options)
+            apiCall(() => { 
+              fetchData();
+              setRowSelection({});
+             }, options)
               .then((res) => {
                 if (res) {
                   // set error msg if api call returns error

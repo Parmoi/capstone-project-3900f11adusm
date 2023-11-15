@@ -6,7 +6,7 @@ import {
   MRT_FullScreenToggleButton,
 } from 'material-react-table';
 
-import { Box, Button, IconButton } from '@mui/material';
+import { Box, Typography, Button } from '@mui/material';
 
 //Date Picker Imports
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -15,6 +15,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import moment from 'moment';
 import { apiCall } from '../App';
 import { useNavigate } from 'react-router-dom';
+import CollectibleImage from '../components/CollectibleImage';
 
 
 // sourced from https://github.com/KevinVandy/material-react-table/blob/v1/apps/material-react-table-docs/examples/custom-top-toolbar/sandbox/src/JS.js
@@ -31,7 +32,7 @@ const TradeList = () => {
 
     apiCall((d) => {
       console.log(d);
-      setData(d["trades_list"]);
+      setData(d);
     }, options)
       .then((res) => {
         if (res) {
@@ -45,30 +46,18 @@ const TradeList = () => {
     fetchData();
   }, []);
 
+  function handleOffersClick(post_id) {
+    navigate(`/tradelist/offers/${post_id}`)
+  }
+
   const columns = useMemo(
     //column definitions...
     () => [
       {
-        accessorKey: 'trader_collectible_name',
-        header: 'Collectible on Trade',
-      },
-      {
         accessorKey: 'trader_collectible_img',
         header: 'Trade Item Image',
         Cell: ({ row }) => (
-          <Box
-            sx={{
-              display: 'flex',
-              gap: '1rem',
-            }}
-          >
-            <img
-              alt="trading collectible image"
-              height={60}
-              src={row.original.trader_collectible_img}
-              loading="lazy"
-            />
-          </Box>
+          <CollectibleImage id={row.original.trader_collectible_id} name={row.original.trader_collectible_name} image={row.original.trader_collectible_img} />
         ),
         enableColumnActions: false,
         enableColumnFilter: false,
@@ -110,6 +99,12 @@ const TradeList = () => {
       {
         accessorKey: 'offers_received',
         header: 'Offers Received',
+        Cell: ({ row }) => (
+          <Button onClick={() => handleOffersClick(row.original.trade_post_id)}>
+            <Typography variant='h8'>{row.original.offers_received}</Typography>
+          </Button>
+          
+        ),
       },
 
     ],
@@ -127,14 +122,8 @@ const TradeList = () => {
       defaultColumn={{
         minSize: 50,
         maxSize: 300,
-        size: 250,
+        size: 300,
       }}
-      muiTableBodyRowProps={({ row }) => ({
-        onClick: () => {
-          navigate(`/tradelist/offers/${row.original.trade_post_id}`)
-        },
-        sx: { cursor: 'pointer' },
-      })}
 
       //customize built-in buttons in the top-right of top toolbar
       renderToolbarInternalActions={({ table }) => (

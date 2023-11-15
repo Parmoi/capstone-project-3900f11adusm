@@ -72,7 +72,7 @@ function ResultsPage() {
           >
             <img
               alt="collectible image"
-              height={50}
+              height={100}
               src={row.original.collectible_image}
               loading="lazy"
             />

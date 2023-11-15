@@ -114,6 +114,35 @@ def search_collectibles(collectible_name):
     return jsonify({"collectibles": coll_list}), OK
 
 
+def get_collectible_info(user_id, collectible_id):
+
+    engine, conn, metadata = dbm.db_connect()
+    collectibles = db.Table("collectibles", metadata, autoload_with=engine)
+    campaigns = db.Table("campaigns", metadata, autoload_with=engine)
+
+    join = db.join(
+        collectibles, campaigns, (collectibles.c.campaign_id == campaigns.c.id)
+    )
+
+    select_stmt = db.select(
+        collectibles.c.id == collectible_id,
+        collectibles.c.name.label("collectible_name"),
+        campaigns.c.id.label("campaign_id"),
+        campaigns.c.name.label("campaign_name"),
+        collectibles.c.image.label("collectible_image"),
+        collectibles.c.description.label("collectible_description"),
+        collectibles.c.date_added.label("date_added"),
+    ).select_from(join)
+
+    res = conn.execute(select_stmt)
+
+    if res is None:
+        return jsonify({"msg": "Invalid collectible id"}), InputError
+    else:
+        return jsonify(res.fetchone()._asdict()), OK
+    
+
+
 def get_all_collectibles():
     engine, conn, metadata = dbm.db_connect()
     collectibles = db.Table("collectibles", metadata, autoload_with=engine)
