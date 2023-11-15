@@ -826,7 +826,6 @@ def manager_privilege():
 def get_collector_list():
     """
     Returns a list of collectors for the Admin to see
-    """
 
     stub_return = {
         "collectors": [
@@ -850,8 +849,10 @@ def get_collector_list():
             },
         ]
     }
+    """
 
-    return jsonify(stub_return), OK
+    return db_collectors.get_all_collectors()
+
 
 @APP.route("/collector/ban", methods=["POST"])
 @jwt_required(fresh=False)
