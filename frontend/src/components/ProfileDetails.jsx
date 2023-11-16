@@ -13,34 +13,75 @@ import TwitterIcon from '@mui/icons-material/Twitter';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import FacebookIcon from '@mui/icons-material/Facebook';
 
+import WidgetUpload from './WidgetUpload';
+
 import { Divider } from '@mui/material';
 
 import React from 'react';
 
 import { apiCall } from '../App';
 
-const ProfileBox = ({style, data}) => {
+const ProfileBox = ({style, data, handleImageSave, privilege}) => {
+  const [error, setError] = React.useState(false);
+  const [errContent, setErrContent] = React.useState('');
+  const [imgUrl, setImgUrl] = React.useState(data.profile_picture);
+
+  const handleUpload = () => {
+    // call api with data
+    const options = {
+      method: 'POST',
+      route: '/profile/update',
+      body: JSON.stringify({
+        profile_picture: imgUrl,
+      })
+    };
+
+    apiCall(() => {
+      handleImageSave();
+    }, options)
+    .then((res) => {
+      if (res) {
+        // set error msg if api call returns error
+        setErrContent(`Error: ${res.msg}`);
+        setError(true);
+      }
+    });
+  }
+
+  const handleImageURL = (url) => {
+    setImgUrl(url);
+    handleUpload();
+  }
+
+
   return (
     <Stack direction="column" spacing={2} sx={style} >
       <Box component="span">
         <Avatar 
           variant="outlined"
-          alt="Bob Ret"
-          src={data.image_url ? data.image_url : ''}
+          alt="Profile Image"
+          src={data.profile_picture ? data.profile_picture : ''}
           display="flex"
           sx={{ width: 150, height: 150, marginTop: "16px", fontSize: "60px"}}
         />
       </Box>
       <Typography variant="h5">{data.username ? data.username : 'Username Unknown'}</Typography>
-      <Typography variant="p1">Collector</Typography>
+      { privilege === 1 && <Typography variant="p1">Collector</Typography>}
+      {/* { (privilege === 2 || privilege === 3) && <Route path="/" element={<ManagerHomePage/>} />} */}
+      { privilege === 2 && <Typography variant="p1">Manager</Typography>}
+      { privilege === 3 && <Typography variant="p1">Admin</Typography>}
+      <div>
+        {error ? <Alert severity='error'>{errContent}</Alert> : <></> }
+      </div>
       <Box component="span">
-        <Button variant="contained" sx={{marginLeft: "8px", marginBottom: "16px"}}>Change Icon</Button>
+        <WidgetUpload onSuccess={handleImageURL} style={{marginLeft: "8px", marginBottom: "16px"}} buttonName='Change Icon'/>
+        {/* <Button variant="contained" sx={{marginLeft: "8px", marginBottom: "16px"}}>Change Icon</Button> */}
       </Box>
     </Stack>
   );
 };
 
-const SocialMediaDisplay = ({displaySocials, style}) => {
+const SocialMediaDisplay = ({handleEdit, style}) => {
   return (
     <List sx={style}>
       <ListItem secondaryAction={ <ListItemText primary="@Test"/> }>
@@ -79,12 +120,12 @@ const SocialMediaDisplay = ({displaySocials, style}) => {
         </Button>
       </ListItem>
       <Divider variant="middle"/>
-      <Button onClick={() => { displaySocials(true); }} variant="contained" sx={{marginLeft: "16px", marginTop: "16px", marginBottom: "8px"}}>Edit</Button>
+      <Button onClick={handleEdit} variant="contained" sx={{marginLeft: "16px", marginTop: "16px", marginBottom: "8px"}}>Edit</Button>
     </List>
   );
 }
 
-const SocialMediaEdit = ({displaySocials, style}) => {
+const SocialMediaEdit = ({handleSave, style}) => {
   return (
     <List sx={style}>
       <ListItem secondaryAction={ <TextField fullWidth id="Address" label="Address" variant="outlined" size='small' sx={{width: 200}}/> }>
@@ -123,12 +164,12 @@ const SocialMediaEdit = ({displaySocials, style}) => {
         </Button>
       </ListItem>
       <Divider variant="middle"/>
-        <Button onClick={() => { displaySocials(false); }} variant="contained" sx={{marginLeft: "16px", marginTop: "16px", marginBottom: "8px"}}>Save</Button>
+        <Button onClick={handleSave} variant="contained" sx={{marginLeft: "16px", marginTop: "16px", marginBottom: "8px"}}>Save</Button>
     </List>
   );
 }
 
-const ProfileDetailsDisplay = ({displayDetails, style, data}) => {
+const ProfileDetailsDisplay = ({handleEdit, style, data}) => {
 
   return (
     <List sx={style}>
@@ -136,11 +177,11 @@ const ProfileDetailsDisplay = ({displayDetails, style, data}) => {
         <ListItemText primary="Username"/>
       </ListItem>
       <Divider variant="middle"/>
-      <ListItem secondaryAction={ <ListItemText primary={data.real_name ? data.real_name : 'Unknown'}/> }>
+      <ListItem secondaryAction={ <ListItemText primary={data.first_name ? data.first_name : 'Unknown'}/> }>
         <ListItemText primary="First Name"/>
       </ListItem>
       <Divider variant="middle"/>
-      <ListItem secondaryAction={ <ListItemText primary={data.real_name ? data.real_name : 'Unknown'}/> }>
+      <ListItem secondaryAction={ <ListItemText primary={data.last_name ? data.last_name : 'Unknown'}/> }>
         <ListItemText primary="Last Name"/>
       </ListItem>
       <Divider variant="middle"/>
@@ -156,12 +197,12 @@ const ProfileDetailsDisplay = ({displayDetails, style, data}) => {
         <ListItemText primary="Address"/>
       </ListItem>
       <Divider variant="middle"/>
-      <Button onClick={() => { displayDetails(true) }} variant="contained" sx={{marginLeft: "16px", marginTop: "16px", marginBottom: "8px"}}>Edit</Button>
+      <Button onClick={handleEdit} variant="contained" sx={{marginLeft: "16px", marginTop: "16px", marginBottom: "8px"}}>Edit</Button>
     </List>
   );
 }
 
-const ProfileDetailsEdit = ({displayDetails, style}) => {  
+const ProfileDetailsEdit = ({handleSave, style}) => {  
   const [error, setError] = React.useState(false);
   const [errContent, setErrContent] = React.useState('');
 
@@ -186,7 +227,7 @@ const ProfileDetailsEdit = ({displayDetails, style}) => {
     console.log(data);
 
     apiCall(() => {
-      displayDetails(false);
+      handleSave();
     }, options)
     .then((res) => {
       if (res) {

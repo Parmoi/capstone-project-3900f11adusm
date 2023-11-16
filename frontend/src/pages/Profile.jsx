@@ -15,7 +15,7 @@ import { apiCall } from '../App';
 
 const theme = createTheme();
 
-function Profile() {
+function Profile({privilege}) {
   const [editDetails, displayDetails] = useState(false);
   const [editSocials, displaySocials] = useState(false);
   const [data, setData] = useState([]);
@@ -52,6 +52,28 @@ function Profile() {
     fetchInfo();
   }, []);
 
+  const handleImageSave = () => {
+    fetchInfo();
+  }
+
+  const handleSocialEdit = () => {
+    displaySocials(true);;
+  }
+
+  const handleSocialSave = () => {
+    displaySocials(false);
+    fetchInfo();
+  }
+
+  const handleDetailsEdit = () => {
+    displayDetails(true);
+  }
+
+  const handleDetailsSave = () => {
+    displayDetails(false);
+    fetchInfo();
+  }
+
   const style = {
     alignItems: 'center', 
     marginTop: "20px", 
@@ -65,16 +87,16 @@ function Profile() {
       <CssBaseline/>
         <Grid container spacing={2}>
           <Grid item xs={4}>
-            <ProfileBox style={style} data={data}/>
+            <ProfileBox style={style} data={data} handleImageSave={handleImageSave} privilege={privilege}/>
             { !editSocials 
-            ? <SocialMediaDisplay displaySocials={displaySocials} style={style} />
-            : <SocialMediaEdit displaySocials={displaySocials} style={style} /> 
+            ? <SocialMediaDisplay handleEdit={handleSocialEdit} style={style}/>
+            : <SocialMediaEdit handleSave={handleSocialSave} style={style}/> 
             }
           </Grid>
           <Grid item xs={8}>
             { !editDetails 
-            ? <ProfileDetailsDisplay displayDetails={displayDetails} style={style} data={data} /> 
-            : <ProfileDetailsEdit displayDetails={displayDetails} style={style} />             
+            ? <ProfileDetailsDisplay handleEdit={handleDetailsEdit} style={style} data={data}/> 
+            : <ProfileDetailsEdit handleSave={handleDetailsSave} style={style} />             
             }
             <CollectionCompletion style={style} />
           </Grid>
