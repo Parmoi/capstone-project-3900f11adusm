@@ -6,9 +6,10 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 
 
-// Component for caption modal when adding images to trade post
-const CaptionModal = ({ image, setImageCaptions, open, handleClose }) => {
-    const [caption, setCaption] = React.useState('');
+// Component for collectible modal when uploading
+const CollectibleUploadModal = ({ image, setCollectible, open, handleClose }) => {
+    const [name, setName] = React.useState('');
+    const [description, setDescription] = React.useState('');
 
     const style = {
         position: 'absolute',
@@ -24,8 +25,12 @@ const CaptionModal = ({ image, setImageCaptions, open, handleClose }) => {
         flexDirection: 'column',
     };
 
-    const handleChange = (e) => {
-        setCaption(e.target.value);
+    const handleNameChange = (e) => {
+        setName(e.target.value);
+    }
+
+    const handleDescriptionChange = (e) => {
+        setDescription(e.target.value);
     }
 
     return (
@@ -33,13 +38,10 @@ const CaptionModal = ({ image, setImageCaptions, open, handleClose }) => {
         <Modal
             open={open}
             onClose={handleClose}
-            aria-labelledby="Caption modal"
-            aria-describedby="Modal for adding a caption to image"
+            aria-labelledby="Collectible modal"
+            aria-describedby="Modal for adding collectible info"
         >
             <Box sx={style}>
-                <Typography id="modal-modal-title" variant="h6" component="h2" mb='30px'>
-                    Add caption to image:
-                </Typography>
                 <Box sx={{ 
                     display: 'flex',
                     justifyContent: 'center',
@@ -51,11 +53,19 @@ const CaptionModal = ({ image, setImageCaptions, open, handleClose }) => {
                         loading="lazy"
                     />
                 </Box>
-            <TextField label="Caption" onChange={handleChange} variant="standard" sx={{ mb: '30px' }} />
+            <Typography id="modal-modal-title" variant="h6" component="h2" mt='30px' mb='30px'>
+                Add collectible details:
+            </Typography>
+            <TextField label="Name" onChange={handleNameChange} variant="standard" sx={{ mb: '30px' }} />
+            <TextField label="Description" onChange={handleDescriptionChange} variant="standard" sx={{ mb: '30px' }} />
             <Box>
                 <Button variant="contained" sx={{ float: 'right', mt: '20px' }} onClick={handleClose}>Close</Button>
                 <Button variant="contained" sx={{ float: 'left', mt: '20px' }} onClick={() => {
-                    setImageCaptions(caption);
+                    setCollectible({
+                        'image': image,
+                        'name': name,
+                        'description': description
+                    });
                     handleClose();
                     }}>Add</Button>
             </Box>
@@ -65,4 +75,4 @@ const CaptionModal = ({ image, setImageCaptions, open, handleClose }) => {
     );
     }
 
-export default CaptionModal;
+export default CollectibleUploadModal;
