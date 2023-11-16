@@ -6,40 +6,34 @@ import {
   MRT_FullScreenToggleButton,
 } from 'material-react-table';
 
-import { Box, Button, IconButton } from '@mui/material';
+import { Box, Button } from '@mui/material';
 
 //Date Picker Imports
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import moment from 'moment';
+import { apiCall } from '../../App';
+import CollectibleImage from '../../components/CollectibleImage';
 
-import CollectibleImage from '../components/CollectibleImage';
-import { apiCall } from '../App';
-
-
-// sourced from https://github.com/KevinVandy/material-react-table/blob/v1/apps/material-react-table-docs/examples/custom-top-toolbar/sandbox/src/JS.js
-const WantList = () => {
+// Page that displays a list of all collectibles in the user's collection
+// Shows collectible image, name, campaign it is associated with, date released and date added to user's collection
+// Allows user to delete selected collectibles from their collection
+// Table sourced from https://github.com/KevinVandy/material-react-table/blob/v1/apps/material-react-table-docs/examples/custom-top-toolbar/sandbox/src/JS.js
+function CollectionList() {
   const [data, setData] = React.useState([]);
   const [rowSelection, setRowSelection] = React.useState({});
 
   const fetchData = () => {
-    // call api with data
+    // fetches data on collectibles in user's collection
     const options = {
       method: 'GET',
-      route: "/wantlist/get",
+      route: "/collection/get",
     };
 
     apiCall((d) => {
-      console.log(d);
-      setData(d);
+      setData(d.collection);
     }, options)
-      .then((res) => {
-        if (res) {
-          // set error msg if api call returns error
-
-        }
-      });
   }
 
   React.useEffect(() => {
@@ -47,7 +41,6 @@ const WantList = () => {
   }, []);
 
   const columns = useMemo(
-    //column definitions...
     () => [
       {
         accessorKey: 'id',
@@ -58,7 +51,6 @@ const WantList = () => {
         header: 'Image',
         Cell: ({ row }) => (
           <CollectibleImage id={row.original.collectible_id} name={row.original.name} image={row.original.image} />
-
         ),
         enableColumnActions: false,
         enableColumnFilter: false,
@@ -69,7 +61,6 @@ const WantList = () => {
         header: 'Campaign Name',
       },
       {
-        accessorKey: 'dateReleased',
         accessorFn: (row) => moment(row.date_released, "DD/MM/YYYY"), //convert to Date for sorting and filtering
         id: 'dateReleased',
         header: 'Date Released',
@@ -102,7 +93,6 @@ const WantList = () => {
         )
       },
       {
-        accessorKey: 'dateAdded',
         accessorFn: (row) => moment(row.date_added, "DD/MM/YYYY"), //convert to Date for sorting and filtering
         id: 'dateAdded',
         header: 'Date Added',
@@ -141,7 +131,7 @@ const WantList = () => {
 
   return (
     <MaterialReactTable
-      title="Wantlist"
+      title="Collection"
       columns={columns}
       data={data}
       enableRowSelection
@@ -151,44 +141,21 @@ const WantList = () => {
       defaultColumn={{
         minSize: 50,
         maxSize: 500,
-        size: 250,
+        size: 200,
       }}
       onRowSelectionChange={setRowSelection}
       state={{ rowSelection }}
-
       //add custom action buttons to top-left of top toolbar
 
       renderBottomToolbarCustomActions={({ table }) => {
         const handleDelete = () => {
+          // for each selected row, call api to delete collectible
           table.getSelectedRowModel().flatRows.map((row) => {
             const options = {
               method: 'DELETE',
-              route: "/wantlist/delete",
+              route: "/collection/delete",
               body: JSON.stringify({
-                'wantlist_id': row.getValue('id'),
-              }),
-            };
-
-            apiCall(() => { 
-              fetchData();
-              setRowSelection({});
-             }, options)
-              .then((res) => {
-                if (res) {
-                  // set error msg if api call returns error
-
-                }
-              });
-          });
-        };
-
-        const handleMove = () => {
-          table.getSelectedRowModel().flatRows.map((row) => {
-            const options = {
-              method: 'POST',
-              route: "/wantlist/move",
-              body: JSON.stringify({
-                'wantlist_id': row.getValue('id'),
+                'id': row.getValue('id'),
               }),
             };
 
@@ -208,33 +175,23 @@ const WantList = () => {
         return (
           <Box sx={{ display: 'flex', gap: '1rem', p: '4px' }}>
             <Button
-              color="secondary"
-              // For some reason, button is disabled when all rows selected
-              // TODO: find fix
-              disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()}
-              onClick={handleMove}
-              variant="contained"
-            >
-              Move to collections
-            </Button>
-
-            <Button
               color="error"
               disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()}
-              onClick={handleDelete}
+              onClick={() => {
+                handleDelete();
+              }}
               variant="contained"
             >
               Delete selected
             </Button>
           </Box>
         );
-
       }}
 
       //customize built-in buttons in the top-right of top toolbar
       renderToolbarInternalActions={({ table }) => (
-
         <Box>
+          {/* add custom button to print table  */}
           <MRT_ToggleDensePaddingButton table={table} />
           <MRT_FullScreenToggleButton table={table} />
         </Box>
@@ -245,4 +202,4 @@ const WantList = () => {
 };
 
 
-export default WantList;
+export default CollectionList;

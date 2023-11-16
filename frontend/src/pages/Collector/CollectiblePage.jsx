@@ -1,42 +1,38 @@
-import React, { useState } from 'react';
-import ImageCarousel from '../components/ImageCarousel';
+import React from 'react';
+import ImageCarousel from '../../components/ImageCarousel';
 import {
     Grid,
     Button,
     Typography,
     Box,
-    Container,
     Paper,
+    Divider,
+    ListItem,
+    List,
 } from '@mui/material'
+
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTheme, ThemeProvider } from '@mui/material/styles';
-import { apiCall } from '../App';
+import { apiCall } from '../../App';
 
-
+// Page which displays information about collectible including name, image, add date and description
+// Contains buttons which allow users to see trade posts, add collectible to wantlist and collection
 const CollectiblePage = () => {
   const [data, setData] = React.useState({});
   const navigate = useNavigate();
   const params = useParams();
   const c_id = params.id;
   
-
   const fetchData = () => {
-    // call api with data
+    // fetches collectible information to be displayed
     const options = {
       method: 'GET',
       route: `/collectible/get?collectible_id=${c_id}`,
     };
 
     apiCall((d) => {
-      console.log(d);
       setData(d);
-    }, options)
-      .then((res) => {
-        if (res) {
-          // set error msg if api call returns error
-
-        }
-      });
+    }, options);
   }
 
   React.useEffect(() => {
@@ -49,6 +45,7 @@ const CollectiblePage = () => {
   }
 
   const handleAddWantlist = () => {
+    // api call to add collectible to wantlist
     const options = {
       method: 'POST',
       route: "/wantlist/add",
@@ -57,18 +54,12 @@ const CollectiblePage = () => {
       })
     };
 
-    apiCall((d) => {
-      console.log(d);
-    }, options)
-      .then((res) => {
-        if (res) {
-          // set error msg if api call returns error
-
-        }
-      });
+    apiCall(() => {
+    }, options);
   }
 
   const handleAddCollection = () => {
+    // api call to add collectible to collection list
     const options = {
       method: 'POST',
       route: "/collection/add",
@@ -77,20 +68,13 @@ const CollectiblePage = () => {
       })
     };
 
-    apiCall((d) => {
-      console.log(d);
-    }, options)
-      .then((res) => {
-        if (res) {
-          // set error msg if api call returns error
-
-        }
-      });
+    apiCall(() => {
+    }, options);
   }
 
   return (
     <ThemeProvider theme={useTheme()}>
-      <Box sx={{ width: '100%', height: '100%', flexGrow: 1, alignContent: 'center', bgcolor: '#f4f4f4' }}>
+      <Box sx={{ width: '100%', height: '100%', flexGrow: 1 }}>
       <Grid item xs={12} sx={{ height: '100px' }}></Grid>
       <Grid container spacing={12}>
         <Grid item xs={1}></Grid>
@@ -120,19 +104,28 @@ const CollectiblePage = () => {
         <Grid item xs={1}></Grid>
         <Grid item xs={1}></Grid>
         <Grid item xs={7}>
-        <Paper elevation={3} sx={{ 
-            width: '100%', 
-            display: 'flex', 
-            flexDirection: 'column', 
-            justifyContent: 'center', 
-            alignItems: 'center' 
-            }}>
-              <Container sx={{ padding: '10px' }}>
-                <Typography variant='h5'>{data.collectible_name}</Typography>
-                <Typography variant='h8'>Added on: {data.collectible_added_date}</Typography>
-                <Typography>{data.collectible_description}</Typography>
-                </Container>
-          </Paper>
+        <Paper elevation={3} 
+          sx={{ 
+              width: '100%', 
+              display: 'flex', 
+              flexDirection: 'column', 
+              justifyContent: 'center', 
+              alignItems: 'center' 
+          }}
+        >
+        <List sx={{ display: 'flex', flexDirection: 'column', alignContent: 'flex-start', width: '100%' }}>
+          <ListItem>
+            <Typography variant='h5'>{data.collectible_name}</Typography>
+          </ListItem>
+          <ListItem>
+            <Typography variant='h8'>Added on: {data.collectible_added_date}</Typography>
+          </ListItem>
+          <Divider variant="middle"/>
+          <ListItem>
+            <Typography>{data.collectible_description}</Typography>
+          </ListItem>
+        </List>
+        </Paper>
         </Grid>
       </Grid>
       </Box>

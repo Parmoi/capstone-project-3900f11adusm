@@ -6,40 +6,35 @@ import {
   MRT_FullScreenToggleButton,
 } from 'material-react-table';
 
-import { Box, Typography, Button } from '@mui/material';
+import { Box, Button } from '@mui/material';
 
 //Date Picker Imports
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import moment from 'moment';
-import { apiCall } from '../App';
+import { apiCall } from '../../App';
 import { useNavigate } from 'react-router-dom';
-import CollectibleImage from '../components/CollectibleImage';
+import CollectibleImage from '../../components/CollectibleImage';
 
-
-// sourced from https://github.com/KevinVandy/material-react-table/blob/v1/apps/material-react-table-docs/examples/custom-top-toolbar/sandbox/src/JS.js
+// Displays list of all items the current user has put up for trade
+// Shows trade item, name, date posted and number of offers received
+// Clicking on offers received takes user to trade offers list page
+// Table sourced from https://github.com/KevinVandy/material-react-table/blob/v1/apps/material-react-table-docs/examples/custom-top-toolbar/sandbox/src/JS.js
 const TradeList = () => {
   const [data, setData] = React.useState([]);
   const navigate = useNavigate();
 
   const fetchData = () => {
-    // call api with data
+    // fetches all trade posts made by user 
     const options = {
       method: 'GET',
       route: "/trade/list",
     };
 
     apiCall((d) => {
-      console.log(d);
       setData(d);
-    }, options)
-      .then((res) => {
-        if (res) {
-          // set error msg if api call returns error
-
-        }
-      });
+    }, options);
   }
 
   React.useEffect(() => {
@@ -115,7 +110,6 @@ const TradeList = () => {
 
     ],
     [],
-    //end
   );
 
   return (
@@ -123,17 +117,14 @@ const TradeList = () => {
       title="Tradelist"
       columns={columns}
       data={data}
-      positionToolbarAlertBanner="bottom" //show selected rows count on bottom toolbar
-      // changes sizing of default columns
+      positionToolbarAlertBanner="bottom"
       defaultColumn={{
         minSize: 50,
         maxSize: 300,
         size: 300,
       }}
-
-      //customize built-in buttons in the top-right of top toolbar
+      
       renderToolbarInternalActions={({ table }) => (
-
         <Box>
           <MRT_ToggleDensePaddingButton table={table} />
           <MRT_FullScreenToggleButton table={table} />

@@ -1,22 +1,16 @@
 import * as React from 'react';
-import Rating from '@mui/material/Rating';
-import StarIcon from '@mui/icons-material/Star';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import { useTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { apiCall } from '../App';
-import Alert from '@mui/material/Alert';
+import { apiCall } from '../../App';
 import Paper from '@mui/material/Paper';
 
-
+// Page that allows user to add feedback for any particular campaign, which is sent to the manager
 function Feedback() {
-
-    
     const location = useLocation();
     const navigate = useNavigate();
     const [feedbackText, setFeedbackText] = React.useState("");
@@ -34,7 +28,6 @@ function Feedback() {
           };
       
           apiCall((d) => {
-            console.log(d)
           }, options)
         setShowPopup(true);
         setTimeout(() => {

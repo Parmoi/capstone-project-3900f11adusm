@@ -26,7 +26,7 @@ LinearProgressWithLabel.propTypes = {
   value: PropTypes.number.isRequired,
 };
 
-
+// Component to show the completion progress as a percentage/bar of campaigns user have started collecting
 const CollectionCompletion = ({style}) => {
   return (
     <Box sx={style} p="8px">

@@ -13,7 +13,7 @@ import WidgetUpload from '../components/WidgetUpload';
 import Alert from '@mui/material/Alert';
 
 
-// Component for offer modal
+// Component for offer modal, allows user to make an offer to a particular trade post
 const OfferModal = ({ tradeId, open, handleClose }) => {
   const [offerMessage, setOfferMessage] = React.useState('');
   const [collectionID, setCollectionID] = React.useState(0);
@@ -23,7 +23,7 @@ const OfferModal = ({ tradeId, open, handleClose }) => {
   const [emptyCollection, setEmptyCollection] = React.useState(false);
 
   const fetchData = () => {
-    // call api with data
+    // fetches all collectibles user owns
     const options = {
       method: 'GET',
       route: "/collection/get",
@@ -32,13 +32,7 @@ const OfferModal = ({ tradeId, open, handleClose }) => {
     apiCall((d) => {
       setCollectibles(d.collection);
       setEmptyCollection(d.collection.length === 0);
-    }, options)
-      .then((res) => {
-        if (res) {
-          // set error msg if api call returns error
-
-        }
-      });
+    }, options);
   }
 
   React.useEffect(() => {
@@ -58,7 +52,7 @@ const OfferModal = ({ tradeId, open, handleClose }) => {
   };
 
   const handleMakeOffer = () => {
-    // call api with data
+    // handles making offer, calls api with offer data
     const options = {
       method: 'POST',
       route: "/exchange/makeoffer",
@@ -70,15 +64,8 @@ const OfferModal = ({ tradeId, open, handleClose }) => {
         description: collectibleDescription,
       }),
     };
-    console.log(options.body);
 
-    apiCall((d) => { }, options)
-      .then((res) => {
-        if (res) {
-          // set error msg if api call returns error
-
-        }
-      });
+    apiCall({}, options);
     handleClose();
   }
 

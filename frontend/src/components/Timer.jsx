@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
+// Timer component that displays time left for campaign
 const Timer = ({ startDate, endDate }) => {
   const calculateTimeLeft = () => {
     const now = new Date();
@@ -39,12 +40,6 @@ const Timer = ({ startDate, endDate }) => {
       </span>
     );
   });
-
-  const timer_style = {
-    textAlign: "center",
-    padding: "20px",
-    marginLeft: "20px"
-  }
 
   return (
     <div>

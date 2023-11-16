@@ -37,8 +37,6 @@ const ProfileBox = ({style, data, handleImageSave, privilege, isAccount}) => {
 
     apiCall(() => {
       handleImageSave();
-      console.log(url);
-      console.log('Profile Image Updated');
     }, options)
     .then((res) => {
       if (res) {
@@ -140,8 +138,6 @@ const SocialMediaEdit = ({handleSave, style}) => {
       })
     };
 
-    console.log(data);
-
     apiCall(() => {
       handleSave();
     }, options)
@@ -199,7 +195,7 @@ const SocialMediaEdit = ({handleSave, style}) => {
   );
 }
 
-const ProfileDetailsDisplay = ({handleEdit, style, data, isAccount}) => {
+const ProfileDetailsDisplay = ({handleEdit, style, data, isAccount }) => {
 
   return (
     <List sx={style}>
@@ -256,7 +252,6 @@ const ProfileDetailsEdit = ({handleSave, style}) => {
       })
     };
 
-    console.log(data);
 
     apiCall(() => {
       handleSave();

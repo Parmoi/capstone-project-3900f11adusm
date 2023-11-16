@@ -73,6 +73,8 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     },
 }));
 
+// Component for signed in navigation bar
+// Has menu button, which when clicked shows a dropdown menu for different pages user can visit
 const SignedInNav = ({ logout, username, userId }) => {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
@@ -136,6 +138,7 @@ const SignedInNav = ({ logout, username, userId }) => {
                 </Button>
               </Box>
             </Box>
+            {/* Menu list */}
             <Menu
               anchorEl={anchorEl}
               id="account-menu"

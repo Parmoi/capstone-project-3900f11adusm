@@ -1,31 +1,9 @@
 import React from "react"
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { apiCall } from "../App";
+import { apiCall } from "../../App";
 
-
-
-// const  Campaigns = {
-//     past: [
-//         { image: "https://i.postimg.cc/sX59yLfP/IMG-2438.jpg", campaign_name: "campaign1", start_date: "Fri, 01 Jan 1999 00:00:00 GMT", end_date: "Fri, 24 Mar 2023 00:00:00 GMT", des: "babababbabab", id: 1},
-//         { image: "https://i.postimg.cc/wT4JKzc8/IMG-2304.jpg", campaign_name: "campaign2", start_date: "Fri, 01 Jan 1999 00:00:00 GMT", end_date: "Fri, 23 Mar 2023 00:00:00 GMT", des: "babababbabab", id: 2}
-      
-//     ],
-//     future: [
-//         { image: "https://i.postimg.cc/NfnyJ4BQ/IMG-2441.jpg", campaign_name: "campaign6", start_date: "Fri, 24 Nov 2023 00:00:00 GMT", end_date: "Fri, 27 Nov 2023 00:00:00 GMT", des: "babababbabab", id: 3},
-//         { image: "https://i.postimg.cc/2jc3ywqn/IMG-2436.jpg", campaign_name: "campaign7", start_date: "Fri, 24 Nov 2023 00:00:00 GMT", end_date: "Fri, 27 Nov 2023 00:00:00 GMT", des: "babababbabab", id: 4}
-//     ],
-//     current: [
-//         { image: "https://i.postimg.cc/SxMqVKRw/IMG-2375.jpg", campaign_name: "campaign3", start_date: "Fri, 01 Jan 1999 00:00:00 GMT", end_date: "Fri, 24 Nov 2023 00:00:00 GMT", des: "babababbabab", id: 5},
-//         { image: "https://i.postimg.cc/HL0mDPQz/IMG-2369.jpg", campaign_name: "campaign4", start_date: "Fri, 01 Jan 1999 00:00:00 GMT", end_date: "Fri, 25 Nov 2023 00:00:00 GMT", des: "babababbabab", id: 6},
-//         { image: "https://i.postimg.cc/xC020y52/IMG-2442.jpg", campaign_name: "campaign5", start_date: "Fri, 01 Jan 1999 00:00:00 GMT", end_date: "Fri, 26 Nov 2023 00:00:00 GMT", des: "babababbabab", id: 7},
-//     ]
-//   };
-
-
-  
-
-
+// Displays current, past and future campaigns, and gives user access to campaign pages 
 const HomePage = () => {
     const [currentIndex, setCurrent] = useState(0);
     const [selection, setSelection] = useState('current');
@@ -48,13 +26,7 @@ const HomePage = () => {
     apiCall((d) => {
       console.log(d["campaigns"]);
       setData(d["campaigns"]);
-    }, options)
-      .then((res) => {
-        if (res) {
-          // set error msg if api call returns error
-
-        }
-      });
+    }, options);
   }
 
   React.useEffect(() => {

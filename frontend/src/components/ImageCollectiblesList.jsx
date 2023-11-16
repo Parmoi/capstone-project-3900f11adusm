@@ -6,7 +6,8 @@ import ListSubheader from '@mui/material/ListSubheader';
 import IconButton from '@mui/material/IconButton';
 import InfoIcon from '@mui/icons-material/Info';
 
-//Sourced from https://mui.com/material-ui/react-image-list/
+// Displays collectibles as image list with name and description
+// Sourced from https://mui.com/material-ui/react-image-list/
 export default function ImageCollectiblesList({ itemData }) {
   return (
     <ImageList sx={{ width: 500, height: 300 }}>

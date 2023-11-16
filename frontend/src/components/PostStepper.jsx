@@ -6,6 +6,7 @@ import StepLabel from '@mui/material/StepLabel';
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 
+// Stepper component for posting, includes next and back button to cycle through steps
 // Derived from https://mui.com/material-ui/react-stepper/
 const PostStepper = ({ steps, stepperContent }) => {
   const [activeStep, setActiveStep] = React.useState(0);

@@ -8,13 +8,16 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { ProfileBox, ProfileDetailsDisplay, ProfileDetailsEdit, SocialMediaDisplay, SocialMediaEdit } from '../components/ProfileDetails'
-import CollectionCompletion from '../components/CollectionCompletion';
+import { ProfileBox, ProfileDetailsDisplay, ProfileDetailsEdit, SocialMediaDisplay, SocialMediaEdit } from '../../components/ProfileDetails'
+import CollectionCompletion from '../../components/CollectionCompletion';
 
-import { apiCall } from '../App';
+import { apiCall } from '../../App';
 
 const theme = createTheme();
 
+// Page which displays user's profile details
+// Displays username, first and last name, email, phone number, address, social media, profile avatar and collection completion
+// Allows user to edit profile details
 function Profile({privilege, user_id}) {
   const [editDetails, displayDetails] = useState(false);
   const [editSocials, displaySocials] = useState(false);
@@ -22,31 +25,18 @@ function Profile({privilege, user_id}) {
 
   const params = useParams();
   const u_id = params.id;
-  const isAccount = u_id == user_id || u_id == ''
-  console.log(u_id)
+  const isAccount = u_id == user_id;
 
   const fetchInfo = () => {
-    let url = '';
-    if (u_id == '') {
-      url='/profile';
-    } else {
-      url = `/profile?id=${u_id}`;
-    }
-  
+    // fetches info of profile with u_id
     const options = {
       method: 'GET',
-      route: url,
+      route: `/profile?id=${u_id}`,
     };
 
     apiCall((d) => {
       setData(d);
-    }, options)
-    .then((res) => {
-      if (res) {
-        // set error msg if api call returns error
-        
-      }
-    });
+    }, options);
   }
 
   useEffect(() => {

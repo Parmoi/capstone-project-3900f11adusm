@@ -9,11 +9,12 @@ import Paper from '@mui/material/Paper';
 import { createTheme, useTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import validator from 'validator';
-import { apiCall } from '../App';
+import { apiCall } from '../../App';
 import Alert from '@mui/material/Alert';
 
-const theme = createTheme();
-
+// Displays page for user to register
+// Accepts name, email address and password as inputs
+// Has validation for all fields, shows relevant helper text
 function Register({ setUserId, setLogin, setUsername }) {
   const navigate = useNavigate();
   const [emailError, setEmailError] = React.useState(false);
@@ -23,19 +24,21 @@ function Register({ setUserId, setLogin, setUsername }) {
   const [error, setError] = React.useState(false);
   const [errContent, setErrContent] = React.useState('');
 
-
   const validateEmail = (e) => {
     const email = e.target.value;
+    // error when email is not valid format
     setEmailError(!validator.isEmail(email));
   };
 
   const validateName = (e) => {
     const name = e.target.value;
+    // error when name is empty string
     setNameError(name === '');
   };
 
   const validatePwd = (e) => {
     const pwd = e.target.value;
+    // error when password is empty string
     setPwdError(pwd === '');
   };
 
@@ -48,7 +51,6 @@ function Register({ setUserId, setLogin, setUsername }) {
       return;
     }
 
-    // call api with data
     const options = {
       method: 'POST',
       route: '/register',
@@ -59,6 +61,7 @@ function Register({ setUserId, setLogin, setUsername }) {
       })
     };
 
+    // call api with register inputs
     apiCall((d) => {
       setLogin(true);
       setUsername(data.get('name'));
@@ -110,7 +113,6 @@ function Register({ setUserId, setLogin, setUsername }) {
           }}
         >
           <Avatar sx={{ m: 1, bgcolor: 'support.main' }}>
-            {/* <LockOutlinedIcon /> */}
           </Avatar>
           <Typography component="h1" variant="h5" color='primary.text'>
             Sign up
