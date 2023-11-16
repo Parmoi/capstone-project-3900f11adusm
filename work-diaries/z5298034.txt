@@ -34,3 +34,10 @@ page
 week7 
 doing the search function and api function, the search function can return stuffs if you search for the collectible 
 names. And divide the campaign with 3 group which are "past" "current" and "future".
+
+week8
+add some convenient component for user that can give better user experience and connect the api with backend for homepage and campaign 
+page
+
+week9
+working on the feedback page and working for backend api connected with frontend
