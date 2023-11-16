@@ -8,6 +8,7 @@ const HomePage = () => {
     const [currentIndex, setCurrent] = useState(0);
     const [selection, setSelection] = useState('current');
     const location = useLocation();
+    // some dummy data for initialization
     const [data, setData] = React.useState([{ image: "https://i.postimg.cc/sX59yLfP/IMG-2438.jpg", campaign_name: "campaign1", start_date: "Fri, 01 Jan 1999 00:00:00 GMT", end_date: "Fri, 24 Mar 2023 00:00:00 GMT", des: "babababbabab", id: 10000},
     { image: "https://i.postimg.cc/wT4JKzc8/IMG-2304.jpg", campaign_name: "campaign2", start_date: "Fri, 01 Jan 1999 00:00:00 GMT", end_date: "Fri, 23 Mar 2023 00:00:00 GMT", des: "babababbabab", id: 200000},
     { image: "https://i.postimg.cc/NfnyJ4BQ/IMG-2441.jpg", campaign_name: "campaign6", start_date: "Fri, 24 Nov 2023 00:00:00 GMT", end_date: "Fri, 27 Nov 2023 00:00:00 GMT", des: "babababbabab", id: 30000},
@@ -102,12 +103,13 @@ const HomePage = () => {
         marginTop: "20px",
     }
 
+    // for photoslide arrow function
     const goPrevious = () => {
         const isFirst = currentIndex ===0
         const newIndex = isFirst ? Campaigns.current.length-1 : currentIndex -1
         setCurrent(newIndex);
     }
-
+    // for photoslide arrow function
     const goNext = () => {
         const isLast = currentIndex === Campaigns.current.length - 1
         const newIndex = isLast ? 0 : currentIndex +1
@@ -115,6 +117,7 @@ const HomePage = () => {
     }
 
     const navigate = useNavigate();
+    // use goCampaign for photoslider, if click photo, jump to the campaign
     const goCampaign = () => {
 
         navigate("/campaign", {state: {img: Campaigns.current[currentIndex].image, 
@@ -124,7 +127,7 @@ const HomePage = () => {
             id: Campaigns.current[currentIndex].id}});
             
     }
-
+    // display the staff for the past, current, future campaign
     const ItemDisplay = ({ image, start_date, end_date, des, campaign_name, id}) => {
       const navigate = useNavigate();
       const [isHovering, setIsHovering] = useState(false);

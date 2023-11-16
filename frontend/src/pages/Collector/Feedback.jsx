@@ -25,8 +25,8 @@ function Feedback() {
               campaign_id: location.state?.id,
               feedback: data.get('feedback'),
             })
+            
           };
-      
           apiCall((d) => {
           }, options)
         setShowPopup(true);
