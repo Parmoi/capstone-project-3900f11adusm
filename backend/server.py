@@ -168,7 +168,6 @@ def profile():
         email: "email_string",
         phone: "string" (numbers),
         address: "string"
-        }
     """
     user_id = request.args.get('id')
 
@@ -216,46 +215,6 @@ def profile_update():
         address=address,
         profile_picture=profile_picture,
     )
-
-@APP.route("/profile/socials", methods=["GET"])
-@jwt_required(fresh=False)
-def profile_socials():
-    """
-    Obtain the social media connections of the user.
-    returns:
-        {
-        twitter: "string",
-        facebook: "string",
-        instagram: "string",
-        }
-    """
-    user_id = request.args.get('id')
-
-    stub_data = {
-        "twitter": "string",
-        "facebook": "string",
-        "instagram": "string",
-    }
-
-    return jsonify(stub_data), OK
-
-@APP.route("/profile/update/socials", methods=["GET"])
-@jwt_required(fresh=False)
-def profile_update_socials():
-    """
-    Updates the social media of the user.
-    """
-    user_id = request.args.get('id')
-
-    twitter = request.json.get("twitter", None)
-    facebook = request.json.get("facebook", None)
-    instagram = request.json.get("instagram", None)
-
-    stub_data = {
-        "msg": "Socials successfully updated."
-    }
-
-    return jsonify(stub_data), OK
 
 
 @APP.route("/get_collectors", methods=["GET"])
