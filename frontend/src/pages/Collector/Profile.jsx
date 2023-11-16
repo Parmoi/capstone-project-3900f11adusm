@@ -15,19 +15,25 @@ import { apiCall } from '../../App';
 
 const theme = createTheme();
 
+// Page which displays user's profile details
+// Displays username, first and last name, email, phone number, address, social media, profile avatar and collection completion
+// Allows user to edit profile details
 function Profile() {
   const [editDetails, displayDetails] = useState(false);
   const [editSocials, displaySocials] = useState(false);
   const [data, setData] = useState([]);
+  const [userProfile, setUserProfile] = useState(false);
 
   const params = useParams();
   const u_id = params.id;
-  console.log(u_id)
 
   const fetchInfo = () => {
+    // fetches info of profile
     let url = '';
     if (u_id == '') {
+      // user profile
       url='/profile';
+      setUserProfile(true);
     } else {
       url = `/profile?id=${u_id}`;
     }
@@ -39,13 +45,7 @@ function Profile() {
 
     apiCall((d) => {
       setData(d);
-    }, options)
-    .then((res) => {
-      if (res) {
-        // set error msg if api call returns error
-        
-      }
-    });
+    }, options);
   }
 
   useEffect(() => {
