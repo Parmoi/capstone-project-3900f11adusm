@@ -119,8 +119,18 @@ const ManagerPost = () => {
         }
 
         return (
-            <Box sx={{ height: '100%' }}>
+            <Box sx={{ height: '100%', display: 'flex', justifyContent: 'center', flexDirection: 'column' }}>
                 <Typography variant='h5' mb='50px'>Add your campaign image:</Typography>
+                { image !== '' ? <Box
+                    component="img"
+                    sx={{
+                        height: 350,
+                        width: 350,
+                    }}
+                    alt="Campaign image."
+                    src={image}
+                /> 
+                : <></>}
                 <WidgetUpload onSuccess={handleImageURL} />
             </Box>
         );
@@ -138,7 +148,7 @@ const ManagerPost = () => {
                     const newList = collectibles.concat(collectible);
                     setCollectibles(newList);
                 }} open={modalOpen} handleClose={handleModalClose}/>
-                <Typography variant='h5' mb='50px'>Add images of your Campaign:</Typography>
+                <Typography variant='h5' mb='50px'>Add new collectibles:</Typography>
                 <WidgetUpload onSuccess={handleImageURL} />
             </Box>
         );
@@ -153,9 +163,9 @@ const ManagerPost = () => {
                 body: JSON.stringify({
                     name: name,
                     image: image,
-                    description: description,
-                    start_date: moment(startDate).format('DD/MM/YYYY'),
-                    end_date: moment(endDate).format('DD/MM/YYYY'),
+                    desc: description,
+                    start: moment(startDate).format('DD/MM/YYYY'),
+                    end: moment(endDate).format('YY/MM/YYYY'),
                     collectibles_list: collectibles,
                 }),
             };
@@ -177,17 +187,10 @@ const ManagerPost = () => {
 
         return (
             <Box sx={{ height: '100%' }}>
+                <Typography variant='h5' mb='50px'>Check new campaign post</Typography>
                 <Grid container spacing={12} sx={{ display: 'flex', justifyContent: 'center' }}>
-                    <Grid item xs={12}>
-                        <Typography variant='h5' mb='50px'>Check new campaign post</Typography>
-                    </Grid>
                     <Grid item xs={6}>
                         <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                        <img 
-                                src={image}
-                                height={100}
-                                width={100}
-                            />
                             <TextField label="Campaign Name" variant="standard" aria-disabled value={name} sx={{ mb: '50px' }} />
                             <TextField
                                 id="outlined-multiline-static"

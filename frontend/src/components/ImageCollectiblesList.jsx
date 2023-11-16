@@ -9,9 +9,9 @@ import InfoIcon from '@mui/icons-material/Info';
 //Sourced from https://mui.com/material-ui/react-image-list/
 export default function ImageCollectiblesList({ itemData }) {
   return (
-    <ImageList sx={{ width: 300, height: 200 }}>
+    <ImageList sx={{ width: 500, height: 300 }}>
       <ImageListItem key="Subheader" cols={2}>
-        <ListSubheader component="div">Collectibles</ListSubheader>
+        <ListSubheader component="div">Collectibles uploaded</ListSubheader>
       </ImageListItem>
       {itemData.map((item) => (
         <ImageListItem key={item.image}>
@@ -22,11 +22,12 @@ export default function ImageCollectiblesList({ itemData }) {
             loading="lazy"
           />
           <ImageListItemBar
-            title={`${item.name}: ${item.description}`}
+            title={item.name}
+            subtitle={item.description}
             actionIcon={
               <IconButton
                 sx={{ color: 'rgba(255, 255, 255, 0.54)' }}
-                aria-label={`info about ${item.description}`}
+                aria-label={`info about ${item.name}`}
               >
                 <InfoIcon />
               </IconButton>
