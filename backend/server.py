@@ -264,6 +264,7 @@ def register_campaign():
     image = request.json.get("image", None)
     start_date = request.json.get("start", None)
     end_date = request.json.get("end", None)
+    collectibles = request.json.get("collectibles_list", None)
 
     return db_campaigns.register_campaign(
         user_id, name, description, image, start_date, end_date

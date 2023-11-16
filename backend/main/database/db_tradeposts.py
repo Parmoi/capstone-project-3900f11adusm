@@ -179,7 +179,8 @@ def get_trade_post_info(trade_post_id):
             "post_trader":"uso",
             "trade_id": 1,
             "trader_avatar":"https://robohash.org/utomniseos.png?size=50x50&set=set1",
-            "trader_location":"696 Londonderry Avenue"
+            "trader_location":"696 Londonderry Avenue",
+            "trader_id":"1"
         }, 200
     """
     engine, conn, metadata = dbm.db_connect()
@@ -205,7 +206,7 @@ def get_trade_post_info(trade_post_id):
             tp.c.post_date.label("post_created"),
             tp.c.post_description.label("post_description"),
             ctr.c.username.label("post_trader"),
-            ctr.c.id.label("trade_id"),
+            ctr.c.id.label("trader_id"),
             ctr.c.profile_picture.label("trader_avatar"),
             ctr.c.address.label("trader_location")
         ).select_from(join)
