@@ -100,8 +100,8 @@ def generate_demo():
     execute_sql_file("./mock_data/campaigns.sql")
 
     # Populates campaignes with 100 randomly allocatedc collectibles
-    # execute_sql_file("./mock_data/collectibles.sql")
-    generate_collectibles()
+    execute_sql_file("./mock_data/collectibles.sql")
+    # generate_collectibles()
 
     # Populates the first 20 collectors with 500 randomly allocated collectibles to their collections
     execute_sql_file("./mock_data/collections.sql")
@@ -128,7 +128,7 @@ def generate_collectibles(num_collectibles=100, num_campaigns=5):
             campaign_id,
             collectibles[collectible_id]["name"],
             collectibles[collectible_id]["paragraph"],
-            f"https://picsum.photos/id/{photo_id}/300/200",
+            f"https://picsum.photos/id/{photo_id}/600/400",
         )
 
     f.close()
