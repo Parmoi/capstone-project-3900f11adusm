@@ -142,7 +142,7 @@ function App() {
                 { privilege === MANAGER && <Route path="/" element={<ManagerHomePage/>} />}
                 { privilege === ADMIN && <Route path="/" element={<AdminHomePage/>} />}
 
-                <Route path="/profile/:id" element={<Profile privilege={privilege}/>} />
+                <Route path="/profile/:id" element={<Profile privilege={privilege} user_id={userId}/>} />
                 <Route path="/wantlist" element={<WantList />} />
                 <Route path="/collection" element={<CollectionList />} />
                 <Route path="/exchange-history" element={<ExchangeHistory />} />
