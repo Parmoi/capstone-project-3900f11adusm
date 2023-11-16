@@ -682,7 +682,7 @@ def get_collectible_info():
     """
     user_id = get_jwt_identity()
 
-    collectible_id = request.json.get("collectible_id", None)
+    collectible_id = request.args.get("collectible_id", None)
 
     return db_collectibles.get_collectible_info(user_id, collectible_id)
 
