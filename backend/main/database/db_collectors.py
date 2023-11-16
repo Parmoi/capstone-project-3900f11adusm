@@ -206,6 +206,42 @@ def get_managers():
 
     return jsonify(managers), OK
 
+# TODO: Error checking
+def update_socials(user_id, twitter_handle=None, facebook_handle=None, instagram_handle=None):
+    """Function to update a user's socials
+    
+    Args:
+        user_id (int): id of the user we want to change the socials for
+        twitter (string): twitter handle of user
+        facebook (string): facebook handle of the user
+        instagram (string): instagram handle of the user
+
+    Returns:
+        JSON, int: JSON of success/error message, int of success/error code
+
+    Example Output:
+        {"msg": "User 1's socials have been updated}, 200
+    """
+    engine, conn, metadata = dbm.db_connect()
+
+    # Loads in the collectors table
+    ctr = db.Table("collectors", metadata, autoload_with=engine)
+
+    update_dict = {}
+
+    if twitter_handle is not None:
+        update_dict["twitter_handle"] = twitter_handle
+    if facebook_handle is not None:
+        update_dict["facebook_handle"] = facebook_handle
+    if instagram_handle is not None:
+        update_dict["instagram_handle"] = instagram_handle
+    update_stmt = db.update(ctr).where(ctr.c.id == user_id).values(update_dict)
+    
+    conn.execute(update_stmt)
+    conn.close()
+
+    return jsonify({"msg": f"User {user_id}'s socials have been updated!"}), OK
+
 
 """ |------------------------------------|
     |  Helper functions for collectors   |
