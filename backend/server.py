@@ -221,6 +221,7 @@ def profile_update():
     )
 
 @APP.route("/profile/update_socials", methods=["POST"])
+@jwt_required(fresh=False)
 def profile_socials_update():
     """Route specifically to update the socials of the user
 
