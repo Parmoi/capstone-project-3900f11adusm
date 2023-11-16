@@ -24,13 +24,12 @@ function AdminManageManagers() {
   const [data, setData] = useState([]);
   const [sent, setSent] = useState(false);
 
-  const changePermission = (manager_id, canPublish) => {
+  const changePermission = (manager_id) => {
     const options = {
       method: 'POST',
       route: '/manager/publish',
       body: JSON.stringify({
         manager_id: manager_id,
-        can_publish: canPublish,
       })
     };
 
@@ -128,8 +127,8 @@ function AdminManageManagers() {
         header: 'Phone',
       },
       { 
-        accessorKey: 'canPublish',
-        header: 'canPublish', 
+        accessorKey: 'can_publish',
+        header: 'can_publish', 
         Cell: ({ row }) => (
           <Box
             sx={{
@@ -140,8 +139,8 @@ function AdminManageManagers() {
             }}
           >
             <Switch 
-              checked={row.original.canPublish} 
-              onChange={changePermission(row.original.user_id, !row.original.canPublish)} 
+              checked={row.original.privelage == 3} 
+              onChange={changePermission(row.original.user_id)} 
               name="Can Publish" color="primary"
             />
           </Box>
