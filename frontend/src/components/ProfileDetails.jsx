@@ -21,7 +21,7 @@ import React from 'react';
 
 import { apiCall } from '../App';
 
-const ProfileBox = ({style, data, handleImageSave, privilege}) => {
+const ProfileBox = ({style, data, handleImageSave, privilege, isAccount}) => {
   const [error, setError] = React.useState(false);
   const [errContent, setErrContent] = React.useState('');
 
@@ -69,13 +69,13 @@ const ProfileBox = ({style, data, handleImageSave, privilege}) => {
         {error ? <Alert severity='error'>{errContent}</Alert> : <></> }
       </div>
       <Box component="span">
-        <WidgetUpload onSuccess={handleUpload} style={{marginLeft: "8px", marginBottom: "16px"}} buttonName='Change Icon'/>
+        { isAccount && <WidgetUpload onSuccess={handleUpload} style={{marginLeft: "8px", marginBottom: "16px"}} buttonName='Change Icon'/> }
       </Box>
     </Stack>
   );
 };
 
-const SocialMediaDisplay = ({handleEdit, style, socials, u_id}) => {
+const SocialMediaDisplay = ({handleEdit, style, socials, isAccount}) => {
   return (
     <List sx={style}>
       <ListItem >
@@ -115,7 +115,7 @@ const SocialMediaDisplay = ({handleEdit, style, socials, u_id}) => {
       </ListItem>
       <Divider variant="middle"/>
       {
-        u_id == '' && <Button onClick={handleEdit} variant="contained" sx={{marginLeft: "16px", marginTop: "16px", marginBottom: "8px"}}>Edit</Button>
+        isAccount && <Button onClick={handleEdit} variant="contained" sx={{marginLeft: "16px", marginTop: "16px", marginBottom: "8px"}}>Edit</Button>
       }
     </List>
   );
@@ -130,7 +130,6 @@ const SocialMediaEdit = ({handleSave, style}) => {
           target="_blank"
           color="default"
           startIcon={<TwitterIcon />}
-          href="https://twitter.com/"
         >
           Twitter
         </Button>
@@ -142,7 +141,6 @@ const SocialMediaEdit = ({handleSave, style}) => {
           target="_blank"
           color="default"
           startIcon={<FacebookIcon />}
-          href="https://www.facebook.com/"
         >
           Facebook
         </Button>
@@ -154,7 +152,6 @@ const SocialMediaEdit = ({handleSave, style}) => {
           target="_blank"
           color="default"
           startIcon={<InstagramIcon />}
-          href="https://www.instagram.com/"
         >
           Instagram
         </Button>
@@ -165,7 +162,7 @@ const SocialMediaEdit = ({handleSave, style}) => {
   );
 }
 
-const ProfileDetailsDisplay = ({handleEdit, style, data, u_id}) => {
+const ProfileDetailsDisplay = ({handleEdit, style, data, isAccount}) => {
 
   return (
     <List sx={style}>
@@ -194,7 +191,7 @@ const ProfileDetailsDisplay = ({handleEdit, style, data, u_id}) => {
       </ListItem>
       <Divider variant="middle"/>
       {
-        u_id == '' && <Button onClick={handleEdit} variant="contained" sx={{marginLeft: "16px", marginTop: "16px", marginBottom: "8px"}}>Edit</Button>
+        isAccount && <Button onClick={handleEdit} variant="contained" sx={{marginLeft: "16px", marginTop: "16px", marginBottom: "8px"}}>Edit</Button>
       }
     </List>
   );
