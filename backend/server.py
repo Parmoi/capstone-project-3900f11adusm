@@ -24,6 +24,7 @@ from main.database import (
     db_tradeposts,
     db_tradeoffers,
     db_exchangehistory,
+    db_campaign_analytics
 )
 from main import auth
 from main.error import InputError, AccessError, OK
@@ -167,7 +168,10 @@ def profile():
         last_name: "string",
         email: "email_string",
         phone: "string" (numbers),
-        address: "string"
+        address: "string",
+        twitter_handle: "string",
+        facebook_handle: "string",
+        instagram_handle: "string"
         }
     """
     user_id = request.args.get("id")
@@ -203,6 +207,7 @@ def profile_update():
     last_name = request.json.get("last_name", None)
     phone = request.json.get("phone", None)
     address = request.json.get("address", None)
+    profile_picture = request.json.get("profile_picture", None)
 
     return db_collectors.update_collector(
         id=user_id,
@@ -213,7 +218,24 @@ def profile_update():
         phone=phone,
         password=password,
         address=address,
+        profile_picture=profile_picture,
     )
+
+@APP.route("/profile/update_socials", methods=["POST"])
+@jwt_required(fresh=False)
+def profile_socials_update():
+    """Route specifically to update the socials of the user
+
+    Example Output:
+        {"msg": "User 1's socials have been updated}, 200
+    """
+    user_id = get_jwt_identity()
+    twitter_handle = request.json.get("twitter_handle")
+    facebook_handle = request.json.get("facebook_handle")
+    instagram_handle = request.json.get("instagram_handle")
+
+    return db_collectors.update_socials(
+        user_id, twitter_handle, facebook_handle, instagram_handle)
 
 
 @APP.route("/get_collectors", methods=["GET"])
@@ -246,6 +268,7 @@ def register_campaign():
     image = request.json.get("image", None)
     start_date = request.json.get("start", None)
     end_date = request.json.get("end", None)
+    collectibles = request.json.get("collectibles_list", None)
 
     return db_campaigns.register_campaign(
         user_id, name, description, image, start_date, end_date
@@ -287,11 +310,9 @@ def register_collectible():
 
 
 @APP.route("/campaign/get_collectibles", methods=["GET"])
-# @jwt_required(fresh=False)
+@jwt_required(fresh=False)
 def get_campaign_collectibles():
-    # verify_jwt_in_request()
-
-    campaign_id = request.json.get("campaign_id", None)
+    campaign_id = request.args.get("campaign_id")
 
     return db_campaigns.get_campaign_collectibles(campaign_id)
 
@@ -686,7 +707,6 @@ def get_collectible_info():
     """
     user_id = get_jwt_identity()
 
-    # collectible_id = request.json.get("collectible_id", None)
     collectible_id = request.args.get("collectible_id", None)
 
     return db_collectibles.get_collectible_info(user_id, collectible_id)
@@ -754,50 +774,7 @@ def get_manager_analytics():
 
     manager_id = get_jwt_identity()
 
-    stub_return = {
-        "analytics": [
-            {
-                "campaign_id": 21,
-                "campaign_name": "Simpsons",
-                # Essentially the X-axes labels
-                "exchange_dates": [
-                    "2023/10/20",
-                    "2023/10/21",
-                    "2023/10/22",
-                    "2023/10/23",
-                    "2023/10/24",
-                    "2023/10/25",
-                    "2023/10/26",
-                ],
-                # Essentially the y-axes data for the X-axes labels
-                "exchanges_made": [
-                    24,
-                    13,
-                    98,
-                    39,
-                    48,
-                    38,
-                    43,
-                ],  # These two lists need to be the same length
-            },
-            {
-                "campaign_id": 22,
-                "campaign_name": "Simpsons 2",
-                "exchange_dates": [
-                    "2023/11/20",
-                    "2023/11/21",
-                    "2023/11/22",
-                    "2023/11/23",
-                    "2023/11/24",
-                    "2023/11/25",
-                    "2023/11/26",
-                ],
-                "exchanges_made": [26, 23, 78, 19, 88, 76, 14],
-            },
-        ]
-    }
-
-    return jsonify(stub_return), OK
+    db_campaign_analytics.return_analytics(manager_id)
 
 
 @APP.route("/manager/feedback", methods=["GET"])

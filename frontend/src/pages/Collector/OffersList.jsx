@@ -6,44 +6,38 @@ import {
   MRT_FullScreenToggleButton,
 } from 'material-react-table';
 
-import { Box, Button, Typography } from '@mui/material';
+import { Box, Button } from '@mui/material';
 
 //Date Picker Imports
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import moment from 'moment';
-import Avatar from '@mui/material/Avatar';
 
-import { apiCall } from '../App';
-import ProfileAvatar from '../components/ProfileAvatar';
-import CollectibleImage from '../components/CollectibleImage';
+import { apiCall } from '../../App';
+import ProfileAvatar from '../../components/ProfileAvatar';
+import CollectibleImage from '../../components/CollectibleImage';
 
+// changes colour of status icon based on status
 const getBackgroundColor = (status) => {
   return status ? 'secondary.main' : 'ACCEPTED' ? 'primary.light' : 'error.main';
 }
 
-// sourced from https://github.com/KevinVandy/material-react-table/blob/v1/apps/material-react-table-docs/examples/custom-top-toolbar/sandbox/src/JS.js
+// Displays all offers sent by user and the offer status
+// Table sourced from https://github.com/KevinVandy/material-react-table/blob/v1/apps/material-react-table-docs/examples/custom-top-toolbar/sandbox/src/JS.js
 const OffersList = () => {
   const [data, setData] = React.useState([]);
 
   const fetchData = () => {
-    // call api with data
+    // fetches data on all offers sent by current user
     const options = {
       method: 'GET',
       route: "/offers/get",
     };
 
     apiCall((d) => {
-      console.log(d);
       setData(d);
     }, options)
-      .then((res) => {
-        if (res) {
-          // set error msg if api call returns error
-
-        }
-      });
   }
 
   React.useEffect(() => {
@@ -51,7 +45,6 @@ const OffersList = () => {
   }, []);
 
   const columns = useMemo(
-    //column definitions...
     () => [
       {
         accessorKey: 'offer_id',
@@ -183,7 +176,6 @@ const OffersList = () => {
       },
     ],
     [],
-    //end
   );
 
   return (
@@ -191,18 +183,16 @@ const OffersList = () => {
       title="Offerlist"
       columns={columns}
       data={data}
-      positionToolbarAlertBanner="bottom" //show selected rows count on bottom toolbar
+      positionToolbarAlertBanner="bottom" 
       initialState={{ columnVisibility: { offer_id: false } }}
-      // changes sizing of default columns
       defaultColumn={{
         minSize: 50,
         maxSize: 500,
         size: 100, 
       }}
 
-      //customize built-in buttons in the top-right of top toolbar
+      // buttons for toggling padding and full screen
       renderToolbarInternalActions={({ table }) => (
-
         <Box>
           <MRT_ToggleDensePaddingButton table={table} />
           <MRT_FullScreenToggleButton table={table} />

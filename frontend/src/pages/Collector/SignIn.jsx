@@ -7,10 +7,11 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { useTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
-import { apiCall } from '../App';
+import { apiCall } from '../../App';
 import Alert from '@mui/material/Alert';
 import Paper from '@mui/material/Paper';
 
+// gets username from profile api call
 const getUsername = (userId, setUsername) => {
   const options = {
     method: 'GET',
@@ -19,16 +20,12 @@ const getUsername = (userId, setUsername) => {
 
   apiCall((d) => {
     setUsername(d.username);
-  }, options)
-    .then((res) => {
-      if (res) {
-
-      }
-      else {
-      }
-    });
+  }, options);
 }
 
+// Displays page for user to sign in 
+// Inputs are email address and password
+// After sign in, takes user to the home page
 function SignIn({ setUserId, setLogin, setPrivilege, setUsername }) {
   const [error, setError] = React.useState(false);
   const [errContent, setErrContent] = React.useState('');
@@ -38,7 +35,6 @@ function SignIn({ setUserId, setLogin, setPrivilege, setUsername }) {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
 
-    // call api with data
     const options = {
       method: 'POST',
       route: '/login',
@@ -48,6 +44,7 @@ function SignIn({ setUserId, setLogin, setPrivilege, setUsername }) {
       })
     };
 
+    // calls api with login data
     apiCall((d) => {
       setLogin(true);
       setUserId(d.userId);

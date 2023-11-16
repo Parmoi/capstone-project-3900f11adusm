@@ -1,7 +1,9 @@
 import { useEffect, useRef } from "react";
 import { Box, Button } from '@mui/material';
 
-const WidgetUpload = ({ onSuccess }) => {
+// Component for uploading images
+// Takes in onSuccess and performs function if image is successfully updated
+const WidgetUpload = ({ onSuccess, style, buttonName='Upload' }) => {
     const cloudinaryRef = useRef();
     const widgetRef = useRef();
     
@@ -13,19 +15,15 @@ const WidgetUpload = ({ onSuccess }) => {
             max_files: '1',
         }, function(error, result) {
             if (result.event === "success") {
-                console.log(result);
-                // console.log('The url to the image');
-                // console.log(result.info.secure_url); // The URL to the image.
                 onSuccess(result.info.secure_url);
-                // widgetRef.current.close(); This immedietely closes the widget.
             }
         });
     }, [])
 
     return (
         <Box sx={{ display: 'flex', justifyContent: "center" }}>
-            <Button onClick={() => widgetRef.current.open()}>
-                Upload
+            <Button variant="contained" onClick={() => widgetRef.current.open()} sx={style}>
+                {buttonName}
             </Button>
         </Box>
     )

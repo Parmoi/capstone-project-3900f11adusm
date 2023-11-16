@@ -3,26 +3,28 @@ import React, { Fragment } from 'react';
 import Box from '@mui/material/Box';
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 
-import SignIn from './pages/SignIn';
-import Register from './pages/Register';
-import Profile from './pages/Profile';
-import WantList from './pages/WantList';
-import CollectionList from './pages/CollectionList';
-import HomePage from './pages/homePage';
-import CollectiblePage from './pages/CollectiblePage';
+import SignIn from './pages/Collector/SignIn';
+import Register from './pages/Collector/Register';
+import Profile from './pages/Collector/Profile';
+import WantList from './pages/Collector/WantList';
+import CollectionList from './pages/Collector/CollectionList';
+import HomePage from './pages/Collector/HomePage';
+import CollectiblePage from './pages/Collector/CollectiblePage';
 
-import OffersList from './pages/OffersList';
-import SellPage from './pages/SellPage';
-import LandingPage from './pages/landingPage';
+import OffersList from './pages/Collector/OffersList';
+import SellPage from './pages/Collector/SellPage';
+import LandingPage from './pages/Collector/LandingPage';
 import SignedInNav from './components/SignedInNav';
 import SignedOutNav from './components/SignedOutNav';
-import ExchangeHistory from './pages/ExchangeHistory';
-import Campaign from './pages/campaign';
-import ResultsPage from './pages/ResultPage';
-import BuyList from './pages/BuyList';
-import TradePostPage from './pages/TradePostPage';
-import TradeList from './pages/TradeList';
-import TradeOffersList from './pages/TradeOffersList';
+import AdminSignedInNav from './components/AdminSignedInNav';
+import ExchangeHistory from './pages/Collector/ExchangeHistory';
+import Campaign from './pages/Collector/Campaign';
+import ResultsPage from './pages/Collector/ResultPage';
+import BuyList from './pages/Collector/BuyList';
+import TradePostPage from './pages/Collector/TradePostPage';
+import TradeList from './pages/Collector/TradeList';
+import TradeOffersList from './pages/Collector/TradeOffersList';
+import Feedback from './pages/Collector/Feedback';
 
 import ManagerHomePage from './pages/Manager/ManagerHomePage';
 import ManagerAnalytics from './pages/Manager/ManagerAnalytics';
@@ -42,7 +44,6 @@ import {
   Routes,
   Route,
 } from 'react-router-dom';
-import { Helmet } from 'react-helmet';
 
 const PORT = 5000;
 
@@ -135,18 +136,20 @@ function App() {
               </Routes>
             </BrowserRouter>
             : <BrowserRouter>
-              <SignedInNav userId={userId} logout={logout} username={username} />
+              { (privilege === ADMIN || privilege === MANAGER) 
+                ? <AdminSignedInNav logout={logout} username={username}/>
+                : <SignedInNav userId={userId} logout={logout} username={username} />
+              }
               <Routes>
                 { privilege === COLLECTOR && <Route path="/" element={<HomePage/>} />}
                 {/* { (privilege === 2 || privilege === 3) && <Route path="/" element={<ManagerHomePage/>} />} */}
                 { privilege === MANAGER && <Route path="/" element={<ManagerHomePage/>} />}
                 { privilege === ADMIN && <Route path="/" element={<AdminHomePage/>} />}
 
-                <Route path="/profile/:id" element={<Profile />} />
+                <Route path="/profile/:id" element={<Profile privilege={privilege} user_id={userId}/>} />
                 <Route path="/wantlist" element={<WantList />} />
                 <Route path="/collection" element={<CollectionList />} />
-                <Route path="/exchange-history" element={<ExchangeHistory />} />
-                <Route path="/dashboard" element={<span>Dashboard</span>} />
+                <Route path="/exchange-history" element={<ExchangeHistory />} />  
                 <Route path="/dashboard" element={<HomePage />} />
                 <Route path="/offers" element={<OffersList />} />
                 <Route path="/trade" element={<SellPage />} />
@@ -158,11 +161,10 @@ function App() {
                 <Route path="/collectible/:id" element={<CollectiblePage />} />
                 <Route path="/collectible/buy/:id" element={<BuyList />} />
                 <Route path="/trade/view/:id" element={<TradePostPage />} />
-
+                <Route path="/feedback" element={<Feedback />}></Route>
                 <Route path="/manager/feedback" element={<ManagerFeedback />} />
                 <Route path="/manager/post" element={<ManagerPost />} />
                 <Route path="/manager/analytics" element={<ManagerAnalytics />} />
-
                 <Route path='/manage/managers' element={<AdminManageManagers/>} />
                 <Route path='/campaign/approval' element={<AdminCampaignApproval/>} />
                 <Route path='/manage/collectors' element={<AdminManageCollectors/>} />

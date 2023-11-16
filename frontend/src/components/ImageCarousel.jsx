@@ -19,6 +19,7 @@ const settings = {
     swipe: true
 }
 
+// Image carousel item
 function CarouselItem(props)
 {
   return (
@@ -38,6 +39,7 @@ function CarouselItem(props)
   );
 }
 
+// Component for image carousel, displaying multiple images with included captions
 const ImageCarousel = ( { items } ) => {
     return (
       <Box sx={{ height:'100%', width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>

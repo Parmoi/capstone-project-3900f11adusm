@@ -121,17 +121,18 @@ def get_collectible_info(user_id, collectible_id):
     campaigns = db.Table("campaigns", metadata, autoload_with=engine)
 
     join = db.join(
-        collectibles, campaigns, (collectibles.c.campaign_id == campaigns.c.id)
+        collectibles, campaigns, 
+        (collectibles.c.campaign_id == campaigns.c.id) &
+        (collectibles.c.id == collectible_id)
     )
 
     select_stmt = db.select(
-        collectibles.c.id == collectible_id,
         collectibles.c.name.label("collectible_name"),
         campaigns.c.id.label("campaign_id"),
         campaigns.c.name.label("campaign_name"),
         collectibles.c.image.label("collectible_image"),
         collectibles.c.description.label("collectible_description"),
-        collectibles.c.date_added.label("collectible_date_added"),
+        campaigns.c.start_date.label("date_added"), # as a default, all collectibles added on campaign start date
     ).select_from(join)
 
     res = conn.execute(select_stmt)

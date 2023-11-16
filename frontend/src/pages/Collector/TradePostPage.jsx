@@ -1,5 +1,5 @@
 import React from 'react';
-import ImageCarousel from '../components/ImageCarousel';
+import ImageCarousel from '../../components/ImageCarousel';
 import {
     Grid,
     Button,
@@ -8,14 +8,15 @@ import {
     Container,
     Paper,
 } from '@mui/material'
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useTheme, ThemeProvider } from '@mui/material/styles';
-import { apiCall } from '../App';
-import Avatar from '@mui/material/Avatar';
-import OfferModal from '../components/OfferModal'
+import { apiCall } from '../../App';
+import ProfileAvatar from '../../components/ProfileAvatar';
+import OfferModal from '../../components/OfferModal'
 
-
-const CollectiblePage = () => {
+// Displays page for trade post, along with images and captions of collectible uploaded by trader, name, description, date created
+// Has button for making an offer to this particular trade, which opens a trade modal
+const TradePostPage = () => {
   const [data, setData] = React.useState(
       {
         "post_images": []
@@ -24,29 +25,20 @@ const CollectiblePage = () => {
   const [offerOpen, setOfferOpen] = React.useState(false);
   const handleOfferClose = () => setOfferOpen(false);
     
-
-  const navigate = useNavigate();
   const params = useParams();
   const tradepost_id = params.id;
   
 
   const fetchData = () => {
-    // call api with data
+    // fetches trade post data
     const options = {
       method: 'GET',
       route: `/trade/view?trade_post_id=${tradepost_id}`,
     };
 
     apiCall((d) => {
-      console.log(d);
       setData(d);
-    }, options)
-      .then((res) => {
-        if (res) {
-          // set error msg if api call returns error
-
-        }
-      });
+    }, options);
   }
 
   React.useEffect(() => {
@@ -76,17 +68,12 @@ const CollectiblePage = () => {
             justifyContent: 'center', 
             alignItems: 'center' 
             }}>
-            <Typography variant='h5'>{data.post_trader}</Typography>
             <Typography variant='h6' color='grey'>{data.trader_location}</Typography>
-            <Box component="span">
-                <Avatar 
-                variant="outlined"
-                alt="Trader avatar"
-                src={data.trader_avatar ? data.trader_avatar : ''}
-                display="flex"
-                sx={{ width: 150, height: 150, marginTop: "16px", fontSize: "60px"}}
-                />
-            </Box>
+            <ProfileAvatar 
+              userId={data.trader_id} 
+              image={data.trader_avatar} 
+              name={data.trader_name}
+            />
             <Button variant="contained" onClick={handleOffer}>Make offer</Button>
           </Paper>
         </Grid>
@@ -113,4 +100,4 @@ const CollectiblePage = () => {
   )
 }
 
-export default CollectiblePage;
+export default TradePostPage;

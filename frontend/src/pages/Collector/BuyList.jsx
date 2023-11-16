@@ -1,21 +1,20 @@
-import React, { useMemo, Fragment } from 'react';
+import React, { useMemo } from 'react';
 
 import {
-
   MaterialReactTable,
-
   MRT_ToggleDensePaddingButton,
-
   MRT_FullScreenToggleButton,
-
 } from 'material-react-table';
 
 import { Box } from '@mui/material';
-import { apiCall } from '../App';
+import { apiCall } from '../../App';
 import { useParams, useNavigate } from 'react-router-dom';
 import Avatar from '@mui/material/Avatar';
 
-// sourced from https://github.com/KevinVandy/material-react-table/blob/v1/apps/material-react-table-docs/examples/custom-top-toolbar/sandbox/src/JS.js
+// Page which display a list of trade posts trading a particular collectible
+// The collectible id identifies which collectible the trade posts are trading
+// Clicking on a trade post takes the user to the trade post page
+// List sourced from https://github.com/KevinVandy/material-react-table/blob/v1/apps/material-react-table-docs/examples/custom-top-toolbar/sandbox/src/JS.js
 function BuyList() {
   const [data, setData] = React.useState([]);
 
@@ -24,22 +23,15 @@ function BuyList() {
   const c_id = params.id;
 
   const fetchData = () => {
-    // call api with data
+    // fetches all trade posts trading this collectible 
     const options = {
       method: 'GET',
       route: `/collectible/buy?collectible_id=${c_id}`,
     };
 
     apiCall((d) => {
-      console.log(d);
       setData(d);
     }, options)
-      .then((res) => {
-        if (res) {
-          // set error msg if api call returns error
-
-        }
-      });
   }
 
   React.useEffect(() => {
@@ -47,7 +39,6 @@ function BuyList() {
   }, []);
 
   const columns = useMemo(
-    //column definitions...
     () => [
       {
         accessorKey: 'collection_id',
@@ -106,7 +97,6 @@ function BuyList() {
       },
     ],
     [],
-    //end
   );
 
   return (
@@ -117,24 +107,20 @@ function BuyList() {
       positionToolbarAlertBanner="bottom" //show selected rows count on bottom toolbar
       muiTableBodyRowProps={({ row }) => ({
         onClick: () => {
+          // navigates to trade post
           navigate(`/trade/view/${row.original.trade_post_id}`)
         },
         sx: { cursor: 'pointer' },
       })}
       initialState={{ columnVisibility: { collection_id: false } }}
-      // changes sizing of default columns
       defaultColumn={{
         minSize: 50,
         maxSize: 500,
         size: 200, 
       }}
 
-      //customize built-in buttons in the top-right of top toolbar
-
       renderToolbarInternalActions={({ table }) => (
-
         <Box>
-          {/* add custom button to print table  */}
           <MRT_ToggleDensePaddingButton table={table} />
           <MRT_FullScreenToggleButton table={table} />
         </Box>

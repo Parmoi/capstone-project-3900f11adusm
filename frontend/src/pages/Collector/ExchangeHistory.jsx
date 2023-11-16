@@ -1,18 +1,21 @@
 import React, { useMemo } from 'react';
-import { Box, Typography} from '@mui/material';
+import { Box } from '@mui/material';
 
 import { MaterialReactTable, MRT_ToggleDensePaddingButton, MRT_FullScreenToggleButton } from 'material-react-table';
 
 import { useState, useEffect } from 'react';
 
-import { apiCall } from '../App';
-import ProfileAvatar from '../components/ProfileAvatar';
-import CollectibleImage from '../components/CollectibleImage';
+import { apiCall } from '../../App';
+import ProfileAvatar from '../../components/ProfileAvatar';
+import CollectibleImage from '../../components/CollectibleImage';
 
+// Page that displays user's exchange/trade history using this platform
+// Shows traded and accepted collectible, profile of user they traded with, date offer was sent and date it was accepted
 function ExchangeHistory() {
   const [data, setData] = useState([]);
 
   const fetchInfo = () => {
+    // gets user's exchange history information
     const options = {
       method: 'GET',
       route: '/exchange/history'
@@ -20,12 +23,7 @@ function ExchangeHistory() {
 
     apiCall((d) => {
       setData(d);
-    }, options)
-      .then((res) => {
-        if (res) {
-          // set error msg if api call returns error
-        }
-      });
+    }, options);
   }
 
   useEffect(() => {
@@ -91,7 +89,6 @@ function ExchangeHistory() {
       title="Exchange History"
       columns={columns}
       data={data}
-      // changes sizing of default columns
       defaultColumn={{
         minSize: 50,
         maxSize: 200,
