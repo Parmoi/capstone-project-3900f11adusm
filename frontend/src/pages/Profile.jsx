@@ -99,7 +99,7 @@ function Profile({privilege, user_id}) {
             ? <ProfileDetailsDisplay handleEdit={handleDetailsEdit} style={style} data={data} isAccount={isAccount}/> 
             : <ProfileDetailsEdit handleSave={handleDetailsSave} style={style} />             
             }
-            <CollectionCompletion style={style} />
+            { privilege == 1 && <CollectionCompletion style={style} /> }
           </Grid>
         </Grid>
       </Container>
