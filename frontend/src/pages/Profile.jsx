@@ -88,7 +88,7 @@ function Profile({privilege, user_id}) {
       <CssBaseline/>
         <Grid container spacing={2}>
           <Grid item xs={4}>
-            <ProfileBox style={style} data={data} handleImageSave={handleImageSave} privilege={privilege}/>
+            <ProfileBox style={style} data={data} handleImageSave={handleImageSave} privilege={privilege} isAccount={isAccount}/>
             { !editSocials 
             ? <SocialMediaDisplay handleEdit={handleSocialEdit} style={style} socials={data} isAccount={isAccount}/>
             : <SocialMediaEdit handleSave={handleSocialSave} style={style}/> 

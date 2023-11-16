@@ -84,7 +84,7 @@ const SocialMediaDisplay = ({handleEdit, style, socials, isAccount}) => {
           target="_blank"
           color="default"
           startIcon={<TwitterIcon />}
-          href={socials.twitter ? socials.twitter : "https://twitter.com/"} 
+          href={socials.twitter_handle ? socials.twitter_handle : "https://twitter.com/"} 
         >
           Twitter
         </Button>
@@ -96,7 +96,7 @@ const SocialMediaDisplay = ({handleEdit, style, socials, isAccount}) => {
           target="_blank"
           color="default"
           startIcon={<FacebookIcon />}
-          href={socials.facebook ? socials.facebook : "https://www.facebook.com/"} 
+          href={socials.facebook_handle ? socials.facebook_handle : "https://www.facebook.com/"} 
         >
           Facebook
         </Button>
@@ -108,7 +108,7 @@ const SocialMediaDisplay = ({handleEdit, style, socials, isAccount}) => {
           target="_blank"
           color="default"
           startIcon={<InstagramIcon />}
-          href={socials.twitter ? socials.twitter : "https://www.instagram.com/"} 
+          href={socials.instagram_handle ? socials.instagram_handle : "https://www.instagram.com/"} 
         >
           Instagram
         </Button>
@@ -122,42 +122,79 @@ const SocialMediaDisplay = ({handleEdit, style, socials, isAccount}) => {
 }
 
 const SocialMediaEdit = ({handleSave, style}) => {
+  const [error, setError] = React.useState(false);
+  const [errContent, setErrContent] = React.useState('');
+
+  const edit = (e) => {
+    e.preventDefault();
+    const data = new FormData(e.currentTarget);
+
+    // call api with data
+    const options = {
+      method: 'POST',
+      route: '/profile/update_socials',
+      body: JSON.stringify({
+        twitter_handle: data.get('twitter_handle'),
+        facebook_handle: data.get('facebook_handle'),
+        instagram_handle: data.get('instagram_handle'),
+      })
+    };
+
+    console.log(data);
+
+    apiCall(() => {
+      handleSave();
+    }, options)
+    .then((res) => {
+      if (res) {
+        // set error msg if api call returns error
+        setErrContent(`Error: ${res.msg}`);
+        setError(true);
+      }
+    });
+  }
+
   return (
     <List sx={style}>
-      <ListItem secondaryAction={ <TextField fullWidth id="Address" label="Address" variant="outlined" size='small' sx={{width: 200}}/> }>
-        <Button 
-          variant="link"
-          target="_blank"
-          color="default"
-          startIcon={<TwitterIcon />}
-        >
-          Twitter
-        </Button>
-      </ListItem>
-      <Divider variant="middle"/>
-      <ListItem secondaryAction={ <TextField fullWidth id="Address" label="Address" variant="outlined" size='small' sx={{width: 200}}/> }>
-        <Button 
-          variant="link"
-          target="_blank"
-          color="default"
-          startIcon={<FacebookIcon />}
-        >
-          Facebook
-        </Button>
-      </ListItem>
-      <Divider variant="middle"/>
-      <ListItem secondaryAction={ <TextField fullWidth id="Address" label="Address" variant="outlined" size='small' sx={{width: 200}}/> }>
-        <Button 
-          variant="link"
-          target="_blank"
-          color="default"
-          startIcon={<InstagramIcon />}
-        >
-          Instagram
-        </Button>
-      </ListItem>
-      <Divider variant="middle"/>
-        <Button onClick={handleSave} variant="contained" sx={{marginLeft: "16px", marginTop: "16px", marginBottom: "8px"}}>Save</Button>
+      <Box component="form" onSubmit={edit} noValidate sx={{ mt: 1 }}>
+        <ListItem secondaryAction={ <TextField fullWidth id="twitter_handle" label="twitter_handle" name="twitter_handle" autoComplete="twitter_handle" variant="outlined" size='small' sx={{width: 200}}/> }>
+          <Button 
+            variant="link"
+            target="_blank"
+            color="default"
+            startIcon={<TwitterIcon />}
+          >
+            Twitter
+          </Button>
+        </ListItem>
+        <Divider variant="middle"/>
+        <ListItem secondaryAction={ <TextField fullWidth id="facebook_handle" label="facebook_handle" name="facebook_handle" autoComplete="facebook_handle" variant="outlined" size='small' sx={{width: 200}}/> }>
+          <Button 
+            variant="link"
+            target="_blank"
+            color="default"
+            startIcon={<FacebookIcon />}
+          >
+            Facebook
+          </Button>
+        </ListItem>
+        <Divider variant="middle"/>
+        <ListItem secondaryAction={ <TextField fullWidth id="instagram_handle" label="instagram_handle" name="instagram_handle" autoComplete="instagram_handle" variant="outlined" size='small' sx={{width: 200}}/> }>
+          <Button 
+            variant="link"
+            target="_blank"
+            color="default"
+            startIcon={<InstagramIcon />}
+          >
+            Instagram
+          </Button>
+        </ListItem>
+        <Divider variant="middle"/>
+        <div>
+          {error ? <Alert severity='error'>{errContent}</Alert> : <></> }
+        </div>
+        <Button type="submit" variant="contained" sx={{marginLeft: "16px", marginTop: "16px", marginBottom: "8px"}}>Save</Button>
+        </Box>
     </List>
   );
 }
