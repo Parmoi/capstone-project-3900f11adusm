@@ -50,3 +50,7 @@ In particular, fixed Sell Page UI to feature correct uploading, and displaying i
 Week 10:
 Updated profile route and added profile avatars so that when a user clicks on a profile image, it takes them to their profile page. Also updated collectible images so that when
 clicked, takes user to the collectible page. Worked on making lists more concise by merging name and image as one component. Also assigned the functionalities portion of the project report.
+Worked on writing report. Implemented UI fixes for better user experience such as changing background image, and worked on creating post page for manager. Manager post page
+implemented, allowing managers to post campaigns and upload collectibles. Fixed up frontend code, adding more detailed comments, removing unused imports/comments/debugging statements, 
+fixing indentation of pages to be consistent and restructuring page folder to be split into pages for the three different roles: Admin, Manager and Collector.
+Had meeting discussing demo requirements, working out presentation, assigned roles and listing demo steps for final project demo.
