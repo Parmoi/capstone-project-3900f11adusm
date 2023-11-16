@@ -17,29 +17,23 @@ import moment from 'moment';
 import CollectibleImage from '../../components/CollectibleImage';
 import { apiCall } from '../../App';
 
-
-// sourced from https://github.com/KevinVandy/material-react-table/blob/v1/apps/material-react-table-docs/examples/custom-top-toolbar/sandbox/src/JS.js
+// Displays collectibles in current user's wantlist
+// Shows collectible name, image, associated campaign, date released and date collectible was added to user's collection
+// Table sourced from https://github.com/KevinVandy/material-react-table/blob/v1/apps/material-react-table-docs/examples/custom-top-toolbar/sandbox/src/JS.js
 const WantList = () => {
   const [data, setData] = React.useState([]);
   const [rowSelection, setRowSelection] = React.useState({});
 
   const fetchData = () => {
-    // call api with data
+    // fetches all collectibles from user's wantlist
     const options = {
       method: 'GET',
       route: "/wantlist/get",
     };
 
     apiCall((d) => {
-      console.log(d);
       setData(d);
-    }, options)
-      .then((res) => {
-        if (res) {
-          // set error msg if api call returns error
-
-        }
-      });
+    }, options);
   }
 
   React.useEffect(() => {
@@ -47,7 +41,6 @@ const WantList = () => {
   }, []);
 
   const columns = useMemo(
-    //column definitions...
     () => [
       {
         accessorKey: 'id',
@@ -145,9 +138,8 @@ const WantList = () => {
       columns={columns}
       data={data}
       enableRowSelection
-      positionToolbarAlertBanner="bottom" //show selected rows count on bottom toolbar
+      positionToolbarAlertBanner="bottom"
       initialState={{ columnVisibility: { id: false } }}
-      // changes sizing of default columns
       defaultColumn={{
         minSize: 50,
         maxSize: 500,
@@ -157,9 +149,9 @@ const WantList = () => {
       state={{ rowSelection }}
 
       //add custom action buttons to top-left of top toolbar
-
       renderBottomToolbarCustomActions={({ table }) => {
         const handleDelete = () => {
+          // deletes all selected collectibles from wantlist
           table.getSelectedRowModel().flatRows.map((row) => {
             const options = {
               method: 'DELETE',
@@ -170,19 +162,15 @@ const WantList = () => {
             };
 
             apiCall(() => { 
+              // reloads wantlist and resets selection
               fetchData();
               setRowSelection({});
-             }, options)
-              .then((res) => {
-                if (res) {
-                  // set error msg if api call returns error
-
-                }
-              });
+             }, options);
           });
         };
 
         const handleMove = () => {
+          // moves all selected collectibles from wantlist to collection list
           table.getSelectedRowModel().flatRows.map((row) => {
             const options = {
               method: 'POST',
@@ -193,15 +181,10 @@ const WantList = () => {
             };
 
             apiCall(() => { 
+              // reloads wantlist and resets selection
               fetchData();
               setRowSelection({});
-             }, options)
-              .then((res) => {
-                if (res) {
-                  // set error msg if api call returns error
-
-                }
-              });
+             }, options);
           });
         };
 
@@ -209,8 +192,6 @@ const WantList = () => {
           <Box sx={{ display: 'flex', gap: '1rem', p: '4px' }}>
             <Button
               color="secondary"
-              // For some reason, button is disabled when all rows selected
-              // TODO: find fix
               disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()}
               onClick={handleMove}
               variant="contained"

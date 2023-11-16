@@ -18,23 +18,24 @@ import { apiCall } from '../../App';
 import ProfileAvatar from '../../components/ProfileAvatar';
 import CollectibleImage from '../../components/CollectibleImage';
 
+// changes colour of status icon based on status
 const getBackgroundColor = (status) => {
   return status ? 'secondary.main' : 'ACCEPTED' ? 'primary.light' : 'error.main';
 }
 
-// sourced from https://github.com/KevinVandy/material-react-table/blob/v1/apps/material-react-table-docs/examples/custom-top-toolbar/sandbox/src/JS.js
+// Displays all offers sent by user and the offer status
+// Table sourced from https://github.com/KevinVandy/material-react-table/blob/v1/apps/material-react-table-docs/examples/custom-top-toolbar/sandbox/src/JS.js
 const OffersList = () => {
   const [data, setData] = React.useState([]);
 
   const fetchData = () => {
-    // call api with data
+    // fetches data on all offers sent by current user
     const options = {
       method: 'GET',
       route: "/offers/get",
     };
 
     apiCall((d) => {
-      console.log(d);
       setData(d);
     }, options)
   }
@@ -44,7 +45,6 @@ const OffersList = () => {
   }, []);
 
   const columns = useMemo(
-    //column definitions...
     () => [
       {
         accessorKey: 'offer_id',
@@ -176,7 +176,6 @@ const OffersList = () => {
       },
     ],
     [],
-    //end
   );
 
   return (
@@ -184,18 +183,16 @@ const OffersList = () => {
       title="Offerlist"
       columns={columns}
       data={data}
-      positionToolbarAlertBanner="bottom" //show selected rows count on bottom toolbar
+      positionToolbarAlertBanner="bottom" 
       initialState={{ columnVisibility: { offer_id: false } }}
-      // changes sizing of default columns
       defaultColumn={{
         minSize: 50,
         maxSize: 500,
         size: 100, 
       }}
 
-      //customize built-in buttons in the top-right of top toolbar
+      // buttons for toggling padding and full screen
       renderToolbarInternalActions={({ table }) => (
-
         <Box>
           <MRT_ToggleDensePaddingButton table={table} />
           <MRT_FullScreenToggleButton table={table} />

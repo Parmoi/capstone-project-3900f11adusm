@@ -22,26 +22,16 @@ function Profile({privilege, user_id}) {
   const [editDetails, displayDetails] = useState(false);
   const [editSocials, displaySocials] = useState(false);
   const [data, setData] = useState({});
-  const [isEditable, isEditable] = useState(false);
 
   const params = useParams();
   const u_id = params.id;
-  const isAccount = u_id == user_id || u_id == '';
+  const isAccount = u_id == user_id;
 
   const fetchInfo = () => {
-    // fetches info of profile
-    let url = '';
-    if (u_id == '') {
-      // user profile
-      url='/profile';
-      setisEditable(true);
-    } else {
-      url = `/profile?id=${u_id}`;
-    }
-  
+    // fetches info of profile with u_id
     const options = {
       method: 'GET',
-      route: url,
+      route: `/profile?id=${u_id}`,
     };
 
     apiCall((d) => {
@@ -90,13 +80,13 @@ function Profile({privilege, user_id}) {
           <Grid item xs={4}>
             <ProfileBox style={style} data={data} handleImageSave={handleImageSave} privilege={privilege} isAccount={isAccount}/>
             { !editSocials 
-            ? <SocialMediaDisplay handleEdit={handleSocialEdit} style={style} socials={data} isAccount={isAccount} isEditable={isEditable}/>
+            ? <SocialMediaDisplay handleEdit={handleSocialEdit} style={style} socials={data} isAccount={isAccount}/>
             : <SocialMediaEdit handleSave={handleSocialSave} style={style}/> 
             }
           </Grid>
           <Grid item xs={8}>
             { !editDetails 
-            ? <ProfileDetailsDisplay handleEdit={handleDetailsEdit} style={style} data={data} isAccount={isAccount} isEditable={isEditable}/> 
+            ? <ProfileDetailsDisplay handleEdit={handleDetailsEdit} style={style} data={data} isAccount={isAccount}/> 
             : <ProfileDetailsEdit handleSave={handleDetailsSave} style={style} />             
             }
             { privilege == 1 && <CollectionCompletion style={style} /> }

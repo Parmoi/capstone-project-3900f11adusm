@@ -1,13 +1,9 @@
 import React, { useMemo } from 'react';
 
 import {
-
   MaterialReactTable,
-
   MRT_ToggleDensePaddingButton,
-
   MRT_FullScreenToggleButton,
-
 } from 'material-react-table';
 
 import { Box } from '@mui/material';

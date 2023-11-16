@@ -5,18 +5,17 @@ import {
 } from "react-router-dom";
 
 import {
-
   MaterialReactTable,
-
   MRT_ToggleDensePaddingButton,
-
   MRT_FullScreenToggleButton,
-
 } from 'material-react-table';
 
 import { Box } from '@mui/material';
 import { apiCall } from "../../App";
 
+// Displays list of collectibles that matches the search query
+// Clicking on a result takes the user to the collectible page
+// Table sourced from https://github.com/KevinVandy/material-react-table/blob/v1/apps/material-react-table-docs/examples/custom-top-toolbar/sandbox/src/JS.js
 function ResultsPage() {
   const { query } = useParams();
   const [results, setResults] = useState([]);
@@ -118,7 +117,6 @@ function ResultsPage() {
       }}
 
       //customize built-in buttons in the top-right of top toolbar
-
       renderToolbarInternalActions={({ table }) => (
 
         <Box>

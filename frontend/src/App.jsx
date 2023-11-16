@@ -24,6 +24,7 @@ import BuyList from './pages/Collector/BuyList';
 import TradePostPage from './pages/Collector/TradePostPage';
 import TradeList from './pages/Collector/TradeList';
 import TradeOffersList from './pages/Collector/TradeOffersList';
+import Feedback from './pages/Collector/Feedback';
 
 import ManagerHomePage from './pages/Manager/ManagerHomePage';
 import ManagerAnalytics from './pages/Manager/ManagerAnalytics';

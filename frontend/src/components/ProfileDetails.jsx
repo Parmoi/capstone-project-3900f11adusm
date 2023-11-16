@@ -199,7 +199,7 @@ const SocialMediaEdit = ({handleSave, style}) => {
   );
 }
 
-const ProfileDetailsDisplay = ({handleEdit, style, data, isAccount}) => {
+const ProfileDetailsDisplay = ({handleEdit, style, data, isAccount }) => {
 
   return (
     <List sx={style}>

@@ -9,7 +9,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { useTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { apiCall } from '../App';
+import { apiCall } from '../../App';
 import Alert from '@mui/material/Alert';
 import Paper from '@mui/material/Paper';
 

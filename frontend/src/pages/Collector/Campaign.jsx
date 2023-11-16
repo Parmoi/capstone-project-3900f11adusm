@@ -1,37 +1,35 @@
 import React, { useMemo, useEffect } from 'react';
 
 import {
-
   MaterialReactTable,
-
   MRT_ToggleDensePaddingButton,
-
   MRT_FullScreenToggleButton,
-
 } from 'material-react-table';
 
 import { Box, Button,Typography} from '@mui/material';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Timer from '../../components/Timer'
+import { apiCall } from '../../App';
 
-// sourced from https://github.com/KevinVandy/material-react-table/blob/v1/apps/material-react-table-docs/examples/custom-top-toolbar/sandbox/src/JS.js
+// Displays campaign details such as name, start and end date, timer counting down when the campaign ends and all collectibles in the campaign
+// Button that takes user to feedback page
+// Table sourced from https://github.com/KevinVandy/material-react-table/blob/v1/apps/material-react-table-docs/examples/custom-top-toolbar/sandbox/src/JS.js
 const Campaign = () => {
   const location = useLocation();
   const [data, setData] = React.useState([]);
   const campaignId = location.state?.id;
 
   const fetchData = () => {
-
+    // gets campaign data
     const options = {
       method: "GET",
       route: `/campaign/get_collectibles?campaign_id=${campaignId}`,
       
     };
+
     apiCall((d) => {
-        console.log(d["collectibles"]);
         setData(d["collectibles"]);
-    }, options)
-    ;
+    }, options);
   }
   
   
@@ -41,7 +39,6 @@ const Campaign = () => {
 
 
   const columns = useMemo(    
-    //column definitions...
     () => [
       {
         accessorKey: 'image',
@@ -81,13 +78,10 @@ const Campaign = () => {
     //end
   );
 
-  
-  // const query = location.state?.
   const navigate = useNavigate();  
   const goFeedback = () => {
     navigate("/feedback", {state: {name: location.state?.name, id:location.state?.id}});
   }
-  console.log(data)
 
   return (
     <>
@@ -112,7 +106,7 @@ const Campaign = () => {
         })}
         //add custom action buttons to top-left of top toolbar
 
-        renderBottomToolbarCustomActions={({ table }) => (
+        renderBottomToolbarCustomActions={() => (
 
           <Box sx={{ display: 'flex', gap: '1rem', p: '4px' }}>
             <Button
@@ -127,11 +121,8 @@ const Campaign = () => {
         )}
 
         //customize built-in buttons in the top-right of top toolbar
-
         renderToolbarInternalActions={({ table }) => (
-
           <Box>
-            {/* add custom button to print table  */}
             <MRT_ToggleDensePaddingButton table={table} />
             <MRT_FullScreenToggleButton table={table} />
           </Box>

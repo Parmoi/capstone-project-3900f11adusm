@@ -14,7 +14,8 @@ import { apiCall } from '../../App';
 import ProfileAvatar from '../../components/ProfileAvatar';
 import OfferModal from '../../components/OfferModal'
 
-
+// Displays page for trade post, along with images and captions of collectible uploaded by trader, name, description, date created
+// Has button for making an offer to this particular trade, which opens a trade modal
 const TradePostPage = () => {
   const [data, setData] = React.useState(
       {
@@ -29,7 +30,7 @@ const TradePostPage = () => {
   
 
   const fetchData = () => {
-    // call api with data
+    // fetches trade post data
     const options = {
       method: 'GET',
       route: `/trade/view?trade_post_id=${tradepost_id}`,
@@ -37,13 +38,7 @@ const TradePostPage = () => {
 
     apiCall((d) => {
       setData(d);
-    }, options)
-      .then((res) => {
-        if (res) {
-          // set error msg if api call returns error
-
-        }
-      });
+    }, options);
   }
 
   React.useEffect(() => {

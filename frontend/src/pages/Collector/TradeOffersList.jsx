@@ -18,208 +18,185 @@ import { apiCall } from '../../App';
 import ProfileAvatar from '../../components/ProfileAvatar';
 import CollectibleImage from '../../components/CollectibleImage';
 
-
-// sourced from https://github.com/KevinVandy/material-react-table/blob/v1/apps/material-react-table-docs/examples/custom-top-toolbar/sandbox/src/JS.js
+// Displays all offers made for a particular trade
+// Shows offer collectible image, trader profile, offer message and date offer was made
+// Table sourced from https://github.com/KevinVandy/material-react-table/blob/v1/apps/material-react-table-docs/examples/custom-top-toolbar/sandbox/src/JS.js
 const TradeOffersList = () => {
-    const [data, setData] = React.useState([]);
+  const [data, setData] = React.useState([]);
 
-    const params = useParams();
-    const t_id = params.id;
+  const params = useParams();
+  const t_id = params.id;
 
-    const fetchData = () => {
-        // call api with data
-        const options = {
-            method: 'GET',
-            route: `/trade/list/offers?trade_id=${t_id}`,
+  const fetchData = () => {
+    // fetches all offers for a particular trade
+    const options = {
+      method: 'GET',
+      route: `/trade/list/offers?trade_id=${t_id}`,
+    };
+
+    apiCall((d) => {
+      setData(d);
+    }, options);
+  }
+
+  React.useEffect(() => {
+    fetchData();
+  }, []);
+
+  const columns = useMemo(
+    () => [
+      {
+        accessorKey: 'offer_collectible_img',
+        header: 'Trade Item Image',
+        Cell: ({ row }) => (
+          <CollectibleImage 
+            id={row.original.collectible_id} 
+            name={row.original.offer_collectible_name} 
+            image={row.original.offer_collectible_img}
+          />
+        ),
+        enableColumnActions: false,
+        enableColumnFilter: false,
+        enableSorting: false,
+      },
+      {
+        accessorKey: 'trader_profile_img',
+        header: 'Trader Profile',
+        Cell: ({ row }) => (
+          <ProfileAvatar 
+            userId={row.original.trader_id} 
+            image={row.original.trader_profile_img} 
+            name={row.original.trader_name}
+          />
+        ),
+        enableColumnActions: false,
+        enableColumnFilter: false,
+      },
+      {
+        accessorKey: 'offer_message',
+        header: 'Offer Message',
+      },
+      {
+        accessorKey: 'offer_made_date',
+        accessorFn: (row) => moment(row.offer_made_date, "DD/MM/YYYY"), //convert to Date for sorting and filtering
+        id: 'dateOffer',
+        header: 'Date Offer Made',
+        filterFn: 'lessThanOrEqualTo',
+        sortingFn: 'datetime',
+
+        Cell: ({ cell }) => cell.getValue()?.format('DD/MM/YY'), //render Date as a string
+        Header: ({ column }) => <em>{column.columnDef.header}</em>, //custom header markup
+
+        //Custom Date Picker Filter from @mui/x-date-pickers
+        Filter: ({ column }) => (
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DatePicker
+              onChange={(newValue) => {
+                column.setFilterValue(newValue);
+              }}
+
+              slotProps={{
+                textField: {
+                    helperText: 'Filter Mode: Less Than',
+                    sx: { minWidth: '120px' },
+                    variant: 'standard',
+                },
+              }}
+
+              value={column.getFilterValue()}
+              format="DD-MM-YYYY"
+            />
+          </LocalizationProvider>
+        )
+      },
+    ],
+  [],
+  );
+
+  return (
+    <MaterialReactTable
+      title="Tradelist"
+      columns={columns}
+      data={data}
+      enableRowSelection
+      enableMultiRowSelection={false}
+      positionToolbarAlertBanner="bottom" //show selected rows count on bottom toolbar
+      initialState={{ columnVisibility: { id: false } }}
+      // changes sizing of default columns
+      defaultColumn={{
+        minSize: 50,
+        maxSize: 300,
+        size: 150,
+      }}
+
+      //add custom action buttons to top-left of top toolbar
+
+      renderBottomToolbarCustomActions={({ table }) => {
+        // declines all selected offers
+        const handleDecline = () => {
+          table.getSelectedRowModel().flatRows.map((row) => {
+            const options = {
+              method: 'POST',
+              route: "/exchange/decline",
+              body: JSON.stringify({
+                offer_id: row.original.offer_id,
+              })
+            };
+
+            apiCall(() => { 
+              fetchData();
+            }, options);
+          });
         };
 
-        apiCall((d) => {
-            console.log(d);
-            setData(d);
-        }, options)
-            .then((res) => {
-                if (res) {
-                    // set error msg if api call returns error
+        // accepts all selected offers
+        const handleAccept = () => {
+          table.getSelectedRowModel().flatRows.map((row) => {
+            const options = {
+              method: 'POST',
+              route: "/exchange/accept",
+              body: JSON.stringify({
+                offer_id: row.original.offer_id,
+              })
+            };
 
-                }
-            });
-    }
+            apiCall(() => {
+              fetchData();
+              }, options);
+          });
+        };
 
-    React.useEffect(() => {
-        fetchData();
-    }, []);
+        return (
+          <Box sx={{ display: 'flex', gap: '1rem', p: '4px' }}>
+            <Button
+              color="secondary"
+              disabled={(!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected())}
+              onClick={handleAccept}
+              variant="contained"
+            >
+              Accept Offer
+            </Button>
 
-    const columns = useMemo(
-        //column definitions...
-        () => [
-            {
-                accessorKey: 'offer_collectible_img',
-                header: 'Trade Item Image',
-                Cell: ({ row }) => (
-                    <CollectibleImage 
-                        id={row.original.collectible_id} 
-                        name={row.original.offer_collectible_name} 
-                        image={row.original.offer_collectible_img}
-                    />
-                ),
-                enableColumnActions: false,
-                enableColumnFilter: false,
-                enableSorting: false,
-            },
-            {
-                accessorKey: 'trader_profile_img',
-                header: 'Trader Profile',
-                Cell: ({ row }) => (
-                    <ProfileAvatar 
-                        userId={row.original.trader_id} 
-                        image={row.original.trader_profile_img} 
-                        name={row.original.trader_name}
-                    />
-                ),
-                enableColumnActions: false,
-                enableColumnFilter: false,
-            },
-            {
-                accessorKey: 'offer_message',
-                header: 'Offer Message',
-            },
-            {
-                accessorKey: 'offer_made_date',
-                accessorFn: (row) => moment(row.offer_made_date, "DD/MM/YYYY"), //convert to Date for sorting and filtering
-                id: 'dateOffer',
-                header: 'Date Offer Made',
-                filterFn: 'lessThanOrEqualTo',
-                sortingFn: 'datetime',
+            <Button
+              color="error"
+              disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()}
+              onClick={handleDecline}
+              variant="contained"
+            >
+              Decline Offer
+            </Button>
+          </Box>
+        );
+      }}
 
-                Cell: ({ cell }) => cell.getValue()?.format('DD/MM/YY'), //render Date as a string
-                Header: ({ column }) => <em>{column.columnDef.header}</em>, //custom header markup
-
-                //Custom Date Picker Filter from @mui/x-date-pickers
-                Filter: ({ column }) => (
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <DatePicker
-                            onChange={(newValue) => {
-                                column.setFilterValue(newValue);
-                            }}
-
-                            slotProps={{
-                                textField: {
-                                    helperText: 'Filter Mode: Less Than',
-                                    sx: { minWidth: '120px' },
-                                    variant: 'standard',
-                                },
-                            }}
-
-                            value={column.getFilterValue()}
-                            format="DD-MM-YYYY"
-                        />
-                    </LocalizationProvider>
-                )
-            },
-        ],
-        [],
-        //end
-    );
-
-    return (
-        <MaterialReactTable
-            title="Tradelist"
-            columns={columns}
-            data={data}
-            enableRowSelection
-            enableMultiRowSelection={false}
-            positionToolbarAlertBanner="bottom" //show selected rows count on bottom toolbar
-            initialState={{ columnVisibility: { id: false } }}
-            // changes sizing of default columns
-            defaultColumn={{
-                minSize: 50,
-                maxSize: 300,
-                size: 150,
-            }}
-
-            //add custom action buttons to top-left of top toolbar
-
-            renderBottomToolbarCustomActions={({ table }) => {
-                const handleDecline = () => {
-                    table.getSelectedRowModel().flatRows.map((row) => {
-                        const options = {
-                            method: 'POST',
-                            route: "/exchange/decline",
-                            body: JSON.stringify({
-                                offer_id: row.original.offer_id,
-                            })
-                        };
-                        console.log(options)
-
-                        apiCall(() => { 
-                            fetchData();
-                        }, options)
-                            .then((res) => {
-                                if (res) {
-                                    // set error msg if api call returns error
-
-                                }
-                            });
-                    });
-                };
-
-                const handleAccept = () => {
-                    table.getSelectedRowModel().flatRows.map((row) => {
-                        const options = {
-                            method: 'POST',
-                            route: "/exchange/accept",
-                            body: JSON.stringify({
-                                offer_id: row.original.offer_id,
-                            })
-                        };
-
-                        apiCall(() => {
-                            fetchData();
-                         }, options)
-                            .then((res) => {
-                                if (res) {
-                                    // set error msg if api call returns error
-
-                                }
-                            });
-                    });
-                };
-
-                return (
-                    <Box sx={{ display: 'flex', gap: '1rem', p: '4px' }}>
-                        <Button
-                            color="secondary"
-                            disabled={(!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected())}
-                            onClick={handleAccept}
-                            variant="contained"
-                        >
-                            Accept Offer
-                        </Button>
-
-                        <Button
-                            color="error"
-                            disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()}
-                            onClick={handleDecline}
-                            variant="contained"
-                        >
-                            Decline Offer
-                        </Button>
-                    </Box>
-                );
-
-            }}
-
-            //customize built-in buttons in the top-right of top toolbar
-            renderToolbarInternalActions={({ table }) => (
-
-                <Box>
-                    <MRT_ToggleDensePaddingButton table={table} />
-                    <MRT_FullScreenToggleButton table={table} />
-                </Box>
-            )}
-
-        />
-    );
+      renderToolbarInternalActions={({ table }) => (
+        <Box>
+          <MRT_ToggleDensePaddingButton table={table} />
+          <MRT_FullScreenToggleButton table={table} />
+        </Box>
+      )}
+    />
+  );
 };
 
 
