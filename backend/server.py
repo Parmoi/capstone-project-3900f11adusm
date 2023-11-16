@@ -219,7 +219,7 @@ def profile_update():
 
 @APP.route("/profile/socials", methods=["GET"])
 @jwt_required(fresh=False)
-def profile_socails():
+def profile_socials():
     """
     Obtain the social media connections of the user.
     returns:
@@ -241,7 +241,7 @@ def profile_socails():
 
 @APP.route("/profile/update/socials", methods=["GET"])
 @jwt_required(fresh=False)
-def profile_socails():
+def profile_update_socials():
     """
     Updates the social media of the user.
     """
