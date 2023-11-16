@@ -15,13 +15,14 @@ import { apiCall } from '../App';
 
 const theme = createTheme();
 
-function Profile() {
+function Profile({privilege, user_id}) {
   const [editDetails, displayDetails] = useState(false);
   const [editSocials, displaySocials] = useState(false);
-  const [data, setData] = useState([]);
+  const [data, setData] = useState({});
 
   const params = useParams();
   const u_id = params.id;
+  const isAccount = u_id == user_id || u_id == ''
   console.log(u_id)
 
   const fetchInfo = () => {
@@ -52,6 +53,28 @@ function Profile() {
     fetchInfo();
   }, []);
 
+  const handleImageSave = () => {
+    fetchInfo();
+  }
+
+  const handleSocialEdit = () => {
+    displaySocials(true);;
+  }
+
+  const handleSocialSave = () => {
+    displaySocials(false);
+    fetchInfo();
+  }
+
+  const handleDetailsEdit = () => {
+    displayDetails(true);
+  }
+
+  const handleDetailsSave = () => {
+    displayDetails(false);
+    fetchInfo();
+  }
+
   const style = {
     alignItems: 'center', 
     marginTop: "20px", 
@@ -65,18 +88,18 @@ function Profile() {
       <CssBaseline/>
         <Grid container spacing={2}>
           <Grid item xs={4}>
-            <ProfileBox style={style} data={data}/>
+            <ProfileBox style={style} data={data} handleImageSave={handleImageSave} privilege={privilege} isAccount={isAccount}/>
             { !editSocials 
-            ? <SocialMediaDisplay displaySocials={displaySocials} style={style} />
-            : <SocialMediaEdit displaySocials={displaySocials} style={style} /> 
+            ? <SocialMediaDisplay handleEdit={handleSocialEdit} style={style} socials={data} isAccount={isAccount}/>
+            : <SocialMediaEdit handleSave={handleSocialSave} style={style}/> 
             }
           </Grid>
           <Grid item xs={8}>
             { !editDetails 
-            ? <ProfileDetailsDisplay displayDetails={displayDetails} style={style} data={data} /> 
-            : <ProfileDetailsEdit displayDetails={displayDetails} style={style} />             
+            ? <ProfileDetailsDisplay handleEdit={handleDetailsEdit} style={style} data={data} isAccount={isAccount}/> 
+            : <ProfileDetailsEdit handleSave={handleDetailsSave} style={style} />             
             }
-            <CollectionCompletion style={style} />
+            { privilege == 1 && <CollectionCompletion style={style} /> }
           </Grid>
         </Grid>
       </Container>

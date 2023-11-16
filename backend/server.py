@@ -206,6 +206,7 @@ def profile_update():
     last_name = request.json.get("last_name", None)
     phone = request.json.get("phone", None)
     address = request.json.get("address", None)
+    profile_picture = request.json.get("profile_picture", None)
 
     return db_collectors.update_collector(
         id=user_id,
@@ -216,9 +217,11 @@ def profile_update():
         phone=phone,
         password=password,
         address=address,
+        profile_picture=profile_picture,
     )
 
 @APP.route("/profile/update_socials", methods=["POST"])
+@jwt_required(fresh=False)
 def profile_socials_update():
     """Route specifically to update the socials of the user
 
