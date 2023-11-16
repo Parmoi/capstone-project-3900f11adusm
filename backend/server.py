@@ -167,7 +167,10 @@ def profile():
         last_name: "string",
         email: "email_string",
         phone: "string" (numbers),
-        address: "string"
+        address: "string",
+        twitter_handle: "string",
+        facebook_handle: "string",
+        instagram_handle: "string"
         }
     """
     user_id = request.args.get('id')
@@ -214,6 +217,21 @@ def profile_update():
         password=password,
         address=address,
     )
+
+@APP.route("/profile/update_socials", methods=["POST"])
+def profile_socials_update():
+    """Route specifically to update the socials of the user
+
+    Example Output:
+        {"msg": "User 1's socials have been updated}, 200
+    """
+    user_id = get_jwt_identity()
+    twitter_handle = request.json.get("twitter_handle")
+    facebook_handle = request.json.get("facebook_handle")
+    instagram_handle = request.json.get("instagram_handle")
+
+    return db_collectors.update_socials(
+        user_id, twitter_handle, facebook_handle, instagram_handle)
 
 
 @APP.route("/get_collectors", methods=["GET"])
