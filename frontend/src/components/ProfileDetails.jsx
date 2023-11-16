@@ -37,8 +37,6 @@ const ProfileBox = ({style, data, handleImageSave, privilege, isAccount}) => {
 
     apiCall(() => {
       handleImageSave();
-      console.log(url);
-      console.log('Profile Image Updated');
     }, options)
     .then((res) => {
       if (res) {
@@ -139,8 +137,6 @@ const SocialMediaEdit = ({handleSave, style}) => {
         instagram_handle: data.get('instagram_handle'),
       })
     };
-
-    console.log(data);
 
     apiCall(() => {
       handleSave();
@@ -256,7 +252,6 @@ const ProfileDetailsEdit = ({handleSave, style}) => {
       })
     };
 
-    console.log(data);
 
     apiCall(() => {
       handleSave();

@@ -21,7 +21,8 @@ const linkStyle = {
     color: '#F0F4EF'
 }
 
-
+// Signed in navigation bar for admins and managers
+// Menu item only allows for signing out
 const AdminSignedInNav = ({ logout, username }) => {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
@@ -33,7 +34,6 @@ const AdminSignedInNav = ({ logout, username }) => {
     const handleClose = () => {
       setAnchorEl(null);
     };
-
 
     return (
       <Box sx={{ flexGrow: 1 }}>

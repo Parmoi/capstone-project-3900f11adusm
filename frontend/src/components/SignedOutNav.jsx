@@ -15,6 +15,8 @@ const linkStyle = {
     color: '#F0F4EF'
 }
 
+// Component for signed out navigation bar
+// Directs user to login and register pages
 const SignedOutNav = () => {
     return (
       <Box sx={{ flexGrow: 1 }}>
