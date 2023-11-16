@@ -134,7 +134,7 @@ const Campaign = () => {
   // const query = location.state?.
   const navigate = useNavigate();  
   const goFeedback = () => {
-    navigate("/feedback");
+    navigate("/feedback", {state: {name: location.state?.name, id:location.state?.id}});
   }
   console.log(data)
 
@@ -153,13 +153,19 @@ const Campaign = () => {
         enableRowSelection
         positionToolbarAlertBanner="bottom" //show selected rows count on bottom toolbar
         style={{minWidth: '1000px'}}
+        muiTableBodyRowProps={({ row }) => ({
+          onClick: () => {
+            navigate(`/collectible/${row.original.id}`)
+          },
+          sx: { cursor: 'pointer' },
+        })}
         //add custom action buttons to top-left of top toolbar
 
         renderBottomToolbarCustomActions={({ table }) => (
 
           <Box sx={{ display: 'flex', gap: '1rem', p: '4px' }}>
             <Button
-              color="secondary"
+              backgroundColor = 'primary'
               onClick={(goFeedback)}
               variant="contained"
             >

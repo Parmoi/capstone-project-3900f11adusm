@@ -147,7 +147,7 @@ function App() {
                 <Route path="/wantlist" element={<WantList />} />
                 <Route path="/collection" element={<CollectionList />} />
                 <Route path="/exchange-history" element={<ExchangeHistory />} />
-                <Route path="/dashboard" element={<span>Dashboard</span>} />
+                
                 <Route path="/dashboard" element={<HomePage />} />
                 <Route path="/offers" element={<OffersList />} />
                 <Route path="/trade" element={<SellPage />} />
