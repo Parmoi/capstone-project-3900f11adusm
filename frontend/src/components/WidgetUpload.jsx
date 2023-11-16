@@ -13,7 +13,7 @@ const WidgetUpload = ({ onSuccess, style, buttonName='Upload' }) => {
             cloudName: 'ddor5nnks',
             uploadPreset: 'wwrzhd4r',
             max_files: '1',
-        }, function(result) {
+        }, function(error, result) {
             if (result.event === "success") {
                 onSuccess(result.info.secure_url);
             }
