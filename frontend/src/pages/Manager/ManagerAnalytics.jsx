@@ -49,7 +49,15 @@ const TableColor = [
 function ManagerAnalytics() {
   const [campaign, setCampaign] = React.useState('');
   const [color, setColor] = React.useState('#4e79a7');
-  const [analytics, setAnaltyics] = React.useState([]);
+  const [analytics, setAnaltyics] = React.useState([
+      {
+          "campaign_id": 5,
+          "campaign_name": "Galapagos Dove",
+          "exchange_dates": ['2023/04/20', '2023/04/21', '2023/04/22', '2023/04/23', '2023/04/24', '2023/04/25', '2023/04/26'],   
+          "exchanges_made": [24, 13, 98, 39, 48, 38, 43]
+      },
+  ]);
+
   const [xLabels, setXLables] = React.useState([]);
   const [yData, setYData] = React.useState([]);
 
@@ -60,7 +68,9 @@ function ManagerAnalytics() {
     };
 
     apiCall((d) => {
-      setAnaltyics(d["analytics"]);
+      if (d.length != 0) {
+        setAnaltyics(d);
+      }
     }, options)
     .then((res) => {
       if (res) {
@@ -147,7 +157,9 @@ function ManagerAnalytics() {
         >
           {
             analytics == [] || campaign == ''
-            ? <Typography>There is no Data to Display</Typography>
+            ? <Stack direction="column" spacing={2} alignItems="center" sx={{ width: '100%', padding: '25px' }}>
+            <Typography>There is no Data to Display</Typography>
+            </Stack>
             : <Stack direction="column" spacing={2} alignItems="center" sx={{ width: '100%', padding: '25px' }}>
             <LineChart
               width={1000}

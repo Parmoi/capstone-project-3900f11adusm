@@ -65,7 +65,7 @@ const OfferModal = ({ tradeId, open, handleClose }) => {
       }),
     };
 
-    apiCall({}, options);
+    apiCall(() => {}, options);
     handleClose();
   }
 

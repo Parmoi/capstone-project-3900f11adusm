@@ -1,4 +1,5 @@
 from main.privelage import ADMIN, MANAGER
+from main.database import db_collectibles
 import sqlalchemy as db
 from flask import jsonify
 import db_manager as dbm
@@ -13,7 +14,14 @@ from main.error import OK, InputError, AccessError
 
 
 def register_campaign(
-    user_id, name, description, image, start_date, end_date, approved=False
+    user_id,
+    name,
+    description,
+    image,
+    start_date,
+    end_date,
+    collectibles,
+    approved=False,
 ):
     """insert_campaign.
 
@@ -54,6 +62,9 @@ def register_campaign(
     )
     conn.execute(insert_stmt)
     conn.close()
+
+    for collectible in collectibles:
+        db_collectibles.register_collectible()
 
     return (
         jsonify(
@@ -364,26 +375,52 @@ def add_campaign_feedback(user_id, campaign_id, feedback):
     )
 
 
-def get_campaign_feedback(user_id, campaign_id):
+def get_campaign_feedback(user_id):
+    """
+    Returns the feedback to the campaign manager for a campaign.
+
+    stub_return = {
+        "feedback": [
+            {
+                "collector_id": 21,
+                "collector_username": "Barry",
+                "collector_profile_img": "https://tse3.mm.bing.net/th?id=OIP.SwCSPpmwihkM2SUqh7wKXwHaFG&pid=Api",
+                "feedback": "I would have prefered if you didn't do another Simpsons campaign. Maybe try something with trees, trees are nice.",
+                "feedback_date": "2023/11/01",
+                "campaign_id": 2
+            },
+            {
+                "collector_id": 11,
+                "collector_username": "Bart",
+                "collector_profile_img": "https://tse2.mm.bing.net/th?id=OIP.j7EknM6CUuEct_kx7o-dNQHaMN&pid=Api",
+                "feedback": "This is a good campaign, keep up the good work.",
+                "feedback_date": "2023/10/31",
+                "campaign_id": 5
+            },
+        ]
+    }
+    """
     engine, conn, metadata = dbm.db_connect()
 
     feedback = db.Table("campaign_feedback", metadata, autoload_with=engine)
     collectors = db.Table("collectors", metadata, autoload_with=engine)
+    campaigns = db.Table("campaigns", metadata, autoload_with=engine)
 
-    join = db.join(collectors, feedback, (collectors.c.id == feedback.c.collector_id))
+    join = db.join(
+        collectors, feedback, (collectors.c.id == feedback.c.collector_id)
+    ).join(campaigns, (feedback.c.campaign_id == campaigns.c.id))
 
     select_stmt = (
         db.select(
             collectors.c.id.label("collector_id"),
             collectors.c.username.label("collector_username"),
             collectors.c.profile_picture.label("collector_profile_img"),
+            feedback.c.campaign_id,
             feedback.c.feedback,
-            feedback.c.feedback_date,
+            feedback.c.feedback_date
+            # campaigns.c.id.label("campaign_id")
         )
         .select_from(join)
-        .where(
-            feedback.c.campaign_id == campaign_id,
-        )
     )
 
     res = conn.execute(select_stmt)
