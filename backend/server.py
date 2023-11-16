@@ -774,7 +774,7 @@ def get_manager_analytics():
 
     manager_id = get_jwt_identity()
 
-    db_campaign_analytics.return_analytics(manager_id)
+    return db_campaign_analytics.return_analytics(manager_id)
 
 
 @APP.route("/manager/feedback", methods=["GET"])
@@ -850,7 +850,6 @@ def manager_privilege():
     """
     Arguments:
         - manager_id
-        - can_publish
 
     Changes the campaign publishing privilege of a Manager.
     """

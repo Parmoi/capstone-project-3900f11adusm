@@ -417,8 +417,8 @@ def get_campaign_feedback(user_id):
             collectors.c.profile_picture.label("collector_profile_img"),
             feedback.c.campaign_id,
             feedback.c.feedback,
-            feedback.c.feedback_date,
-            campaigns.c.id.label("campaign_id")
+            feedback.c.feedback_date
+            # campaigns.c.id.label("campaign_id")
         )
         .select_from(join)
     )

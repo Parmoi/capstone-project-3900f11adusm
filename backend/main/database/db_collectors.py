@@ -206,7 +206,7 @@ def get_managers():
     result = conn.execute(select_stmt)
     managers = db_helpers.rows_to_list(result.fetchall())
 
-    return jsonify(managers), OK
+    return jsonify({"managers": managers}), OK
 
 # TODO: Error checking
 def update_socials(user_id, twitter_handle=None, facebook_handle=None, instagram_handle=None):
