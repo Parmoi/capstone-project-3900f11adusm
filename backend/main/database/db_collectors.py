@@ -4,7 +4,7 @@ import auth
 import main.database.db_manager as dbm
 from main.database import db_helpers
 from main.error import OK, InputError, AccessError
-from main.privelage import COLLECTOR, MANAGER
+from main.privelage import BANNED, COLLECTOR, MANAGER
 
 """ |------------------------------------|
     |     Functions for collectors       |
@@ -186,7 +186,10 @@ def get_managers():
     privelages = db.Table("privelages", metadata, autoload_with=engine)
 
     join = db.join(
-        collectors, privelages, (privelages.c.privelage == MANAGER) & (collectors.c.id == privelages.c.collector_id)
+        collectors,
+        privelages,
+        (privelages.c.privelage == MANAGER)
+        & (collectors.c.id == privelages.c.collector_id),
     )
 
     select_stmt = db.select(
@@ -197,8 +200,7 @@ def get_managers():
         collectors.c.last_name.label("last_name"),
         collectors.c.email.label("email"),
         collectors.c.phone.label("phone"),
-        privelages.c.privelage.label("privelage")
-
+        privelages.c.privelage.label("privelage"),
     ).select_from(join)
 
     result = conn.execute(select_stmt)
@@ -241,6 +243,19 @@ def update_socials(user_id, twitter_handle=None, facebook_handle=None, instagram
     conn.close()
 
     return jsonify({"msg": f"User {user_id}'s socials have been updated!"}), OK
+
+
+def ban_collector(admin_id, collector_id):
+    engine, conn, metadata = dbm.db_connect()
+
+    privelages = db.Table("privelages", metadata, autoload_with=engine)
+
+    update_stmt = (
+        db.update(privelages)
+        .where(privelages.c.collector_id == collector_id)
+        .values({"privelage": BANNED})
+    )
+    conn.execute(update_stmt)
 
 
 """ |------------------------------------|
