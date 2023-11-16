@@ -18,14 +18,10 @@ const PostStepper = ({ steps, stepperContent }) => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
-  const handleReset = () => {
-    setActiveStep(0);
-  };
-
   return (
     <Paper sx={{ width: '100%', flex: 1 }}>
       <Stepper activeStep={activeStep} sx={{mt:'5vh'}}>
-        {steps.map((label, index) => {
+        {steps.map((label) => {
           const stepProps = {};
           const labelProps = {};
           return (
