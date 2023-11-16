@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { Box, Button } from '@mui/material';
 
-const WidgetUpload = ({ onSuccess }) => {
+const WidgetUpload = ({ onSuccess, style, buttonName='Upload' }) => {
     const cloudinaryRef = useRef();
     const widgetRef = useRef();
     
@@ -24,8 +24,8 @@ const WidgetUpload = ({ onSuccess }) => {
 
     return (
         <Box sx={{ display: 'flex', justifyContent: "center" }}>
-            <Button onClick={() => widgetRef.current.open()}>
-                Upload
+            <Button variant="contained" onClick={() => widgetRef.current.open()} sx={style}>
+                {buttonName}
             </Button>
         </Box>
     )
