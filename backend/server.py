@@ -791,6 +791,7 @@ def get_feedback():
                 "collector_profile_img": "https://tse3.mm.bing.net/th?id=OIP.SwCSPpmwihkM2SUqh7wKXwHaFG&pid=Api",
                 "feedback": "I would have prefered if you didn't do another Simpsons campaign. Maybe try something with trees, trees are nice.",
                 "feedback_date": "2023/11/01",
+                "campaign_id": 2
             },
             {
                 "collector_id": 11,
@@ -798,15 +799,15 @@ def get_feedback():
                 "collector_profile_img": "https://tse2.mm.bing.net/th?id=OIP.j7EknM6CUuEct_kx7o-dNQHaMN&pid=Api",
                 "feedback": "This is a good campaign, keep up the good work.",
                 "feedback_date": "2023/10/31",
+                "campaign_id": 5
             },
         ]
     }
     """
 
     user_id = get_jwt_identity()
-    campaign_id = request.json.get("campaign_id", None)
 
-    return db_campaigns.get_campaign_feedback(user_id, campaign_id)
+    return db_campaigns.get_campaign_feedback(user_id)
 
 
 @APP.route("/manager/getlist", methods=["GET"])
