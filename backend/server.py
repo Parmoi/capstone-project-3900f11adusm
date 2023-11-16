@@ -309,11 +309,9 @@ def register_collectible():
 
 
 @APP.route("/campaign/get_collectibles", methods=["GET"])
-# @jwt_required(fresh=False)
+@jwt_required(fresh=False)
 def get_campaign_collectibles():
-    # verify_jwt_in_request()
-
-    campaign_id = request.json.get("campaign_id", None)
+    campaign_id = request.args.get("campaign_id")
 
     return db_campaigns.get_campaign_collectibles(campaign_id)
 
