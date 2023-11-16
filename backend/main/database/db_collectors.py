@@ -1,9 +1,10 @@
 import sqlalchemy as db
 from flask import jsonify
-import db_manager as dbm
 import auth
+import main.database.db_manager as dbm
+from main.database import db_helpers
 from main.error import OK, InputError, AccessError
-from main.privelage import COLLECTOR
+from main.privelage import COLLECTOR, MANAGER
 
 """ |------------------------------------|
     |     Functions for collectors       |
@@ -142,10 +143,68 @@ def get_collector(user_id=None, email=None, username=None):
         select_stmt = db.select(collectors).where(collectors.c.id == user_id)
 
     result = conn.execute(select_stmt)
+    if result is None:
+        return jsonify({"msg": "Invalid collector id"}), InputError
+
     collector_info = result.fetchone()._asdict()
     conn.close()
 
     return jsonify(collector_info), OK
+
+
+def get_managers():
+    """
+    stub_return = {
+        "managers": [
+            {
+                "user_id": "3",
+                "username": "dso",
+                "profile_img": "https://tse3.mm.bing.net/th?id=OIP.SwCSPpmwihkM2SUqh7wKXwHaFG&pid=Api",
+                "first_name": "Dyllanson",
+                "last_name": "So",
+                "email": "ds@gmail.com",
+                "phone": "4444 4444",
+                "canPublish": True,  # The managers posting privilege
+            },
+            {
+                "user_id": "2",
+                "username": "szhang",
+                "profile_img": "",
+                "first_name": "Stella",
+                "last_name": "Zhang",
+                "email": "dz@gmail.com",
+                "phone": "9999 4444",
+                "canPublish": False,  # The managers posting privilege
+            },
+        ]
+    }
+
+    """
+    engine, conn, metadata = dbm.db_connect()
+
+    collectors = db.Table("collectors", metadata, autoload_with=engine)
+    privelages = db.Table("privelages", metadata, autoload_with=engine)
+
+    join = db.join(
+        collectors, privelages, (privelages.c.privelage == MANAGER) & (collectors.c.id == privelages.c.collector_id)
+    )
+
+    select_stmt = db.select(
+        collectors.c.id.label("user_id"),
+        collectors.c.username.label("username"),
+        collectors.c.profile_picture.label("profile_img"),
+        collectors.c.first_name.label("first_name"),
+        collectors.c.last_name.label("last_name"),
+        collectors.c.email.label("email"),
+        collectors.c.phone.label("phone"),
+        privelages.c.privelage.label("privelage")
+
+    ).select_from(join)
+
+    result = conn.execute(select_stmt)
+    managers = db_helpers.rows_to_list(result.fetchall())
+
+    return jsonify(managers), OK
 
 
 """ |------------------------------------|
@@ -212,3 +271,30 @@ def get_collector_pw(id=None, email=None):
     conn.close()
 
     return password
+
+
+def get_collector_dict(user_id=None, email=None, username=None):
+    """get_collector.
+
+    Returns dict with collectors details
+
+    Args:
+        user_id: user id of collector being returned
+    """
+
+    engine, conn, metadata = dbm.db_connect()
+
+    # Loads in the collector table into our metadata
+    collectors = db.Table("collectors", metadata, autoload_with=engine)
+    select_stmt = None
+    if email:
+        select_stmt = db.select(collectors).where(collectors.c.email == email)
+    elif username:
+        select_stmt = db.select(collectors).where(collectors.c.username == username)
+    elif user_id:
+        select_stmt = db.select(collectors).where(collectors.c.id == user_id)
+
+    result = conn.execute(select_stmt)
+    collector_info = result.fetchone()._asdict()
+    conn.close()
+    return collector_info

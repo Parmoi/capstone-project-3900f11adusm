@@ -235,9 +235,11 @@ def first_search():
 
 
 @APP.route("/campaign/register", methods=["POST"])
-# @jwt_required(fresh=False)
+@jwt_required(fresh=False)
 def register_campaign():
-    # verify_jwt_in_request()
+    verify_jwt_in_request()
+
+    user_id = get_jwt_identity()
 
     name = request.json.get("name", None)
     description = request.json.get("desc", None)
@@ -246,7 +248,7 @@ def register_campaign():
     end_date = request.json.get("end", None)
 
     return db_campaigns.register_campaign(
-        name, description, image, start_date, end_date
+        user_id, name, description, image, start_date, end_date
     )
 
 
@@ -293,6 +295,17 @@ def get_campaign_collectibles():
 
     return db_campaigns.get_campaign_collectibles(campaign_id)
 
+
+@APP.route("/campaign/feedback", methods=["POST"])
+@jwt_required(fresh=False)
+def give_campaign_feedback():
+    verify_jwt_in_request()
+
+    user_id = get_jwt_identity()
+    campaign_id = request.json.get("campaign_id", None)
+    feedback = request.json.get("feedback", None)
+
+    return db_campaigns.add_campaign_feedback(user_id, campaign_id, feedback)
 
 """ |------------------------------------|
     |         Collection Routes          |
@@ -657,19 +670,21 @@ def exchange_accept():
 def get_collectible_info():
     """
     Takes in collectible_id as request argument
-    """
-    # user_id = get_jwt_identity()
 
     stub_return = {
         "collectible_name": "Homer",
         "campaign_id": 1,
         "campaign_name": "Simpsons",
-        "collectible_image": "https://tse3.mm.bing.net/th?id=OIP.SwCSPpmwihkM2SUqh7wKXwHaFG&pid=Api",
+        "collectible_image": image_url
         "collectible_description": "Description",
         "collectible_added_date": "08/04/2003",
     }
+    """
+    user_id = get_jwt_identity()
 
-    return jsonify(stub_return), OK
+    collectible_id = request.args.get("collectible_id", None)
+
+    return db_collectibles.get_collectible_info(user_id, collectible_id)
 
 
 @APP.route("/collectible/buy", methods=["GET"])
@@ -690,6 +705,33 @@ def get_buylist():
     |            Manager Routes          |
     |------------------------------------| """
 
+@APP.route("/manager/invite", methods=["GET"])
+@jwt_required(fresh=False)
+def invite_manager():
+    # TODO: check admin id is valid
+    admin_id = get_jwt_identity()
+    manager_id = request.json.get("manager_id", None)
+    return auth.send_manager_email(admin_id, manager_id)
+
+@APP.route("/manager/register", methods=["GET"])
+@jwt_required(fresh=False)
+def register_manager():
+    """
+    Arguments:
+        - username
+        - first_name
+        - last_name
+        - email
+        - phone
+        - password
+        - special_code
+
+    A special registration that registers Manager accounts.
+    Manager privilege should be that of not postable.
+    """
+    manager_id = get_jwt_identity()
+    code = request.json.get("special_code", None)
+    return auth.check_manager_email_code(manager_id, code)
 
 @APP.route("/manager/analytics", methods=["GET"])
 @jwt_required(fresh=False)
@@ -731,7 +773,6 @@ def get_manager_analytics():
 def get_feedback():
     """
     Returns the feedback to the campaign manager for a campaign.
-    """
 
     stub_return = {
         "feedback": [
@@ -751,57 +792,20 @@ def get_feedback():
             },
         ]
     }
-
-    return jsonify(stub_return), OK
-
-
-@APP.route("/manager/invite", methods=["POST"])
-@jwt_required(fresh=False)
-def invite_manager():
-    """
-    Arguments:
-        - email
-
-    Sends the given email account an email with a registration code and
-    a link to http://localhost:3000/register/manager for registration.
     """
 
-    stub_return = {
-        "msg": "An invite has been sent."
-    }
 
-    return jsonify(stub_return), OK
+    user_id = get_jwt_identity()
+    campaign_id = request.json.get("campaign_id", None)
 
+    return db_campaigns.get_campaign_feedback(user_id, campaign_id)
 
-@APP.route("/manager/register", methods=["POST"])
-@jwt_required(fresh=False)
-def register_manager():
-    """
-    Arguments:
-        - username
-        - first_name
-        - last_name
-        - email
-        - phone
-        - password
-        - special_code
-
-    A special registration that registers Manager accounts.
-    Manager privilege should be that of not postable.
-    """
-
-    stub_return = {
-        "msg": "Registration successful"
-    }
-
-    return jsonify(stub_return), OK
 
 @APP.route("/manager/getlist", methods=["GET"])
 @jwt_required(fresh=False)
 def get_manager_list():
     """
     Returns a list of managers in the system.
-    """
 
     stub_return = {
         "managers": [
@@ -827,8 +831,8 @@ def get_manager_list():
             },
         ]
     }
-
-    return jsonify(stub_return), OK
+    """
+    return db_collectors.get_managers()
 
 @APP.route("/manager/publish", methods=["POST"])
 @jwt_required(fresh=False)
