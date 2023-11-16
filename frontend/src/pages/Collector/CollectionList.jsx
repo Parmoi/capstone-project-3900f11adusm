@@ -1,4 +1,4 @@
-import React, { useMemo, Fragment } from 'react';
+import React, { useMemo } from 'react';
 
 import {
 
@@ -10,39 +10,33 @@ import {
 
 } from 'material-react-table';
 
-import { Box, Button, IconButton } from '@mui/material';
+import { Box, Button } from '@mui/material';
 
 //Date Picker Imports
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import moment from 'moment';
-import { apiCall } from '../App';
-import CollectibleImage from '../components/CollectibleImage';
+import { apiCall } from '../../App';
+import CollectibleImage from '../../components/CollectibleImage';
 
-// sourced from https://github.com/KevinVandy/material-react-table/blob/v1/apps/material-react-table-docs/examples/custom-top-toolbar/sandbox/src/JS.js
+// Page that displays a list of all collectibles in the user's collection
+// 
+// Table sourced from https://github.com/KevinVandy/material-react-table/blob/v1/apps/material-react-table-docs/examples/custom-top-toolbar/sandbox/src/JS.js
 function CollectionList() {
   const [data, setData] = React.useState([]);
   const [rowSelection, setRowSelection] = React.useState({});
 
   const fetchData = () => {
-    console.log('fetching data');
-    // call api with data
+    // fetches data on collectibles in user's collection
     const options = {
       method: 'GET',
       route: "/collection/get",
     };
 
     apiCall((d) => {
-      console.log(d);
       setData(d.collection);
     }, options)
-      .then((res) => {
-        if (res) {
-          // set error msg if api call returns error
-
-        }
-      });
   }
 
   React.useEffect(() => {

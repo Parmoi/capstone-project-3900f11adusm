@@ -1,9 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
 import {
-  BrowserRouter as Router,
-  Route,
-  Routes,
-  Link,
   useNavigate,
   useParams,
 } from "react-router-dom";
@@ -18,8 +14,8 @@ import {
 
 } from 'material-react-table';
 
-import { Box, Button, IconButton } from '@mui/material';
-import { apiCall } from "../App";
+import { Box } from '@mui/material';
+import { apiCall } from "../../App";
 
 function ResultsPage() {
   const { query } = useParams();
@@ -45,8 +41,7 @@ function ResultsPage() {
         setResults(filteredData);
       }
 
-    }, options)
-    ;
+    }, options);
   }
 
 

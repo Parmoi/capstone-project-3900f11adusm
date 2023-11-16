@@ -1,6 +1,6 @@
 // src/LandingPage.js
 import React from 'react';
-import landing_page_icon from '../images/landing_page_icon.png'
+import landing_page_icon from '../../images/landing_page_icon.png'
 
 function LandingPage() {
   

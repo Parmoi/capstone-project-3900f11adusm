@@ -8,10 +8,10 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { ProfileBox, ProfileDetailsDisplay, ProfileDetailsEdit, SocialMediaDisplay, SocialMediaEdit } from '../components/ProfileDetails'
-import CollectionCompletion from '../components/CollectionCompletion';
+import { ProfileBox, ProfileDetailsDisplay, ProfileDetailsEdit, SocialMediaDisplay, SocialMediaEdit } from '../../components/ProfileDetails'
+import CollectionCompletion from '../../components/CollectionCompletion';
 
-import { apiCall } from '../App';
+import { apiCall } from '../../App';
 
 const theme = createTheme();
 

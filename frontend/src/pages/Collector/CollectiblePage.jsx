@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import ImageCarousel from '../components/ImageCarousel';
+import React from 'react';
+import ImageCarousel from '../../components/ImageCarousel';
 import {
     Grid,
     Button,
@@ -10,9 +10,9 @@ import {
 } from '@mui/material'
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTheme, ThemeProvider } from '@mui/material/styles';
-import { apiCall } from '../App';
+import { apiCall } from '../../App';
 
-
+// 
 const CollectiblePage = () => {
   const [data, setData] = React.useState({});
   const navigate = useNavigate();

@@ -1,5 +1,5 @@
 import React from 'react';
-import ImageCarousel from '../components/ImageCarousel';
+import ImageCarousel from '../../components/ImageCarousel';
 import {
     Grid,
     Button,
@@ -10,9 +10,9 @@ import {
 } from '@mui/material'
 import { useParams } from 'react-router-dom';
 import { useTheme, ThemeProvider } from '@mui/material/styles';
-import { apiCall } from '../App';
-import ProfileAvatar from '../components/ProfileAvatar';
-import OfferModal from '../components/OfferModal'
+import { apiCall } from '../../App';
+import ProfileAvatar from '../../components/ProfileAvatar';
+import OfferModal from '../../components/OfferModal'
 
 
 const TradePostPage = () => {

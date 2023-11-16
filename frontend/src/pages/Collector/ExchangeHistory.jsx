@@ -1,13 +1,13 @@
 import React, { useMemo } from 'react';
-import { Box, Typography} from '@mui/material';
+import { Box } from '@mui/material';
 
 import { MaterialReactTable, MRT_ToggleDensePaddingButton, MRT_FullScreenToggleButton } from 'material-react-table';
 
 import { useState, useEffect } from 'react';
 
-import { apiCall } from '../App';
-import ProfileAvatar from '../components/ProfileAvatar';
-import CollectibleImage from '../components/CollectibleImage';
+import { apiCall } from '../../App';
+import ProfileAvatar from '../../components/ProfileAvatar';
+import CollectibleImage from '../../components/CollectibleImage';
 
 function ExchangeHistory() {
   const [data, setData] = useState([]);

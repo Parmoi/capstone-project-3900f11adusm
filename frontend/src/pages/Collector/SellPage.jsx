@@ -1,5 +1,5 @@
 import * as React from 'react';
-import PostStepper from "../components/PostStepper";
+import PostStepper from "../../components/PostStepper";
 import Typography from '@mui/material/Typography';
 import { Box, Button, Grid } from '@mui/material';
 import InputLabel from '@mui/material/InputLabel';
@@ -9,11 +9,11 @@ import Select from '@mui/material/Select';
 import TextField from '@mui/material/TextField';
 import Alert from '@mui/material/Alert';
 
-import { apiCall } from '../App';
-import WidgetUpload from '../components/WidgetUpload';
+import { apiCall } from '../../App';
+import WidgetUpload from '../../components/WidgetUpload';
 import { useNavigate } from 'react-router-dom';
-import CaptionModal from '../components/CaptionModal';
-import ImageList from '../components/ImageCaptionList';
+import CaptionModal from '../../components/CaptionModal';
+import ImageList from '../../components/ImageCaptionList';
 
 const steps = ['Select collectible', 'Add title', 'Enter a description', 'Add images', 'Post listing'];
 

@@ -12,7 +12,7 @@ import {
 
 import { Box, Button,Typography} from '@mui/material';
 import { useLocation } from 'react-router-dom';
-import Timer from '../components/Timer'
+import Timer from '../../components/Timer'
 
 // stub data
 const data = [

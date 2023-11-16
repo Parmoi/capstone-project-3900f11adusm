@@ -6,18 +6,17 @@ import {
   MRT_FullScreenToggleButton,
 } from 'material-react-table';
 
-import { Box, Button, Typography } from '@mui/material';
+import { Box, Button } from '@mui/material';
 
 //Date Picker Imports
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import moment from 'moment';
-import Avatar from '@mui/material/Avatar';
 
-import { apiCall } from '../App';
-import ProfileAvatar from '../components/ProfileAvatar';
-import CollectibleImage from '../components/CollectibleImage';
+import { apiCall } from '../../App';
+import ProfileAvatar from '../../components/ProfileAvatar';
+import CollectibleImage from '../../components/CollectibleImage';
 
 const getBackgroundColor = (status) => {
   return status ? 'secondary.main' : 'ACCEPTED' ? 'primary.light' : 'error.main';
@@ -38,12 +37,6 @@ const OffersList = () => {
       console.log(d);
       setData(d);
     }, options)
-      .then((res) => {
-        if (res) {
-          // set error msg if api call returns error
-
-        }
-      });
   }
 
   React.useEffect(() => {
