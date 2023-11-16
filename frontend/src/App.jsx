@@ -24,6 +24,7 @@ import BuyList from './pages/BuyList';
 import TradePostPage from './pages/TradePostPage';
 import TradeList from './pages/TradeList';
 import TradeOffersList from './pages/TradeOffersList';
+import Feedback from './pages/feedback';
 
 import ManagerHomePage from './pages/Manager/ManagerHomePage';
 import ManagerAnalytics from './pages/Manager/ManagerAnalytics';
@@ -148,7 +149,8 @@ function App() {
                 <Route path="/profile/:id" element={<Profile />} />
                 <Route path="/wantlist" element={<WantList />} />
                 <Route path="/collection" element={<CollectionList />} />
-                <Route path="/exchange-history" element={<ExchangeHistory />} />
+                <Route path="/exchange-history" element={<ExchangeHistory />} />  
+                <Route path="/dashboard" element={<HomePage />} />
                 <Route path="/offers" element={<OffersList />} />
                 <Route path="/trade" element={<SellPage />} />
                 <Route path="/tradelist" element={<TradeList />} />
@@ -159,11 +161,10 @@ function App() {
                 <Route path="/collectible/:id" element={<CollectiblePage />} />
                 <Route path="/collectible/buy/:id" element={<BuyList />} />
                 <Route path="/trade/view/:id" element={<TradePostPage />} />
-
+                <Route path="/feedback" element={<Feedback />}></Route>
                 <Route path="/manager/feedback" element={<ManagerFeedback />} />
                 <Route path="/manager/post" element={<ManagerPost />} />
                 <Route path="/manager/analytics" element={<ManagerAnalytics />} />
-
                 <Route path='/manage/managers' element={<AdminManageManagers/>} />
                 <Route path='/campaign/approval' element={<AdminCampaignApproval/>} />
                 <Route path='/manage/collectors' element={<AdminManageCollectors/>} />
