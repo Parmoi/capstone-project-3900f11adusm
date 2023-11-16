@@ -774,7 +774,7 @@ def get_manager_analytics():
 
     manager_id = get_jwt_identity()
 
-    db_campaign_analytics.return_analytics(manager_id)
+    return db_campaign_analytics.return_analytics(manager_id)
 
 
 @APP.route("/manager/feedback", methods=["GET"])
