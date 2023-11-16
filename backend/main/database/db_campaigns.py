@@ -33,7 +33,6 @@ def register_campaign(
             AccessError,
         )
 
-
     start_date_obj = datetime.strptime(start_date, "%d/%m/%Y").date()
     end_date_obj = datetime.strptime(end_date, "%d/%m/%Y").date()
 
@@ -85,6 +84,7 @@ def approve_campaign(admin_id, campaign_id):
     conn.close()
     return jsonify({"msg": "Campaign apporoved!"}), OK
 
+
 def decline_campaign(admin_id, campaign_id):
     if not auth.check_user_privelage(admin_id, ADMIN):
         return (
@@ -130,7 +130,7 @@ def get_all_campaigns():
     engine, conn, metadata = dbm.db_connect()
 
     campaigns = db.Table("campaigns", metadata, autoload_with=engine)
-    select_stmt = db.select(campaigns)
+    select_stmt = db.select(campaigns).where(campaigns.c.approved == True)
     results = conn.execute(select_stmt)
     conn.close()
 
@@ -148,7 +148,6 @@ def get_campaign_collectibles(campaign_id):
         campaign_id:
 
     Returns:
-    """
     collectibles = {
         "collectibles": [
             {
@@ -156,6 +155,8 @@ def get_campaign_collectibles(campaign_id):
             },
         ]
     }
+    """
+
     engine, conn, metadata = dbm.db_connect()
 
     collectibles = db.Table("collectibles", metadata, autoload_with=engine)
@@ -175,8 +176,99 @@ def get_campaign_collectibles(campaign_id):
                 "collectibles": collectibles,
             }
         ),
-        200,
+        OK,
     )
+
+
+def get_campaigns_and_collectibles():
+    """
+    stub_return = {
+        "campaigns": [
+            {
+                "campaign_id": "1",
+                "campaign_name": "The Cats",
+                "campaign_image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQw4xHiYs4vnhBs9jqjYk0_JY3-SiSavqovXA&usqp=CAU",
+                "campaign_description": "The cats are new series of really cool collectibles that you can collect from us.",
+                "campaign_start_date": "29/11/2023",
+                "campaign_end_date": "12/12/2023",
+                "collection_list": [
+                    {
+                        "collectible_id": "1",
+                        "name": "Cat Cat",
+                        "image": "https://tse3.mm.bing.net/th?id=OIP.SwCSPpmwihkM2SUqh7wKXwHaFG&pid=Api",
+                        "caption": "A super Cat",
+                    },
+                    {
+                        "collectible_id": "2",
+                        "name": "Doomed Dog",
+                        "image": "https://tse2.mm.bing.net/th?id=OIP.j7EknM6CUuEct_kx7o-dNQHaMN&pid=Api",
+                        "caption": "A cat that is afraid",
+                    },
+                    {
+                        "collectible_id": "3",
+                        "name": "Lion Cat",
+                        "image": "https://tse3.mm.bing.net/th?id=OIP.SwCSPpmwihkM2SUqh7wKXwHaFG&pid=Api",
+                        "caption": "Lioness Cat",
+                    },
+                    {
+                        "collectible_id": "4",
+                        "name": "Cat the Dog",
+                        "image": "'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQw4xHiYs4vnhBs9jqjYk0_JY3-SiSavqovXA&usqp=CAU'",
+                        "caption": "A super duper cat and dog",
+                    },
+                ],
+                "approved": False,
+            },
+    """
+
+    engine, conn, metadata = dbm.db_connect()
+
+    collectibles = db.Table("collectibles", metadata, autoload_with=engine)
+    campaigns = db.Table("campaigns", metadata, autoload_with=engine)
+
+    select_stmt = db.select(
+        campaigns.c.id.label("campaign_id"),
+        campaigns.c.name.label("campaign_name"),
+        campaigns.c.image.label("campaign_image"),
+        campaigns.c.description.label("campaign_description"),
+        campaigns.c.start_date.label("campaign_start_date"),
+        campaigns.c.end_date.label("campaign_end_date"),
+        campaigns.c.approved.label("approved"),
+    ).select_from(campaigns)
+
+    campaigns = conn.execute(select_stmt)
+    campaigns = db_helpers.rows_to_list(campaigns.fetchall())
+
+    campaign_list = []
+    for campaign in campaigns:
+        campaign_id = campaign.get("campaign_id")
+        select_stmt = (
+            db.select(
+                collectibles.c.id.label("collectible_id"),
+                collectibles.c.name.label("name"),
+                collectibles.c.image.label("image"),
+                collectibles.c.description.label("caption"),
+            )
+            .where(collectibles.c.campaign_id == campaign_id)
+            .select_from(collectibles)
+        )
+        campaign_collectibles = conn.execute(select_stmt)
+        campaign["collection_list"] = db_helpers.rows_to_list(campaign_collectibles)
+        campaign_list.append(campaign)
+
+    conn.close()
+
+    return (
+        jsonify(
+            {
+                "campaigns": campaign_list,
+            }
+        ),
+        OK,
+    )
+
+    all_collectible_rows = results.all()
+    collectibles = [row._asdict() for row in all_collectible_rows]
 
 
 def get_campaigns_in_period(time_period):

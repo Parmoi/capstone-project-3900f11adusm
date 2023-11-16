@@ -131,7 +131,7 @@ def get_collectible_info(user_id, collectible_id):
         campaigns.c.name.label("campaign_name"),
         collectibles.c.image.label("collectible_image"),
         collectibles.c.description.label("collectible_description"),
-        collectibles.c.date_added.label("date_added"),
+        collectibles.c.date_added.label("collectible_date_added"),
     ).select_from(join)
 
     res = conn.execute(select_stmt)

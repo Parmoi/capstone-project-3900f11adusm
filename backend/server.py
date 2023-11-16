@@ -686,7 +686,8 @@ def get_collectible_info():
     """
     user_id = get_jwt_identity()
 
-    collectible_id = request.json.get("collectible_id", None)
+    # collectible_id = request.json.get("collectible_id", None)
+    collectible_id = request.args.get("collectible_id", None)
 
     return db_collectibles.get_collectible_info(user_id, collectible_id)
 
@@ -942,7 +943,6 @@ def get_campaigns_for_review():
 
     Provides a list of campaigns, either reviewed or not
     for the Admin to view and review.
-    """
 
     stub_return = {
         "campaigns": [
@@ -979,7 +979,7 @@ def get_campaigns_for_review():
                         "caption": "A super duper cat and dog",
                     },
                 ],
-                "approval_status": "",
+                "approved": False,
             },
             {
                 "campaign_id": "2",
@@ -1014,12 +1014,13 @@ def get_campaigns_for_review():
                         "caption": "A super duper dog and cat",
                     },
                 ],
-                "approval_status": "Approved",
+                "approved": True,
             },
         ]
     }
+    """
 
-    return jsonify(stub_return), OK
+    return db_campaigns.get_campaigns_and_collectibles()
 
 
 @APP.route("/admin/campaign/approve", methods=["POST"])
