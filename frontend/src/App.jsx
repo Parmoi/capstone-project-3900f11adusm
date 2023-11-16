@@ -47,9 +47,12 @@ import {
 
 const PORT = 5000;
 
+// Account Privileges
+const BANNED = 0
 const COLLECTOR = 1;
-const MANAGER = 2;
-const ADMIN = 3;
+const MANAGERPENDING = 2;
+const MANAGER = 3;
+const ADMIN = 4;
 
 export async function apiCall(onSuccess, options, ...optional) {
   const url = `http://localhost:${PORT}${options.route}`;
@@ -142,8 +145,7 @@ function App() {
               }
               <Routes>
                 { privilege === COLLECTOR && <Route path="/" element={<HomePage/>} />}
-                {/* { (privilege === 2 || privilege === 3) && <Route path="/" element={<ManagerHomePage/>} />} */}
-                { privilege === MANAGER && <Route path="/" element={<ManagerHomePage/>} />}
+                { (privilege === MANAGERPENDING || privilege === MANAGER) && <Route path="/" element={<ManagerHomePage/>} />}
                 { privilege === ADMIN && <Route path="/" element={<AdminHomePage/>} />}
 
                 <Route path="/profile/:id" element={<Profile privilege={privilege} user_id={userId}/>} />
