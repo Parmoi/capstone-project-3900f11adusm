@@ -4,12 +4,10 @@ import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-
-const steps = ['Add title', 'Enter a description', 'Add images', 'Post listing'];
+import Paper from '@mui/material/Paper';
 
 // Derived from https://mui.com/material-ui/react-stepper/
-const CampaignPostStepper = ({ stepperContent }) => {
+const PostStepper = ({ steps, stepperContent }) => {
   const [activeStep, setActiveStep] = React.useState(0);
 
   const handleNext = () => {
@@ -20,14 +18,10 @@ const CampaignPostStepper = ({ stepperContent }) => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
-  const handleReset = () => {
-    setActiveStep(0);
-  };
-
   return (
-    <Box sx={{ width: '100%', flex: 1 }}>
+    <Paper sx={{ width: '100%', flex: 1 }}>
       <Stepper activeStep={activeStep} sx={{mt:'5vh'}}>
-        {steps.map((label, index) => {
+        {steps.map((label) => {
           const stepProps = {};
           const labelProps = {};
           return (
@@ -38,7 +32,7 @@ const CampaignPostStepper = ({ stepperContent }) => {
         })}
       </Stepper>
         <React.Fragment>
-          <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', mt: '20vh'  }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', mt: '10vh', height: '50vh' }}>
             {stepperContent[activeStep]}
           </Box>
           <Box>
@@ -63,8 +57,8 @@ const CampaignPostStepper = ({ stepperContent }) => {
             </Box>
           </Box>
         </React.Fragment>
-    </Box>
+    </Paper>
   );
 }
 
-export default CampaignPostStepper;
+export default PostStepper;

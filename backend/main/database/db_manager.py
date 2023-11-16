@@ -40,6 +40,9 @@ def database_setup():
         db.Column("password", db.String),
         db.Column("address", db.String),
         db.Column("profile_picture", db.String),
+        db.Column("twitter_handle", db.String),
+        db.Column("facebook_handle", db.String),
+        db.Column("instagram_handle", db.String),
     )
 
     # Creates a collectible campaign table

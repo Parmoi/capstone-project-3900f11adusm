@@ -167,7 +167,10 @@ def profile():
         last_name: "string",
         email: "email_string",
         phone: "string" (numbers),
-        address: "string"
+        address: "string",
+        twitter_handle: "string",
+        facebook_handle: "string",
+        instagram_handle: "string"
         }
     """
     user_id = request.args.get('id')
@@ -215,6 +218,21 @@ def profile_update():
         address=address,
     )
 
+@APP.route("/profile/update_socials", methods=["POST"])
+def profile_socials_update():
+    """Route specifically to update the socials of the user
+
+    Example Output:
+        {"msg": "User 1's socials have been updated}, 200
+    """
+    user_id = get_jwt_identity()
+    twitter_handle = request.json.get("twitter_handle")
+    facebook_handle = request.json.get("facebook_handle")
+    instagram_handle = request.json.get("instagram_handle")
+
+    return db_collectors.update_socials(
+        user_id, twitter_handle, facebook_handle, instagram_handle)
+
 
 @APP.route("/get_collectors", methods=["GET"])
 def get_collectors():
@@ -246,6 +264,7 @@ def register_campaign():
     image = request.json.get("image", None)
     start_date = request.json.get("start", None)
     end_date = request.json.get("end", None)
+    collectibles = request.json.get("collectibles_list", None)
 
     return db_campaigns.register_campaign(
         user_id, name, description, image, start_date, end_date
@@ -680,7 +699,7 @@ def get_collectible_info():
     """
     user_id = get_jwt_identity()
 
-    collectible_id = request.json.get("collectible_id", None)
+    collectible_id = request.args.get("collectible_id", None)
 
     return db_collectibles.get_collectible_info(user_id, collectible_id)
 

@@ -100,9 +100,15 @@ const TradeList = () => {
         accessorKey: 'offers_received',
         header: 'Offers Received',
         Cell: ({ row }) => (
-          <Button onClick={() => handleOffersClick(row.original.trade_post_id)}>
-            <Typography variant='h8'>{row.original.offers_received}</Typography>
-          </Button>
+          <Button
+            onClick={() => handleOffersClick(row.original.trade_post_id)}
+            sx={{ 
+              bgcolor: 'secondary.main',
+              borderRadius: 28,
+            }}
+          >
+            {row.original.offers_received}
+          </Button> 
           
         ),
       },

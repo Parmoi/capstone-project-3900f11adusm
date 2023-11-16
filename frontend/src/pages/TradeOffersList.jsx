@@ -57,7 +57,11 @@ const TradeOffersList = () => {
                 accessorKey: 'offer_collectible_img',
                 header: 'Trade Item Image',
                 Cell: ({ row }) => (
-                    <CollectibleImage id={row.original.collectible_id} name={row.original.offer_collectible_name} image={row.original.offer_collectible_img}/>
+                    <CollectibleImage 
+                        id={row.original.collectible_id} 
+                        name={row.original.offer_collectible_name} 
+                        image={row.original.offer_collectible_img}
+                    />
                 ),
                 enableColumnActions: false,
                 enableColumnFilter: false,
