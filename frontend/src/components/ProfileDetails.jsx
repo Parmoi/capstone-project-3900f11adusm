@@ -24,20 +24,21 @@ import { apiCall } from '../App';
 const ProfileBox = ({style, data, handleImageSave, privilege}) => {
   const [error, setError] = React.useState(false);
   const [errContent, setErrContent] = React.useState('');
-  const [imgUrl, setImgUrl] = React.useState(data.profile_picture);
 
-  const handleUpload = () => {
+  const handleUpload = (url) => {
     // call api with data
     const options = {
       method: 'POST',
       route: '/profile/update',
       body: JSON.stringify({
-        profile_picture: imgUrl,
+        profile_picture: url,
       })
     };
 
     apiCall(() => {
       handleImageSave();
+      console.log(url);
+      console.log('Profile Image Updated');
     }, options)
     .then((res) => {
       if (res) {
@@ -47,12 +48,6 @@ const ProfileBox = ({style, data, handleImageSave, privilege}) => {
       }
     });
   }
-
-  const handleImageURL = (url) => {
-    setImgUrl(url);
-    handleUpload();
-  }
-
 
   return (
     <Stack direction="column" spacing={2} sx={style} >
@@ -74,53 +69,54 @@ const ProfileBox = ({style, data, handleImageSave, privilege}) => {
         {error ? <Alert severity='error'>{errContent}</Alert> : <></> }
       </div>
       <Box component="span">
-        <WidgetUpload onSuccess={handleImageURL} style={{marginLeft: "8px", marginBottom: "16px"}} buttonName='Change Icon'/>
-        {/* <Button variant="contained" sx={{marginLeft: "8px", marginBottom: "16px"}}>Change Icon</Button> */}
+        <WidgetUpload onSuccess={handleUpload} style={{marginLeft: "8px", marginBottom: "16px"}} buttonName='Change Icon'/>
       </Box>
     </Stack>
   );
 };
 
-const SocialMediaDisplay = ({handleEdit, style}) => {
+const SocialMediaDisplay = ({handleEdit, style, socials, u_id}) => {
   return (
     <List sx={style}>
-      <ListItem secondaryAction={ <ListItemText primary="@Test"/> }>
+      <ListItem >
         <Button 
           variant="link"
           target="_blank"
           color="default"
           startIcon={<TwitterIcon />}
-          href="https://twitter.com/"
+          href={socials.twitter ? socials.twitter : "https://twitter.com/"} 
         >
           Twitter
         </Button>
       </ListItem>
       <Divider variant="middle"/>
-      <ListItem secondaryAction={ <ListItemText primary="Test"/> }>
+      <ListItem >
         <Button 
           variant="link"
           target="_blank"
           color="default"
           startIcon={<FacebookIcon />}
-          href="https://www.facebook.com/"
+          href={socials.facebook ? socials.facebook : "https://www.facebook.com/"} 
         >
           Facebook
         </Button>
       </ListItem>
       <Divider variant="middle"/>
-      <ListItem secondaryAction={ <ListItemText primary="Test"/> }>
+      <ListItem >
         <Button 
           variant="link"
           target="_blank"
           color="default"
           startIcon={<InstagramIcon />}
-          href="https://www.instagram.com/"
+          href={socials.twitter ? socials.twitter : "https://www.instagram.com/"} 
         >
           Instagram
         </Button>
       </ListItem>
       <Divider variant="middle"/>
-      <Button onClick={handleEdit} variant="contained" sx={{marginLeft: "16px", marginTop: "16px", marginBottom: "8px"}}>Edit</Button>
+      {
+        u_id == '' && <Button onClick={handleEdit} variant="contained" sx={{marginLeft: "16px", marginTop: "16px", marginBottom: "8px"}}>Edit</Button>
+      }
     </List>
   );
 }
@@ -169,7 +165,7 @@ const SocialMediaEdit = ({handleSave, style}) => {
   );
 }
 
-const ProfileDetailsDisplay = ({handleEdit, style, data}) => {
+const ProfileDetailsDisplay = ({handleEdit, style, data, u_id}) => {
 
   return (
     <List sx={style}>
@@ -197,7 +193,9 @@ const ProfileDetailsDisplay = ({handleEdit, style, data}) => {
         <ListItemText primary="Address"/>
       </ListItem>
       <Divider variant="middle"/>
-      <Button onClick={handleEdit} variant="contained" sx={{marginLeft: "16px", marginTop: "16px", marginBottom: "8px"}}>Edit</Button>
+      {
+        u_id == '' && <Button onClick={handleEdit} variant="contained" sx={{marginLeft: "16px", marginTop: "16px", marginBottom: "8px"}}>Edit</Button>
+      }
     </List>
   );
 }

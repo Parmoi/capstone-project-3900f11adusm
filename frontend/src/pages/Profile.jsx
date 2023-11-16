@@ -18,7 +18,8 @@ const theme = createTheme();
 function Profile({privilege}) {
   const [editDetails, displayDetails] = useState(false);
   const [editSocials, displaySocials] = useState(false);
-  const [data, setData] = useState([]);
+  const [data, setData] = useState({});
+  const [socials, setSocials] = useState({})
 
   const params = useParams();
   const u_id = params.id;
@@ -48,8 +49,33 @@ function Profile({privilege}) {
     });
   }
 
+  const fetchSocials = () => {
+    let url = '';
+    if (u_id == '') {
+      url='/profile/socials';
+    } else {
+      url = `/profile/socials?id=${u_id}`;
+    }
+  
+    const options = {
+      method: 'GET',
+      route: url,
+    };
+
+    apiCall((d) => {
+      setSocials(d);
+    }, options)
+    .then((res) => {
+      if (res) {
+        // set error msg if api call returns error
+        
+      }
+    });
+  }
+
   useEffect(() => {
     fetchInfo();
+    fetchSocials();
   }, []);
 
   const handleImageSave = () => {
@@ -89,13 +115,13 @@ function Profile({privilege}) {
           <Grid item xs={4}>
             <ProfileBox style={style} data={data} handleImageSave={handleImageSave} privilege={privilege}/>
             { !editSocials 
-            ? <SocialMediaDisplay handleEdit={handleSocialEdit} style={style}/>
+            ? <SocialMediaDisplay handleEdit={handleSocialEdit} style={style} socials={socials} u_id={u_id}/>
             : <SocialMediaEdit handleSave={handleSocialSave} style={style}/> 
             }
           </Grid>
           <Grid item xs={8}>
             { !editDetails 
-            ? <ProfileDetailsDisplay handleEdit={handleDetailsEdit} style={style} data={data}/> 
+            ? <ProfileDetailsDisplay handleEdit={handleDetailsEdit} style={style} data={data} u_id={u_id}/> 
             : <ProfileDetailsEdit handleSave={handleDetailsSave} style={style} />             
             }
             <CollectionCompletion style={style} />
