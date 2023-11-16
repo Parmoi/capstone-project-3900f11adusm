@@ -203,6 +203,7 @@ def profile_update():
     last_name = request.json.get("last_name", None)
     phone = request.json.get("phone", None)
     address = request.json.get("address", None)
+    profile_picture = request.json.get("profile_picture", None)
 
     return db_collectors.update_collector(
         id=user_id,
@@ -213,7 +214,48 @@ def profile_update():
         phone=phone,
         password=password,
         address=address,
+        profile_picture=profile_picture,
     )
+
+@APP.route("/profile/socials", methods=["GET"])
+@jwt_required(fresh=False)
+def profile_socails():
+    """
+    Obtain the social media connections of the user.
+    returns:
+        {
+        twitter: "string",
+        facebook: "string",
+        instagram: "string",
+        }
+    """
+    user_id = request.args.get('id')
+
+    stub_data = {
+        "twitter": "string",
+        "facebook": "string",
+        "instagram": "string",
+    }
+
+    return jsonify(stub_data), OK
+
+@APP.route("/profile/update/socials", methods=["GET"])
+@jwt_required(fresh=False)
+def profile_socails():
+    """
+    Updates the social media of the user.
+    """
+    user_id = request.args.get('id')
+
+    twitter = request.json.get("twitter", None)
+    facebook = request.json.get("facebook", None)
+    instagram = request.json.get("instagram", None)
+
+    stub_data = {
+        "msg": "Socials successfully updated."
+    }
+
+    return jsonify(stub_data), OK
 
 
 @APP.route("/get_collectors", methods=["GET"])
