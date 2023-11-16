@@ -1,10 +1,9 @@
-// src/LandingPage.js
 import React from 'react';
 import landing_page_icon from '../../images/landing_page_icon.png'
 
+// Landing page for user, displaying site name and logo
 function LandingPage() {
-  
-  //style of image
+  // image style
   const ImageAdjust = {
     display: 'flex',
     justifyContent: 'center',

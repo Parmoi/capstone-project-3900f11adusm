@@ -1,4 +1,4 @@
-import React, { useMemo, Fragment } from 'react';
+import React, { useMemo } from 'react';
 
 import {
 
@@ -34,7 +34,6 @@ function BuyList() {
     };
 
     apiCall((d) => {
-      console.log(d);
       setData(d);
     }, options)
   }
