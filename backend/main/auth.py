@@ -103,7 +103,7 @@ def register_collector(email, username, password, privelage=COLLECTOR):
 
     collector_id = db_collectors.get_collector_id(email=email, username=username)
 
-    response = jsonify({"msg": "Account successfully registered!"})
+    response = jsonify({"msg": "Account successfully registered!", "user_id": collector_id})
     access_token = create_access_token(identity=collector_id, fresh=True)
     refresh_token = create_refresh_token(identity=collector_id)
     set_access_cookies(response, access_token)

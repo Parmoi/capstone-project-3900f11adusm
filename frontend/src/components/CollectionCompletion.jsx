@@ -32,10 +32,10 @@ const CollectionCompletion = ({style}) => {
     <Box sx={style} p="8px">
       <Typography variant="h5" sx={{margin: "8px"}}>Collection Completion</Typography>
       <List sx={{alignItems: "center"}} p={8}>
-        <Typography sx={{margin: "8px"}}>The Simpsons</Typography>
-        <LinearProgressWithLabel value={100} />
+        <Typography sx={{margin: "8px"}}>Grey Heron</Typography>
+        <LinearProgressWithLabel value={90} />
         <Divider sx={{margin: "8px"}}/>
-        <Typography sx={{margin: "8px"}}>The Simpsons Season 2</Typography>
+        <Typography sx={{margin: "8px"}}>Moauntain Duck</Typography>
         <LinearProgressWithLabel value={20} />
         <Divider sx={{margin: "8px"}}/>
       </List> 

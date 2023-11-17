@@ -6,13 +6,11 @@ import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
-import { createTheme, useTheme, ThemeProvider } from '@mui/material/styles';
+import { useTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import validator from 'validator';
 import { apiCall } from '../../App';
 import Alert from '@mui/material/Alert';
-
-const theme = createTheme();
 
 function ManagerRegister({ setLogin, setUsername }) {
   const navigate = useNavigate();

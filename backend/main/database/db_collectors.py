@@ -110,7 +110,12 @@ def get_all_collectors():
     """
     engine, conn, metadata = dbm.db_connect()
     collectors = db.Table("collectors", metadata, autoload_with=engine)
-    select_stmt = db.select(collectors)
+    privelages = db.Table("privelages", metadata, autoload_with=engine)
+
+    join = db.join(collectors, privelages,
+        (collectors.c.id == privelages.c.collector_id))
+
+    select_stmt = db.select(collectors).where(privelages.c.privelage == COLLECTOR).select_from(join)
     result = conn.execute(select_stmt)
     conn.close()
 
