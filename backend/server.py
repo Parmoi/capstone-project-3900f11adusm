@@ -652,33 +652,12 @@ def get_trade_posts():
     |------------------------------------| """
 
 
-@APP.route("/manager/invite", methods=["GET"])
+@APP.route("/manager/invite", methods=["POST"])
 @jwt_required(fresh=False)
 def invite_manager():
     admin_id = get_jwt_identity()
-    manager_id = request.json.get("manager_id", None)
-
-    return auth.send_manager_email(admin_id, manager_id)
-
-
-@APP.route("/manager/register", methods=["GET"])
-@jwt_required(fresh=False)
-def register_manager():
-    """A special registration that registers Manager accounts.
-    Manager privilege should be that of not postable.
-    Arguments:
-        - username
-        - first_name
-        - last_name
-        - email
-        - phone
-        - password
-        - special_code
-
-    """
-    manager_id = get_jwt_identity()
-    code = request.json.get("special_code", None)
-    return auth.check_manager_email_code(manager_id, code)
+    email = request.json.get("email", None)
+    return auth.send_manager_email(admin_id, email)
 
 
 @APP.route("/manager/analytics", methods=["GET"])
