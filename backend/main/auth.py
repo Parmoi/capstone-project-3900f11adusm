@@ -17,7 +17,7 @@ from flask_jwt_extended import (
 
 from database import db_collectors
 import database.db_manager as dbm
-from privelage import COLLECTOR, MANAGER, ADMIN
+from privelage import COLLECTOR, MANAGER, ADMIN, MANAGERPENDING
 
 from error import InputError, AccessError, OK
 
@@ -54,8 +54,13 @@ def login(password, email=None, username=None):
         return jsonify({"msg": "Invalid password!"}), InputError
 
     user_id = db_collectors.get_collector_id(email=email, username=username)
+    
+    privelage = get_user_privelage(user_id)
+    if privelage == MANAGERPENDING:
+        update_privelage(user_id, MANAGER)
+
     response = jsonify(
-        {"userId": user_id, "privelage": get_user_privelage(user_id)}
+        {"userId": user_id, "privelage": privelage}
     )
     access_token = create_access_token(identity=user_id, fresh=True)
     refresh_token = create_refresh_token(identity=user_id)
@@ -106,26 +111,26 @@ def register_collector(email, username, password, privelage=COLLECTOR):
     return response, OK
 
 
-def send_manager_email(admin_id, manager_id):
-    manager_info = db_collectors.get_collector_dict(user_id=manager_id)
-
-    if manager_info is None:
-        return jsonify({"msg": "Invalid collector id"}), InputError
+def send_manager_email(admin_id, email):
 
     smtp_port = 587
     smtp_server = "smtp.gmail.com"
-    # smtp_server = "localhost"
 
     app_email = "woolliescollectiblescorner@gmail.com"
     password = "collectibles1234"
     app_password = "lvyztdilxougllhb"
 
-    invite_email = manager_info.get("email")
-    # invite_email = "greg.whitehead21@gmail.com"
-
-    subject = "Email Subject"
     code = randrange(100000, 999999)
-    body = f"Manager invitation code: \n\n{code}"
+    message = f"""You have been invited to become a manager at collectibles corner!
+
+    Use the following code as a password with your email to log into the Collectibles Corner and begin creating and managing campaigns for your collectibles!
+
+    {code}
+    """
+
+    message = MIMEText(message, "plain")
+    message["Subject"] = "Collectibles Corner Manager Invitation"
+    message["From"] = app_email 
 
     context = ssl.create_default_context()
 
@@ -135,110 +140,18 @@ def send_manager_email(admin_id, manager_id):
         server.starttls(context=context)
         server.login(app_email, app_password)
         print("connected to server!")
-        print(f"Sending manager invitation email to {invite_email}")
-        server.sendmail(app_email, invite_email, body)
+        print(f"Sending manager invitation email to {email}")
+        server.sendmail(app_email, email, message.as_string())
+        print("Email sent!")
     except Exception as e:
-        return jsonify(print(e))
+        jsonify(print(e))
 
     finally:
         server.quit()
 
-    engine, conn, metadata = dbm.db_connect()
-    privelages = db.Table("privelages", metadata, autoload_with=engine)
-    update_stmt = (
-        db.update(privelages)
-        .where(privelages.c.collector_id == manager_id)
-        .values({"code": code})
-    )
-    conn.execute(update_stmt)
-    conn.close()
+    db_collectors.insert_collector(email, "Manager", code, MANAGERPENDING)
 
     return jsonify({"msg": "Manager invitation email sent!"}), OK
-
-
-def check_manager_email_code(manager_id, code):
-    engine, conn, metadata = dbm.db_connect()
-    privelages = db.Table("privelages", metadata, autoload_with=engine)
-    select_stmt = db.select(privelages).where(privelages.c.collector_id == manager_id)
-    result = conn.execute(select_stmt)
-    manager_info = result.fetchone()._asdict()
-    conn.close()
-
-    if manager_info.get("code") == code:
-        engine, conn, metadata = dbm.db_connect()
-        privelages = db.Table("privelages", metadata, autoload_with=engine)
-        update_stmt = (
-            db.update(privelages)
-            .where(privelages.c.collector_id == manager_id)
-            .values({"privelage": ADMIN})
-        )
-        result = conn.execute(update_stmt)
-        conn.close()
-
-        return (
-            jsonify({"msg": "Manager authorization code verified!"}),
-            OK,
-        )
-    else:
-        return (
-            jsonify({"msg": "Manager authorization code invalid!"}),
-            InputError,
-        )
-
-
-# We will create a function to send mail .We will pass above values in funcion parameter.
-# def send_email(subject, body, sender, recipients, password):
-# msg = MIMEText(body)   # Creating msg object using MIMEText class of email module
-# msg['Subject'] = subject  # Assigning the subject
-# msg['From'] = app_email# Assigning the sender email address
-# msg['To'] = invite_email  # Assigning recepients email address.
-# with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp_server:   # Creating connection using context manager
-#    smtp_server.login(app_email, app_password)
-#    smtp_server.sendmail(app_email, invite_email, msg.as_string())
-# print("Email sent Successfully!")
-
-
-# We will call the function and pass the parameter values defined in line no 4 to 8.
-# send_email(subject, body, sender, recipients, password)
-
-# # creates SMTP session
-# s = smtplib.SMTP('smtp.gmail.com', port)
-
-# # start TLS for security
-# s.starttls()
-
-# # Authentication
-# s.login(app_email, app_password)
-
-# # message to be sent
-# message = "Message_you_need_to_send"
-
-# # sending the mail
-# s.sendmail(app_email, invite_email, message)
-
-# # terminating the session
-# s.quit()
-
-# # port = 465  # For SSL
-
-# # Create a secure SSL context
-# context = ssl.create_default_context()
-
-# with smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as server:
-#     server.login(email, password)
-#     # TODO: Send email here
-
-# with open("manager_email.txt") as fp:
-#     msg = EmailMessage()
-#     msg.set_content(fp.read())
-
-# msg["Subject"] = "Collectible Corner Manager Authorization"
-# msg["From"] = "greg.whitehead21@gmail.com"
-# msg["To"] = "greg.whitehead21@gmail.com"
-#
-# smtp = smtplib.SMTP('localhost')
-# smtp.send_message(msg)
-# smtp.quit()
 
 
 def refresh(user_id):
@@ -344,3 +257,5 @@ def get_user_privelage(user_id):
 def check_user_privelage(user_id, required_privelage):
     user_privelage = get_user_privelage(user_id)
     return user_privelage >= required_privelage
+
+
