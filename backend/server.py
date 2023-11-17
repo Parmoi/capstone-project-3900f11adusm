@@ -1,4 +1,3 @@
-import json
 import os
 
 from datetime import timedelta
@@ -11,8 +10,6 @@ from flask_jwt_extended import (
     verify_jwt_in_request,
 )
 
-import helpers.config as config
-import helpers.exceptions as exceptions
 from main import auth
 from main.database import (
     db_campaigns,
@@ -29,6 +26,8 @@ from main.database import (
 from main.error import InputError, AccessError, OK
 from main.privelage import ADMIN, MANAGER
 from mock_data import mock_data_init
+import helpers.config as config
+import helpers.exceptions as exceptions
 
 APP = Flask(__name__)
 APP.config.from_object(config.DevelopmentConfig)

@@ -1,25 +1,24 @@
-import sqlalchemy as db
-import bcrypt
-import smtplib, ssl
 from random import randrange
+import smtplib, ssl
+
 from email.message import EmailMessage
 from email.mime.text import MIMEText
-
 from flask import jsonify
 from flask_jwt_extended import (
     create_access_token,
-    set_access_cookies,
-    unset_jwt_cookies,
     create_refresh_token,
+    set_access_cookies,
     set_refresh_cookies,
+    unset_jwt_cookies,
 )
-
+import bcrypt
+import sqlalchemy as db
 
 from database import db_collectors
-import database.db_manager as dbm
-from privelage import BANNED, COLLECTOR, MANAGER, ADMIN
-
 from error import InputError, AccessError, OK
+from privelage import BANNED, COLLECTOR, MANAGER, ADMIN
+import database.db_manager as dbm
+
 
 """ |------------------------------------|
     |     Functions for Authorization    |
@@ -59,7 +58,7 @@ def login(email=None, password=None):
     if privelage == BANNED:
         return jsonify({"msg": "You have been banned!"}), AccessError
 
-    response = jsonify({"userId": user_id, "privelage": privelage}), OK
+    response = jsonify({"userId": user_id, "privelage": privelage})
     access_token = create_access_token(identity=user_id, fresh=True)
     refresh_token = create_refresh_token(identity=user_id)
     set_access_cookies(response, access_token)
@@ -68,7 +67,12 @@ def login(email=None, password=None):
 
 
 def logout():
-    """Removes cookies from client"""
+    """Logs the user out and removes the cookies from the client
+    
+    Returns:
+        JSON: {"msg": (string)}
+        int: success code
+    """
     response = jsonify({"msg": "logout successful"})
     unset_jwt_cookies(response)
     return response, OK
