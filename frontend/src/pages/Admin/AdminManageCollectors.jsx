@@ -27,6 +27,7 @@ function AdminManageCollectors() {
 
     apiCall((d) => {
       setData(d["collectors"]);
+      console.log(d["collectors"]);
     }, options)
       .then((res) => {
         if (res) {
@@ -42,7 +43,7 @@ function AdminManageCollectors() {
   const columns = useMemo(
     () => [
       {
-        accessorKey: 'user_id',
+        accessorKey: 'id',
         header: 'Collector ID',
       },
       {
@@ -94,7 +95,7 @@ function AdminManageCollectors() {
       data={data}
       enableRowSelection
       positionToolbarAlertBanner="bottom" //show selected rows count on bottom toolbar
-      initialState={{ columnVisibility: { user_id: false } }}
+      // initialState={{ columnVisibility: { user_id: false } }}
       // changes sizing of default columns
       defaultColumn={{
         minSize: 50,
@@ -108,15 +109,15 @@ function AdminManageCollectors() {
 
       renderBottomToolbarCustomActions={({ table }) => {
         const handleDelete = () => {
+          // for each selected row, call api to delete collectible
           table.getSelectedRowModel().flatRows.map((row) => {
             const options = {
               method: 'POST',
               route: "/collector/ban",
               body: JSON.stringify({
-                'collector_id': row.getValue('user_id'),
-              })
+                'collector_id': row.getValue('id'),
+              }),
             };
-            console.log(row.getValue('user_id'));
 
             apiCall(() => { 
               fetchData();
