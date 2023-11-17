@@ -35,8 +35,8 @@ def login(email=None, password=None):
 
     Returns:
         JSON:
-            - on success {"userId": (int), "privelage": (int)}
-            - on errror {"msg": (string)}
+            - on success: {"userId": (int), "privelage": (int)}
+            - on errror: {"msg": (string)}
         int: success/error code
 
     Raises:
@@ -79,22 +79,34 @@ def logout():
 
 
 def register_collector(email, username, password, privelage=COLLECTOR):
-    """register_collector.
-
-    Checks if email or usernames exists, returns <error_code> if they do.
+    """Function to register a collector
+    
     Hashes password and inserts the collector into the database.
-    Generates access and response tokens and attatches them to response object cookies.
+    Generates access and response tokens and attatches them to response object
+    cookies.
     Returns response for successful collector registration.
 
     Args:
-        email:
-        username:
-        password:
+        email (string): email being used to register an account
+        username (string): username the user want to register under
+        password (string): password of the account
+        privelage (int): what privelage we want to give the registered user 
+                         (defaulted to COLLECTOR)
+
+    Returns:
+        JSON:
+            - on success: {"msg": success message (string), "user_id": (int)}
+            - on error: {"msg": error message (string)}
+        int:
+            success/error code
+    
+    Raises:
+        InputError: email/username already registered
     """
 
     collector_id = db_collectors.get_collector_id(email=email, username=username)
     if collector_id is not None:
-        return jsonify({"msg": "Email or user name already registered!"}), InputError
+        return jsonify({"msg": "Email or username already registered!"}), InputError
 
     password = hash_password(password)
 

@@ -98,9 +98,9 @@ def register():
     password = request.json.get("password", None)
 
     return auth.register_collector(
-        email,
-        username,
-        password,
+        email=email,
+        username=username,
+        password=password,
     )
 
 
