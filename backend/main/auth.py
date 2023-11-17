@@ -56,7 +56,7 @@ def login(email=None, password=None):
     if not validate_password(email, password):
         return jsonify({"msg": "Invalid password!"}), InputError
 
-    user_id = db_collectors.get_collector_id(email=email, username=username)
+    user_id = db_collectors.get_collector_id(email=email)
     
     privelage = get_user_privelage(user_id)
     if privelage == MANAGERPENDING:
