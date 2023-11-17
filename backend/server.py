@@ -813,11 +813,10 @@ def get_collector_list():
 @APP.route("/collector/ban", methods=["POST"])
 @jwt_required(fresh=False)
 def ban_collector():
-    """
+    """Bans a collector account, actionable only by an Admin
+
     Argument:
         - collector_id
-
-    Bans a collector account, actionable only by an Admin
     """
 
     admin_id = get_jwt_identity()
@@ -833,11 +832,7 @@ def ban_collector():
 @APP.route("/admin/get_campaigns", methods=["GET"])
 @jwt_required(fresh=False)
 def get_campaigns_for_review():
-    """
-
-
-    Provides a list of campaigns, either reviewed or not
-    for the Admin to view and review.
+    """Provides a list of campaigns, either reviewed or not for the Admin to view and review.
 
     stub_return = {
         "campaigns": [
@@ -914,77 +909,37 @@ def get_campaigns_for_review():
         ]
     }
     """
-
     return db_campaigns.get_campaigns_and_collectibles()
 
 
 @APP.route("/admin/campaign/approve", methods=["POST"])
 @jwt_required(fresh=False)
 def admin_campaign_approve():
-    """
-    An Admin Approves the campaign.
+    """An Admin Approves the campaign.
 
     stub_return = {
         "msg" : "Campaign Approved"
     }
     """
-
     admin_id = get_jwt_identity()
     campaign_id = request.json.get("campaign_id", None)
+
     return db_campaigns.approve_campaign(admin_id, campaign_id)
 
 
 @APP.route("/admin/campaign/decline", methods=["POST"])
 @jwt_required(fresh=False)
 def admin_campaign_decline():
-    """
-    An Admin Declines the campaing.
+    """An Admin Declines the campaign.
+
     stub_return = {
         "msg" : "Campaign declined!"
     }
     """
-
     admin_id = get_jwt_identity()
     campaign_id = request.json.get("campaign_id", None)
+
     return db_campaigns.decline_campaign(admin_id, campaign_id)
-
-
-""" |------------------------------------|
-    |           Dashboard Routes         |
-    |------------------------------------| """
-
-# Example stubs for /dashboard and /collection
-# @APP.route('/dashboard', methods=['GET'])
-# @jwt_required(fresh=False)
-# def dashboard():
-#     user_id = get_jwt_identity()
-#     return jsonify(dbm.get_dashboard(user_id)), OK
-
-
-""" |------------------------------------|
-    |         Example JWT Routes         |
-    |------------------------------------| """
-# @APP.route("/protected", methods=["GET"])
-# @jwt_required()
-# def protected():
-#     '''
-#     Example of protected route. Requires JWT to access.
-#     Useful for when user has been logged in for a while and wants to edit profile.
-#     '''
-
-#     current_user = get_jwt_identity()
-#     return jsonify(logged_in_as=current_user), OK
-
-# @APP.route("/protected_fresh", methods=["GET"])
-# @jwt_required(fresh=True)
-# def protected_fresh():
-#     '''
-#     Example of protected route. Requires fresh JWT to be fresh to access.
-#     Useful for when user has been logged in for a while and wants to edit profile.
-#     '''
-
-#     current_user = get_jwt_identity()
-#     return jsonify(logged_in_as=current_user), OK
 
 
 if __name__ == "__main__":
