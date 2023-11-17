@@ -1,0 +1,45 @@
+Week 3
+Tutorial schedule changed so was only allocated to a group in week 3. 
+Met new group and familiarized myself with the project specification.
+Group decided on functinality and design of the architecture of the project.
+User stories defined to ensure that all of the requirements for the client have been met.
+
+Week 4
+Discussed division of work and continued on refining user stories.
+I was allocated to work on the backend of the project.
+I spent this week familiarizing myself with docker, postgres and the python
+modules I will be using for the project.
+
+Week 5
+Docker is set up so that the project can be deployed consistently no matter the os.
+Began working on the backend to create collectors and meet the user story requirements
+relating to the users account management and access.
+We had the first demo and took the feedback we received and applied it to the second spring.
+
+Week 6
+I implemented the jwt tokens for secure authentication of the use currentl using system.
+Also worked on user stories related to campaigns and collectibles.
+Worked on all other user stories relating to authentication.
+
+Week 7
+Finished user stories for campaigns and collectibles.
+Commenced work on implementing both wantlist and collection.
+generated mock data so that the database is populated with users, campaigns and
+collectibles.
+
+Week 8
+Restructured backend to accomodate more user friendly structure.
+Implemented user privelages so users access appropriate functinality, ie for
+collector, manager or admin.
+
+
+Week 9
+Implemented more features relating to campaigns and feedback
+Implemented admin features in the backend such as the ability to send email to invite manager
+
+Week 10 
+Generated more mock data for the demonstartion
+Presented the project
+Wrote architecture overview for the final report
+Cleaned up code and fixed remaining minor bugs
+
