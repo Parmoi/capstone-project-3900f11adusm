@@ -1,12 +1,12 @@
-import sqlalchemy as db
+from datetime import date
 from flask import jsonify
-import db_helpers
-import db_manager as dbm
-import db_collections, db_past_tradeoffers, db_exchangehistory
-from error import OK, InputError, AccessError
-from datetime import date, datetime
+import sqlalchemy as db
 
-# TODO: Error checking
+from error import OK
+import db_collections, db_exchangehistory, db_helpers
+import db_manager as dbm, db_past_tradeoffers
+
+
 def register_trade_offer(tp_id, send_id, ctn_s_id, offer_msg, offer_img):
     """Generates a new trade offer for a certain trade_post
 
@@ -45,7 +45,7 @@ def register_trade_offer(tp_id, send_id, ctn_s_id, offer_msg, offer_img):
     
     return jsonify({"trade_offer_id": trade_offer_id}), OK
 
-# TODO: Error checking
+
 def find_tradelist_offers(trade_post_id):
     """Finds all incoming offers for a certain trade post (when we click on it)
 
@@ -118,15 +118,12 @@ def find_tradelist_offers(trade_post_id):
 
     return jsonify(offers)
 
-# TODO: Error checking (empty lists?)
+
 def find_outgoing_offers(user_id):
     """Finds all outgoing offers the user has made
 
     Notes:
-        - id == sender_id
-        - "SENT" offers differ slightly in their return to "DECLINED"/"ACCEPTED" offers,
-          but the important data should be the same
-
+        id == sender_id
 
     Args:
         user_id (int): id of user who we want to find outgoing trade offers for
@@ -186,8 +183,8 @@ def find_outgoing_offers(user_id):
     select_stmt = (db.select(
         to.c.id.label("offer_id"),
         cbl.c.id.label("collectible_s_id"),
-        cbl.c.name.label("collectible_s_name"), # Collectible send name
-        cbl.c.image.label("collectible_s_img"), # Collectible send image
+        cbl.c.name.label("collectible_s_name"),
+        cbl.c.image.label("collectible_s_img"),
         to.c.date_offered.label("date_offer_sent"),
         to.c.offer_status.label("offer_status"),
         to.c.date_updated.label("date_updated"),
@@ -224,19 +221,8 @@ def find_outgoing_offers(user_id):
     return jsonify(offer_list), OK
 
 
-# TODO: Error checking
 def accept_trade_offer(offer_id):
     """Function to accept a trade offer
-
-    Notes:
-        1. Updates trade_offer entry to "ACCEPTED" status                       [DONE]
-        2. Copies trade offer into past_trade_offers                            [DONE]
-        3. Deletes the old trade offer                                          [DONE]
-        4. Deletes the trade post                                               [DONE]
-        5. Add the trade to sender's exchange history
-        6. Add the trade to receiver's exchange history
-        7. Move collectible from sender's collection to receiver's collection   [DONE]
-        8. Move collectible from receiver's collection to sender's collection   [DONE]
 
     Args:
         offer_id (int): id of the offer we want to accept
@@ -255,7 +241,6 @@ def accept_trade_offer(offer_id):
     tp_img = db.Table("trade_post_images", metadata, autoload_with=engine)
     
     # Change offer status from "SENT" to "ACCEPTED"
-    # update_stmt = db.update(to).where(to.c.id == offer_id).values(offer_status = "ACCEPTED")
     update_stmt = db.update(to).where(to.c.id == offer_id).values({
         "offer_status": "ACCEPTED",
         "date_updated": date.today()
@@ -271,7 +256,8 @@ def accept_trade_offer(offer_id):
     db_past_tradeoffers.move_to_past(offer_id, engine, conn, metadata)
     
     # For all the other trades, automatically set them to "DECLINED"
-    offers_update_stmt = db.update(to).where(to.c.trade_post_id == trade_post_id).values(offer_status = "DECLINED")
+    offers_update_stmt = db.update(to).where(
+        to.c.trade_post_id == trade_post_id).values(offer_status = "DECLINED")
     conn.execute(offers_update_stmt)
 
     # Find the id of the remaining trade offers, and send them to "past_trade_offers" table
@@ -282,7 +268,8 @@ def accept_trade_offer(offer_id):
         db_past_tradeoffers.move_to_past(curr_offer_id, engine, conn, metadata)
 
     # Delete trade post images associated with the trade post
-    post_img_delete_stmt = db.delete(tp_img).where(tp_img.c.trade_post_id == trade_post_id)
+    post_img_delete_stmt = db.delete(tp_img).where(
+        tp_img.c.trade_post_id == trade_post_id)
     conn.execute(post_img_delete_stmt)
 
     # Delete the trade post
@@ -303,21 +290,14 @@ def accept_trade_offer(offer_id):
 
     # Moves the collectible from receiver to sender
     db_collections.move_collectible(receiver_id, sender_id, collection_r_id)
-    
 
     conn.close()
 
     return jsonify({"offer_id": offer_id}), OK
 
 
-# TODO: Error checking (empty lists?)
 def decline_trade_offer(offer_id):
     """Function to decline a trade offer
-
-    Notes:
-        1. Updates trade_offer entry to "DECLINED" status
-        2. Copies the trade_offer entry to the past_trade_offers table
-        3. Deletes the original trade_offer entry
 
     Args:
         offer_id (int): id of the trade offer that we want to decline
@@ -349,7 +329,7 @@ def decline_trade_offer(offer_id):
     |  Helper Functions for tradeoffers  |
     |------------------------------------| """
 
-# TODO: Error checking? Not sure if needed, since this is a helper and the main functions should handle errors already
+
 def find_trade_offer_id(trade_post_id, sender_id, ctn_s_id):
     """Find trade offer id from the trade post, sender id and sent collection id
 
@@ -382,8 +362,7 @@ def to_tp_info(offer_id, engine, conn, metadata):
     """Returns the trade offer and the corresponding trade post information
 
     Notes:
-        engine, conn, metadata included in arguments because too many
-        connections were being opened simultaneously
+        engine, conn, metadata included in arguments (db connectors)
     
     Args:
         offer_id (int): id of trade offer we want to find information for
@@ -405,7 +384,6 @@ def to_tp_info(offer_id, engine, conn, metadata):
             "date_updated": "25/11/2023"
         }
     """
-
     # Loads in the trade_offers, collections, collectibles, and collectors table
     to = db.Table("trade_offers", metadata, autoload_with=engine)
     tp = db.Table("trade_posts", metadata, autoload_with=engine)
