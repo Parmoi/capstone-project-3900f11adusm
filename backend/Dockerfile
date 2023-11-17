@@ -16,6 +16,7 @@ ENV FLASK_APP=server.py
 ENV PYTHONPATH "${PYTHONPATH}:/server/main"
 ENV PYTHONPATH "${PYTHONPATH}:/server/main/database"
 ENV PYTHONPATH "${PYTHONPATH}:/server/helpers"
+ENV PYTHONPATH "${PYTHONPATH}:/server/mock_data"
 
 # Create a non-privileged user that the app will run under.
 # See https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#user

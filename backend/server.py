@@ -50,6 +50,8 @@ APP.config["JWT_COOKIE_CSRF_PROTECT"] = False
 # def entry():
 #     return "<h1>Hello, Collector<h1\>"
 
+with APP.app_context():
+    dbm.database_setup()
 
 """ |------------------------------------|
     |          Database Routes           |

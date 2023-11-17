@@ -2,6 +2,8 @@ services:
   server:
     build:
       context: ./backend
+    container_name: backend
+    restart: always
     ports:
       - 5000:5000
     environment:
@@ -16,26 +18,26 @@ services:
     depends_on:
       db:
         condition: service_healthy
-  # frontend:
-  #   build:
-  #     context: ./frontend
-  #   ports:
-  #     - 3000:3000
-  #   depends_on:
-  #     - server
+  frontend:
+    build:
+      context: ./frontend
+    container_name: frontend
+    restart: always
+    ports:
+      - 3000:3000
+    depends_on:
+      - server
   db:
     image: postgres
     restart: always
     user: postgres
     secrets:
       - db-password
-      # - jwt_secret
     volumes:
       - db-data:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=example
       - POSTGRES_PASSWORD_FILE=/run/secrets/db-password
-      # - AUTH_SALT=Null
       - JWT_SECRET_KEY=secret
 
     expose:

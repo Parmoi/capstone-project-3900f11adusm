@@ -107,3 +107,17 @@ the Admin pages for the frontend where I got the main functionality pages for
 Admin completed. These were the user management and Manager invite and management
 pages.
 
+
+Week 10
+
+I made an overview all the functionality we needed to implement and notified the 
+rest of the group members on that regard. I made further work on the Admin pages
+and the Manager pages. I finished the implementation for these pages during the 
+week prior to the backend API for them were complete. Afterwards, I started testing
+the different functionality in our web application and from there, found and fixed 
+bugs, both in the backend and frontend.
+
+During the week, the backend APIs for the Admin and Manager pages I've made were 
+completed but with different functionality than I originally expected. Due to this,
+I spent some time properly connecting the APIs to the frontend. I've also contributed
+to non-coding work regarding reports, demo preparation and presentation. 
