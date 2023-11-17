@@ -39,7 +39,6 @@ function AdminCampaignApproval() {
 
     apiCall((d) => {
       setData(d["campaigns"]);
-      console.log(d["campaigns"]);
     }, options)
     .then((res) => {
       if (res) {

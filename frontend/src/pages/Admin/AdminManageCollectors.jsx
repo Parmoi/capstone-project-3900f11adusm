@@ -18,7 +18,6 @@ function AdminManageCollectors() {
   const [rowSelection, setRowSelection] = React.useState({});
 
   const fetchData = () => {
-    console.log('fetching data');
     // call api with data
     const options = {
       method: 'GET',
@@ -27,7 +26,6 @@ function AdminManageCollectors() {
 
     apiCall((d) => {
       setData(d["collectors"]);
-      console.log(d["collectors"]);
     }, options)
       .then((res) => {
         if (res) {
