@@ -5,9 +5,6 @@ export
 # DOCKER_PROJECT = ${PROJECT_NAME}
 DOCKER_PROJECT = 'Collectibles Corner'
 
-kill:
-	docker compose kill
-
 build:
 	docker compose up --build
 
@@ -22,3 +19,6 @@ remove_images:
 
 remove_volumes:
 	docker volume rm $(shell docker volume ls -q)
+
+kill:
+	docker compose kill
