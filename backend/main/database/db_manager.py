@@ -7,11 +7,6 @@ db_user = "postgres"
 db_password = os.environ["POSTGRES_PASSWORD"]
 db_host = "db"
 
-image_url_placeholder = (
-    "https://ilarge.lisimg.com/image/8825948/980full-homer-simpson.jpg"
-)
-
-
 # Function to setup our database
 def database_setup():
     # Establish connection
@@ -24,10 +19,10 @@ def database_setup():
     cursor.execute(f"CREATE DATABASE {db_name}")
     conn.close()
 
-    # Connect to database again
+    # Connect to the database
     engine, conn, metadata = db_connect()
 
-    # Creates a collector table and adds it to metadata
+    # Table that stores all collectibles
     collector_table = db.Table(
         "collectors",
         metadata,  # Names cannot be uppercase
@@ -45,7 +40,7 @@ def database_setup():
         db.Column("instagram_handle", db.String),
     )
 
-    # Creates a collectible campaign table
+    # Table that stores all campaigns
     campaign_table = db.Table(
         "campaigns",
         metadata,
@@ -59,7 +54,7 @@ def database_setup():
         db.Column("approved", db.Boolean),
     )
 
-    # Creates a capaign feedback table
+    # Table that stores all campaign feedback
     campaign_feedback_table = db.Table(
         "campaign_feedback",
         metadata,
@@ -70,7 +65,7 @@ def database_setup():
         db.Column("feedback_date", db.DATE),
     )
 
-    # Creates a collectible table
+    # Table that stores all collectibles
     collectible_table = db.Table(
         "collectibles",
         metadata,
@@ -81,7 +76,7 @@ def database_setup():
         db.Column("campaign_id", db.Integer, db.ForeignKey("campaigns.id")),
     )
 
-    # Creates a collections table
+    # Table that stores what collectibles belong to what user's collection
     collections_table = db.Table(
         "collections",
         metadata,
@@ -91,8 +86,7 @@ def database_setup():
         db.Column("date_added", db.DATE),
     )
 
-    # Creates a wantlist table
-    # Ties a user and collectible together
+    # Table that stores what collectibles a user wants
     wantlist_table = db.Table(
         "wantlist",
         metadata,
@@ -102,7 +96,7 @@ def database_setup():
         db.Column("date_added", db.DATE),
     )
 
-    # Creates a trade_posts table that lists all current trade posts
+    # Table that lists all current trade posts
     trade_posts_table = db.Table(
         "trade_posts",
         metadata,
@@ -114,7 +108,7 @@ def database_setup():
         db.Column("post_date", db.DATE)
     )
 
-    # Create a trade_post_images table that stores the images of the trade posts
+    # Table that stores the images of the trade posts
     trade_post_images_table = db.Table(
         "trade_post_images",
         metadata,
@@ -125,49 +119,52 @@ def database_setup():
         db.Column("image_url", db.String)
     )
 
+    # Table that stores all sent trade offers
     trade_offers_table = db.Table(
         "trade_offers",
         metadata,
         db.Column("id", db.Integer, db.Identity(), primary_key=True),
         db.Column("trade_post_id", db.Integer, db.ForeignKey("trade_posts.id")),
-        db.Column("trade_sender_id", db.Integer, db.ForeignKey("collectors.id")), # id of user sending trade offer
-        db.Column("collection_send_id", db.Integer, db.ForeignKey("collections.id")), # collection id of collectible that user is sending for trade
+        db.Column("trade_sender_id", db.Integer, db.ForeignKey("collectors.id")),
+        db.Column("collection_send_id", db.Integer, db.ForeignKey("collections.id")),
         db.Column("offer_message", db.String),
         db.Column("offer_image", db.String),
         db.Column("offer_status", db.String),
         db.Column("date_offered", db.DATE),
-        db.Column("date_updated", db.DATE), # The date the offer was sent/accepted/declined
+        db.Column("date_updated", db.DATE),
     )
 
+    # Table that stores all accepted/declined offers
     past_trade_offers_table = db.Table(
         "past_trade_offers",
         metadata,
         db.Column("id", db.Integer, db.Identity(), primary_key=True),
-        db.Column("trade_sender_id", db.Integer, db.ForeignKey("collectors.id")), # id of user sending trade offer
-        db.Column("collectible_send_id", db.Integer, db.ForeignKey("collectibles.id")), # collection id of collectible that user is sending for trade
-        db.Column("trade_receiver_id", db.Integer, db.ForeignKey("collectors.id")), # id of user receiving trade offer
-        db.Column("collectible_receive_id", db.Integer, db.ForeignKey("collectibles.id")), # collection id of collectible that user is receiving for trade
+        db.Column("trade_sender_id", db.Integer, db.ForeignKey("collectors.id")),
+        db.Column("collectible_send_id", db.Integer, db.ForeignKey("collectibles.id")),
+        db.Column("trade_receiver_id", db.Integer, db.ForeignKey("collectors.id")),
+        db.Column("collectible_receive_id", db.Integer, db.ForeignKey("collectibles.id")),
         db.Column("offer_status", db.String),
         db.Column("date_offered", db.DATE),
-        db.Column("date_updated", db.DATE), # The date the offer was sent/accepted/declined
+        db.Column("date_updated", db.DATE),
     )
 
+    # Table that stores all accepted trade interactions
     exchange_history_table = db.Table(
         "exchange_history",
         metadata,
         db.Column("id", db.Integer, db.Identity(), primary_key=True),
-        db.Column("trade_sender_id", db.Integer, db.ForeignKey("collectors.id")), # id of user sending trade offer
-        db.Column("collectible_send_id", db.Integer, db.ForeignKey("collectibles.id")), # collection id of collectible that user is sending for trade
-        db.Column("trade_receiver_id", db.Integer, db.ForeignKey("collectors.id")), # id of user receiving trade offer
-        db.Column("collectible_receive_id", db.Integer, db.ForeignKey("collectibles.id")), # collection id of collectible that user is receiving for trade
+        db.Column("trade_sender_id", db.Integer, db.ForeignKey("collectors.id")),
+        db.Column("collectible_send_id", db.Integer, db.ForeignKey("collectibles.id")),
+        db.Column("trade_receiver_id", db.Integer, db.ForeignKey("collectors.id")),
+        db.Column("collectible_receive_id", db.Integer, db.ForeignKey("collectibles.id")),
         db.Column("date_offered", db.DATE),
         db.Column("date_accepted", db.DATE),
     )
 
-    pivelage_table = db.Table(
+    # Table that stores the privelages of a certain user
+    privelage_table = db.Table(
         "privelages",
         metadata,
-        # db.Column("id", db.Integer, db.Identity(), primary_key=True),
         db.Column(
             "collector_id", db.Integer, db.ForeignKey("collectors.id"), primary_key=True
         ),
@@ -181,9 +178,7 @@ def database_setup():
 
 
 def db_connect():
-    """db_connect.
-
-    Function to connect to the db and return [engine, conn, metadata]
+    """Function to connect to the db and return [engine, conn, metadata].
     """
     # Create an engine and connect to the db
     engine = db.create_engine(

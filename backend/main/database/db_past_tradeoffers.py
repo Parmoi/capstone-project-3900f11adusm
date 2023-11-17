@@ -1,18 +1,14 @@
+from datetime import datetime
 import sqlalchemy as db
-from flask import jsonify
-import db_helpers, db_tradeoffers, db_collections
-from error import OK, InputError, AccessError
-from datetime import date, datetime
 
-# TODO: Error checking
+import db_helpers, db_tradeoffers, db_collections
+
+
 def find_past_outgoing_offers(user_id, engine, conn, metadata):
-    """Finds all past offers that the user has made (since ACCCEPTED/DECLINED
-    offers are deleted)
+    """Finds all past offers that the user has made (since ACCCEPTED/DECLINED offers are deleted)
 
     Notes:
-        - engine, conn, metadata included in arguments because too many
-        connections were being opened simultaneously
-        - has no offer_id, trade_post_id (mainly for the purpose of deleting and not having foreign key errors)
+        engine, conn, metadata included in arguments (db connection helpers)
 
     Args:
         user_id (int): id of collector we want to find past outgoing offers for
@@ -38,7 +34,6 @@ def find_past_outgoing_offers(user_id, engine, conn, metadata):
             },
         ]
     """
-
     # Loads in the past_trade_offers, collectors and collectibles table
     past_to = db.Table("past_trade_offers", metadata, autoload_with=engine)
     ctr = db.Table("collectors", metadata, autoload_with=engine)
@@ -85,7 +80,7 @@ def find_past_outgoing_offers(user_id, engine, conn, metadata):
     
     return offers
 
-# TODO: Error checking
+
 def move_to_past(offer_id, engine, conn, metadata):
     """Moves an offer from the trade_offers table to the past_trade_offers table
 

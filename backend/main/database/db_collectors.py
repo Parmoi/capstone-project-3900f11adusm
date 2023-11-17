@@ -1,10 +1,11 @@
-import sqlalchemy as db
 from flask import jsonify
+import sqlalchemy as db
+
+from main.database import db_helpers
+from main.error import OK, InputError
+from main.privelage import BANNED, COLLECTOR, MANAGER
 import auth
 import main.database.db_manager as dbm
-from main.database import db_helpers
-from main.error import OK, InputError, AccessError
-from main.privelage import BANNED, COLLECTOR, MANAGER
 
 """ |------------------------------------|
     |     Functions for collectors       |
@@ -12,9 +13,8 @@ from main.privelage import BANNED, COLLECTOR, MANAGER
 
 
 def insert_collector(email, username, password, privelage=COLLECTOR):
-    """insert_collector.
+    """Inserts a collector into the system.
 
-    Insert a new collector into the database.
     Returns the new users unique id that was created when inserted.
 
     Args:
@@ -63,21 +63,25 @@ def update_collector(
     address=None,
     profile_picture=None,
 ):
-    """update_collector.
+    """Updates the details of a user.
 
     Args:
-        id: collectors user id
-        email: collectors new email
-        username: collectors new user name
-        first_name: collectors new first name
-        last_name: collectors last name
-        phone: collectors phone number
-        password: collectors hashed password
-        address: collectors address
+        id (int): collector's user id
+        email (string): collector's new email
+        username (string): collector's new username
+        first_name (string): collector's new first name
+        last_name (string): collector's new last name
+        phone (string): collector's new phone number
+        password (string): collector's new hashed password
+        address (string): collector's new address
+
+    Returns:
+        JSON:
+            - on success: {"msg": (string), "collectors": (dictionary)}
+        int: success/error code
     """
 
     update_dict = {k: v for k, v in locals().items() if v != "" and v is not None}
-    print(update_dict)
 
     if "password" in update_dict.keys():
         update_dict["password"] = auth.hash_password(update_dict["password"])
@@ -125,16 +129,36 @@ def get_all_collectors():
     return jsonify({"collectors": all_collectors}), OK
 
 
-# TODO: user error check
 def get_collector(user_id=None, email=None, username=None):
-    """get_collector.
-
-    Returns dict with collectors details
+    """Returns a dict of the collector's details
 
     Args:
-        user_id: user id of collector being returned
-    """
+        user_id (int): id of collector we want to find information on
+        email (string): string of the collector to find
+        username (string): username of the collector to find
 
+    Returns:
+        JSON:
+            - on success: 
+                {
+                    "id": (int), 
+                    "email": (string), 
+                    "username": (string),
+                    "first_name": (string),
+                    "last_name": (string),
+                    "phone": (string),
+                    "address": (string),
+                    "profile_picture": (string),
+                    "twitter_handle": (string),
+                    "facebook_handle": (string),
+                    "instagram_handle": (string)
+                }
+            - on error: {"msg": (string)}
+        int: success/error code
+    
+        Raises:
+            InputError: Not a valid collector
+    """
     engine, conn, metadata = dbm.db_connect()
 
     # Loads in the collector table into our metadata
@@ -158,7 +182,11 @@ def get_collector(user_id=None, email=None, username=None):
 
 
 def get_managers():
-    """
+    """Return a list of all managers within the system.
+
+    Returns:
+        [dictionary]: list of dictionaries of our managers
+
     stub_return = {
         "managers": [
             {
@@ -183,7 +211,6 @@ def get_managers():
             },
         ]
     }
-
     """
     engine, conn, metadata = dbm.db_connect()
 
@@ -213,7 +240,7 @@ def get_managers():
 
     return jsonify({"managers": managers}), OK
 
-# TODO: Error checking
+
 def update_socials(user_id, twitter_handle=None, facebook_handle=None, instagram_handle=None):
     """Function to update a user's socials
     
@@ -251,6 +278,13 @@ def update_socials(user_id, twitter_handle=None, facebook_handle=None, instagram
 
 
 def ban_collector(admin_id, collector_id):
+    """Function to ban a certain collector.
+
+    Args:
+        admin_id (int): id of admin that is performing the ban
+        collector_id (int): id of collector to be banned
+    
+    """
     engine, conn, metadata = dbm.db_connect()
 
     privelages = db.Table("privelages", metadata, autoload_with=engine)
@@ -261,6 +295,9 @@ def ban_collector(admin_id, collector_id):
         .values({"privelage": BANNED})
     )
     conn.execute(update_stmt)
+    conn.close()
+
+    return
 
 
 """ |------------------------------------|
@@ -269,14 +306,16 @@ def ban_collector(admin_id, collector_id):
 
 
 def get_collector_id(email=None, username=None):
-    """get_collector_id.
+    """Returns the user id associated with an email or username.
 
-    Get collectors user id associated with email address or username from database.
     Returns None if user does not exist.
 
     Args:
-        email: users email
-        username: users username
+        email (string): email of the collector we want to find the id for
+        username (string): username of collecter we want to find the id for
+    
+    Returns:
+        int: id of the user
     """
     engine, conn, metadata = dbm.db_connect()
     collectors = db.Table("collectors", metadata, autoload_with=engine)
@@ -300,16 +339,15 @@ def get_collector_id(email=None, username=None):
     return collector_id
 
 
-# TODO: do a check that the collector acturally exists
 def get_collector_pw(id=None, email=None):
-    """get_wantlist.
-
-    Returns the hashed password of the user associated with user_id or email.
-    Returns None if id and email not given.
+    """returns the hashed password of a collector through their id or email.
 
     Args:
-        id: users id
-        email: users email
+        id (int): id of our user
+        email (string): email of our user
+    
+    Returns:
+        string: string of the hashed password
     """
     engine, conn, metadata = dbm.db_connect()
     collectors = db.Table("collectors", metadata, autoload_with=engine)
@@ -330,12 +368,13 @@ def get_collector_pw(id=None, email=None):
 
 
 def get_collector_dict(user_id=None, email=None, username=None):
-    """get_collector.
-
-    Returns dict with collectors details
+    """Returns dict with collector's details.
 
     Args:
-        user_id: user id of collector being returned
+        user_id (int): id of the collector we want to find details for
+
+    Returns:
+        dictionary: contains the collector's details
     """
 
     engine, conn, metadata = dbm.db_connect()

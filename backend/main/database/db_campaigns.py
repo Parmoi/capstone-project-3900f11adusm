@@ -1,12 +1,12 @@
-from main.privelage import ADMIN, MANAGER
-from main.database import db_collectibles
-import sqlalchemy as db
-from flask import jsonify
-import db_manager as dbm
-from main import auth
-import db_helpers
 from datetime import date, datetime
+from flask import jsonify
+import sqlalchemy as db
+
+from main import auth
+from main.database import db_collectibles
 from main.error import OK, InputError, AccessError
+from main.privelage import ADMIN, MANAGER
+import db_helpers, db_manager as dbm
 
 """ |------------------------------------|
     |       Functions for campaigns      |
@@ -23,17 +23,21 @@ def register_campaign(
     collectibles,
     approved=False,
 ):
-    """insert_campaign.
-
-    Function to insert new campaign.
-    Dynamically creates campaign collectible table with optional fields.
+    """Register a new campaign into the database.
 
     Args:
-        name: name of collectible campaign
-        description: description of collectible campaign
-        start_date: start_date of campaign ("DD/MM/YYYY")
-        end_date: end date of campaign ("DD/MM/YYYY")
-        collectible_fields: list of fields/columns for collectibles in this campaign
+        user_id (int): id of user creating the campaign
+        name (string): name of collectible campaign
+        description (string): description of collectible campaign
+        image (string): url of image the campaign image
+        start_date (string): start_date of campaign ("DD/MM/YYYY")
+        end_date (string): end date of campaign ("DD/MM/YYYY")
+        collectibles ([dictionary]): list of collectibles to add to the campaign
+        approved (boolean): approval status of campaign (approved/not approved)
+
+    Returns:
+        JSON: {"msg": (string), "campaign_id": (int)}
+        int: success/error code
     """
     if not auth.check_user_privelage(user_id, MANAGER):
         return (
@@ -78,6 +82,16 @@ def register_campaign(
 
 
 def approve_campaign(admin_id, campaign_id):
+    """As an admin, approve the posting of a certain campaign.
+
+    Args:
+        admin_id (int): id of the admin approving the campaign
+        campaign_id (int): id of campaign to be approved
+
+    Returns:
+        JSON: {"msg": (string)}
+        int: success/error code
+    """
     if not auth.check_user_privelage(admin_id, ADMIN):
         return (
             jsonify({"msg": "User does not have privelage level required!"}),
@@ -136,7 +150,6 @@ def get_campaign(name=None, id=None):
     return jsonify(campaign), 200
 
 
-# TODO: Error checking, Docstring
 def get_all_campaigns():
     engine, conn, metadata = dbm.db_connect()
 
@@ -151,7 +164,6 @@ def get_all_campaigns():
     return jsonify({"campaigns": campaigns}), 200
 
 
-# TODO: Error checking, Docstring
 def get_campaign_collectibles(campaign_id):
     """get_campaign_collectibles.
 
@@ -231,7 +243,6 @@ def get_campaigns_and_collectibles():
                 "approved": False,
             },
     """
-
     engine, conn, metadata = dbm.db_connect()
 
     collectibles = db.Table("collectibles", metadata, autoload_with=engine)
@@ -277,9 +288,6 @@ def get_campaigns_and_collectibles():
         ),
         OK,
     )
-
-    all_collectible_rows = results.all()
-    collectibles = [row._asdict() for row in all_collectible_rows]
 
 
 def get_campaigns_in_period(time_period):
@@ -347,6 +355,16 @@ def get_campaigns_in_period(time_period):
 
 
 def add_campaign_feedback(user_id, campaign_id, feedback):
+    """Adds feedback for a campaign.
+
+    Args:
+        user_id (int): id of the user giving the feedback
+        campaign_id (int): id of the campaign the feedback is directed to
+        feedback (string): the feedback the user wants to give the campaign
+
+    Returns:
+        JSON: success/error message
+    """
     engine, conn, metadata = dbm.db_connect()
 
     # Loads in the campaign table into our metadata
@@ -418,7 +436,6 @@ def get_campaign_feedback(user_id):
             feedback.c.campaign_id,
             feedback.c.feedback,
             feedback.c.feedback_date
-            # campaigns.c.id.label("campaign_id")
         )
         .select_from(join)
     )
@@ -436,9 +453,15 @@ def get_campaign_feedback(user_id):
     |------------------------------------| """
 
 
-# Function to convert campaign name to campaign id
-# Returns campaign id as int
 def get_campaign_id(campaign_name):
+    """Find the campaign_id from the campaign_name
+
+    Args:
+        campaign_name (string): name of the campaign
+
+    Returns:
+        int: id of the campaign that has the sepcificied name
+    """
     engine, conn, metadata = dbm.db_connect()
 
     # Loads in the campaign table into our metadata
@@ -454,6 +477,14 @@ def get_campaign_id(campaign_name):
 
 
 def get_campaign_name(campaign_id):
+    """Find the campaign name associated with the campaign_id.
+
+    Args:
+        campaign_id (int): id of the campaign we want to find the name for
+
+    Returns:
+        string: name of the campaign
+    """
     engine, conn, metadata = dbm.db_connect()
 
     # Loads in the campaign table into our metadata
@@ -462,7 +493,7 @@ def get_campaign_name(campaign_id):
     select_stmt = db.select(campaigns.c.name).where(campaigns.c.id == campaign_id)
 
     execute = conn.execute(select_stmt)
-    campaign_id = execute.fetchone()._asdict().get("name", None)
+    campaign_name = execute.fetchone()._asdict().get("name", None)
     conn.close()
 
-    return campaign_id
+    return campaign_name

@@ -1,54 +1,54 @@
-import sqlalchemy as db
-import bcrypt
-import smtplib, ssl
 from random import randrange
+import smtplib, ssl
+
 from email.message import EmailMessage
 from email.mime.text import MIMEText
-
 from flask import jsonify
 from flask_jwt_extended import (
     create_access_token,
-    set_access_cookies,
-    unset_jwt_cookies,
     create_refresh_token,
+    set_access_cookies,
     set_refresh_cookies,
+    unset_jwt_cookies,
 )
-
+import bcrypt
+import sqlalchemy as db
 
 from database import db_collectors
-import database.db_manager as dbm
-from privelage import COLLECTOR, MANAGER, ADMIN, BANNED
-
 from error import InputError, AccessError, OK
+from privelage import BANNED, COLLECTOR, MANAGER, ADMIN
+import database.db_manager as dbm
+
 
 """ |------------------------------------|
     |     Functions for Authorization    |
     |------------------------------------| """
 
 
-def login(password, email=None, username=None):
-    """login.
-
-    Logs a user in by setting fresh access and refresh tokens in client cookies
-    if credentials are correct.
+def login(email=None, password=None):
+    """Logs a user in by setting fresh access and refresh tokens in client
+    cookies if credentials are correct.
 
     Args:
-        password: users password
-        email: users email
-        username: users username
+        email (string): email of the user trying to log in
+        password (string): password of user trying to log in
 
-    provide username or email, not both.
+    Returns:
+        JSON:
+            - on success: {"userId": (int), "privelage": (int)}
+            - on errror: {"msg": (string)}
+        int: success/error code
+
+    Raises:
+        InputError: invalid email or password
+        AccessError: banned user tries to login
     """
     if email:
         collector_id = db_collectors.get_collector_id(email=email)
         if collector_id is None:
             return jsonify({"msg": "Invalid email!"}), InputError
-    elif username:
-        collector_id = db_collectors.get_collector_id(username=username)
-        if collector_id is None:
-            return jsonify({"msg": "Invalid username!"}), InputError
     else:
-        return jsonify({"msg": "No email or username provided!"}), InputError
+        return jsonify({"msg": "No email provided!"}), InputError
 
     if not validate_password(email, password):
         return jsonify({"msg": "Invalid password!"}), InputError
@@ -58,9 +58,7 @@ def login(password, email=None, username=None):
     if privelage == BANNED:
         return jsonify({"msg": "You have been banned!"}), AccessError
 
-    response = jsonify(
-        {"userId": user_id, "privelage": get_user_privelage(user_id)}
-    )
+    response = jsonify({"userId": user_id, "privelage": privelage})
     access_token = create_access_token(identity=user_id, fresh=True)
     refresh_token = create_refresh_token(identity=user_id)
     set_access_cookies(response, access_token)
@@ -69,29 +67,46 @@ def login(password, email=None, username=None):
 
 
 def logout():
-    """Removes cookies from client"""
-    response = jsonify({"msg": "logout successful"})
+    """Logs the user out and removes the cookies from the client
+    
+    Returns:
+        JSON: {"msg": (string)}
+        int: success code
+    """
+    response = jsonify({"msg": "Logout successful!"})
     unset_jwt_cookies(response)
     return response, OK
 
 
 def register_collector(email, username, password, privelage=COLLECTOR):
-    """register_collector.
-
-    Checks if email or usernames exists, returns <error_code> if they do.
+    """Function to register a collector
+    
     Hashes password and inserts the collector into the database.
-    Generates access and response tokens and attatches them to response object cookies.
+    Generates access and response tokens and attatches them to response object
+    cookies.
     Returns response for successful collector registration.
 
     Args:
-        email:
-        username:
-        password:
+        email (string): email being used to register an account
+        username (string): username the user want to register under
+        password (string): password of the account
+        privelage (int): what privelage we want to give the registered user 
+                         (defaulted to COLLECTOR)
+
+    Returns:
+        JSON:
+            - on success: {"msg": success message (string), "user_id": (int)}
+            - on error: {"msg": error message (string)}
+        int:
+            success/error code
+    
+    Raises:
+        InputError: email/username already registered
     """
 
     collector_id = db_collectors.get_collector_id(email=email, username=username)
     if collector_id is not None:
-        return jsonify({"msg": "Email or user name already registered!"}), InputError
+        return jsonify({"msg": "Email or username already registered!"}), InputError
 
     password = hash_password(password)
 

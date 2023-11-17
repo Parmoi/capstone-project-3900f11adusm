@@ -1,9 +1,9 @@
-import sqlalchemy as db
-from flask import jsonify
-import db_helpers
-import db_manager as dbm
-from error import OK, InputError, AccessError
 from datetime import date
+from flask import jsonify
+import sqlalchemy as db
+
+from error import OK
+import db_helpers, db_manager as dbm
 
 """
 Preface:
@@ -14,7 +14,7 @@ Preface:
     an offer to the collector that lists it
 """
 
-# TODO: Error checking
+
 def get_trade_posts(collectible_id):
     """Returns all trade posts for a certain collectible
 
@@ -82,7 +82,7 @@ def get_trade_posts(collectible_id):
 
     return jsonify(trade_posts), OK
     
-# TODO: Error checking
+
 def get_current_trade_posts(collector_id):
     """Finds the trade posts that the collector has posted
 
@@ -150,7 +150,7 @@ def get_current_trade_posts(collector_id):
 
     return jsonify(trade_posts), OK
 
-# TODO: Error checking
+
 def get_trade_post_info(trade_post_id):
     """Gets the information for a trade post
 
@@ -212,7 +212,6 @@ def get_trade_post_info(trade_post_id):
         ).select_from(join)
     )
 
-    # TODO: TEST
     post_info = db_helpers.rows_to_list(conn.execute(select_stmt).fetchall())[0]
 
     img_select_stmt = (
@@ -230,7 +229,6 @@ def get_trade_post_info(trade_post_id):
     return jsonify(post_info), OK
 
 
-# TODO: Error checking (valid collection_id, valid collector_id, valid title/desc/imgs)
 def insert_trade_post(collector_id, collection_id, post_title, post_desc, post_imgs):
     """Takes a collectible we have in our collection, and puts it up for trade
 
@@ -287,7 +285,6 @@ def insert_trade_post(collector_id, collection_id, post_title, post_desc, post_i
     return jsonify({"trade_post_id": trade_post_id}), OK
 
 
-# TODO: Error checking
 def remove_trade_post(collector_id, collection_id):
     """Remove the trade post associated with the collector and their posted collectible
 
@@ -326,7 +323,6 @@ def remove_trade_post(collector_id, collection_id):
     return jsonify({"trade_post_id": trade_post_id}), OK
 
 
-# Error checking not necessary, as this should be called after the other functions already do a check
 def find_trade_post(collector_id, collection_id):
     """Finds the trade_post id associated with the collector_id and collection_id
 
@@ -352,4 +348,3 @@ def find_trade_post(collector_id, collection_id):
     conn.close()
 
     return tp_id
-
