@@ -24,3 +24,77 @@ writing answers to part C of the proposal. Met again on Wednesday. Discussed a
 new implementation of the trade system, modelled after Steam's trading system.
 Helped in making changes to the storyboard to accomodate these changes. Used
 user stories from lectures to rewrite all our user stories.
+
+
+Week 4
+
+Had a meeting on Monday discussing the division of work and the structure of our
+user stories. Made a start on making the database persistent, and learnt how our
+backend would function.
+
+Week 5
+
+To ensure that everyone's environments were consistent, Uguudei set up Docker, 
+and had it up and running for that week. This way we could ensure our code ran
+correctly on every system. I worked on making a persistent database, and pushed 
+the working code through. Also wrote the backend functions dealing with the 
+registration/login of users. Made it so that even if the Docker environment was 
+closed and reopened, the details of the user would persist. Created backend 
+function to edit user information. We also had our project demo that week, where
+we were able to show that our frontend and backend were connected, even though 
+not much functionality was implemented. After the demo, we planned how our 
+second sprint would look, and the tasks we wished to cover.
+
+Week 6
+
+Discussed the integration of a token verification system with the group, as well
+as a status update where everyone was at. Finished insert functionality for 
+wantlist, and inserting collectible/campaign. Had a meeting to assign everyone 
+tasks, and set hard deadlines. I began working on implementing the search 
+function. Cleaned up some messy code for collectibles/collectors and 
+successfully implemented the backend for the search function. Had progress 
+meeting that Wednesday.
+
+Week 7
+
+Began working on the function to find campaigns in a certain period. Had another
+meeting that Wednesday discussing progress blockers and issues found while 
+coding (such as undocumented confusing code). Another progress update here as 
+well. Finished working on returning campaigns in a certain period, and began 
+working on the functions dealing with wantlist. Ran into a progress blocker with
+unclear database structure (campaign collectibles). Wrote code for that 
+structure, then had to refactor because the changes were rolled back. Finished 
+off the wantlist functions, including get, insert, and remove, and ensured that 
+they were all consistent with the frontend's expectations. Added a helper 
+function that converted a certain column type to string (in line with frontend's
+expectations). Missed a meeting during the week, but I ensured my group was
+updated on my progress, and I clearly communicated what I was doing, and was 
+open to being assigned tasks.
+
+Week 8
+I made a start on the trade functions, while also fixing some buys and formatting
+I spotted in the code. Made a start on creating trade posts for certain collectibles
+as well as inserting new table definitions for these functions. Had meetings
+discussing the format of trade offers/posts, and worked closely with Stella
+to determine how the frontend might look, so I could fit the backend into that.
+Talked a little bit about our presentation for week 10, and some submission questions.
+
+Week 9
+We had a meeting on Monday just to discuss where we were at with our project,
+and have a clear image of what was done, and what needed to be done. We talked about
+sprint 2 fixups, and missing functionality. During that week I personally worked on
+the offer system, such as the trade_post_images, and various other trade_post functions
+such as get, insert, remove and find. I also fixed up API calls and replaced stubs
+to call actual functioning code.
+
+Week 10
+Finally finished off the trade_post and trade_offer functionality, with accomodating
+helper functions and new database definitions (800 lines of code). After that
+I also implemented the exchange history functionality, and ensured that it was working
+both on the frontend and backend. Had a meeting with the group discussing the
+demo structure and how we were going to cover functionality. I wrote up a plan for that.
+I also made the demo presentation slides that we used. At the end of the week I added
+the social media function to our system, and also functions for analytics. Added the
+necessary API routes and correct function calling, and ensured it was all working.
+Worked on formatting the backend, removing unused code, adding docstrings, fixing formatting,
+and other formatting changes.
