@@ -1,10 +1,11 @@
-import sqlalchemy as db
 from flask import jsonify
+import sqlalchemy as db
+
 import auth
-import main.database.db_manager as dbm
 from main.database import db_helpers
-from main.error import OK, InputError, AccessError
+from main.error import OK, InputError
 from main.privelage import BANNED, COLLECTOR, MANAGER
+import main.database.db_manager as dbm
 
 """ |------------------------------------|
     |     Functions for collectors       |
