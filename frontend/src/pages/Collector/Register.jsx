@@ -65,7 +65,7 @@ function Register({ setUserId, setLogin, setUsername }) {
     apiCall((d) => {
       setLogin(true);
       setUsername(data.get('name'));
-      setUserId(d.userId);
+      setUserId(d.user_id);
     }, options)
       .then((res) => {
         if (res) {
