@@ -182,7 +182,11 @@ def get_collector(user_id=None, email=None, username=None):
 
 
 def get_managers():
-    """
+    """Return a list of all managers within the system.
+
+    Returns:
+        [dictionary]: list of dictionaries of our managers
+
     stub_return = {
         "managers": [
             {
@@ -207,7 +211,6 @@ def get_managers():
             },
         ]
     }
-
     """
     engine, conn, metadata = dbm.db_connect()
 
@@ -237,7 +240,7 @@ def get_managers():
 
     return jsonify({"managers": managers}), OK
 
-# TODO: Error checking
+
 def update_socials(user_id, twitter_handle=None, facebook_handle=None, instagram_handle=None):
     """Function to update a user's socials
     
@@ -275,6 +278,13 @@ def update_socials(user_id, twitter_handle=None, facebook_handle=None, instagram
 
 
 def ban_collector(admin_id, collector_id):
+    """Function to ban a certain collector.
+
+    Args:
+        admin_id (int): id of admin that is performing the ban
+        collector_id (int): id of collector to be banned
+    
+    """
     engine, conn, metadata = dbm.db_connect()
 
     privelages = db.Table("privelages", metadata, autoload_with=engine)
@@ -285,6 +295,9 @@ def ban_collector(admin_id, collector_id):
         .values({"privelage": BANNED})
     )
     conn.execute(update_stmt)
+    conn.close()
+
+    return
 
 
 """ |------------------------------------|
@@ -293,14 +306,16 @@ def ban_collector(admin_id, collector_id):
 
 
 def get_collector_id(email=None, username=None):
-    """get_collector_id.
+    """Returns the user id associated with an email or username.
 
-    Get collectors user id associated with email address or username from database.
     Returns None if user does not exist.
 
     Args:
-        email: users email
-        username: users username
+        email (string): email of the collector we want to find the id for
+        username (string): username of collecter we want to find the id for
+    
+    Returns:
+        int: id of the user
     """
     engine, conn, metadata = dbm.db_connect()
     collectors = db.Table("collectors", metadata, autoload_with=engine)
@@ -324,16 +339,15 @@ def get_collector_id(email=None, username=None):
     return collector_id
 
 
-# TODO: do a check that the collector acturally exists
 def get_collector_pw(id=None, email=None):
-    """get_wantlist.
-
-    Returns the hashed password of the user associated with user_id or email.
-    Returns None if id and email not given.
+    """returns the hashed password of a collector through their id or email.
 
     Args:
-        id: users id
-        email: users email
+        id (int): id of our user
+        email (string): email of our user
+    
+    Returns:
+        string: string of the hashed password
     """
     engine, conn, metadata = dbm.db_connect()
     collectors = db.Table("collectors", metadata, autoload_with=engine)
@@ -354,12 +368,13 @@ def get_collector_pw(id=None, email=None):
 
 
 def get_collector_dict(user_id=None, email=None, username=None):
-    """get_collector.
-
-    Returns dict with collectors details
+    """Returns dict with collector's details.
 
     Args:
-        user_id: user id of collector being returned
+        user_id (int): id of the collector we want to find details for
+
+    Returns:
+        dictionary: contains the collector's details
     """
 
     engine, conn, metadata = dbm.db_connect()
