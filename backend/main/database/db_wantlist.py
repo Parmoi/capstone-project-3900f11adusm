@@ -1,18 +1,15 @@
-import sqlalchemy as db
-from flask import jsonify
-import db_manager as dbm
-import db_collectibles
-import db_collections
-import db_helpers
-from error import OK, InputError, AccessError
 from datetime import date
+from flask import jsonify
+import sqlalchemy as db
+
+from error import OK, InputError, AccessError
+import db_collections, db_helpers, db_manager as dbm
 
 """ |------------------------------------|
     |      Functions for wantlist        |
     |------------------------------------| """
 
 
-# TODO: Error checking (valid user)
 def get_wantlist(user_id):
     """Return the wantlist of the user with user_id
 
@@ -79,7 +76,6 @@ def get_wantlist(user_id):
     return jsonify(wantlist), OK
 
 
-# TODO: Error checking (valid user, valid collectible name)
 def insert_wantlist(collector_id, collectible_id):
     """Function to insert a collectible into our wantlist
 
@@ -116,7 +112,6 @@ def insert_wantlist(collector_id, collectible_id):
     return jsonify({"wantlist_id": wantlist_id}), OK
 
 
-# TODO: error checking (valid user, valid collectible name)
 def remove_from_wantlist(collector_id, wantlist_id):
     """Removes a collectible from the user's wantlist, given its name
 
@@ -146,9 +141,7 @@ def remove_from_wantlist(collector_id, wantlist_id):
 
 
 def move_to_collection(collector_id, wantlist_id):
-    """move_to_collection.
-
-    Moves wantlist collectible to collectors collection and removes it from wantlist
+    """Moves wantlist collectible to collectors collection and removes it from wantlist
 
     Args:
         collector_id (int): id of collector
@@ -199,6 +192,14 @@ def find_wantlist_id(collector_id, collectible_id):
 
 
 def find_last_wantlist(collector_id):
+    """Find the last item in the collector's wantlist.
+    
+    Args:
+        collector_id (int): id we want to find the last wantlist item for
+    
+    Returns:
+        dictionary: dictionary of the last wantlist item of the collector
+    """
     engine, conn, metadata = dbm.db_connect()
     wantlist = db.Table("wantlist", metadata, autoload_with=engine)
     select_stmt = (
@@ -214,6 +215,15 @@ def find_last_wantlist(collector_id):
 
 
 def get_wantlist_dict(wantlist_id):
+    """Return a dictionary containing the details of a wantlist.
+    
+    Args:
+        wantlist_id (int): id of wantlist we want the information for
+
+    Returns:
+        dictionary: dictionary of the wantlist
+
+    """
     engine, conn, metadata = dbm.db_connect()
 
     wantlist = db.Table("wantlist", metadata, autoload_with=engine)
