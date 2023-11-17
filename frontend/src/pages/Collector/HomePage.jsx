@@ -9,13 +9,14 @@ const HomePage = () => {
     const [selection, setSelection] = useState('current');
     const location = useLocation();
     // some dummy data for initialization
-    const [data, setData] = React.useState([{ image: "https://i.postimg.cc/sX59yLfP/IMG-2438.jpg", campaign_name: "campaign1", start_date: "Fri, 01 Jan 1999 00:00:00 GMT", end_date: "Fri, 24 Mar 2023 00:00:00 GMT", des: "babababbabab", id: 10000},
-    { image: "https://i.postimg.cc/wT4JKzc8/IMG-2304.jpg", campaign_name: "campaign2", start_date: "Fri, 01 Jan 1999 00:00:00 GMT", end_date: "Fri, 23 Mar 2023 00:00:00 GMT", des: "babababbabab", id: 200000},
-    { image: "https://i.postimg.cc/NfnyJ4BQ/IMG-2441.jpg", campaign_name: "campaign6", start_date: "Fri, 24 Nov 2023 00:00:00 GMT", end_date: "Fri, 27 Nov 2023 00:00:00 GMT", des: "babababbabab", id: 30000},
-    { image: "https://i.postimg.cc/2jc3ywqn/IMG-2436.jpg", campaign_name: "campaign7", start_date: "Fri, 24 Nov 2023 00:00:00 GMT", end_date: "Fri, 27 Nov 2023 00:00:00 GMT", des: "babababbabab", id: 40000},
-    { image: "https://i.postimg.cc/SxMqVKRw/IMG-2375.jpg", campaign_name: "campaign3", start_date: "Fri, 01 Jan 1999 00:00:00 GMT", end_date: "Fri, 24 Nov 2023 00:00:00 GMT", des: "babababbabab", id: 50000},
-    { image: "https://i.postimg.cc/HL0mDPQz/IMG-2369.jpg", campaign_name: "campaign4", start_date: "Fri, 01 Jan 1999 00:00:00 GMT", end_date: "Fri, 25 Nov 2023 00:00:00 GMT", des: "babababbabab", id: 60000},
-    { image: "https://i.postimg.cc/xC020y52/IMG-2442.jpg", campaign_name: "campaign5", start_date: "Fri, 01 Jan 1999 00:00:00 GMT", end_date: "Fri, 26 Nov 2023 00:00:00 GMT", des: "babababbabab", id: 70000},]);
+    const [data, setData] = React.useState([{ image: "https://i.postimg.cc/sX59yLfP/IMG-2438.jpg", campaign_name: "NO DATA HAS BEEN PROVIDED", start_date: "Fri, 01 Jan 1999 00:00:00 GMT", end_date: "Fri, 24 Mar 2023 00:00:00 GMT", des: "babababbabab", id: 10000},
+      { image: "https://i.postimg.cc/wT4JKzc8/IMG-2304.jpg", campaign_name: "NO DATA HAS BEEN PROVIDED", start_date: "Fri, 01 Jan 1999 00:00:00 GMT", end_date: "Fri, 23 Mar 2023 00:00:00 GMT", des: "babababbabab", id: 200000},
+      { image: "https://i.postimg.cc/NfnyJ4BQ/IMG-2441.jpg", campaign_name: "NO DATA HAS BEEN PROVIDED", start_date: "Fri, 24 Nov 2023 00:00:00 GMT", end_date: "Fri, 27 Nov 2023 00:00:00 GMT", des: "babababbabab", id: 30000},
+      { image: "https://i.postimg.cc/2jc3ywqn/IMG-2436.jpg", campaign_name: "NO DATA HAS BEEN PROVIDED", start_date: "Fri, 24 Nov 2023 00:00:00 GMT", end_date: "Fri, 27 Nov 2023 00:00:00 GMT", des: "babababbabab", id: 40000},
+      { image: "https://i.postimg.cc/SxMqVKRw/IMG-2375.jpg", campaign_name: "NO DATA HAS BEEN PROVIDED", start_date: "Fri, 01 Jan 1999 00:00:00 GMT", end_date: "Fri, 24 Nov 2023 00:00:00 GMT", des: "babababbabab", id: 50000},
+      { image: "https://i.postimg.cc/HL0mDPQz/IMG-2369.jpg", campaign_name: "NO DATA HAS BEEN PROVIDED", start_date: "Fri, 01 Jan 1999 00:00:00 GMT", end_date: "Fri, 25 Nov 2023 00:00:00 GMT", des: "babababbabab", id: 60000},
+      { image: "https://i.postimg.cc/xC020y52/IMG-2442.jpg", campaign_name: "NO DATA HAS BEEN PROVIDED", start_date: "Fri, 01 Jan 1999 00:00:00 GMT", end_date: "Fri, 26 Nov 2023 00:00:00 GMT", des: "babababbabab", id: 70000},
+    ]);
 
   const fetchData = () => {
     // call api with data
@@ -25,7 +26,9 @@ const HomePage = () => {
     };
 
     apiCall((d) => {
-      setData(d["campaigns"]);
+      if (d["campaigns"].length != 0) {
+        setData(d["campaigns"]);
+      }
     }, options);
   }
 

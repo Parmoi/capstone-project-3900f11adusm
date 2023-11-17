@@ -1,6 +1,8 @@
 import os
-import json
+
+from datetime import timedelta
 from flask import Flask, jsonify, request
+from flask_cors import CORS
 from flask_jwt_extended import (
     JWTManager,
     jwt_required,
@@ -8,28 +10,24 @@ from flask_jwt_extended import (
     verify_jwt_in_request,
 )
 
-from flask_cors import CORS
-from datetime import timedelta
-
-import helpers.config as config
-import helpers.exceptions as exceptions
-
-from main.database import db_manager as dbm
+from main import auth
 from main.database import (
-    db_collectors,
     db_campaigns,
-    db_wantlist,
+    db_campaign_analytics,
     db_collectibles,
     db_collections,
-    db_tradeposts,
-    db_tradeoffers,
+    db_collectors,
     db_exchangehistory,
-    db_campaign_analytics
+    db_manager as dbm,
+    db_tradeoffers,
+    db_tradeposts,
+    db_wantlist,
 )
-from main import auth
 from main.error import InputError, AccessError, OK
 from main.privelage import ADMIN, MANAGER
 from mock_data import mock_data_init
+import helpers.config as config
+import helpers.exceptions as exceptions
 
 APP = Flask(__name__)
 APP.config.from_object(config.DevelopmentConfig)
@@ -48,10 +46,12 @@ APP.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=30)
 APP.config["JWT_COOKIE_CSRF_PROTECT"] = False
 
 
-@APP.route("/")
-def entry():
-    return "<h1>Hello, Collector<h1\>"
+# @APP.route("/")
+# def entry():
+#     return "<h1>Hello, Collector<h1\>"
 
+with APP.app_context():
+    dbm.database_setup()
 
 """ |------------------------------------|
     |          Database Routes           |
@@ -59,14 +59,14 @@ def entry():
 
 
 @APP.route("/initdb")
-def db_init():
+def init_db():
     dbm.database_setup()
     return jsonify(msg="Database has been setup successfully!"), OK
 
 
-@APP.route("/init_mock_data", methods=["GET"])
-def init_mock_data():
-    return jsonify(msg="Mock data initialised!"), OK
+# @APP.route("/init_mock_data", methods=["GET"])
+# def init_mock_data():
+#     return jsonify(msg="Mock data initialised!"), OK
 
 
 @APP.route("/init_mock_data/demo", methods=["GET"])
@@ -83,26 +83,47 @@ def init_mock_data_demo():
 
 @APP.route("/login", methods=["POST"])
 def login():
+    """Logs the user into the system.
+
+    Example Success Output:
+        {"userId": 1, "privelage": 2}, 200
+    
+    Example Error Output:
+        {"msg": "Invalid password!"}, 400
+    """
     email = request.json.get("email", None)
     password = request.json.get("password", None)
-    return auth.login(password, email=email)
+    return auth.login(email=email, password=password)
 
 
 @APP.route("/logout", methods=["POST"])
 def logout():
+    """Logs the user out of the system.
+
+    Example Success Output:
+        {"msg": "Logout successful!"}, 200
+    """
     return auth.logout()
 
 
 @APP.route("/register", methods=["POST"])
 def register():
+    """Register a new user to the system.
+
+    Example Success Output:
+        {"msg": "Account successfully registered!", "user_id": 1}, 200
+
+    Example Error Output:
+        {"msg": "Email or username already registered!"}, 400
+    """
     email = request.json.get("email", None)
     username = request.json.get("username", None)
     password = request.json.get("password", None)
 
     return auth.register_collector(
-        email,
-        username,
-        password,
+        email=email,
+        username=username,
+        password=password,
     )
 
 
@@ -131,26 +152,6 @@ def update_privelage():
     return auth.update_privelage(user_id, privelage)
 
 
-# Uncomment to have access token refreshed automatically after evert request is made
-# If it is going to expire within a certain amount of time (optional)
-# @APP.after_request
-# def refresh_expiring_jwts(response):
-#     '''Refreshes users token if it is going to expire withing a given amount of time'''
-
-#     exp_in = 60
-
-#     try:
-#         exp_timestamp = get_jwt()["exp"]
-#         now = datetime.now(timezone.utc)
-#         target_timestamp = datetime.timestamp(now + timedelta(minutes=exp_in))
-#         if target_timestamp > exp_timestamp:
-#             access_token = create_access_token(identity=get_jwt_identity())
-#             set_access_cookies(response, access_token)
-#         return response
-#     except (RuntimeError, KeyError):
-#         # Case where there is not a valid JWT. Just return the original response
-#         return response
-
 """ |------------------------------------|
     |          Collector Routes          |
     |------------------------------------| """
@@ -159,43 +160,53 @@ def update_privelage():
 @APP.route("/profile", methods=["GET"])
 @jwt_required(fresh=False)
 def profile():
-    """
-    returns:
+    """Fetch the profile of the desired user.
+
+    Example Success Output:
         {
-        profile_picture: "string",
-        Username: "string",
-        first_name: "string",
-        last_name: "string",
-        email: "email_string",
-        phone: "string" (numbers),
-        address: "string",
-        twitter_handle: "string",
-        facebook_handle: "string",
-        instagram_handle: "string"
-        }
+            "id": 1,
+            "email": "bob@gmail.com",
+            "username": "bobby",
+            "first_name": "bob",
+            "last_name": "junior",
+            "phone": "0444444444",
+            "address": "NSW",
+            "profile_picture": "www.some_image.com/rnanranrrqn",
+            "twitter_handle": "monkey",
+            "facebook_handle": "monkey",
+            "instagram_handle": "monkey"
+        }, 200
+
+    Example Error Output:
+        {"msg": "Invalid collector id"}, 400
     """
     user_id = request.args.get("id")
-
     return db_collectors.get_collector(user_id=user_id)
 
 
 @APP.route("/profile/update", methods=["POST"])
 @jwt_required(fresh=False)
 def profile_update():
-    """
-    Updates the profile details of the user. Returns detailed
-    error messages if the user provides invalid data.
+    """Updates the profile details of the user.
 
-    Example: "username already taken"
-
-    Args:
-        profile_picture: string
-        username: string
-        email: valid email format.
-        first_name: string
-        last_name: string
-        phone: string (numbers)
-        address: string
+    Example Success Output:
+        {
+            "msg": "Collector successfully updated!", 
+            "collector": 
+                {
+                    "id": 1,
+                    "email": "bob@gmail.com",
+                    "username": "bobby",
+                    "first_name": "bob",
+                    "last_name": "junior",
+                    "phone": "0444444444",
+                    "address": "NSW",
+                    "profile_picture": "www.some_image.com/rnanranrrqn",
+                    "twitter_handle": "monkey",
+                    "facebook_handle": "monkey",
+                    "instagram_handle": "monkey"
+                }
+        }
     """
 
     user_id = get_jwt_identity()
@@ -226,7 +237,7 @@ def profile_update():
 def profile_socials_update():
     """Route specifically to update the socials of the user
 
-    Example Output:
+    Example Success Output:
         {"msg": "User 1's socials have been updated}, 200
     """
     user_id = get_jwt_identity()
@@ -240,14 +251,13 @@ def profile_socials_update():
 
 @APP.route("/get_collectors", methods=["GET"])
 def get_collectors():
+    """Returns all the collectors within our database."""
     return db_collectors.get_all_collectors()
 
 
 @APP.route("/search", methods=["GET"])
 def first_search():
-    # search_query = request.json.get("query", None)
-    # return db_collectibles.search_collectibles(search_query)
-    # return db_campaigns.get_campaign_collectibles(1)
+    """Returns all the collectibles within our database."""
     return db_collectibles.get_all_collectibles()
 
 
@@ -259,10 +269,10 @@ def first_search():
 @APP.route("/campaign/register", methods=["POST"])
 @jwt_required(fresh=False)
 def register_campaign():
+    """Registers a campaign to our database."""
     verify_jwt_in_request()
 
     user_id = get_jwt_identity()
-
     name = request.json.get("name", None)
     description = request.json.get("desc", None)
     image = request.json.get("image", None)
@@ -275,30 +285,15 @@ def register_campaign():
     )
 
 
-@APP.route("/campaign/get_campaign", methods=["GET"])
-# @jwt_required(fresh=False)
-def get_campaign():
-    # verify_jwt_in_request()
-
-    name = request.json.get("name", None)
-    id = request.json.get("id", None)
-
-    return db_campaigns.get_campaign(name=name, id=id)
-
-
 @APP.route("/campaign/get_campaigns", methods=["GET"])
-# @jwt_required(fresh=False)
 def get_all_campaigns():
-    # verify_jwt_in_request()
-
+    """Returns all campaigns stored in the database."""
     return db_campaigns.get_all_campaigns()
 
 
 @APP.route("/campaign/register_collectible", methods=["POST"])
-# @jwt_required(fresh=False)
 def register_collectible():
-    # verify_jwt_in_request()
-
+    """Register a collectible under the specified campaign."""
     campaign_id = request.json.get("campaign_id", None)
     collectible_name = request.json.get("name", None)
     description = request.json.get("description", None)
@@ -312,6 +307,7 @@ def register_collectible():
 @APP.route("/campaign/get_collectibles", methods=["GET"])
 @jwt_required(fresh=False)
 def get_campaign_collectibles():
+    """Return the collectibles associated with the passed in campaign_id."""
     campaign_id = request.args.get("campaign_id")
 
     return db_campaigns.get_campaign_collectibles(campaign_id)
@@ -320,6 +316,7 @@ def get_campaign_collectibles():
 @APP.route("/campaign/feedback", methods=["POST"])
 @jwt_required(fresh=False)
 def give_campaign_feedback():
+    """Registers a user's feedback on a campaign."""
     verify_jwt_in_request()
 
     user_id = get_jwt_identity()
@@ -337,8 +334,8 @@ def give_campaign_feedback():
 @APP.route("/collection/add", methods=["POST"])
 @jwt_required(fresh=False)
 def insert_collectible():
-    """
-    Inserts collectible into collection list
+    """Inserts a collectible into the user's collection
+    
     Returns collection id created
 
     Args:
@@ -354,71 +351,38 @@ def insert_collectible():
 @APP.route("/collection/get", methods=["GET"])
 @jwt_required(fresh=False)
 def get_collection():
+    """Gets the collectibles that are in the user's collection."""
     user_id = get_jwt_identity()
+
     return db_collections.get_collection(user_id)
-    # return jsonify([
-    #     {
-    #         'id': 1,
-    #         'name': 'Homer',
-    #         'campaign_name': 'Simpsons',
-    #         'campaign_id': 1,
-    #         'collectible_id': 1,
-    #         'image': 'https://ilarge.lisimg.com/image/8825948/980full-homer-simpson.jpg',
-    #         'date_added': '23/05/2014',
-    #         'date_released': '03/03/2014',
-    #     },
-    #     {
-    #         "id": 2,
-    #         "image": 'https://tse4.mm.bing.net/th?id=OIP.e4tAXeZ6G0YL4OE5M8KTwAHaMq&pid=Api',
-    #         "name": 'Marge',
-    #         'campaign_id': 12,
-    #         'collectible_id': 12,
-    #         "campaign_name": 'Winter 2022',
-    #         'date_added': '03/02/2014',
-    #         'date_released': '03/01/2014',
-    #     },
-    #     {
-    #         "id": 3,
-    #         "image": 'https://tse2.mm.bing.net/th?id=OIP.j7EknM6CUuEct_kx7o-dNQHaMN&pid=Api',
-    #         "name": 'Bart',
-    #         'campaign_id': 1,
-    #         'collectible_id': 2,
-    #         "campaign_name": 'Simpsons',
-    #         'date_added': '03/08/2014',
-    #         'date_released': '03/01/2014',
-    #     },
-    # ]), 200
 
 
 @APP.route("/collection/delete", methods=["DELETE"])
 @jwt_required(fresh=False)
 def remove_collectible():
-    """
-    Deletes collectible from user's collection
+    """Deletes a collectible from the user's collection.
 
     Args:
         user_id: int (collector's id)
         collection_id: int (id of entry to be deleted)
 
-    Returns {
-        collection_id: int
-    }
+    Returns:
+        {collection_id: int}
     """
-
-    # return jsonify({'collection_id': 1}), 200
     user_id = get_jwt_identity()
     collection_id = request.json.get("id", None)
 
     return db_collections.remove_collectible(user_id, collection_id)
 
 
-@APP.route("/collection/check", methods=["GET"])
-@jwt_required(fresh=False)
-def user_has_collectible():
-    user_id = get_jwt_identity()
-    collectible_id = request.json.get("collectible_id", None)
+# @APP.route("/collection/check", methods=["GET"])
+# @jwt_required(fresh=False)
+# def user_has_collectible():
+#     """Checks if the user has a certain"""
+#     user_id = get_jwt_identity()
+#     collectible_id = request.json.get("collectible_id", None)
 
-    return db_collections.user_has_collectible(user_id, collectible_id)
+#     return db_collections.user_has_collectible(user_id, collectible_id)
 
 
 """ |------------------------------------|
@@ -430,7 +394,7 @@ def user_has_collectible():
 @jwt_required(fresh=False)
 def wantlist():
     """
-    Returns list of collectibles in user's want list along with details about collectible to be displayed
+    Returns the list of collectibles inside the user's wantlist.
 
     Args:
         user_id: collectors user id
@@ -459,7 +423,7 @@ def wantlist():
 @jwt_required(fresh=False)
 def insert_wantlist():
     """
-    Inserts collectible into wantlist
+    Inserts a collectible into the user's wantlist
     Returns wantlist id created
 
     Args:
@@ -481,7 +445,7 @@ def insert_wantlist():
 @jwt_required(fresh=False)
 def remove_wantlist():
     """
-    Deletes collectible from user's wantlist
+    Deletes a collectible from the user's wantlist
 
     Args:
         user_id: int (collector's id)
@@ -501,7 +465,7 @@ def remove_wantlist():
 @jwt_required(fresh=False)
 def move_collectible():
     """
-    Moves collectible from user's wantlist to collection
+    Moves collectible from user's wantlist to their collection
 
     Args:
         user_id: int (collector's id)
@@ -511,7 +475,6 @@ def move_collectible():
         collection_id: int (id of new entry created in collection)
     }
     """
-
     user_id = get_jwt_identity()
     wantlist_id = request.json.get("wantlist_id", None)
 
@@ -536,7 +499,6 @@ def post_trade():
         post_images: [] (list of post image urls dictionaries: {caption, image})
 
     """
-
     user_id = get_jwt_identity()
     collection_id = request.json.get("collection_id")
     post_title = request.json.get("post_title")
@@ -552,10 +514,9 @@ def post_trade():
 @jwt_required(fresh=False)
 def get_tradepost():
     """
-    Returns trade post information
+    Returns trade post information for a specific post
     Takes trade post id as param
     Used when we click on a trade post
-
     """
     trade_post_id = request.args.get("trade_post_id")
 
@@ -583,6 +544,7 @@ def trade_offers_list():
 
     """
     trade_post_id = request.args.get("trade_id")
+
     return db_tradeoffers.find_tradelist_offers(trade_post_id)
 
 
@@ -595,6 +557,7 @@ def trade_offers_list():
 @jwt_required(fresh=False)
 def offers_get():
     user_id = get_jwt_identity()
+
     return db_tradeoffers.find_outgoing_offers(user_id)
 
 
@@ -610,37 +573,8 @@ def exchange_history():
     Find the user's exchange history
     """
     user_id = get_jwt_identity()
+
     return db_exchangehistory.find_exchange_history(user_id)
-
-
-@APP.route("/exchange/available", methods=["GET"])
-@jwt_required(fresh=False)
-def available_exchanges():
-    """
-    I think this function might be unnecessary - Dyllan
-    """
-    user_id = get_jwt_identity()
-
-    collectible_id = request.json.get("collectible_id", None)
-
-    stub_return = {  # return a json list
-        "trade_posts": [
-            {
-                "trade_id": "",  # ID of the posted trade, will be used for making offers to the trade.
-                "collector_id": "",  # The collector who posted the trade
-                "collector_username": "",
-                "collectible_id": collectible_id,
-                "collectible_name": "",
-                "item_img": "",  # collector uploaded image. irl image
-                "creation_date": "",
-                "post_title": "",
-                "suggested_worth": "",
-                "description": "",  # collector uploaded description
-            }
-        ]
-    }
-
-    return jsonify(stub_return), OK
 
 
 @APP.route("/exchange/makeoffer", methods=["POST"])
@@ -648,15 +582,12 @@ def available_exchanges():
 def make_offer():
     """
     Accepts parameters for an offer to a collectible setup for trade.
-    Should store the information as a
     """
-    user_id = get_jwt_identity()  # collector making the offer for trade
-
+    user_id = get_jwt_identity()
     trade_id = request.json.get("trade_id", None)
     offer_collection_id = request.json.get("collection_id", None)
     offer_msg = request.json.get("offer_message", None)
     offer_img = request.json.get("offer_img", None)
-    # There's also description, but I don't need it
 
     return db_tradeoffers.register_trade_offer(
         trade_id, user_id, offer_collection_id, offer_msg, offer_img
@@ -666,9 +597,7 @@ def make_offer():
 @APP.route("/exchange/decline", methods=["POST"])
 @jwt_required(fresh=False)
 def exchange_decline():
-    """
-    Declines the exchange offer for the trade item.
-    """
+    """Declines the exchange offer for the trade item."""
     offer_id = request.json.get("offer_id", None)
 
     return db_tradeoffers.decline_trade_offer(offer_id)
@@ -677,9 +606,7 @@ def exchange_decline():
 @APP.route("/exchange/accept", methods=["POST"])
 @jwt_required(fresh=False)
 def exchange_accept():
-    """
-    Accepts the exchange offer for the trade item.
-    """
+    """Accepts the exchange offer for the trade item."""
     offer_id = request.json.get("offer_id", None)
 
     return db_tradeoffers.accept_trade_offer(offer_id)
@@ -693,7 +620,7 @@ def exchange_accept():
 @APP.route("/collectible/get", methods=["GET"])
 @jwt_required(fresh=False)
 def get_collectible_info():
-    """
+    """Find the information of a certain collectible.
     Takes in collectible_id as request argument
 
     stub_return = {
@@ -706,7 +633,6 @@ def get_collectible_info():
     }
     """
     user_id = get_jwt_identity()
-
     collectible_id = request.args.get("collectible_id", None)
 
     return db_collectibles.get_collectible_info(user_id, collectible_id)
@@ -714,13 +640,8 @@ def get_collectible_info():
 
 @APP.route("/collectible/buy", methods=["GET"])
 @jwt_required(fresh=False)
-def get_buylist():
-    """
-    Takes in collectible_id as request argument
-    """
-
-    # I'm not too sure how to get the collectible_id from frontend, but if you
-    # call get_trade_posts with collectible_id it should work properly - Dyllan
+def get_trade_posts():
+    """Finds the trade postings of a certain collectible."""
     collectible_id = request.args.get("collectible_id")
 
     return db_tradeposts.get_trade_posts(collectible_id)
@@ -743,13 +664,10 @@ def invite_manager():
 @jwt_required(fresh=False)
 def get_manager_analytics():
     """
-    Returns analytics of a campaigns posted by the
-    given manager.
+    Returns analytics of a campaigns posted by the given manager.
 
-    If no campaigns are posted, or if no analytics
-    are available, return an empty list.
+    If no campaigns are posted, or if no analytics are available, return an empty list.
     """
-
     manager_id = get_jwt_identity()
 
     return db_campaign_analytics.return_analytics(manager_id)
@@ -758,31 +676,30 @@ def get_manager_analytics():
 @APP.route("/manager/feedback", methods=["GET"])
 @jwt_required(fresh=False)
 def get_feedback():
-    """
-    Returns the feedback to the campaign manager for a campaign.
+    """Returns the feedback to the campaign manager for a campaign.
 
-    stub_return = {
-        "feedback": [
-            {
-                "collector_id": 21,
-                "collector_username": "Barry",
-                "collector_profile_img": "https://tse3.mm.bing.net/th?id=OIP.SwCSPpmwihkM2SUqh7wKXwHaFG&pid=Api",
-                "feedback": "I would have prefered if you didn't do another Simpsons campaign. Maybe try something with trees, trees are nice.",
-                "feedback_date": "2023/11/01",
-                "campaign_id": 2
-            },
-            {
-                "collector_id": 11,
-                "collector_username": "Bart",
-                "collector_profile_img": "https://tse2.mm.bing.net/th?id=OIP.j7EknM6CUuEct_kx7o-dNQHaMN&pid=Api",
-                "feedback": "This is a good campaign, keep up the good work.",
-                "feedback_date": "2023/10/31",
-                "campaign_id": 5
-            },
-        ]
-    }
+    Example Success Output:
+        {
+            "feedback": [
+                {
+                    "collector_id": 21,
+                    "collector_username": "Barry",
+                    "collector_profile_img": "https://tse3.mm.bing.net/th?id=OIP.SwCSPpmwihkM2SUqh7wKXwHaFG&pid=Api",
+                    "feedback": "I would have prefered if you didn't do another Simpsons campaign. Maybe try something with trees, trees are nice.",
+                    "feedback_date": "2023/11/01",
+                    "campaign_id": 2
+                },
+                {
+                    "collector_id": 11,
+                    "collector_username": "Bart",
+                    "collector_profile_img": "https://tse2.mm.bing.net/th?id=OIP.j7EknM6CUuEct_kx7o-dNQHaMN&pid=Api",
+                    "feedback": "This is a good campaign, keep up the good work.",
+                    "feedback_date": "2023/10/31",
+                    "campaign_id": 5
+                },
+            ]
+        }, 200
     """
-
     user_id = get_jwt_identity()
 
     return db_campaigns.get_campaign_feedback(user_id)
@@ -791,8 +708,7 @@ def get_feedback():
 @APP.route("/manager/getlist", methods=["GET"])
 @jwt_required(fresh=False)
 def get_manager_list():
-    """
-    Returns a list of managers in the system.
+    """Returns a list of managers in the system.
 
     stub_return = {
         "managers": [
@@ -878,11 +794,10 @@ def get_collector_list():
 @APP.route("/collector/ban", methods=["POST"])
 @jwt_required(fresh=False)
 def ban_collector():
-    """
+    """Bans a collector account, actionable only by an Admin
+
     Argument:
         - collector_id
-
-    Bans a collector account, actionable only by an Admin
     """
 
     admin_id = get_jwt_identity()
@@ -898,11 +813,7 @@ def ban_collector():
 @APP.route("/admin/get_campaigns", methods=["GET"])
 @jwt_required(fresh=False)
 def get_campaigns_for_review():
-    """
-
-
-    Provides a list of campaigns, either reviewed or not
-    for the Admin to view and review.
+    """Provides a list of campaigns, either reviewed or not for the Admin to view and review.
 
     stub_return = {
         "campaigns": [
@@ -979,77 +890,37 @@ def get_campaigns_for_review():
         ]
     }
     """
-
     return db_campaigns.get_campaigns_and_collectibles()
 
 
 @APP.route("/admin/campaign/approve", methods=["POST"])
 @jwt_required(fresh=False)
 def admin_campaign_approve():
-    """
-    An Admin Approves the campaign.
+    """An Admin Approves the campaign.
 
     stub_return = {
         "msg" : "Campaign Approved"
     }
     """
-
     admin_id = get_jwt_identity()
     campaign_id = request.json.get("campaign_id", None)
+
     return db_campaigns.approve_campaign(admin_id, campaign_id)
 
 
 @APP.route("/admin/campaign/decline", methods=["POST"])
 @jwt_required(fresh=False)
 def admin_campaign_decline():
-    """
-    An Admin Declines the campaing.
+    """An Admin Declines the campaign.
+
     stub_return = {
         "msg" : "Campaign declined!"
     }
     """
-
     admin_id = get_jwt_identity()
     campaign_id = request.json.get("campaign_id", None)
+
     return db_campaigns.decline_campaign(admin_id, campaign_id)
-
-
-""" |------------------------------------|
-    |           Dashboard Routes         |
-    |------------------------------------| """
-
-# Example stubs for /dashboard and /collection
-# @APP.route('/dashboard', methods=['GET'])
-# @jwt_required(fresh=False)
-# def dashboard():
-#     user_id = get_jwt_identity()
-#     return jsonify(dbm.get_dashboard(user_id)), OK
-
-
-""" |------------------------------------|
-    |         Example JWT Routes         |
-    |------------------------------------| """
-# @APP.route("/protected", methods=["GET"])
-# @jwt_required()
-# def protected():
-#     '''
-#     Example of protected route. Requires JWT to access.
-#     Useful for when user has been logged in for a while and wants to edit profile.
-#     '''
-
-#     current_user = get_jwt_identity()
-#     return jsonify(logged_in_as=current_user), OK
-
-# @APP.route("/protected_fresh", methods=["GET"])
-# @jwt_required(fresh=True)
-# def protected_fresh():
-#     '''
-#     Example of protected route. Requires fresh JWT to be fresh to access.
-#     Useful for when user has been logged in for a while and wants to edit profile.
-#     '''
-
-#     current_user = get_jwt_identity()
-#     return jsonify(logged_in_as=current_user), OK
 
 
 if __name__ == "__main__":

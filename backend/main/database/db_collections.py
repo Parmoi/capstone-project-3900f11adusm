@@ -1,11 +1,9 @@
-import sqlalchemy as db
 from flask import jsonify
-import db_manager as dbm
-import db_campaigns
-import db_helpers
-import db_collectibles
-from main.error import OK, InputError, AccessError
-from datetime import date, datetime
+from datetime import date
+import sqlalchemy as db
+
+from main.error import OK, InputError
+import db_collectibles, db_helpers, db_manager as dbm
 
 
 """ |------------------------------------|
@@ -14,16 +12,16 @@ from datetime import date, datetime
 
 
 def insert_collectible(user_id, collectible_id):
-    """insert_collectible.
-
-    Inserts a collectible to users collection
+    """Inserts a collectible to a user's collection.
 
     Args:
-        user_id: collectors id
-        campaign_id: id of campaign which collectible belongs to
-        collectible_id: id of collectible in campaign
+        user_id (int): id of collector whose collection we want to add to
+        collectible_id (int): id of collectible we want to add to the collection
+    
+    Returns:
+        JSON: Either the success/error message
+        int: success/error code
     """
-
     collectible = db_collectibles.get_collectible(collectible_id)
 
     if collectible is None:
@@ -73,13 +71,15 @@ def insert_collectible(user_id, collectible_id):
 
 
 def remove_collectible(user_id, collection_id):
-    """remove_collectible.
-
-    Removes a collection row from users collection
+    """Removes a collectible from the user's collection
 
     Args:
-        user_id: collectors id
-        collection_id: id of collection entry corresponding to collectible to be removed.
+        user_id (int): id of collector that we want to remove collectible from collection from
+        collection_id (int): id of collection that we want to remove
+    
+    Returns:
+        JSON: success/error message
+        int: success/error code
     """
 
     if not user_owns_collection(user_id, collection_id):
@@ -113,17 +113,20 @@ def remove_collectible(user_id, collection_id):
     )
 
 
-# TODO: Error checking for invalid user id
 def get_collection(collector_id):
-    """get_collection.
-
-    Return list conataining all collectibles and their details in users collection.
+    """Returns a list of collectibles and their details in the user's collection
 
     Args:
-        user_id: collectors user id
+        user_id (int): id of collector we want to find the collection for
 
-    get_collection() = {
-        "collection": [
+    Returns:
+        JSON:
+            - on success: list of colllectibles in collection
+            - on error: error message
+        int: success/error code
+        
+    Example Output:
+        {"collection": [
             {
                 "id": collection_id,
                 "collectible_id": collectible_id,
@@ -182,6 +185,15 @@ def get_collection(collector_id):
 
 
 def user_has_collectible(user_id, collectible_id):
+    """Checks if a user has a certain collectible in their collection.
+
+    Args:
+        user_id (int): id of collector whose collection we want to check
+        collectible_id (int): id of collectible we want to check its existence
+
+    Returns:
+        JSON: success/error message
+    """
     engine, conn, metadata = dbm.db_connect()
     collections = db.Table("collections", metadata, autoload_with=engine)
     exists_criteria = db.select(collections).where(
@@ -200,7 +212,7 @@ def user_has_collectible(user_id, collectible_id):
         OK,
     )
 
-# TODO: Error checking
+
 def move_collectible(sender_id, receiver_id, collection_id):
     """Moves a collectible from the sender's collection to the receiver's collection
     
@@ -243,6 +255,15 @@ def move_collectible(sender_id, receiver_id, collection_id):
 
 
 def user_owns_collection(user_id, collection_id):
+    """Returns whether collection belongs to the user
+
+    Args:
+        user_id (int): id of collector we want to check
+        collection_id (int): id of collection we want to check if it is owned by the collector
+
+    Returns:
+        boolean: whether or not the collection_id is linked to that user
+    """
     engine, conn, metadata = dbm.db_connect()
     collections = db.Table("collections", metadata, autoload_with=engine)
     select_stmt = db.select(collections).where(collections.c.id == collection_id)
@@ -253,7 +274,16 @@ def user_owns_collection(user_id, collection_id):
 
 
 def get_last_collection(user_id):
+    """Get the last collection entry for a certain user.
+
+    Args:
+        user_id (int): id of user that we want to get the last collection entry for
+
+    Returns:
+        dictionary: dictionary of the details of the last collection entry
+    """
     engine, conn, metadata = dbm.db_connect()
+
     collections = db.Table("collections", metadata, autoload_with=engine)
     select_stmt = (
         db.select(collections)
