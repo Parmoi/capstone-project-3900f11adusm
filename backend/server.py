@@ -81,6 +81,13 @@ def init_mock_data_demo():
 
 @APP.route("/login", methods=["POST"])
 def login():
+    """
+    Example Success Output:
+        {"userId": 1, "privelage": 2}, 200
+    
+    Example Error Output:
+        {"msg": "Invalid password!"}, 400
+    """
     email = request.json.get("email", None)
     password = request.json.get("password", None)
     return auth.login(email=email, password=password)
@@ -88,11 +95,22 @@ def login():
 
 @APP.route("/logout", methods=["POST"])
 def logout():
+    """
+    Example Success Output:
+        {"msg": "Logout successful!"}, 200
+    """
     return auth.logout()
 
 
 @APP.route("/register", methods=["POST"])
 def register():
+    """
+    Example Success Output:
+        {"msg": "Account successfully registered!", "user_id": 1}, 200
+
+    Example Error Output:
+        {"msg": "Email or username already registered!"}, 400
+    """
     email = request.json.get("email", None)
     username = request.json.get("username", None)
     password = request.json.get("password", None)
@@ -129,26 +147,6 @@ def update_privelage():
     return auth.update_privelage(user_id, privelage)
 
 
-# Uncomment to have access token refreshed automatically after evert request is made
-# If it is going to expire within a certain amount of time (optional)
-# @APP.after_request
-# def refresh_expiring_jwts(response):
-#     '''Refreshes users token if it is going to expire withing a given amount of time'''
-
-#     exp_in = 60
-
-#     try:
-#         exp_timestamp = get_jwt()["exp"]
-#         now = datetime.now(timezone.utc)
-#         target_timestamp = datetime.timestamp(now + timedelta(minutes=exp_in))
-#         if target_timestamp > exp_timestamp:
-#             access_token = create_access_token(identity=get_jwt_identity())
-#             set_access_cookies(response, access_token)
-#         return response
-#     except (RuntimeError, KeyError):
-#         # Case where there is not a valid JWT. Just return the original response
-#         return response
-
 """ |------------------------------------|
     |          Collector Routes          |
     |------------------------------------| """
@@ -158,22 +156,25 @@ def update_privelage():
 @jwt_required(fresh=False)
 def profile():
     """
-    returns:
+    Example Success Output:
         {
-        profile_picture: "string",
-        Username: "string",
-        first_name: "string",
-        last_name: "string",
-        email: "email_string",
-        phone: "string" (numbers),
-        address: "string",
-        twitter_handle: "string",
-        facebook_handle: "string",
-        instagram_handle: "string"
-        }
+            "id": 1,
+            "email": "bob@gmail.com",
+            "username": "bobby",
+            "first_name": "bob",
+            "last_name": "junior",
+            "phone": "0444444444",
+            "address": "NSW",
+            "profile_picture": "www.some_image.com/rnanranrrqn",
+            "twitter_handle": "monkey",
+            "facebook_handle": "monkey",
+            "instagram_handle": "monkey"
+        }, 200
+
+    Example Error Output:
+        {"msg": "Invalid collector id"}, 400
     """
     user_id = request.args.get("id")
-
     return db_collectors.get_collector(user_id=user_id)
 
 

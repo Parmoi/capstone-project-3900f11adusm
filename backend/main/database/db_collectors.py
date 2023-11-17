@@ -125,16 +125,36 @@ def get_all_collectors():
     return jsonify({"collectors": all_collectors}), OK
 
 
-# TODO: user error check
 def get_collector(user_id=None, email=None, username=None):
-    """get_collector.
-
-    Returns dict with collectors details
+    """Returns a dict of the collector's details
 
     Args:
-        user_id: user id of collector being returned
-    """
+        user_id (int): id of collector we want to find information on
+        email (string): string of the collector to find
+        username (string): username of the collector to find
 
+    Returns:
+        JSON:
+            - on success: 
+                {
+                    "id": (int), 
+                    "email": (string), 
+                    "username": (string),
+                    "first_name": (string),
+                    "last_name": (string),
+                    "phone": (string),
+                    "address": (string),
+                    "profile_picture": (string),
+                    "twitter_handle": (string),
+                    "facebook_handle": (string),
+                    "instagram_handle": (string)
+                }
+            - on error: {"msg": (string)}
+        int: success/error code
+    
+        Raises:
+            InputError: Not a valid collector
+    """
     engine, conn, metadata = dbm.db_connect()
 
     # Loads in the collector table into our metadata
