@@ -39,11 +39,11 @@ def execute_sql_file(filename):
 
 def generate_demo():
     # Generage users for demo, two ADMIN and 1 MANAGER and 3 COLLECTOR accounts
-    auth.register_collector("ds@gmail.com", None, "dyllanson", privelage=COLLECTOR)
-    auth.register_collector("ua@gmail.com", None, "uguudei", privelage=MANAGER)
-    auth.register_collector("sz@gmail.com", None, "stella", privelage=COLLECTOR)
+    auth.register_collector("ds@gmail.com", None, "dyllanson", privelage=ADMIN)
+    auth.register_collector("ua@gmail.com", None, "uguudei", privelage=ADMIN)
+    auth.register_collector("sz@gmail.com", None, "stella", privelage=MANAGER)
     auth.register_collector("mx@gmail.com", None, "meng", privelage=COLLECTOR)
-    auth.register_collector("gw@gmail.com", None, "greg", privelage=ADMIN)
+    auth.register_collector("gw@gmail.com", None, "greg", privelage=COLLECTOR)
 
     # Update user info
     db_collectors.update_collector(
@@ -101,6 +101,8 @@ def generate_demo():
 
     # Populates campaignes with 100 randomly allocatedc collectibles
     execute_sql_file("./mock_data/collectibles.sql")
+
+    # Uncomment for different images
     # generate_collectibles()
 
     # Populates the first 20 collectors with 500 randomly allocated collectibles to their collections
@@ -111,7 +113,7 @@ def generate_demo():
 
     return (
         jsonify(
-            msg=""" manager account and 3 test accounts added. id's: 1, 2, 3, 4 Mock data initialised! """
+            msg="Mock data initilized!"
         ),
         OK,
     )

@@ -734,7 +734,6 @@ def get_buylist():
 @APP.route("/manager/invite", methods=["POST"])
 @jwt_required(fresh=False)
 def invite_manager():
-    # TODO: check admin id is valid
     admin_id = get_jwt_identity()
     email = request.json.get("email", None)
     return auth.send_manager_email(admin_id, email)
