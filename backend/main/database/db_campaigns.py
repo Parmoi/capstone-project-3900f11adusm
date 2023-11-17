@@ -150,7 +150,6 @@ def get_campaign(name=None, id=None):
     return jsonify(campaign), 200
 
 
-# TODO: Error checking, Docstring
 def get_all_campaigns():
     engine, conn, metadata = dbm.db_connect()
 
@@ -165,7 +164,6 @@ def get_all_campaigns():
     return jsonify({"campaigns": campaigns}), 200
 
 
-# TODO: Error checking, Docstring
 def get_campaign_collectibles(campaign_id):
     """get_campaign_collectibles.
 
@@ -245,7 +243,6 @@ def get_campaigns_and_collectibles():
                 "approved": False,
             },
     """
-
     engine, conn, metadata = dbm.db_connect()
 
     collectibles = db.Table("collectibles", metadata, autoload_with=engine)
@@ -291,9 +288,6 @@ def get_campaigns_and_collectibles():
         ),
         OK,
     )
-
-    all_collectible_rows = results.all()
-    collectibles = [row._asdict() for row in all_collectible_rows]
 
 
 def get_campaigns_in_period(time_period):
@@ -361,6 +355,16 @@ def get_campaigns_in_period(time_period):
 
 
 def add_campaign_feedback(user_id, campaign_id, feedback):
+    """Adds feedback for a campaign.
+
+    Args:
+        user_id (int): id of the user giving the feedback
+        campaign_id (int): id of the campaign the feedback is directed to
+        feedback (string): the feedback the user wants to give the campaign
+
+    Returns:
+        JSON: success/error message
+    """
     engine, conn, metadata = dbm.db_connect()
 
     # Loads in the campaign table into our metadata
@@ -432,7 +436,6 @@ def get_campaign_feedback(user_id):
             feedback.c.campaign_id,
             feedback.c.feedback,
             feedback.c.feedback_date
-            # campaigns.c.id.label("campaign_id")
         )
         .select_from(join)
     )
@@ -450,9 +453,15 @@ def get_campaign_feedback(user_id):
     |------------------------------------| """
 
 
-# Function to convert campaign name to campaign id
-# Returns campaign id as int
 def get_campaign_id(campaign_name):
+    """Find the campaign_id from the campaign_name
+
+    Args:
+        campaign_name (string): name of the campaign
+
+    Returns:
+        int: id of the campaign that has the sepcificied name
+    """
     engine, conn, metadata = dbm.db_connect()
 
     # Loads in the campaign table into our metadata
@@ -468,6 +477,14 @@ def get_campaign_id(campaign_name):
 
 
 def get_campaign_name(campaign_id):
+    """Find the campaign name associated with the campaign_id.
+
+    Args:
+        campaign_id (int): id of the campaign we want to find the name for
+
+    Returns:
+        string: name of the campaign
+    """
     engine, conn, metadata = dbm.db_connect()
 
     # Loads in the campaign table into our metadata
@@ -476,7 +493,7 @@ def get_campaign_name(campaign_id):
     select_stmt = db.select(campaigns.c.name).where(campaigns.c.id == campaign_id)
 
     execute = conn.execute(select_stmt)
-    campaign_id = execute.fetchone()._asdict().get("name", None)
+    campaign_name = execute.fetchone()._asdict().get("name", None)
     conn.close()
 
-    return campaign_id
+    return campaign_name

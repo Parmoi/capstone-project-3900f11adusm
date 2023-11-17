@@ -1,10 +1,10 @@
 from flask import jsonify
 import sqlalchemy as db
 
-import auth
 from main.database import db_helpers
 from main.error import OK, InputError
 from main.privelage import BANNED, COLLECTOR, MANAGER
+import auth
 import main.database.db_manager as dbm
 
 """ |------------------------------------|
@@ -82,7 +82,6 @@ def update_collector(
     """
 
     update_dict = {k: v for k, v in locals().items() if v != "" and v is not None}
-    print(update_dict)
 
     if "password" in update_dict.keys():
         update_dict["password"] = auth.hash_password(update_dict["password"])
