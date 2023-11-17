@@ -1,6 +1,9 @@
-import os
 import json
+import os
+
+from datetime import timedelta
 from flask import Flask, jsonify, request
+from flask_cors import CORS
 from flask_jwt_extended import (
     JWTManager,
     jwt_required,
@@ -8,25 +11,21 @@ from flask_jwt_extended import (
     verify_jwt_in_request,
 )
 
-from flask_cors import CORS
-from datetime import timedelta
-
 import helpers.config as config
 import helpers.exceptions as exceptions
-
-from main.database import db_manager as dbm
+from main import auth
 from main.database import (
-    db_collectors,
     db_campaigns,
-    db_wantlist,
+    db_campaign_analytics,
     db_collectibles,
     db_collections,
-    db_tradeposts,
-    db_tradeoffers,
+    db_collectors,
     db_exchangehistory,
-    db_campaign_analytics
+    db_manager as dbm,
+    db_tradeoffers,
+    db_tradeposts,
+    db_wantlist,
 )
-from main import auth
 from main.error import InputError, AccessError, OK
 from main.privelage import ADMIN, MANAGER
 from mock_data import mock_data_init
@@ -48,9 +47,9 @@ APP.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=30)
 APP.config["JWT_COOKIE_CSRF_PROTECT"] = False
 
 
-@APP.route("/")
-def entry():
-    return "<h1>Hello, Collector<h1\>"
+# @APP.route("/")
+# def entry():
+#     return "<h1>Hello, Collector<h1\>"
 
 
 """ |------------------------------------|
@@ -59,14 +58,14 @@ def entry():
 
 
 @APP.route("/initdb")
-def db_init():
+def init_db():
     dbm.database_setup()
     return jsonify(msg="Database has been setup successfully!"), OK
 
 
-@APP.route("/init_mock_data", methods=["GET"])
-def init_mock_data():
-    return jsonify(msg="Mock data initialised!"), OK
+# @APP.route("/init_mock_data", methods=["GET"])
+# def init_mock_data():
+#     return jsonify(msg="Mock data initialised!"), OK
 
 
 @APP.route("/init_mock_data/demo", methods=["GET"])
@@ -85,7 +84,7 @@ def init_mock_data_demo():
 def login():
     email = request.json.get("email", None)
     password = request.json.get("password", None)
-    return auth.login(password, email=email)
+    return auth.login(email=email, password=password)
 
 
 @APP.route("/logout", methods=["POST"])

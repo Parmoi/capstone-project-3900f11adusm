@@ -17,7 +17,7 @@ from flask_jwt_extended import (
 
 from database import db_collectors
 import database.db_manager as dbm
-from privelage import COLLECTOR, MANAGER, ADMIN
+from privelage import BANNED, COLLECTOR, MANAGER, ADMIN
 
 from error import InputError, AccessError, OK
 
@@ -26,34 +26,35 @@ from error import InputError, AccessError, OK
     |------------------------------------| """
 
 
-def login(password, email=None, username=None):
-    """login.
-
-    Logs a user in by setting fresh access and refresh tokens in client cookies
-    if credentials are correct.
+def login(email=None, password=None):
+    """Logs a user in by setting fresh access and refresh tokens in client
+    cookies if credentials are correct.
 
     Args:
-        password: users password
-        email: users email
-        username: users username
+        email (string): email of the user trying to log in
+        password (string): password of user trying to log in
 
-    provide username or email, not both.
+    Returns:
+        JSON:
+            - on success {"userId": (int), "privelage": (int)}
+            - on errror {"msg": (string)}
+        int: success/error code
+
+    Raises:
+        InputError: invalid email or password
     """
     if email:
         collector_id = db_collectors.get_collector_id(email=email)
         if collector_id is None:
             return jsonify({"msg": "Invalid email!"}), InputError
-    elif username:
-        collector_id = db_collectors.get_collector_id(username=username)
-        if collector_id is None:
-            return jsonify({"msg": "Invalid username!"}), InputError
     else:
-        return jsonify({"msg": "No email or username provided!"}), InputError
+        return jsonify({"msg": "No email provided!"}), InputError
 
     if not validate_password(email, password):
         return jsonify({"msg": "Invalid password!"}), InputError
 
-    user_id = db_collectors.get_collector_id(email=email, username=username)
+    user_id = db_collectors.get_collector_id(email=email)
+
     response = jsonify(
         {"userId": user_id, "privelage": get_user_privelage(user_id)}
     )
