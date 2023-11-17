@@ -188,7 +188,7 @@ const OffersList = () => {
       defaultColumn={{
         minSize: 50,
         maxSize: 500,
-        size: 100, 
+        size: 150, 
       }}
 
       // buttons for toggling padding and full screen

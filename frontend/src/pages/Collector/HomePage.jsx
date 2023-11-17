@@ -25,7 +25,6 @@ const HomePage = () => {
     };
 
     apiCall((d) => {
-      console.log(d["campaigns"]);
       setData(d["campaigns"]);
     }, options);
   }

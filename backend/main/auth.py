@@ -17,7 +17,7 @@ from flask_jwt_extended import (
 
 from database import db_collectors
 import database.db_manager as dbm
-from privelage import COLLECTOR, MANAGER, ADMIN
+from privelage import COLLECTOR, MANAGER, ADMIN, BANNED
 
 from error import InputError, AccessError, OK
 
@@ -53,7 +53,11 @@ def login(password, email=None, username=None):
     if not validate_password(email, password):
         return jsonify({"msg": "Invalid password!"}), InputError
 
-    user_id = db_collectors.get_collector_id(email=email, username=username)
+    user_id = db_collectors.get_collector_id(email=email)
+    privelage = get_user_privelage(user_id)
+    if privelage == BANNED:
+        return jsonify({"msg": "You have been banned!"}), AccessError
+
     response = jsonify(
         {"userId": user_id, "privelage": get_user_privelage(user_id)}
     )
