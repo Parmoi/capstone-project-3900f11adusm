@@ -1,17 +1,18 @@
-import sqlalchemy as db
+from datetime import datetime
 from flask import jsonify
-from error import OK, InputError, AccessError
-import db_manager as dbm
-import db_collections
-from db_helpers import rows_to_list
-from datetime import datetime, date
+import sqlalchemy as db
 
-# TODO: Error checking
+from db_helpers import rows_to_list
+from error import OK
+import db_collections, db_manager as dbm
+
+
 def add_exhange_history(trade_info, engine, conn, metadata):
     """Add an accepted trade offer to our exchange history table
 
     Args:
-        trade_information (): 
+        trade_information (dictionary): trade information to add to exchange history
+        engine, conn, metadata: db connection helpers 
     
     Returns:
         JSON, int: JSON of success/error message, int of success/error code
@@ -44,7 +45,7 @@ def add_exhange_history(trade_info, engine, conn, metadata):
 
     return jsonify({"msg": "Entry into exchange history added successfully!"}), OK
 
-# TODO: Error checking
+
 def find_exchange_history(user_id):
     """Finds all exchange history rows that involve the specified collector
 
@@ -176,4 +177,3 @@ def find_exchange_history(user_id):
     all_exchanges = outgoing_exchanges + incoming_exchanges
 
     return jsonify(all_exchanges), OK
-
