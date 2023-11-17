@@ -907,6 +907,11 @@ def ban_collector():
     Bans a collector account, actionable only by an Admin
     """
 
+    admin_id = get_jwt_identity()
+    collector_id = request.json.get("collector_id", None)
+
+    db_collectors.ban_collector(admin_id, collector_id)
+
     stub_return = {"msg": "Collector banned."}
 
     return jsonify(stub_return), OK
