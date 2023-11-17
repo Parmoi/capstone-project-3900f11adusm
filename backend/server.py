@@ -81,7 +81,8 @@ def init_mock_data_demo():
 
 @APP.route("/login", methods=["POST"])
 def login():
-    """
+    """Logs the user into the system.
+
     Example Success Output:
         {"userId": 1, "privelage": 2}, 200
     
@@ -95,7 +96,8 @@ def login():
 
 @APP.route("/logout", methods=["POST"])
 def logout():
-    """
+    """Logs the user out of the system.
+
     Example Success Output:
         {"msg": "Logout successful!"}, 200
     """
@@ -104,7 +106,8 @@ def logout():
 
 @APP.route("/register", methods=["POST"])
 def register():
-    """
+    """Register a new user to the system.
+
     Example Success Output:
         {"msg": "Account successfully registered!", "user_id": 1}, 200
 
@@ -155,7 +158,8 @@ def update_privelage():
 @APP.route("/profile", methods=["GET"])
 @jwt_required(fresh=False)
 def profile():
-    """
+    """Fetch the profile of the desired user.
+
     Example Success Output:
         {
             "id": 1,
@@ -181,20 +185,26 @@ def profile():
 @APP.route("/profile/update", methods=["POST"])
 @jwt_required(fresh=False)
 def profile_update():
-    """
-    Updates the profile details of the user. Returns detailed
-    error messages if the user provides invalid data.
+    """Updates the profile details of the user.
 
-    Example: "username already taken"
-
-    Args:
-        profile_picture: string
-        username: string
-        email: valid email format.
-        first_name: string
-        last_name: string
-        phone: string (numbers)
-        address: string
+    Example Success Output:
+        {
+            "msg": "Collector successfully updated!", 
+            "collector": 
+                {
+                    "id": 1,
+                    "email": "bob@gmail.com",
+                    "username": "bobby",
+                    "first_name": "bob",
+                    "last_name": "junior",
+                    "phone": "0444444444",
+                    "address": "NSW",
+                    "profile_picture": "www.some_image.com/rnanranrrqn",
+                    "twitter_handle": "monkey",
+                    "facebook_handle": "monkey",
+                    "instagram_handle": "monkey"
+                }
+        }
     """
 
     user_id = get_jwt_identity()

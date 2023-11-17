@@ -12,9 +12,8 @@ from main.privelage import BANNED, COLLECTOR, MANAGER
 
 
 def insert_collector(email, username, password, privelage=COLLECTOR):
-    """insert_collector.
+    """Inserts a collector into the system.
 
-    Insert a new collector into the database.
     Returns the new users unique id that was created when inserted.
 
     Args:
@@ -63,17 +62,22 @@ def update_collector(
     address=None,
     profile_picture=None,
 ):
-    """update_collector.
+    """Updates the details of a user.
 
     Args:
-        id: collectors user id
-        email: collectors new email
-        username: collectors new user name
-        first_name: collectors new first name
-        last_name: collectors last name
-        phone: collectors phone number
-        password: collectors hashed password
-        address: collectors address
+        id (int): collector's user id
+        email (string): collector's new email
+        username (string): collector's new username
+        first_name (string): collector's new first name
+        last_name (string): collector's new last name
+        phone (string): collector's new phone number
+        password (string): collector's new hashed password
+        address (string): collector's new address
+
+    Returns:
+        JSON:
+            - on success: {"msg": (string), "collectors": (dictionary)}
+        int: success/error code
     """
 
     update_dict = {k: v for k, v in locals().items() if v != "" and v is not None}
