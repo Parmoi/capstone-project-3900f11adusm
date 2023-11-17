@@ -1,8 +1,9 @@
-import sqlalchemy as db
 from flask import jsonify
+import sqlalchemy as db
+
 from db_helpers import rows_to_list
-import db_manager as dbm
 from error import OK, InputError, AccessError
+import db_manager as dbm
 
 def return_analytics(manager_id):
     """Given a manager, return the analytics for all their campaigns
@@ -11,7 +12,8 @@ def return_analytics(manager_id):
         manager_id (int): id of manager we want to find the analytics for
 
     Returns:
-        ...
+        JSON: information of our analytics
+        int: success/error code
 
     Example Output:
         {
@@ -30,7 +32,6 @@ def return_analytics(manager_id):
                 }
             ]
         }, 200
-
     """
     engine, conn, metadata = dbm.db_connect()
 
