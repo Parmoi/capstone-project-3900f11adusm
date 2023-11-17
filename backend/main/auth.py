@@ -17,7 +17,7 @@ from flask_jwt_extended import (
 
 from database import db_collectors
 import database.db_manager as dbm
-from privelage import COLLECTOR, MANAGER, ADMIN, MANAGERPENDING
+from privelage import COLLECTOR, MANAGER, ADMIN, MANAGERPENDING, BANNED
 
 from error import InputError, AccessError, OK
 
@@ -58,10 +58,12 @@ def login(password, email=None, username=None):
     privelage = get_user_privelage(user_id)
     if privelage == MANAGERPENDING:
         update_privelage(user_id, MANAGER)
-
+    elif privelage == BANNED:
+        return jsonify({"msg": "You have been banned!"}), AccessError
     response = jsonify(
         {"userId": user_id, "privelage": privelage}
     )
+
     access_token = create_access_token(identity=user_id, fresh=True)
     refresh_token = create_refresh_token(identity=user_id)
     set_access_cookies(response, access_token)
