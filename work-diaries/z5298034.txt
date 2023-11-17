@@ -1,0 +1,43 @@
+week 1
+The team was established and given a name. Each member's field of specialization was recorded,
+and Uguudei was selected as the Scrum Master. We determined our top three project choices and 
+communicated them to our instructor. Uguudei then set up a Jira Site for the group. We arranged 
+asynchronous stand-ups for the end of the week and planned a meeting for the upcoming Monday.
+
+week2
+Design the looking of the website and writing the use stories and decide the language we want to 
+use to implement the frontend(react) and backend(Flask). Also decide how to write the database.
+Have meeting third a week.
+
+week3
+Held a session with the product client and compiled the discussion points into a document. Focused
+on creating the Entity-Relationship (ER) diagram for the database. In Monday's gathering, roles were
+distributed among team members. Updates were made to the software architecture diagram. Started drafting 
+responses for part C of the proposal. Reconvened on Wednesday to talk about a revised version of the 
+trade system, inspired by Steam's trading mechanism. Contributed to modifying the storyboard to reflect
+these changes. Employed user stories from our lectures as a basis to reformulate all our user stories.
+
+week4 
+i write the homepage and landing page for the website and test the api for frontend and also search some 
+good images for UI Design
+
+week5
+start doing campaign page and use the same formate as the wantlist and collections, just put the collectibles
+in this page, but after discussion, Uguudei thought we should put the start and end date time in it, so i
+update the frontend campaign page and also add the timer at the top of the page, so you can check the exact 
+time before it ends
+
+week 6
+keep doing the homepage and add a photo slider here, and make it clickable which can be navigated to the campaign
+page
+
+week7 
+doing the search function and api function, the search function can return stuffs if you search for the collectible 
+names. And divide the campaign with 3 group which are "past" "current" and "future".
+
+week8
+add some convenient component for user that can give better user experience and connect the api with backend for homepage and campaign 
+page
+
+week9
+working on the feedback page and working for backend api connected with frontend

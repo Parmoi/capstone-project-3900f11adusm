@@ -26,20 +26,18 @@ LinearProgressWithLabel.propTypes = {
   value: PropTypes.number.isRequired,
 };
 
-
+// Component to show the completion progress as a percentage/bar of campaigns user have started collecting
 const CollectionCompletion = ({style}) => {
   return (
     <Box sx={style} p="8px">
       <Typography variant="h5" sx={{margin: "8px"}}>Collection Completion</Typography>
       <List sx={{alignItems: "center"}} p={8}>
-        <Typography sx={{margin: "8px"}}>Campaign Name</Typography>
-        <LinearProgressWithLabel value={50} />
+        <Typography sx={{margin: "8px"}}>Grey Heron</Typography>
+        <LinearProgressWithLabel value={90} />
         <Divider sx={{margin: "8px"}}/>
-        <Typography sx={{margin: "8px"}}>Campaign Name</Typography>
-        <LinearProgressWithLabel value={50} />
+        <Typography sx={{margin: "8px"}}>Moauntain Duck</Typography>
+        <LinearProgressWithLabel value={20} />
         <Divider sx={{margin: "8px"}}/>
-        <Typography sx={{margin: "8px"}}>Campaign Name</Typography>
-        <LinearProgressWithLabel value={50} />
       </List> 
     </Box>
   );

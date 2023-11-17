@@ -40,4 +40,17 @@ Week 8:
 Had meeting on Monday, discussed offers and trading and how the functionality translates to frontend and backend. Started work on offerlist and stub api and finished.
 Added new routes in line for offerlist and trade posting. Finished creating a buy/trade list for when a user clicks on buy button on the collectible page. Also 
 started work on trade post page and finished, which is the page a user is taken to when they click on a result from the buy/trade list. Tying in functionality from
-backend to the frontend for demo.
+backend to the frontend for demo. 
+
+Week 9:
+After retrospective for demo, had meeting about assigning the parts left in our backlog, fixes from sprint 2 and things due in future. Assigned fixing up API routes and frontend,
+worked on making UI and visuals larger as per feedback, adding username to the signed in nav bar, connecting API calls from frontend to backend, fixes to sell page and updating UI. 
+In particular, fixed Sell Page UI to feature correct uploading, and displaying images and feedback based on what the user inputted and added similar feedback to the offer modal. 
+
+Week 10:
+Updated profile route and added profile avatars so that when a user clicks on a profile image, it takes them to their profile page. Also updated collectible images so that when
+clicked, takes user to the collectible page. Worked on making lists more concise by merging name and image as one component. Also assigned the functionalities portion of the project report.
+Worked on writing report. Implemented UI fixes for better user experience such as changing background image, and worked on creating post page for manager. Manager post page
+implemented, allowing managers to post campaigns and upload collectibles. Fixed up frontend code, adding more detailed comments, removing unused imports/comments/debugging statements, 
+fixing indentation of pages to be consistent and restructuring page folder to be split into pages for the three different roles: Admin, Manager and Collector.
+Had meeting discussing demo requirements, working out presentation, assigned roles and listing demo steps for final project demo.

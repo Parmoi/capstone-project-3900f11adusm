@@ -5,22 +5,36 @@ import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
 import { useTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
-import { apiCall } from '../App';
+import { apiCall } from '../../App';
 import Alert from '@mui/material/Alert';
+import Paper from '@mui/material/Paper';
 
-function SignIn({ setLogin }) {
+// gets username from profile api call
+const getUsername = (userId, setUsername) => {
+  const options = {
+    method: 'GET',
+    route: `/profile?id=${userId}`,
+  };
+
+  apiCall((d) => {
+    setUsername(d.username);
+  }, options);
+}
+
+// Displays page for user to sign in 
+// Inputs are email address and password
+// After sign in, takes user to the home page
+function SignIn({ setUserId, setLogin, setPrivilege, setUsername }) {
   const [error, setError] = React.useState(false);
   const [errContent, setErrContent] = React.useState('');
   const navigate = useNavigate();
-  
+
   const login = (e) => {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
 
-    // call api with data
     const options = {
       method: 'POST',
       route: '/login',
@@ -30,8 +44,12 @@ function SignIn({ setLogin }) {
       })
     };
 
-    apiCall(() => {
+    // calls api with login data
+    apiCall((d) => {
       setLogin(true);
+      setUserId(d.userId);
+      getUsername(d.userId, setUsername);
+      setPrivilege(parseInt(d.privelage));
     }, options)
       .then((res) => {
         if (res) {
@@ -40,14 +58,33 @@ function SignIn({ setLogin }) {
           setError(true);
         }
         else {
-          navigate('/dashboard');
+          navigate('/');
         }
       });
   }
 
   return (
     <ThemeProvider theme={useTheme()}>
-      <Container component="main" maxWidth="xs">
+      <Box 
+        sx={{ 
+          width: '100%', 
+          display: "flex", 
+          flexDirection: "column", 
+          alignItems: 'center', 
+          justifyContent: 'center'
+          }}
+      >
+      <Paper 
+        component="main" 
+        maxWidth="xs" 
+        sx={{
+          mt: '15vh',
+          borderRadius: 2,
+          maxWidth: '700px',
+          width: '50vw',
+          paddingBottom: '50px',
+        }}
+      >
         <CssBaseline />
         <Box
           sx={{
@@ -57,7 +94,7 @@ function SignIn({ setLogin }) {
             alignItems: 'center',
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: 'support.main' }}>
+          <Avatar sx={{ m: 2, bgcolor: 'support.main' }}>
           </Avatar>
           <Typography component="h1" variant="h5" color='primary.text'>
             Sign in
@@ -98,7 +135,8 @@ function SignIn({ setLogin }) {
             
           </Box>
         </Box>
-      </Container>
+      </Paper>
+      </Box>
     </ThemeProvider>
   );
 }
