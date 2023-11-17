@@ -13,7 +13,6 @@ import {
     Select,
 } from '@mui/material'
 
-import { useParams, useNavigate } from 'react-router-dom';
 import { useTheme, ThemeProvider } from '@mui/material/styles';
 import { apiCall } from '../../App';
 

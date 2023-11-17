@@ -127,6 +127,8 @@ function AdminManageCollectors() {
 
                 }
               });
+
+            return 0;
           });
         };
 
