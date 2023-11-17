@@ -141,7 +141,7 @@ function CollectionList() {
       defaultColumn={{
         minSize: 50,
         maxSize: 500,
-        size: 200,
+        size: 300,
       }}
       onRowSelectionChange={setRowSelection}
       state={{ rowSelection }}

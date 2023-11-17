@@ -13,7 +13,6 @@ import {
     Select,
 } from '@mui/material'
 
-import { useParams, useNavigate } from 'react-router-dom';
 import { useTheme, ThemeProvider } from '@mui/material/styles';
 import { apiCall } from '../../App';
 
@@ -39,7 +38,6 @@ function AdminCampaignApproval() {
 
     apiCall((d) => {
       setData(d["campaigns"]);
-      console.log(d["campaigns"]);
     }, options)
     .then((res) => {
       if (res) {

@@ -25,7 +25,7 @@ function Profile({privilege, user_id}) {
 
   const params = useParams();
   const u_id = params.id;
-  const isAccount = u_id == user_id;
+  const isAccount = u_id == user_id || u_id == '';
 
   const fetchInfo = () => {
     // fetches info of profile with u_id

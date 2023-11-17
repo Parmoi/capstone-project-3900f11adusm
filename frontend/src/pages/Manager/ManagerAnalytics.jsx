@@ -19,18 +19,7 @@ import { LineChart } from '@mui/x-charts/LineChart';
 
 import { apiCall } from '../../App';
 
-import { useState, useEffect } from 'react';
-
-// const pData = [24, 13, 98, 39, 48, 38, 43];
-// const xLabels = [
-//   '2023/10/20',
-//   '2023/10/21',
-//   '2023/10/22',
-//   '2023/10/23',
-//   '2023/10/24',
-//   '2023/10/25',
-//   '2023/10/26',
-// ];
+import { useEffect } from 'react';
 
 const TableColor = [
   '#4e79a7',

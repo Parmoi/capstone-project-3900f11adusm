@@ -42,6 +42,7 @@ def login(email=None, password=None):
 
     Raises:
         InputError: invalid email or password
+        AccessError: banned user tries to login
     """
     if email:
         collector_id = db_collectors.get_collector_id(email=email)
@@ -54,10 +55,11 @@ def login(email=None, password=None):
         return jsonify({"msg": "Invalid password!"}), InputError
 
     user_id = db_collectors.get_collector_id(email=email)
+    privelage = get_user_privelage(user_id)
+    if privelage == BANNED:
+        return jsonify({"msg": "You have been banned!"}), AccessError
 
-    response = jsonify(
-        {"userId": user_id, "privelage": get_user_privelage(user_id)}
-    )
+    response = jsonify({"userId": user_id, "privelage": privelage}), OK
     access_token = create_access_token(identity=user_id, fresh=True)
     refresh_token = create_refresh_token(identity=user_id)
     set_access_cookies(response, access_token)
