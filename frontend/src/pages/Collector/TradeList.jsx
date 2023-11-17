@@ -121,7 +121,7 @@ const TradeList = () => {
       defaultColumn={{
         minSize: 50,
         maxSize: 300,
-        size: 300,
+        size: 350,
       }}
       
       renderToolbarInternalActions={({ table }) => (
